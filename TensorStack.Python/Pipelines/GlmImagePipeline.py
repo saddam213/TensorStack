@@ -441,18 +441,52 @@ def generate(
     # Notify
     Utils.notification_push(key="Generate", subkey="Initialize", elapsed=_stopwatch.reset())
 
+    generator = _generator.manual_seed(options.seed)
+    input_image = None if image_count == 0 else images if image_count > 1 else [images]
+
     # Prompt Cache
-    # None
+    prompt_cache_key = (options.prompt, options.guidance_scale > 1)
+    if _prompt_cache_key != prompt_cache_key:
+        print(f"[Generate] Encoding prompt")
+        with torch.no_grad():
+            _pipeline.vision_language_encoder.to(_pipeline._execution_device)
+            normalized_image = _pipeline._validate_and_normalize_images(input_image, 1)
+            prior_token_ids, prior_token_image_ids_per_sample, source_image_grid_thw_per_sample = (
+                _pipeline.generate_prior_tokens(
+                    prompt=options.prompt,
+                    image=normalized_image,
+                    height=options.height,
+                    width=options.width,
+                    device=_pipeline._execution_device,
+                    generator=generator,
+                )
+            )
+
+            (prompt_embeds, negative_prompt_embeds) = _pipeline.encode_prompt(
+                prompt=options.prompt,
+                do_classifier_free_guidance=options.guidance_scale > 1,
+                device=_pipeline._execution_device,
+                max_sequence_length=2048
+            )
+
+            _prompt_cache_value = (prompt_embeds, negative_prompt_embeds, prior_token_ids, prior_token_image_ids_per_sample, source_image_grid_thw_per_sample)
+            _prompt_cache_key = prompt_cache_key
+            Utils.trim_memory(True)
 
     # Notify
     Utils.notification_push(key="Generate", subkey="Encode", elapsed=_stopwatch.reset())
 
     # Pipeline Options
+    (prompt_embeds, negative_prompt_embeds, prior_token_ids, prior_token_image_ids_per_sample, source_image_grid_thw_per_sample) = _prompt_cache_value
     pipeline_options = {
-        "prompt": options.prompt,
+        "prompt_embeds": prompt_embeds,
+        "negative_prompt_embeds": negative_prompt_embeds,
+        "prior_token_ids": prior_token_ids,
+        "prior_token_image_ids": prior_token_image_ids_per_sample,
+        "source_image_grid_thw": source_image_grid_thw_per_sample,
         "height": options.height,
         "width": options.width,
-        "generator": _generator.manual_seed(options.seed),
+        "generator": generator,
         "guidance_scale": options.guidance_scale,
         "num_inference_steps": options.steps,
         "output_type": "np",
@@ -461,7 +495,7 @@ def generate(
     }
 
     if _processType == ProcessType.ImageEdit:
-        pipeline_options.update({ "image": images})
+        pipeline_options.update({ "image": input_image})
 
     # Run Pipeline
     output = _pipeline(**pipeline_options)[0]
