@@ -7,6 +7,7 @@ namespace Amuse.Common
     {
         public string Key { get; init; }
         public string Subkey { get; init; }
+        public string ElapsedKey { get; init; }
         public DateTime Timestamp { get; init; }
         public float Elapsed { get; init; }
         public int Value { get; init; }

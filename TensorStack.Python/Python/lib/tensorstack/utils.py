@@ -712,8 +712,8 @@ def create_services():
 def notification_get():
     return _notification_service.get()
 
-def notification_push(key: str, subkey: str, value: int = 0, maximum: int = 0, batchValue: int = 0, batchMaximum: int = 0, message: str = None, elapsed: float = 0, timestamp: datetime = datetime.now(), tensor: Buffer = []):
-    return _notification_service.push(key= key, subkey= subkey, value= value, maximum= maximum, batchValue= batchValue, batchMaximum= batchMaximum, message=message, elapsed= elapsed, timestamp= timestamp, tensor= tensor)
+def notification_push(key: str, subkey: str, elapsedkey: str = None, value: int = 0, maximum: int = 0, batchValue: int = 0, batchMaximum: int = 0, message: str = None, elapsed: float = 0, timestamp: datetime = datetime.now(), tensor: Buffer = []):
+    return _notification_service.push(key= key, subkey= subkey,elapsedkey= elapsedkey, value= value, maximum= maximum, batchValue= batchValue, batchMaximum= batchMaximum, message=message, elapsed= elapsed, timestamp= timestamp, tensor= tensor)
 
 #------------------------------------------------
 # Helper class handle notifications
@@ -723,9 +723,9 @@ class NotificationService:
         self._items = []
         self._lock = threading.Lock()
 
-    def push(self, key: str, subkey: str, value: int = 0, maximum: int = 0, batchValue: int = 0, batchMaximum: int = 0, message: str = None, elapsed: float = 0, timestamp: datetime = datetime.now(), tensor: Buffer = []):
+    def push(self, key: str, subkey: str, elapsedkey: str = None, value: int = 0, maximum: int = 0, batchValue: int = 0, batchMaximum: int = 0, message: str = None, elapsed: float = 0, timestamp: datetime = datetime.now(), tensor: Buffer = []):
         with self._lock:
-            self._items.append((f"{key}|{subkey}|{timestamp.isoformat()}|{elapsed}|{value}|{maximum}|{batchValue}|{batchMaximum}|{message}", np.ascontiguousarray(tensor)))
+            self._items.append((f"{key}|{subkey}|{elapsedkey}|{timestamp.isoformat()}|{elapsed}|{value}|{maximum}|{batchValue}|{batchMaximum}|{message}", np.ascontiguousarray(tensor)))
 
     def get(self):
         with self._lock:

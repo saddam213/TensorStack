@@ -683,11 +683,7 @@ namespace Amuse.App.Views
             if (CurrentPipeline is null)
                 return;
 
-            if (progress.Key == "Download")
-            {
-                Progress.Update(progress.Value, progress.Maximum, $"Downloading {CurrentPipeline.DiffusionModel.Name} files ({progress.Message})...");
-            }
-            else if (progress.Key == "Generate")
+            if (progress.Key == "Generate")
             {
                 if (progress.Subkey == "Step")
                 {
@@ -704,7 +700,7 @@ namespace Amuse.App.Views
                     }
                     else
                     {
-                        Progress.Indeterminate($"Step: {progress.Subkey}...");
+                        Progress.Indeterminate($"{progress.Subkey}...");
                         Logger.LogDebug("[{View}] [OnProgress] Step: {Subkey}, it/s: {IterationsPerSecond:N2}, s/it: {SecondsPerIteration:N2}", ViewName, progress.Subkey, progress.IterationsPerSecond, progress.SecondsPerIteration);
                     }
                 }

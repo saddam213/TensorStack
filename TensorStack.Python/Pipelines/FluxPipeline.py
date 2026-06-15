@@ -155,7 +155,7 @@ def _progress_callback(pipe, step: int, total_steps: int, info: Dict):
     elapsed = _stopwatch.reset()
     step_latents = info.get("latents")
     step_latents = step_latents.float().cpu() if step_latents is not None else []
-    Utils.notification_push(key="Generate", subkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
+    Utils.notification_push(key="Generate", subkey="Step", elapsedkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
     return info
 
 
@@ -439,6 +439,7 @@ def generate(
     _pipeline._interrupt = False
     _stopwatch = Utils.Stopwatch()
     _stopwatch.start()
+    Utils.notification_push(key="Generate", subkey="Initialize")
 
     # Input Images
     images = Utils.prepare_images(input_tensors)
@@ -460,7 +461,7 @@ def generate(
     Utils.set_lora_weights(_pipeline, options)
 
     # Notify
-    Utils.notification_push(key="Generate", subkey="Initialize", elapsed=_stopwatch.reset())
+    Utils.notification_push(key="Generate", subkey="TextEncoder", elapsedkey="Initialize", elapsed=_stopwatch.reset())
 
     # Prompt Cache
     prompt_cache_key = (options.prompt, options.negative_prompt, options.guidance_scale > 1)
@@ -486,7 +487,7 @@ def generate(
             _prompt_cache_key = prompt_cache_key
 
     # Notify
-    Utils.notification_push(key="Generate", subkey="Encode", elapsed=_stopwatch.reset())
+    Utils.notification_push(key="Generate", subkey="Transformer", elapsedkey="TextEncoder", elapsed=_stopwatch.reset())
 
     # Pipeline Options
     (prompt_cache, negative_prompt_cache) = _prompt_cache_value
@@ -531,8 +532,8 @@ def generate(
     output = output.transpose(0, 3, 1, 2).astype(np.float32)
 
     # Notify
-    Utils.notification_push(key="Generate", subkey="Decode", elapsed = _stopwatch.reset())
-    Utils.notification_push(key="Generate", subkey="Complete", elapsed = _stopwatch.stop())
+    Utils.notification_push(key="Generate", subkey="AutoEncoder", elapsedkey="Transformer", elapsed = _stopwatch.reset())
+    Utils.notification_push(key="Generate", subkey="Complete", elapsedkey="AutoEncoder", elapsed = _stopwatch.stop())
 
     # Cleanup
     Utils.trim_memory(_isMemoryOffload)

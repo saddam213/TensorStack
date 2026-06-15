@@ -150,7 +150,7 @@ def _progress_callback(pipe, step: int, total_steps: int, info: Dict):
     elapsed = _stopwatch.reset()
     step_latents = info.get("latents")
     step_latents = step_latents.float().cpu() if step_latents is not None else []
-    Utils.notification_push(key="Generate", subkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
+    Utils.notification_push(key="Generate", subkey="Step", elapsedkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
     return info
 
 
@@ -522,6 +522,7 @@ def generate(
     _pipeline._interrupt = False
     _stopwatch = Utils.Stopwatch()
     _stopwatch.start()
+    Utils.notification_push(key="Generate", subkey="Initialize")
 
     # Input Audio
     audio = Utils.prepare_audio(input_tensors)
@@ -541,10 +542,10 @@ def generate(
     Utils.set_lora_weights(_pipeline, options)
 
     # Notify
-    Utils.notification_push(key="Generate", subkey="Initialize", elapsed=_stopwatch.reset())
+    Utils.notification_push(key="Generate", subkey="TextEncoder", elapsedkey="Initialize", elapsed=_stopwatch.reset())
 
     # Notify
-    Utils.notification_push(key="Generate", subkey="Encode", elapsed=_stopwatch.reset())
+    Utils.notification_push(key="Generate", subkey="Transformer", elapsedkey="TextEncoder", elapsed=_stopwatch.reset())
 
     # Pipeline Options
     pipeline_options = {
@@ -575,12 +576,14 @@ def generate(
     # Run Pipeline
     output = _pipeline(**pipeline_options)[0]
 
+    # Notify
+    Utils.notification_push(key="Generate", subkey="AutoEncoder", elapsedkey="Transformer", elapsed = _stopwatch.reset())
+
     audio = output[0]  # (channels, samples), 48 kHz
     sf.write(options.temp_filename, audio.T, _pipeline.sample_rate)
 
     # Notify
-    Utils.notification_push(key="Generate", subkey="Decode", elapsed = _stopwatch.reset())
-    Utils.notification_push(key="Generate", subkey="Complete", elapsed = _stopwatch.stop())
+    Utils.notification_push(key="Generate", subkey="Complete", elapsedkey="AutoEncoder", elapsed = _stopwatch.stop())
 
     # Cleanup
     Utils.trim_memory(_isMemoryOffload)

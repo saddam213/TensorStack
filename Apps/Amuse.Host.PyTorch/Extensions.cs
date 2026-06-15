@@ -166,6 +166,7 @@ namespace Amuse.Host.PyTorch
             {
                 Key = pipelineProgress.Key,
                 Subkey = pipelineProgress.Subkey,
+                ElapsedKey = pipelineProgress.ElapsedKey,
                 Timestamp = pipelineProgress.Timestamp,
                 Elapsed = pipelineProgress.Elapsed,
                 Value = pipelineProgress.Value,

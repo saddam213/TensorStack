@@ -154,7 +154,7 @@ def _progress_callback(pipe, step: int, total_steps: int, info: Dict):
     elapsed = _stopwatch.reset()
     step_latents = info.get("latents")
     step_latents = step_latents.float().cpu() if step_latents is not None else []
-    Utils.notification_push(key="Generate", subkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
+    Utils.notification_push(key="Generate", subkey="Step", elapsedkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
     return info
 
 
@@ -573,6 +573,7 @@ def generate(
     _pipeline._interrupt = False
     _stopwatch = Utils.Stopwatch()
     _stopwatch.start()
+    Utils.notification_push(key="Generate", subkey="Initialize")
 
     # Input Images
     images = Utils.prepare_images(input_tensors)
@@ -594,7 +595,7 @@ def generate(
     Utils.set_lora_weights(_pipeline, options)
 
     # Notify
-    Utils.notification_push(key="Generate", subkey="Initialize", elapsed=_stopwatch.reset())
+    Utils.notification_push(key="Generate", subkey="TextEncoder", elapsedkey="Initialize", elapsed=_stopwatch.reset())
 
     # Prompt Cache
     negative_prompt = options.negative_prompt if options.negative_prompt else DEFAULT_NEGATIVE_PROMPT
@@ -612,7 +613,7 @@ def generate(
             Utils.trim_memory(_isMemoryOffload)
 
     # Notify
-    Utils.notification_push(key="Generate", subkey="Encode", elapsed=_stopwatch.reset())
+    Utils.notification_push(key="Generate", subkey="Transformer", elapsedkey="TextEncoder", elapsed=_stopwatch.reset())
 
     # Pipeline Options
     (prompt_embeds, prompt_attention_mask, negative_prompt_embeds, negative_prompt_attention_mask) = _prompt_cache_value
@@ -651,7 +652,7 @@ def generate(
     output_video, output_audio = _pipeline(**pipeline_options)
 
     # Notify
-    Utils.notification_push(key="Generate", subkey="Decode", elapsed = _stopwatch.reset())
+    Utils.notification_push(key="Generate", subkey="AutoEncoder", elapsedkey="Transformer", elapsed = _stopwatch.reset())
 
     # Export Video
     Export.encode_video(
@@ -663,8 +664,7 @@ def generate(
     )
 
     # Notify
-    Utils.notification_push(key="Generate", subkey="Export", elapsed = _stopwatch.reset())
-    Utils.notification_push(key="Generate", subkey="Complete", elapsed = _stopwatch.stop())
+    Utils.notification_push(key="Generate", subkey="Complete", elapsedkey="AutoEncoder", elapsed = _stopwatch.stop())
 
     # Cleanup
     Utils.trim_memory(_isMemoryOffload)
