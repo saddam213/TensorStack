@@ -72,17 +72,17 @@ namespace TensorStack.Common.Image
             {
                 float wy = 1f;
                 if (y < overlap)
-                    wy = (float)y / overlap;
+                    wy = (float)(y + 1) / (overlap + 1);
                 else if (y >= tileSize - overlap)
-                    wy = (float)(tileSize - y - 1) / overlap;
+                    wy = (float)(tileSize - y) / (overlap + 1);
 
                 for (int x = 0; x < tileSize; x++)
                 {
                     float wx = 1f;
                     if (x < overlap)
-                        wx = (float)x / overlap;
+                        wx = (float)(x + 1) / (overlap + 1);
                     else if (x >= tileSize - overlap)
-                        wx = (float)(tileSize - x - 1) / overlap;
+                        wx = (float)(tileSize - x) / (overlap + 1);
 
                     w[y, x] = MathF.Min(wx, wy);
                 }
