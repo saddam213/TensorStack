@@ -188,7 +188,7 @@ namespace Amuse.Common
             {
                 try
                 {
-                    await _progressChannel.SendObject(progressMessage, cancellationToken);
+                    await _progressChannel.SendMessage(progressMessage, cancellationToken);
                 }
                 catch (OperationCanceledException) { }
                 catch (Exception ex)

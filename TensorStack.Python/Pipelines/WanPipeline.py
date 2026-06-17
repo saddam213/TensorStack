@@ -10,6 +10,7 @@ import torch
 import numpy as np
 from pathlib import Path
 from threading import Event
+from functools import partial
 from collections.abc import Buffer
 from typing import Dict, Sequence, List, Tuple, Optional, Any
 from transformers import T5Tokenizer, UMT5EncoderModel
@@ -79,7 +80,7 @@ def reload(config_args: Dict[str, Any]) -> bool:
     _processType = _config.process_type
 
     # Rebuild Pipeline
-    _pipeline.unload_lora_weights()
+    Utils.unload_lora_weights()
     _pipeline = create_pipeline(_config)
 
     # Load Lora
@@ -137,22 +138,6 @@ def getNotifications() -> list[(str, Buffer)]:
 #------------------------------------------------
 def getLogs() -> list[str]:
     return Utils.get_output()
-
-
-#------------------------------------------------
-# Diffusers pipeline callback to capture step artifacts
-#------------------------------------------------
-def _progress_callback(pipe, step: int, total_steps: int, info: Dict):
-    if _cancel_event.is_set():
-        pipe._interrupt = True
-        raise Exception("Operation Canceled")
-
-    steps = pipe._num_timesteps
-    elapsed = _stopwatch.reset()
-    step_latents = info.get("latents")
-    step_latents = step_latents.float().cpu() if step_latents is not None else []
-    Utils.notification_push(key="Generate", subkey="Step", elapsedkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
-    return info
 
 
 #------------------------------------------------
@@ -471,7 +456,7 @@ def generate(
         "guidance_scale_2": options.guidance_scale2 if options.guidance_scale2 > 0 else None,
         "num_inference_steps": options.steps,
         "output_type": "np",
-        "callback_on_step_end": _progress_callback,
+        "callback_on_step_end": partial(_progress_callback, height=options.height, width=options.width),
         "callback_on_step_end_tensor_inputs": ["latents"],
     }
     if _processType in (ProcessType.TextToVideo, ProcessType.ImageToVideo):
@@ -507,3 +492,23 @@ def generate(
 
     # (Frames, Channel, Height, Width)
     return [ ]
+
+
+#------------------------------------------------
+# Diffusers pipeline callback to capture step artifacts
+#------------------------------------------------
+def _progress_callback(pipe, step: int, total_steps: int, info: Dict, height: int, width: int):
+    if _cancel_event.is_set():
+        pipe._interrupt = True
+        raise Exception("Operation Canceled")
+
+    def preview_latents(latents):
+        if latents is None:
+            return []
+        return latents.float().cpu()
+
+    steps = pipe._num_timesteps
+    elapsed = _stopwatch.reset()
+    step_latents = preview_latents(info.get("latents"))
+    Utils.notification_push(key="Generate", subkey="Step", elapsedkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
+    return info

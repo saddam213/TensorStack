@@ -9,9 +9,10 @@ import torch
 import numpy as np
 from pathlib import Path
 from threading import Event
+from functools import partial
 from collections.abc import Buffer
 from typing import Dict, Sequence, List, Tuple, Optional, Any
-from transformers import CLIPTokenizer, CLIPTextModel, Qwen2Tokenizer, Qwen2_5_VLForConditionalGeneration
+from transformers import CLIPTokenizer, CLIPTextModel, AutoProcessor, Qwen2_5_VLForConditionalGeneration
 from diffusers import (
     AutoencoderKL,
     AutoencoderKLHunyuanVideo,
@@ -82,7 +83,7 @@ def reload(config_args: Dict[str, Any]) -> bool:
     _processType = _config.process_type
 
     # Rebuild Pipeline
-    _pipeline.unload_lora_weights()
+    Utils.unload_lora_weights()
     _pipeline = create_pipeline(_config)
 
     # Load Lora
@@ -143,22 +144,6 @@ def getLogs() -> list[str]:
 
 
 #------------------------------------------------
-# Diffusers pipeline callback to capture step artifacts
-#------------------------------------------------
-def _progress_callback(pipe, step: int, total_steps: int, info: Dict):
-    if _cancel_event.is_set():
-        pipe._interrupt = True
-        raise Exception("Operation Canceled")
-
-    steps = pipe._num_timesteps
-    elapsed = _stopwatch.reset()
-    step_latents = info.get("latents")
-    step_latents = step_latents.float().cpu() if step_latents is not None else []
-    Utils.notification_push(key="Generate", subkey="Step", elapsedkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
-    return info
-
-
-#------------------------------------------------
 # Initialize Pipeline
 #------------------------------------------------
 def initialize(config: DataObjects.PipelineConfig):
@@ -171,7 +156,7 @@ def initialize(config: DataObjects.PipelineConfig):
 
 
 #------------------------------------------------
-# Load Qwen2Tokenizer
+# Load AutoProcessor
 #------------------------------------------------
 def load_tokenizer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
     if _pipeline and _pipeline.tokenizer:
@@ -183,9 +168,9 @@ def load_tokenizer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str
 
     # 1. Load from pretrained folder
     print(f"[Load] Loading Pretrained Tokenizer")
-    tokenizer = Qwen2Tokenizer.from_pretrained(
+    tokenizer = AutoProcessor.from_pretrained(
         tokenizer_path,
-        config=tokenizer_config,
+        #config=tokenizer_config,
         dtype=config.data_type,
         **pipeline_kwargs
     )
@@ -558,7 +543,7 @@ def generate(
         "guidance_scale": options.guidance_scale,
         "num_inference_steps": options.steps,
         "output_type": "np",
-        "callback_on_step_end": _progress_callback,
+        "callback_on_step_end": partial(_progress_callback, height=options.height, width=options.width),
         "callback_on_step_end_tensor_inputs": ["latents"],
     }
 
@@ -587,3 +572,24 @@ def generate(
     # Cleanup
     Utils.trim_memory(_isMemoryOffload)
     return [ np.ascontiguousarray(output) ]
+
+
+#------------------------------------------------
+# Diffusers pipeline callback to capture step artifacts
+#------------------------------------------------
+def _progress_callback(pipe, step: int, total_steps: int, info: Dict, height: int, width: int):
+    if _cancel_event.is_set():
+        pipe._interrupt = True
+        raise Exception("Operation Canceled")
+
+    def preview_latents(latents):
+        if latents is None or _is_video_pipeline == True:
+            return []
+        latents = latents.permute(0, 1, 4, 2, 3).squeeze(0)
+        return latents.float().cpu()
+
+    steps = pipe._num_timesteps
+    elapsed = _stopwatch.reset()
+    step_latents = preview_latents(info.get("latents"))
+    Utils.notification_push(key="Generate", subkey="Step", elapsedkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
+    return info

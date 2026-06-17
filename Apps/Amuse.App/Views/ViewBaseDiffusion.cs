@@ -22,6 +22,7 @@ namespace Amuse.App.Views
         private PipelineModel _currentPipeline;
         private ImageInput _resultImage;
         private ImageInput _compareImage;
+        private ImageInput _previewImage;
         private VideoInputStream _resultVideo;
         private VideoInputStream _compareVideo;
         private AudioInputStream _resultAudio;
@@ -133,6 +134,15 @@ namespace Amuse.App.Views
         {
             get { return _compareImage; }
             set { SetProperty(ref _compareImage, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the preview image.
+        /// </summary>
+        public ImageInput PreviewImage
+        {
+            get { return _previewImage; }
+            set { SetProperty(ref _previewImage, value); }
         }
 
         /// <summary>
@@ -678,33 +688,29 @@ namespace Amuse.App.Views
         /// Called when progress is received from a Python pipeline
         /// </summary>
         /// <param name="progress">The progress.</param>
-        protected virtual void OnProgress(PipelineProgress progress)
+        protected virtual async void OnProgress(PipelineProgress progress)
         {
             if (CurrentPipeline is null)
                 return;
 
             if (progress.Key == "Generate")
             {
+                var message = Globalization.GetProgressMessage(progress);
                 if (progress.Subkey == "Step")
                 {
                     Statistics.Update(progress);
-                    Progress.Update(progress.Value, progress.Maximum, $"Step: {progress.Value}/{progress.Maximum}");
+                    Progress.Update(progress.Value, progress.Maximum, message);
+                    var previewImage = await DiffusionService.GeneratePreviewAsync(progress);
+                    if (previewImage != null && DiffusionService.IsExecuting)
+                        PreviewImage = previewImage;
+
                     Logger.LogDebug("[{View}] [OnProgress] Step: {Value}/{Maximum}, it/s: {IterationsPerSecond:N2}, s/it: {SecondsPerIteration:N2}", ViewName, progress.Value, progress.Maximum, progress.IterationsPerSecond, progress.SecondsPerIteration);
                 }
                 else
                 {
-                    if (string.IsNullOrEmpty(progress.Subkey))
-                    {
-                        Progress.Indeterminate(progress.Message);
-                        Logger.LogDebug("[{View}] [OnProgress] {Message}", ViewName, progress.Message);
-                    }
-                    else
-                    {
-                        Progress.Indeterminate($"{progress.Subkey}...");
-                        Logger.LogDebug("[{View}] [OnProgress] Step: {Subkey}, it/s: {IterationsPerSecond:N2}, s/it: {SecondsPerIteration:N2}", ViewName, progress.Subkey, progress.IterationsPerSecond, progress.SecondsPerIteration);
-                    }
+                    Progress.Indeterminate(message);
+                    Logger.LogDebug("[{View}] [OnProgress] Step: {Subkey}, it/s: {IterationsPerSecond:N2}, s/it: {SecondsPerIteration:N2}", ViewName, progress.Subkey, progress.IterationsPerSecond, progress.SecondsPerIteration);
                 }
-
             }
         }
 

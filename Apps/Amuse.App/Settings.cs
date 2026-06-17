@@ -66,6 +66,7 @@ namespace Amuse.App
         public bool IsBackendOverrideEnabled { get; set; } = false;
         public bool IsHistoryRecentItemsEnabled { get; set; } = true;
         public bool IsHistoryAutoSortEnabled { get; set; } = true;
+        public bool IsDiffusionImagePreviewEnabled { get; set; } = true;
 
         public double VolumeInput
         {

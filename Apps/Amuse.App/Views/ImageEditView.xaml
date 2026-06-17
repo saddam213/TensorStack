@@ -315,7 +315,8 @@
                                     IsLoadEnabled="False" 
                                     IsLoadOverlayEnabled="False"
                                     Source="{Binding ResultImage, Mode=TwoWay}" 
-                                    OverlaySource="{Binding CompareImage, Mode=TwoWay}"/>
+                                    OverlaySource="{Binding CompareImage, Mode=TwoWay}"
+                                    Preview="{Binding PreviewImage, Mode=OneWay}"/>
                             </Grid>
                         </UniformGrid>
                     </Border>

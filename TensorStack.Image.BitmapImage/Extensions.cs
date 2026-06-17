@@ -131,25 +131,31 @@ namespace TensorStack.Image
         /// <returns>WriteableBitmap.</returns>
         internal static WriteableBitmap ToBitmapImage(this ImageTensor imageTensor)
         {
-            var height = imageTensor.Dimensions[2];
-            var width = imageTensor.Dimensions[3];
-            var stride = width * 4;
-            var pixelBuffer = new byte[height * stride];
-            var writeableBitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
-            for (int y = 0; y < height; y++)
+            var width = imageTensor.Width;
+            var height = imageTensor.Height;
+            var pixelCount = width * height;
+            var r = imageTensor.GetChannel(1);
+            var g = imageTensor.GetChannel(2);
+            var b = imageTensor.GetChannel(3);
+            var a = imageTensor.GetChannel(4);
+            var bitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
+            bitmap.Lock();
+            unsafe
             {
-                for (int x = 0; x < width; x++)
+                int p = 0;
+                byte* pixelBuffer = (byte*)bitmap.BackBuffer;
+                for (int i = 0; i < pixelCount; i++)
                 {
-                    int pixelIndex = (y * width + x) * 4;
-                    pixelBuffer[pixelIndex + 0] = imageTensor[0, 2, y, x].DenormalizeToByte(); // B
-                    pixelBuffer[pixelIndex + 1] = imageTensor[0, 1, y, x].DenormalizeToByte(); // G
-                    pixelBuffer[pixelIndex + 2] = imageTensor[0, 0, y, x].DenormalizeToByte(); // R
-                    pixelBuffer[pixelIndex + 3] = imageTensor[0, 3, y, x].DenormalizeToByte(); // A
+                    pixelBuffer[p++] = b[i].DenormalizeToByte();
+                    pixelBuffer[p++] = g[i].DenormalizeToByte();
+                    pixelBuffer[p++] = r[i].DenormalizeToByte();
+                    pixelBuffer[p++] = a[i].DenormalizeToByte();
                 }
             }
-            writeableBitmap.WritePixels(new Int32Rect(0, 0, width, height), pixelBuffer, stride, 0);
-            writeableBitmap.Freeze();
-            return writeableBitmap;
+            bitmap.AddDirtyRect(new Int32Rect(0, 0, width, height));
+            bitmap.Unlock();
+            bitmap.Freeze();
+            return bitmap;
         }
 
 

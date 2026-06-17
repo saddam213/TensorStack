@@ -110,6 +110,7 @@ namespace Amuse.App.Views
             finally
             {
                 Progress.Clear();
+                PreviewImage = default;
             }
         }
 
@@ -137,6 +138,7 @@ namespace Amuse.App.Views
                 var cancellationToken = CancellationTokenSource.Token;
                 await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Image, MediaType.Image))
                 {
+                    PreviewImage = default;
                     cancellationToken.ThrowIfCancellationRequested();
 
                     // Source
@@ -191,6 +193,7 @@ namespace Amuse.App.Views
                 IsAutomating = false;
                 CancellationTokenSource?.Dispose();
                 CancellationTokenSource = null;
+                PreviewImage = default;
             }
         }
 

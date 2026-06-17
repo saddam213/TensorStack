@@ -204,7 +204,7 @@ namespace Amuse.Common
                         continue;
                     }
 
-                    var progress = await _progressChannel.ReceiveObject<PipelineProgress>(_progressCancellation.Token);
+                    var progress = await _progressChannel.ReceiveMessage<PipelineProgress>(_progressCancellation.Token);
                     if (progress == null || _isCanceled)
                         continue;
 

@@ -279,7 +279,8 @@ namespace Amuse.Host.Onnx
                 Value = progress.Value,
                 Maximum = progress.Max,
                 Message = progress.Message,
-                Elapsed = (float)progress.Elapsed.TotalMilliseconds
+                Elapsed = (float)progress.Elapsed.TotalMilliseconds,
+                Tensors = progress.Tensor == null ? null : [progress.Tensor]
             });
         }
 

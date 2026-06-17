@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TensorStack.Audio;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
+using TensorStack.Image;
 using TensorStack.Video;
 
 namespace Amuse.App.Services
@@ -18,6 +19,7 @@ namespace Amuse.App.Services
         private readonly Settings _settings;
         private readonly IMediaService _mediaService;
         private readonly IEnvironmentService _environmentService;
+        private readonly IPreviewService _previewService;
         private bool _isLoaded;
         private bool _isLoading;
         private bool _isExecuting;
@@ -28,12 +30,13 @@ namespace Amuse.App.Services
         /// Initializes a new instance of the <see cref="DiffusionService"/> class.
         /// </summary>
         /// <param name="settings">The settings.</param>
-        public DiffusionService(Settings settings, IEnvironmentService environmentService, IMediaService mediaService, ILogger<DiffusionService> logger)
+        public DiffusionService(Settings settings, IEnvironmentService environmentService, IMediaService mediaService, IPreviewService previewService, ILogger<DiffusionService> logger)
         {
             _logger = logger;
             _settings = settings;
             _mediaService = mediaService;
             _environmentService = environmentService;
+            _previewService = previewService;
         }
 
         /// <summary>
@@ -101,6 +104,7 @@ namespace Amuse.App.Services
             {
                 if (_diffusionRuntime != null)
                 {
+                    await _previewService.UnloadAsync();
                     await _diffusionRuntime.UnloadAsync();
                     DisposeRuntime();
                 }
@@ -113,6 +117,7 @@ namespace Amuse.App.Services
                 };
 
                 await _diffusionRuntime.LoadAsync(pipeline, progressCallback);
+                await _previewService.LoadAsync(pipeline);
                 IsLoaded = true;
             }
             catch (OperationCanceledException)
@@ -144,6 +149,7 @@ namespace Amuse.App.Services
             }
             catch (OperationCanceledException)
             {
+                await _previewService.UnloadAsync();
                 DisposeRuntime();
                 throw;
             }
@@ -231,6 +237,15 @@ namespace Amuse.App.Services
         }
 
 
+        public async Task<ImageInput> GeneratePreviewAsync(PipelineProgress progress)
+        {
+            if (progress.Tensors.IsNullOrEmpty())
+                return default;
+
+            return await _previewService.GenerateAsync(progress.Tensors[0]);
+        }
+
+
         /// <summary>
         /// Cancel the running task (Load or Execute)
         /// </summary>
@@ -252,6 +267,7 @@ namespace Amuse.App.Services
         {
             try
             {
+                await _previewService.UnloadAsync();
                 await _diffusionRuntime.StopAsync();
             }
             catch (Exception) { }
@@ -271,6 +287,7 @@ namespace Amuse.App.Services
         /// </summary>
         public async Task UnloadAsync()
         {
+            await _previewService.UnloadAsync();
             await _diffusionRuntime.UnloadAsync();
             IsLoaded = false;
             IsLoading = false;
@@ -288,6 +305,7 @@ namespace Amuse.App.Services
 
         public void Dispose()
         {
+            _previewService?.Dispose();
             DisposeRuntime();
         }
     }
@@ -300,5 +318,7 @@ namespace Amuse.App.Services
         bool IsExecuting { get; }
         bool IsCanceling { get; }
         bool CanCancel { get; }
+
+        Task<ImageInput> GeneratePreviewAsync(PipelineProgress progress);
     }
 }
