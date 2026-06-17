@@ -124,6 +124,7 @@
                                 SplitterDirection="LeftToRight"
                                 Source="{Binding ResultImage, Mode=TwoWay}" 
                                 OverlaySource="{Binding CompareImage, Mode=TwoWay}" 
+                                Preview="{Binding PreviewImage, Mode=OneWay}"
                                 IsLoadEnabled="False" 
                                 IsLoadOverlayEnabled="False"/>
                         </Grid>

@@ -9,6 +9,7 @@ import torch
 import numpy as np
 from pathlib import Path
 from threading import Event
+from functools import partial
 from collections.abc import Buffer
 from typing import Dict, Sequence, List, Tuple, Optional, Any
 from transformers import Qwen2Tokenizer, Qwen3ForCausalLM
@@ -18,6 +19,7 @@ from diffusers import (
     Flux2KleinPipeline,
     Flux2KleinInpaintPipeline
 )
+from diffusers.utils.torch_utils import randn_tensor
 
 # Globals
 _config = None
@@ -77,7 +79,7 @@ def reload(config_args: Dict[str, Any]) -> bool:
     _processType = _config.process_type
 
     # Rebuild Pipeline
-    _pipeline.unload_lora_weights()
+    Utils.unload_lora_weights()
     _pipeline = create_pipeline(_config)
 
     # Load Lora
@@ -135,22 +137,6 @@ def getNotifications() -> list[(str, Buffer)]:
 #------------------------------------------------
 def getLogs() -> list[str]:
     return Utils.get_output()
-
-
-#------------------------------------------------
-# Diffusers pipeline callback to capture step artifacts
-#------------------------------------------------
-def _progress_callback(pipe, step: int, total_steps: int, info: Dict):
-    if _cancel_event.is_set():
-        pipe._interrupt = True
-        raise Exception("Operation Canceled")
-
-    steps = pipe._num_timesteps
-    elapsed = _stopwatch.reset()
-    step_latents = info.get("latents")
-    step_latents = step_latents.float().cpu() if step_latents is not None else []
-    Utils.notification_push(key="Generate", subkey="Step", elapsedkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
-    return info
 
 
 #------------------------------------------------
@@ -422,17 +408,20 @@ def generate(
     Utils.notification_push(key="Generate", subkey="Transformer", elapsedkey="TextEncoder", elapsed=_stopwatch.reset())
 
     # Pipeline Options
-    (prompt_embeds, negative_prompt_embeds) = _prompt_cache_value
+    generator = _generator.manual_seed(options.seed)
+    prompt_embeds, negative_prompt_embeds = _prompt_cache_value
+    latents, latent_ids = prepare_latents(_pipeline, generator, options.height, options.width, prompt_embeds.dtype)
     pipeline_options = {
         "prompt_embeds": prompt_embeds,
         "negative_prompt_embeds": negative_prompt_embeds,
         "height": options.height,
         "width": options.width,
-        "generator": _generator.manual_seed(options.seed),
+        "generator": generator,
         "guidance_scale": options.guidance_scale,
         "num_inference_steps": options.steps,
+        "latents": latents,
         "output_type": "np",
-        "callback_on_step_end": _progress_callback,
+        "callback_on_step_end": partial(_progress_callback, height=options.height, width=options.width, latent_ids=latent_ids),
         "callback_on_step_end_tensor_inputs": ["latents"],
     }
 
@@ -455,3 +444,41 @@ def generate(
     # Cleanup
     Utils.trim_memory(_isMemoryOffload)
     return [ np.ascontiguousarray(output) ]
+
+
+#------------------------------------------------
+# Diffusers pipeline callback to capture step artifacts
+#------------------------------------------------
+def _progress_callback(pipe, step: int, total_steps: int, info: Dict, height: int, width: int, latent_ids: torch.Tensor):
+    if _cancel_event.is_set():
+        pipe._interrupt = True
+        raise Exception("Operation Canceled")
+
+    def preview_latents(latents):
+        if latents is None:
+            return []
+        latent_height = int(height) // (pipe.vae_scale_factor * 2)
+        latent_width = int(width) // (pipe.vae_scale_factor * 2)
+        latents = pipe._unpack_latents_with_ids(latents, latent_ids, latent_height, latent_width)
+        latents = pipe._unpatchify_latents(latents)
+        return latents.float().cpu()
+
+    steps = pipe._num_timesteps
+    elapsed = _stopwatch.reset()
+    step_latents = preview_latents(info.get("latents"))
+    Utils.notification_push(key="Generate", subkey="Step", elapsedkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)
+    return info
+
+
+#------------------------------------------------
+# Prepare initial noise latents
+#------------------------------------------------
+def prepare_latents(pipeline, generator, height, width, dtype):
+    device = _pipeline._execution_device
+    height = int(height) // (pipeline.vae_scale_factor * 2)
+    width = int(width) // (pipeline.vae_scale_factor * 2)
+    shape = (1, pipeline.transformer.config.in_channels, height, width )
+    latents = randn_tensor(shape, generator=generator, device=device, dtype=dtype)
+    latent_ids = _pipeline._prepare_latent_ids(latents)
+    latent_ids = latent_ids.to(device)
+    return latents, latent_ids

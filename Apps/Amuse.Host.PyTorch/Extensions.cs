@@ -160,6 +160,7 @@ namespace Amuse.Host.PyTorch
             };
         }
 
+
         public static Common.PipelineProgress ToProgress(this TensorStack.Python.Common.PipelineProgress pipelineProgress)
         {
             return new Common.PipelineProgress
@@ -173,7 +174,8 @@ namespace Amuse.Host.PyTorch
                 Maximum = pipelineProgress.Maximum,
                 BatchValue = pipelineProgress.BatchValue,
                 BatchMaximum = pipelineProgress.BatchMaximum,
-                Message = pipelineProgress.Message
+                Message = pipelineProgress.Message,
+                Tensors = pipelineProgress.Tensor == null ? null : [pipelineProgress.Tensor]
             };
         }
 

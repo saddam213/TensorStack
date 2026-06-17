@@ -443,6 +443,14 @@ def load_lora_weights(pipeline: Any, config: DataObjects.PipelineConfig):
 
 
 #------------------------------------------------
+# Unload the LoRA weights from the specified pipeline
+#------------------------------------------------
+def unload_lora_weights(pipeline: Any):
+    if hasattr(pipeline, "unload_lora_weights"):
+        pipeline.unload_lora_weights()
+
+
+#------------------------------------------------
 # Set the LoRA weights for inference
 #------------------------------------------------
 def set_lora_weights(pipeline: Any, config: DataObjects.PipelineOptions):

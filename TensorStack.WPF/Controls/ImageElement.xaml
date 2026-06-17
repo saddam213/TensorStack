@@ -109,6 +109,9 @@
                                 </CommonControls:TransparentImageElement.Clip>
                             </CommonControls:TransparentImageElement>
 
+                            <!--Preview-->
+                            <Image Source="{Binding Preview.Image}" Stretch="Uniform" IsHitTestVisible="False" Visibility="{Binding Preview, Converter={StaticResource NullVisibilityConverter}}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True"/>
+
                             <!--DragDrop Notification-->
                             <Grid Visibility="{Binding Source, Converter={StaticResource NullVisibilityConverter}}" IsHitTestVisible="False">
                                 <Grid Visibility="{Binding AllowDrop, ElementName=DragDropContainer, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#B0000000"/>

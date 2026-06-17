@@ -35,7 +35,7 @@ namespace TensorStack.WPF.Controls
         public static readonly DependencyProperty IsLoadOverlayEnabledProperty = DependencyProperty.Register(nameof(IsLoadOverlayEnabled), typeof(bool), typeof(ImageElement));
         public static readonly DependencyProperty IsSaveOverlayEnabledProperty = DependencyProperty.Register(nameof(IsSaveOverlayEnabled), typeof(bool), typeof(ImageElement));
         public static readonly DependencyProperty IsSaveCanvasEnabledProperty = DependencyProperty.Register(nameof(IsSaveCanvasEnabled), typeof(bool), typeof(ImageElement));
-
+        public static readonly DependencyProperty PreviewProperty = DependencyProperty.Register(nameof(Preview), typeof(ImageInput), typeof(ImageElement));
 
         public ImageInput OverlaySource
         {
@@ -77,6 +77,12 @@ namespace TensorStack.WPF.Controls
         {
             get { return (bool)GetValue(IsSaveCanvasEnabledProperty); }
             set { SetValue(IsSaveCanvasEnabledProperty, value); }
+        }
+
+        public ImageInput Preview
+        {
+            get { return (ImageInput)GetValue(PreviewProperty); }
+            set { SetValue(PreviewProperty, value); }
         }
 
         public AsyncRelayCommand LoadOverlayCommand { get; }
