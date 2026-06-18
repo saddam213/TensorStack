@@ -1,0 +1,56 @@
+﻿<CommonControls:DialogControl x:Class="Amuse.App.Dialogs.AppUpdateDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Amuse.App.Dialogs"
+        xmlns:Controls="clr-namespace:Amuse.App.Controls"
+        xmlns:CommonControls="clr-namespace:TensorStack.WPF.Controls;assembly=TensorStack.WPF"
+        MinWidth="550"
+        MaxWidth="550"
+        Title="Amuse Update"
+        Icon="/Images/Icon.ico"
+        Style="{StaticResource {x:Type CommonControls:DialogControl}}">
+    <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:AppUpdateDialog}}}" Margin="15, 15, 15, 10">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <StackPanel Orientation="Horizontal" Height="30">
+                <Button Content="Download &amp; Install" Command="{Binding DownloadCommand}" IsDefault="True" Padding="25,0"/>
+                <Button Content="Cancel" Command="{Binding CloseCommand}" Width="100"/>
+            </StackPanel>
+        </StackPanel>
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                <TextBlock Text="There is a new version of Amuse available" FontSize="14"  TextWrapping="Wrap" TextAlignment="Center"/>
+            </StackPanel>
+            <Border DockPanel.Dock="Top" Visibility="{Binding ErrorMessage, Converter={StaticResource NullOrEmptyVisibilityConverter}}" Padding="10,10" Background="{StaticResource DangerColour}" Opacity=".7">
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="White" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <DockPanel Margin="0,10,0,10">
+                <Border DockPanel.Dock="Top" Background="{StaticResource ContainerBackground}" BorderBrush="{StaticResource ControlDarkerBorderBrush}" BorderThickness="1" Padding="4">
+                    <DockPanel Margin="5" >
+                        <Image DockPanel.Dock="Left" Source="/Images/Icon.png" Width="50"/>
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock Text="{Binding AppUpdate.Version, StringFormat=Amuse - {0}}" FontSize="14" FontWeight="SemiBold" />
+                            <CommonControls:HyperlinkControl Link="{Binding AppUpdate.Link}" Label="{Binding AppUpdate.Link}" Foreground="{StaticResource InfoColour}"></CommonControls:HyperlinkControl>
+                            <TextBlock Text="{Binding AppAsset.DownloadLink}" TextWrapping="WrapWithOverflow"  FontSize="11"/>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <DockPanel DockPanel.Dock="Bottom" LastChildFill="False">
+                    <TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldTextBlockStyle}">
+                        <Run Text="{Binding DownloadAmount, Mode=OneWay, StringFormat={}{0:N2} MB}"/>
+                        <Run Text="\" />
+                        <Run Text="{Binding DownloadSize, Mode=OneWay, StringFormat={}{0:N2} MB}"/>
+                        <Run Text="  @  " />
+                        <Run Text="{Binding DownloadSpeed, Mode=OneWay, StringFormat={}{0:N2} MB/s}"/>
+                    </TextBlock>
+                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource FieldTextBlockStyle}">
+                        <Run Text="Time Remaining: " />
+                        <Run Text="{Binding DownloadRemaining, Mode=OneWay}"/>
+                    </TextBlock>
+                </DockPanel>
+                <ProgressBar Value="{Binding DownloadProgress}" Minimum="1" Maximum="100" Height="20"/>
+            </DockPanel>
+        </DockPanel>
+    </DockPanel>
+</CommonControls:DialogControl>

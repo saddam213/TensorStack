@@ -97,7 +97,21 @@
                         <Grid x:Name="SourceContainer">
 
                             <!--PlaceHolder-->
-                            <Image Source="{Binding Placeholder, TargetNullValue={StaticResource PlaceholderImage}}" Visibility="{Binding Source, Converter={StaticResource InverseNullVisibilityConverter}}" Stretch="Uniform" IsHitTestVisible="False"/>
+                            <Image Source="{Binding Placeholder, TargetNullValue={StaticResource PlaceholderImage}}" Stretch="Uniform" IsHitTestVisible="False">
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Source, Converter={StaticResource NullBooleanConverter}}" Value="false">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Preview, Converter={StaticResource NullBooleanConverter}}" Value="false">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
 
                             <!--Source-->
                             <CommonControls:TransparentImageElement x:Name="ImageControl" BitmapSource="{Binding Source.Image}" Stretch="Uniform" />

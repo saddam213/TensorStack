@@ -28,26 +28,26 @@
             <DockPanel  Height="34" Margin="0,0,1,0">
 
                 <!--Logo-->
-                <Grid DockPanel.Dock="Left" IsHitTestVisible="False" >
-                    <StackPanel Orientation="Horizontal">
+                <DockPanel DockPanel.Dock="Left" Width="290" >
+                    <StackPanel  DockPanel.Dock="Left" Margin="0,0,0,0" Orientation="Horizontal" IsHitTestVisible="False" >
                         <Image Source="/Images/Amuse-Logo-Long-256.png" Stretch="Uniform"  HorizontalAlignment="Left" Margin="4,2,0,2" />
                         <TextBlock Text="{x:Static local:App.AppVersionDisplay}" Style="{StaticResource FieldTextBlockStyle}" FontSize="10" Margin="2,14,0,0" Opacity=".7"/>
                     </StackPanel>
-                </Grid>
-
-                <!--Window Options-->
-                <Grid DockPanel.Dock="Right">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-
-                        <Button Margin="0,0,5,0" ToolTip="Update Available" Command="{Binding UpdateCommand, Source={x:Static Application.Current}}" Style="{StaticResource TransparentButton}" Visibility="{Binding Settings.IsUpdateAvailable, Converter={StaticResource BooleanToHiddenConverter}}">
+                    <Grid>
+                        <Button HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0" ToolTip="Update Available" Command="{Binding UpdateCommand, Source={x:Static Application.Current}}" Style="{StaticResource TransparentButton}" Visibility="{Binding Settings.IsUpdateAvailable, Converter={StaticResource BooleanToHiddenConverter}}">
                             <StackPanel Orientation="Horizontal" Opacity=".8">
                                 <CommonControls:FontAwesome Icon="&#xf30f;" IconStyle="Light" Color="{StaticResource SuccessColour}" Margin="3,0" Size="14" />
-                                <TextBlock Text="Update" Foreground="{StaticResource SuccessColour}" Margin="1,0,0,0" FontSize="11"/>
+                                <TextBlock Text="New Version!" Foreground="{StaticResource SuccessColour}" Margin="1,0,0,0" FontSize="11"/>
                             </StackPanel>
                         </Button>
+                    </Grid>
+                </DockPanel>
 
+                <!--Window Options-->
+                <Grid DockPanel.Dock="Right" Width="290" >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                         <CommonControls:IconButton 
-                            Width="100"
+                            Width="90"
                             Text="Settings"
                             Icon="f013" 
                             IconStyle="Solid"
@@ -78,7 +78,7 @@
                 </Grid>
 
                 <!--Categories-->
-                <UniformGrid Rows="1" HorizontalAlignment="Center">
+                <UniformGrid Rows="1" >
                     <CommonControls:IconButton 
                         Text="Image" 
                         Icon="f03e" 

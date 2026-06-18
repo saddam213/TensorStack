@@ -888,15 +888,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 2, 7, 10 ]
+          "MemoryModes": [ 2, 10, 12 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 2, 9, 13 ]
+          "MemoryModes": [ 2, 14, 18 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 2, 16, 24 ]
+          "MemoryModes": [ 2, 22, 26 ]
         }
       ],
       "DefaultOptions": {
@@ -1057,15 +1057,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 2, 7, 10 ]
+          "MemoryModes": [ 2, 10, 12 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 2, 9, 13 ]
+          "MemoryModes": [ 2, 14, 18 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 2, 16, 24 ]
+          "MemoryModes": [ 2, 22, 26 ]
         }
       ],
       "DefaultOptions": {
@@ -2399,6 +2399,121 @@
     },
     {
       "Backend": "PyTorch",
+      "Name": "GlmImage_Base",
+      "Template": "GlmImage",
+      "Pipeline": "GlmImagePipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageEdit" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_GLM"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_BYT5_SM"
+        },
+        "TextEncoder2": {
+          "Name": "VisionEncoder",
+          "Type": "Component",
+          "Path": "VE_GLM"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 8, 13 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 11, 20 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 20, 36 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 1.5,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 1,
+            "UseDynamicShifting": true,
+            "BaseShift": 0.25,
+            "MaxShift": 0.75,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Linear",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "PyTorch",
       "Name": "Helios_Base",
       "Template": "Helios_Base",
       "Pipeline": "HeliosPipeline",
@@ -2823,6 +2938,106 @@
         {
           "Width": 1280,
           "Height": 736
+        }
+      ]
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Ideogram4_Base",
+      "Template": "Ideogram4",
+      "Pipeline": "IdeogramPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux2"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_8B-VL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        },
+        "Transformer2": {
+          "Name": "UnconditionalTransformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 22, 22 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 33, 33 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 52, 52 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 20,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "GuidanceScale2": 7,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 1,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1024,
+          "Height": 1792
+        },
+        {
+          "Width": 1024,
+          "Height": 1536
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1536,
+          "Height": 1024
+        },
+        {
+          "Width": 1920,
+          "Height": 1088
+        },
+        {
+          "Width": 2048,
+          "Height": 768
         }
       ]
     },
@@ -10808,6 +11023,16 @@
       ]
     },
     {
+      "Name": "GLM-Image",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Base",
+          "Template": "GlmImage_Base"
+        }
+      ]
+    },
+    {
       "Name": "Helios",
       "Backend": "PyTorch",
       "Options": [
@@ -10822,6 +11047,16 @@
         {
           "Name": "Distilled",
           "Template": "Helios_Distilled"
+        }
+      ]
+    },
+    {
+      "Name": "Ideogram 4",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Base",
+          "Template": "Ideogram4_Base"
         }
       ]
     },

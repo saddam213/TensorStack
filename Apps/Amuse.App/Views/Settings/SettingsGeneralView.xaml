@@ -11,8 +11,8 @@
     <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:SettingsGeneralView}}}" Margin="10, 20, 20, 20"  >
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
 
             <DockPanel Grid.Column="0" VerticalAlignment="Top">
@@ -103,8 +103,7 @@
                                     <TextBlock Text="UI Scale" Style="{StaticResource FieldTextBlockStyle}"/>
                                     <ComboBox ItemsSource="{Binding ScaleOptions}" SelectedValue="{Binding Settings.UIScale, Mode=TwoWay}" SelectedValuePath="Value" DisplayMemberPath="Label" />
                                 </StackPanel>
-                                <!--<CheckBox Content="Check For Updates" IsChecked="{Binding Settings.IsUpdateEnabled}" Margin="22,20,0,0"/>-->
-                                <TextBlock />
+                                <CheckBox Content="Check For Updates" IsChecked="{Binding Settings.IsAutoUpdateEnabled}" Margin="5,20,0,0"/>
                                 <CommonControls:HyperlinkControl Label="Python Directory" Link="{x:Static app:App.DirectoryPython}" IsButtonType="True" VerticalAlignment="Stretch" Margin="0,8,0,0" />
                                 <CommonControls:HyperlinkControl Label="Log Directory" Link="{x:Static app:App.DirectoryLogs}" IsButtonType="True" VerticalAlignment="Stretch" Margin="0,8,0,0" />
                             </UniformGrid>

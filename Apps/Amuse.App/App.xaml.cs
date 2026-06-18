@@ -1,4 +1,5 @@
-﻿using Amuse.App.Services;
+﻿using Amuse.App.Dialogs;
+using Amuse.App.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -377,7 +378,7 @@ namespace Amuse.App
         /// <param name="propertyName">Name of the property.</param>
         private async Task OnSettingsChanged(string propertyName)
         {
-            if (propertyName.Equals(nameof(Settings.IsUpdateEnabled)))
+            if (propertyName.Equals(nameof(Settings.IsAutoUpdateEnabled)))
             {
                 await CheckForUpdates();
             }
@@ -422,7 +423,7 @@ namespace Amuse.App
         {
             try
             {
-                if (_settings.IsUpdateEnabled)
+                if (_settings.IsAutoUpdateEnabled)
                 {
                     Log.Logger.Information("[CheckForUpdates] - Check for updates...");
                     var updateResponse = await GetUpdateInfo();
@@ -480,23 +481,21 @@ namespace Amuse.App
                     return;
 
                 Log.Logger.Information($"[UpdateAsync] - Show UpdateDialog dialog");
-
                 var isInstalled = IsApplicationInstalled();
-                var downloadLink = isInstalled ? updateInfo.LinkInstaller : updateInfo.LinkStandalone;
-                var updateFileName = Path.Combine(_settings.DirectoryTemp, Path.GetFileName(downloadLink));
-                if (await DialogService.DownloadAsync($"Download Amuse {updateInfo.Version}?", downloadLink, updateFileName))
+                var downloadDialog = DialogService.GetDialog<AppUpdateDialog>();
+                if (await downloadDialog.ShowDialogAsync(updateInfo, isInstalled))
                 {
-                    if (!File.Exists(updateFileName))
-                        throw new FileNotFoundException("Update File Not Found", updateFileName);
+                    if (!File.Exists(downloadDialog.AssetLocation))
+                        throw new FileNotFoundException("Update File Not Found", downloadDialog.AssetLocation);
 
-                    Log.Logger.Information("[UpdateAsync] - Update downloaded successfully, Launching: {FileName}", updateFileName);
+                    Log.Logger.Information("[UpdateAsync] - Update downloaded successfully, Launching: {FileName}", downloadDialog.AssetLocation);
                     if (isInstalled)
                     {
                         Process.Start(new ProcessStartInfo
                         {
                             Verb = "runas",
                             UseShellExecute = true,
-                            FileName = updateFileName,
+                            FileName = downloadDialog.AssetLocation,
                         });
                     }
                     else

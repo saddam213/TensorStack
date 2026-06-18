@@ -21,7 +21,7 @@ namespace Amuse.App
         private double _volumeOutput = 0.1;
         private bool _isVolumeInputMute;
         private bool _isVolumeOutputMute;
-        private bool _isUpdateEnabled = false;
+        private bool _isAutoUpdateEnabled = true;
         private bool _isUpdateAvailable;
 
         public Settings()
@@ -110,10 +110,10 @@ namespace Amuse.App
             set { SetProperty(ref _historyOrientation, value); }
         }
 
-        public bool IsUpdateEnabled
+        public bool IsAutoUpdateEnabled
         {
-            get { return _isUpdateEnabled; }
-            set { SetProperty(ref _isUpdateEnabled, value); }
+            get { return _isAutoUpdateEnabled; }
+            set { SetProperty(ref _isAutoUpdateEnabled, value); }
         }
 
         [JsonIgnore]

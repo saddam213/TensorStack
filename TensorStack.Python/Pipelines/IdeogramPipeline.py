@@ -431,7 +431,7 @@ def generate(
         "height": options.height,
         "width": options.width,
         "generator": _generator.manual_seed(options.seed),
-        "guidance_scale": options.guidance_scale,
+        "guidance_scale": options.guidance_scale2,
         "guidance_schedule": None,
         #"mu": float = 0.0,
         #"std": float = 1.5,

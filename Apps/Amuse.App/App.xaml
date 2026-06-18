@@ -457,7 +457,6 @@
 
 
             <Style x:Key="MenuIconButton" TargetType="{x:Type CommonControls:IconButton}" BasedOn="{StaticResource {x:Type CommonControls:IconButton}}">
-                <Setter Property="Width" Value="250"/>
                 <Setter Property="Orientation" Value="Horizontal"/>
                 <Setter Property="Placement" Value="Bottom"/>
                 <Setter Property="FontSize" Value="14"/>

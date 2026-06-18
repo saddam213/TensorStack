@@ -15,19 +15,12 @@ namespace Amuse.App
             _version = version;
             _assetInstaller = version.Assets?.FirstOrDefault(x => x.DownloadLink.EndsWith(".exe"));
             _assetStandalone = version.Assets?.FirstOrDefault(x => x.DownloadLink.EndsWith(".zip"));
-            if (_assetInstaller != null)
-            {
-                Name = _assetInstaller.Name;
-                DownloadSize = _assetInstaller.DownloadSize;
-            }
         }
 
-        public string Version => _version.Version;
         public string Link => _version.Link;
-        public string Name { get; }
-        public double DownloadSize { get; }
-        public string LinkInstaller => _assetInstaller?.DownloadLink;
-        public string LinkStandalone => _assetStandalone?.DownloadLink;
+        public string Version => _version.Version;
+        public AppAsset AssetInstaller => _assetInstaller;
+        public AppAsset AssetStandalone => _assetStandalone;
     }
 
     public sealed record AppVersion

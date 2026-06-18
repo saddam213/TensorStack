@@ -256,5 +256,27 @@ namespace TensorStack.WPF
             renderBitmap.Freeze();
             return renderBitmap;
         }
+
+
+        public static string GetRemainingTime(this DownloadProgress progress)
+        {
+            var bytesLeft = progress.TotalSize - progress.TotalBytes;
+            if (bytesLeft <= 0)
+                return "Complete";
+
+            if (progress.BytesSec == 0)
+                return "Calculating...";
+
+            var secondsLeft = bytesLeft / progress.BytesSec;
+            var timeSpan = TimeSpan.FromSeconds(secondsLeft);
+            if (timeSpan.TotalDays >= 1)
+                return $"{timeSpan.Days}d {timeSpan.Hours}h remaining";
+            else if (timeSpan.TotalHours >= 1)
+                return $"{timeSpan.Hours}h {timeSpan.Minutes}m remaining";
+            else if (timeSpan.TotalMinutes >= 1)
+                return $"{timeSpan.Minutes}m {timeSpan.Seconds}s remaining";
+
+            return $"{timeSpan.Seconds}s remaining";
+        }
     }
 }

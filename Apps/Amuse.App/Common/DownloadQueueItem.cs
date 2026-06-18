@@ -76,7 +76,7 @@ namespace Amuse.App.Common
             if ((DateTime.UtcNow > _lastUpdate))
             {
                 _lastUpdate = DateTime.UtcNow.AddMilliseconds(500);
-                Remaining = GetRemainingTime(progress);
+                Remaining = progress.GetRemainingTime();
                 Speed = progress.BytesSec > 0 ? (float)(progress.BytesSec / 1_000_000.0) : 0f;
             }
 
@@ -98,28 +98,6 @@ namespace Amuse.App.Common
             {
                 return string.Empty;
             }
-        }
-
-
-        private static string GetRemainingTime(DownloadProgress progress)
-        {
-            var bytesLeft = progress.TotalSize - progress.TotalBytes;
-            if (bytesLeft <= 0)
-                return "Complete";
-
-            if (progress.BytesSec == 0)
-                return "Calculating...";
-
-            var secondsLeft = bytesLeft / progress.BytesSec;
-            var timeSpan = TimeSpan.FromSeconds(secondsLeft);
-            if (timeSpan.TotalDays >= 1)
-                return $"{timeSpan.Days}d {timeSpan.Hours}h remaining";
-            else if (timeSpan.TotalHours >= 1)
-                return $"{timeSpan.Hours}h {timeSpan.Minutes}m remaining";
-            else if (timeSpan.TotalMinutes >= 1)
-                return $"{timeSpan.Minutes}m {timeSpan.Seconds}s remaining";
-
-            return $"{timeSpan.Seconds}s remaining";
         }
     }
 }
