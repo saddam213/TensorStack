@@ -80,7 +80,7 @@ def reload(config_args: Dict[str, Any]) -> bool:
     _processType = _config.process_type
 
     # Rebuild Pipeline
-    Utils.unload_lora_weights()
+    Utils.unload_lora_weights(_pipeline)
     _pipeline = create_pipeline(_config)
 
     # Load Lora
