@@ -13,7 +13,7 @@ from threading import Event
 from functools import partial
 from collections.abc import Buffer
 from typing import Dict, Sequence, List, Tuple, Optional, Any
-from transformers import PreTrainedTokenizerBase, UMT5EncoderModel
+from transformers import T5Tokenizer, UMT5EncoderModel
 from diffusers import (
     LongCatAudioDiTVae,
     LongCatAudioDiTTransformer,
@@ -149,7 +149,7 @@ def initialize(config: DataObjects.PipelineConfig):
 
 
 #------------------------------------------------
-# Load PreTrainedTokenizerBase
+# Load T5Tokenizer
 #------------------------------------------------
 def load_tokenizer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
     if _pipeline and _pipeline.tokenizer:
@@ -161,7 +161,7 @@ def load_tokenizer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str
 
     # 1. Load from pretrained folder
     print(f"[Load] Loading Pretrained Tokenizer")
-    tokenizer = PreTrainedTokenizerBase.from_pretrained(
+    tokenizer = T5Tokenizer.from_pretrained(
         tokenizer_path,
         config=tokenizer_config,
         dtype=config.data_type,
@@ -336,8 +336,6 @@ def create_pipeline(config: DataObjects.PipelineConfig):
         vae=vae,
         torch_dtype=config.data_type,
         device_map=_pipeline_device_map,
-        local_files_only=True,
-        low_cpu_mem_usage=True,
         **pipeline_kwargs
     )
 
@@ -368,6 +366,9 @@ def generate(
     # Scheduler
     _pipeline.scheduler = Utils.create_scheduler(options.scheduler_options)
 
+    # AutoEncoder
+    Utils.configure_vae_memory(_pipeline, options.enable_vae_tiling, options.enable_vae_slicing)
+
     # Lora Adapters
     Utils.set_lora_weights(_pipeline, options)
 
@@ -378,6 +379,7 @@ def generate(
     Utils.notification_push(key="Generate", subkey="Transformer", elapsedkey="TextEncoder", elapsed=_stopwatch.reset())
 
     # Pipeline Options
+    _pipeline.max_wav_duration = 240 if options.duration == 0 else options.duration
     pipeline_options = {
         "prompt": options.prompt,
         "negative_prompt": options.negative_prompt,

@@ -138,16 +138,20 @@
                             <!--Prompt-->
                             <Grid Margin="10,0,10,0" IsEnabled="{Binding IsPipelineLoaded}">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="1*"/>
-                                    <RowDefinition Height="5*"/>
+                                    <RowDefinition Height="1*" MinHeight="60"/>
+                                    <RowDefinition Height="5"/>
+                                    <RowDefinition Height="5*" MinHeight="60"/>
                                 </Grid.RowDefinitions>
-                                <DockPanel Grid.Row="0" >
+                                <DockPanel Grid.Row="0" Margin="0,0,0,5">
                                     <DockPanel>
                                         <TextBlock DockPanel.Dock="Top" Text="Style" Style="{StaticResource FieldTextBlockStyle}"/>
                                         <TextBox Text="{Binding Options.Prompt, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap"/>
                                     </DockPanel>
                                 </DockPanel>
-                                <DockPanel Grid.Row="1" >
+
+                                <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="5" Opacity=".4" Style="{StaticResource GridSplitterHorizontal}"/>
+
+                                <DockPanel Grid.Row="2" Margin="0,-2,0,0">
                                     <DockPanel >
                                         <TextBlock DockPanel.Dock="Top" Text="Lyrics" Style="{StaticResource FieldTextBlockStyle}"/>
                                         <TextBox Text="{Binding Options.Prompt2, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"/>

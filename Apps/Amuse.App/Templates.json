@@ -2,6 +2,190 @@
   "DiffusionTemplates": [
     {
       "Backend": "PyTorch",
+      "Name": "AceStep",
+      "Template": "AceStep",
+      "Pipeline": "AceStepPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Audio",
+      "ProcessTypes": [ "TextToAudio" ],
+      "ViewFilter": [ "TextToMusic" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_AceStepXL"
+        },
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_AceStepXL"
+        },
+        "ConditionEncoder": {
+          "Name": "ConditionEncoder",
+          "Type": "Component",
+          "Path": "CE_AceStepXL"
+        },
+        "AudioTokenizer": {
+          "Name": "AudioTokenizer",
+          "Type": "Component",
+          "Path": "AT_AceStepXL"
+        },
+        "AudioDetokenizer": {
+          "Name": "AudioDetokenizer",
+          "Type": "Component",
+          "Path": "AD_AceStepXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 6, 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 6, 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 10, 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "GuidanceScale": 1,
+        "SampleRate": 48000,
+        "Channels": 2,
+        "Strength": 1,
+        "BPM": 80,
+        "Duration": 0,
+        "MaxLength": 512,
+        "MaxLength2": 4096,
+        "Task": "text2music",
+        "Tasks": [ "text2music", "cover", "repaint", "lego" ],
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1,
+            "Shift": 3,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "AceStep_Turbo",
+      "Template": "AceStep_Turbo",
+      "Pipeline": "AceStepPipeline",
+      "ModelType": "Turbo",
+      "BaseType": "bfloat16",
+      "MediaType": "Audio",
+      "ProcessTypes": [ "TextToAudio" ],
+      "ViewFilter": [ "TextToMusic" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_AceStepXL"
+        },
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_AceStepXL"
+        },
+        "ConditionEncoder": {
+          "Name": "ConditionEncoder",
+          "Type": "Component",
+          "Path": "CE_AceStepXL"
+        },
+        "AudioTokenizer": {
+          "Name": "AudioTokenizer",
+          "Type": "Component",
+          "Path": "AT_AceStepXL"
+        },
+        "AudioDetokenizer": {
+          "Name": "AudioDetokenizer",
+          "Type": "Component",
+          "Path": "AD_AceStepXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 6, 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 6, 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 10, 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 8,
+        "GuidanceScale": 0,
+        "SampleRate": 48000,
+        "Channels": 2,
+        "Strength": 1,
+        "BPM": 80,
+        "Duration": 0,
+        "MaxLength": 512,
+        "MaxLength2": 4096,
+        "Task": "text2music",
+        "Tasks": [ "text2music", "cover", "repaint", "lego" ],
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1,
+            "Shift": 3,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      }
+    },
+    {
+      "Backend": "PyTorch",
       "Name": "AceStepXL",
       "Template": "AceStepXL",
       "Pipeline": "AceStepPipeline",
@@ -9103,7 +9287,76 @@
         "TextEncoder": {
           "Name": "TextEncoder",
           "Type": "Component",
-          "Path": "TE_UMT5_XXL"
+          "Path": "TE_UMT5"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 20, 32 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 20, 32 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 23, 32 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "GuidanceScale": 7,
+        "SampleRate": 24000,
+        "Channels": 1,
+        "Duration": 30,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 1,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": true,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "LongCatAudio_3B",
+      "Template": "LongCatAudio_3B",
+      "Pipeline": "LongCatAudioPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Audio",
+      "ProcessTypes": [ "TextToAudio" ],
+      "ViewFilter": [ "TextToAudio" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_LongCatAudio"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5"
         },
         "Transformer": {
           "Name": "Transformer",
@@ -10913,7 +11166,15 @@
       "Backend": "PyTorch",
       "Options": [
         {
-          "Name": "XL",
+          "Name": "Base",
+          "Template": "AceStep"
+        },
+        {
+          "Name": "Turbo",
+          "Template": "AceStep_Turbo"
+        },
+        {
+          "Name": "XL Base",
           "Template": "AceStepXL"
         },
         {
@@ -11121,6 +11382,10 @@
         {
           "Name": "Audio 1B",
           "Template": "LongCatAudio_1B"
+        },
+        {
+          "Name": "Audio 3.5B",
+          "Template": "LongCatAudio_3B"
         }
       ]
     },

@@ -626,7 +626,7 @@
     {
       "Id": 300,
       "Backend": "PyTorch",
-      "Name": "AceStepXL TextEncoder",
+      "Name": "AceStep TextEncoder",
       "Key": "TE_AceStepXL",
       "Link": "https://huggingface.co/saddam213/TextEncoder/tree/main/AceStepXL",
       "Checkpoint": {
@@ -650,7 +650,7 @@
     {
       "Id": 301,
       "Backend": "PyTorch",
-      "Name": "AceStepXL AutoEncoder",
+      "Name": "AceStep AutoEncoder",
       "Key": "VAE_AceStepXL",
       "Link": "https://huggingface.co/saddam213/AutoEncoder/tree/main/AceStepXL",
       "Checkpoint": {
@@ -667,7 +667,7 @@
     {
       "Id": 302,
       "Backend": "PyTorch",
-      "Name": "AceStepXL ConditionEncoder",
+      "Name": "AceStep ConditionEncoder",
       "Key": "CE_AceStepXL",
       "Link": "https://huggingface.co/saddam213/Components/tree/main/AceStepXL_ConditionEncoder",
       "Checkpoint": {
@@ -684,7 +684,7 @@
     {
       "Id": 303,
       "Backend": "PyTorch",
-      "Name": "AceStepXL AudioTokenizer",
+      "Name": "AceStep AudioTokenizer",
       "Key": "AT_AceStepXL",
       "Link": "https://huggingface.co/saddam213/Components/tree/main/AceStepXL_AudioTokenizer",
       "Checkpoint": {
@@ -701,7 +701,7 @@
     {
       "Id": 304,
       "Backend": "PyTorch",
-      "Name": "AceStepXL AudioDetokenizer",
+      "Name": "AceStep AudioDetokenizer",
       "Key": "AD_AceStepXL",
       "Link": "https://huggingface.co/saddam213/Components/tree/main/AceStepXL_AudioDetokenizer",
       "Checkpoint": {
@@ -968,6 +968,28 @@
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Byt5-Small/model.safetensors",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Byt5-Small/special_tokens_map.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Byt5-Small/tokenizer_config.json"
+        ]
+      }
+    },
+    {
+      "Id": 363,
+      "Backend": "PyTorch",
+      "Name": "Google UMT5",
+      "Key": "TE_UMT5",
+      "Link": "https://huggingface.co/saddam213/TextEncoder/tree/main/UMT5-Base",
+      "Checkpoint": {
+        "Name": "Component",
+        "Type": "OnlineFolder",
+        "Folder": "TextEncoder",
+        "Path": "UMT5-Base",
+        "DownloadFiles": [
+          "https://huggingface.co/saddam213/TextEncoder/resolve/main/UMT5-Base/config.json",
+          "https://huggingface.co/saddam213/TextEncoder/resolve/main/UMT5-Base/generation_config.json",
+          "https://huggingface.co/saddam213/TextEncoder/resolve/main/UMT5-Base/model.safetensors",
+          "https://huggingface.co/saddam213/TextEncoder/resolve/main/UMT5-Base/special_tokens_map.json",
+          "https://huggingface.co/saddam213/TextEncoder/resolve/main/UMT5-Base/spiece.model",
+          "https://huggingface.co/saddam213/TextEncoder/resolve/main/UMT5-Base/tokenizer.json",
+          "https://huggingface.co/saddam213/TextEncoder/resolve/main/UMT5-Base/tokenizer_config.json"
         ]
       }
     }
@@ -8417,6 +8439,505 @@
     {
       "Id": 300,
       "Backend": "PyTorch",
+      "Name": "ACE-Step v1.5",
+      "Template": "AceStep",
+      "Pipeline": "AceStepPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Audio",
+      "ProcessTypes": [ "TextToAudio" ],
+      "ViewFilter": [ "TextToMusic" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_AceStepXL"
+        },
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_AceStepXL"
+        },
+        "ConditionEncoder": {
+          "Name": "ConditionEncoder",
+          "Type": "Component",
+          "Path": "CE_AceStepXL"
+        },
+        "AudioTokenizer": {
+          "Name": "AudioTokenizer",
+          "Type": "Component",
+          "Path": "AT_AceStepXL"
+        },
+        "AudioDetokenizer": {
+          "Name": "AudioDetokenizer",
+          "Type": "Component",
+          "Path": "AD_AceStepXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "acestep-v15-base-diffusers",
+          "DownloadFiles": [
+            "https://huggingface.co/Runware/acestep-v15-base-diffusers/resolve/main/transformer/config.json",
+            "https://huggingface.co/Runware/acestep-v15-base-diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 6, 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 6, 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 10, 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "GuidanceScale": 7,
+        "SampleRate": 48000,
+        "Channels": 2,
+        "Strength": 1,
+        "BPM": 80,
+        "Duration": 0,
+        "MaxLength": 512,
+        "MaxLength2": 4096,
+        "Task": "text2music",
+        "Tasks": [ "text2music", "cover", "repaint", "lego" ],
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1,
+            "Shift": 3,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Link": "https://huggingface.co/Runware/acestep-v15-base-diffusers"
+    },
+    {
+      "Id": 301,
+      "Backend": "PyTorch",
+      "Name": "ACE-Step v1.5 SFT",
+      "Template": "AceStep",
+      "Pipeline": "AceStepPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Audio",
+      "ProcessTypes": [ "TextToAudio" ],
+      "ViewFilter": [ "TextToMusic" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_AceStepXL"
+        },
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_AceStepXL"
+        },
+        "ConditionEncoder": {
+          "Name": "ConditionEncoder",
+          "Type": "Component",
+          "Path": "CE_AceStepXL"
+        },
+        "AudioTokenizer": {
+          "Name": "AudioTokenizer",
+          "Type": "Component",
+          "Path": "AT_AceStepXL"
+        },
+        "AudioDetokenizer": {
+          "Name": "AudioDetokenizer",
+          "Type": "Component",
+          "Path": "AD_AceStepXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "acestep-v15-sft-diffusers",
+          "DownloadFiles": [
+            "https://huggingface.co/Runware/acestep-v15-sft-diffusers/resolve/main/transformer/config.json",
+            "https://huggingface.co/Runware/acestep-v15-sft-diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 6, 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 6, 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 10, 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "GuidanceScale": 7,
+        "SampleRate": 48000,
+        "Channels": 2,
+        "Strength": 1,
+        "BPM": 80,
+        "Duration": 0,
+        "MaxLength": 512,
+        "MaxLength2": 4096,
+        "Task": "text2music",
+        "Tasks": [ "text2music", "cover", "repaint", "lego" ],
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1,
+            "Shift": 3,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Link": "https://huggingface.co/Runware/acestep-v15-sft-diffusers"
+    },
+    {
+      "Id": 302,
+      "Backend": "PyTorch",
+      "Name": "ACE-Step v1.5 Turbo",
+      "Template": "AceStep_Turbo",
+      "Pipeline": "AceStepPipeline",
+      "ModelType": "Turbo",
+      "BaseType": "bfloat16",
+      "MediaType": "Audio",
+      "ProcessTypes": [ "TextToAudio" ],
+      "ViewFilter": [ "TextToMusic" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_AceStepXL"
+        },
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_AceStepXL"
+        },
+        "ConditionEncoder": {
+          "Name": "ConditionEncoder",
+          "Type": "Component",
+          "Path": "CE_AceStepXL"
+        },
+        "AudioTokenizer": {
+          "Name": "AudioTokenizer",
+          "Type": "Component",
+          "Path": "AT_AceStepXL"
+        },
+        "AudioDetokenizer": {
+          "Name": "AudioDetokenizer",
+          "Type": "Component",
+          "Path": "AD_AceStepXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "acestep-v15-turbo-diffusers",
+          "DownloadFiles": [
+            "https://huggingface.co/ACE-Step/acestep-v15-turbo-diffusers/resolve/main/transformer/config.json",
+            "https://huggingface.co/ACE-Step/acestep-v15-turbo-diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 6, 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 6, 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 10, 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 8,
+        "GuidanceScale": 0,
+        "SampleRate": 48000,
+        "Channels": 2,
+        "Strength": 1,
+        "BPM": 80,
+        "Duration": 0,
+        "MaxLength": 512,
+        "MaxLength2": 4096,
+        "Task": "text2music",
+        "Tasks": [ "text2music", "cover", "repaint", "lego" ],
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1,
+            "Shift": 3,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Link": "https://huggingface.co/ACE-Step/acestep-v15-turbo-diffusers"
+    },
+    {
+      "Id": 303,
+      "Backend": "PyTorch",
+      "Name": "ACE-Step v1.5 XL",
+      "Template": "AceStepXL",
+      "Pipeline": "AceStepPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Audio",
+      "ProcessTypes": [ "TextToAudio" ],
+      "ViewFilter": [ "TextToMusic" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_AceStepXL"
+        },
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_AceStepXL"
+        },
+        "ConditionEncoder": {
+          "Name": "ConditionEncoder",
+          "Type": "Component",
+          "Path": "CE_AceStepXL"
+        },
+        "AudioTokenizer": {
+          "Name": "AudioTokenizer",
+          "Type": "Component",
+          "Path": "AT_AceStepXL"
+        },
+        "AudioDetokenizer": {
+          "Name": "AudioDetokenizer",
+          "Type": "Component",
+          "Path": "AD_AceStepXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "acestep-v15-xl-base-diffusers",
+          "DownloadFiles": [
+            "https://huggingface.co/Runware/acestep-v15-xl-base-diffusers/resolve/main/transformer/config.json",
+            "https://huggingface.co/Runware/acestep-v15-xl-base-diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors.index.json",
+            "https://huggingface.co/Runware/acestep-v15-xl-base-diffusers/resolve/main/transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "https://huggingface.co/Runware/acestep-v15-xl-base-diffusers/resolve/main/transformer/diffusion_pytorch_model-00002-of-00002.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 6, 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 6, 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 10, 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "GuidanceScale": 7,
+        "SampleRate": 48000,
+        "Channels": 2,
+        "Strength": 1,
+        "BPM": 80,
+        "Duration": 0,
+        "MaxLength": 512,
+        "MaxLength2": 4096,
+        "Task": "text2music",
+        "Tasks": [ "text2music", "cover", "repaint", "lego" ],
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1,
+            "Shift": 3,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Link": "https://huggingface.co/Runware/acestep-v15-xl-base-diffusers"
+    },
+    {
+      "Id": 304,
+      "Backend": "PyTorch",
+      "Name": "ACE-Step v1.5 XL SFT",
+      "Template": "AceStepXL",
+      "Pipeline": "AceStepPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Audio",
+      "ProcessTypes": [ "TextToAudio" ],
+      "ViewFilter": [ "TextToMusic" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_AceStepXL"
+        },
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_AceStepXL"
+        },
+        "ConditionEncoder": {
+          "Name": "ConditionEncoder",
+          "Type": "Component",
+          "Path": "CE_AceStepXL"
+        },
+        "AudioTokenizer": {
+          "Name": "AudioTokenizer",
+          "Type": "Component",
+          "Path": "AT_AceStepXL"
+        },
+        "AudioDetokenizer": {
+          "Name": "AudioDetokenizer",
+          "Type": "Component",
+          "Path": "AD_AceStepXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "acestep-v15-xl-sft-diffusers",
+          "DownloadFiles": [
+            "https://huggingface.co/Runware/acestep-v15-xl-sft-diffusers/resolve/main/transformer/config.json",
+            "https://huggingface.co/Runware/acestep-v15-xl-sft-diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors.index.json",
+            "https://huggingface.co/Runware/acestep-v15-xl-sft-diffusers/resolve/main/transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "https://huggingface.co/Runware/acestep-v15-xl-sft-diffusers/resolve/main/transformer/diffusion_pytorch_model-00002-of-00002.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 6, 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 6, 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 10, 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "GuidanceScale": 7,
+        "SampleRate": 48000,
+        "Channels": 2,
+        "Strength": 1,
+        "BPM": 80,
+        "Duration": 0,
+        "MaxLength": 512,
+        "MaxLength2": 4096,
+        "Task": "text2music",
+        "Tasks": [ "text2music", "cover", "repaint", "lego" ],
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1,
+            "Shift": 3,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Link": "https://huggingface.co/Runware/acestep-v15-xl-sft-diffusers"
+    },
+    {
+      "Id": 305,
+      "Backend": "PyTorch",
       "Name": "ACE-Step v1.5 XL Turbo",
       "Template": "AceStepXL_Turbo",
       "Pipeline": "AceStepPipeline",
@@ -8516,107 +9037,6 @@
       "Link": "https://huggingface.co/ACE-Step/acestep-v15-xl-turbo-diffusers"
     },
     {
-      "Id": 301,
-      "Backend": "PyTorch",
-      "Name": "ACE-Step v1.5 XL",
-      "Template": "AceStepXL",
-      "Pipeline": "AceStepPipeline",
-      "ModelType": "Base",
-      "BaseType": "bfloat16",
-      "MediaType": "Audio",
-      "ProcessTypes": [ "TextToAudio" ],
-      "ViewFilter": [ "TextToMusic" ],
-      "Checkpoint": {
-        "TextEncoder": {
-          "Name": "TextEncoder",
-          "Type": "Component",
-          "Path": "TE_AceStepXL"
-        },
-        "Vae": {
-          "Name": "AutoEncoder",
-          "Type": "Component",
-          "Path": "VAE_AceStepXL"
-        },
-        "ConditionEncoder": {
-          "Name": "ConditionEncoder",
-          "Type": "Component",
-          "Path": "CE_AceStepXL"
-        },
-        "AudioTokenizer": {
-          "Name": "AudioTokenizer",
-          "Type": "Component",
-          "Path": "AT_AceStepXL"
-        },
-        "AudioDetokenizer": {
-          "Name": "AudioDetokenizer",
-          "Type": "Component",
-          "Path": "AD_AceStepXL"
-        },
-        "Transformer": {
-          "Name": "Transformer",
-          "Type": "OnlineFolder",
-          "Path": "transformer",
-          "Folder": "acestep-v15-xl-sft-diffusers",
-          "DownloadFiles": [
-            "https://huggingface.co/Runware/acestep-v15-xl-sft-diffusers/resolve/main/transformer/config.json",
-            "https://huggingface.co/Runware/acestep-v15-xl-sft-diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors.index.json",
-            "https://huggingface.co/Runware/acestep-v15-xl-sft-diffusers/resolve/main/transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
-            "https://huggingface.co/Runware/acestep-v15-xl-sft-diffusers/resolve/main/transformer/diffusion_pytorch_model-00002-of-00002.safetensors"
-          ]
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 4, 6, 6 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 4, 6, 8 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 4, 10, 12 ]
-        }
-      ],
-      "DefaultOptions": {
-        "Steps": 50,
-        "GuidanceScale": 1,
-        "SampleRate": 48000,
-        "Channels": 2,
-        "Strength": 1,
-        "BPM": 80,
-        "Duration": 0,
-        "MaxLength": 512,
-        "MaxLength2": 4096,
-        "Task": "text2music",
-        "Tasks": [ "text2music", "cover", "repaint", "lego" ],
-        "IsVaeTilingEnabled": true,
-        "IsVaeSlicingEnabled": true,
-        "Scheduler": "FlowMatchEuler",
-        "Schedulers": [
-          {
-            "Scheduler": "FlowMatchEuler",
-            "NumTrainTimesteps": 1,
-            "Shift": 3,
-            "UseDynamicShifting": false,
-            "BaseShift": 0.5,
-            "MaxShift": 1.15,
-            "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 4096,
-            "InvertSigmas": false,
-            "ShiftTerminal": 0,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "TimeShiftType": "Exponential",
-            "StochasticSampling": false
-          }
-        ]
-      },
-      "Link": "https://huggingface.co/Runware/acestep-v15-xl-sft-diffusers"
-    },
-    {
       "Id": 320,
       "Backend": "PyTorch",
       "Name": "LongCat Audio 1B",
@@ -8636,7 +9056,7 @@
         "TextEncoder": {
           "Name": "TextEncoder",
           "Type": "Component",
-          "Path": "TE_UMT5_XXL"
+          "Path": "TE_UMT5"
         },
         "Transformer": {
           "Name": "Transformer",
@@ -8691,6 +9111,84 @@
         ]
       },
       "Link": "https://huggingface.co/ruixiangma/LongCat-AudioDiT-1B-Diffusers"
+    },
+    {
+      "Id": 321,
+      "Backend": "PyTorch",
+      "Name": "LongCat Audio 3.5B",
+      "Template": "LongCatAudio_3B",
+      "Pipeline": "LongCatAudioPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Audio",
+      "ProcessTypes": [ "TextToAudio" ],
+      "ViewFilter": [ "TextToAudio" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_LongCatAudio"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "LongCat-AudioDiT-3.5B-diffusers",
+          "DownloadFiles": [
+            "https://huggingface.co/saddam213/LongCat-AudioDiT-3.5B-diffusers/resolve/main/transformer/config.json",
+            "https://huggingface.co/saddam213/LongCat-AudioDiT-3.5B-diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors.index.json",
+            "https://huggingface.co/saddam213/LongCat-AudioDiT-3.5B-diffusers/resolve/main/transformer/diffusion_pytorch_model-00001-of-00002.safetensors",
+            "https://huggingface.co/saddam213/LongCat-AudioDiT-3.5B-diffusers/resolve/main/transformer/diffusion_pytorch_model-00002-of-00002.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 20, 32 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 20, 32 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 23, 32 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "GuidanceScale": 7,
+        "SampleRate": 24000,
+        "Channels": 1,
+        "Duration": 30,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 1,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": true,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Link": "https://huggingface.co/saddam213/LongCat-AudioDiT-3.5B-diffusers"
     },
     {
       "Id": 350,

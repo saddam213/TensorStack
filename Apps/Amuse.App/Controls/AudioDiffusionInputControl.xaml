@@ -161,6 +161,22 @@
                             <CommonControls:SliderControl Value="{Binding Options.Speed}" Text="Speed" Minimum="0.5" Maximum="5" TickFrequency="0.01" ValuePostFix="x" ValueFormat="N1"/>
                         </StackPanel>
 
+                        <DockPanel Margin="0,0,0,0" Visibility="{Binding IsSupertonicPipeline, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                            <ToggleButton x:Name="ToggleButtonDurations2" DockPanel.Dock="Right" Style="{StaticResource ToggleButtonBasic}" Width="25" Height="22" VerticalAlignment="Bottom">
+                                <CommonControls:FontAwesome Icon="f1ec" IconStyle="Light" Size="12"/>
+                            </ToggleButton>
+                            <Grid>
+                                <StackPanel Visibility="{Binding IsChecked, ElementName=ToggleButtonDurations2, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                    <TextBlock Text="Duration" Style="{StaticResource FieldTextBlockStyle}" />
+                                    <ComboBox ItemsSource="{Binding Durations}" SelectedValue="{Binding Options.Duration}" SelectedValuePath="FloatValue" DisplayMemberPath="Label" />
+                                </StackPanel>
+                                <StackPanel Visibility="{Binding IsChecked, ElementName=ToggleButtonDurations2, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Text="Duration Seconds" Style="{StaticResource FieldTextBlockStyle}" />
+                                    <TextBox Text="{Binding Options.Duration}" />
+                                </StackPanel>
+                            </Grid>
+                        </DockPanel>
+
                     </StackPanel>
 
 
