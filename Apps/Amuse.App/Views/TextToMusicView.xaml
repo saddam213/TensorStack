@@ -95,6 +95,8 @@
                                         Height="160"
                                         Source="{Binding SourceAudio, Mode=TwoWay}" 
                                         IsInputEnabled="{Binding IsPipelineLoaded}"
+                                        IsReplayEnabled="False"
+                                        IsAutoPlayEnabled="False"
                                         IsLoadEnabled="True" 
                                         IsSaveEnabled="False"
                                         OnMediaImport="OnMediaImport"/>
@@ -131,7 +133,12 @@
                             <DockPanel DockPanel.Dock="Bottom" Margin="10,10,10,4">
                                 <DockPanel Height="150">
                                     <TextBlock DockPanel.Dock="Top" Text="Audio Result" Style="{StaticResource FieldTextBlockStyle}"/>
-                                    <CommonControls:AudioStreamElement Source="{Binding ResultAudio, Mode=TwoWay}" IsLoadEnabled="False" IsInputEnabled="{Binding IsPipelineLoaded}" />
+                                    <CommonControls:AudioStreamElement 
+                                        Source="{Binding ResultAudio, Mode=TwoWay}" 
+                                        IsReplayEnabled="False"
+                                        IsAutoPlayEnabled="True"
+                                        IsLoadEnabled="False" 
+                                        IsInputEnabled="{Binding IsPipelineLoaded}" />
                                 </DockPanel>
                             </DockPanel>
 

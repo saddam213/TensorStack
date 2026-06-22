@@ -41,6 +41,8 @@ namespace TensorStack.WPF.Controls
         private bool _isLoadingVideoFrames;
         private Point _videoFrameDragStart;
         private bool _isVideoFrameDragging;
+        private bool _trackControlSeeking;
+        private bool _trackControlPlaying;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VideoStreamElement"/> class.
@@ -63,7 +65,6 @@ namespace TensorStack.WPF.Controls
             ChangeViewCommand = new AsyncRelayCommand<bool>(ChangeViewAsync, CanChangeView);
             SaveVideoFrameCommand = new AsyncRelayCommand<int>(SaveVideoFrameAsync);
             CopyVideoFrameCommand = new AsyncRelayCommand<int>(CopyVideoFrameAsync);
-            VideoProgress = new ProgressInfo();
             InitializeComponent();
         }
 
@@ -104,7 +105,6 @@ namespace TensorStack.WPF.Controls
         public AsyncRelayCommand PauseCommand { get; set; }
         public AsyncRelayCommand StopCommand { get; set; }
         public ObservableCollection<VideoFrame> VideoFrames { get; }
-        public ProgressInfo VideoProgress { get; }
         public bool HasSourceVideo => Source != null;
         public bool HasOverlayVideo => OverlaySource != null;
 
@@ -573,7 +573,7 @@ namespace TensorStack.WPF.Controls
             VideoOverlayControl.Stop();
             MediaState = MediaState.Stop;
             Progress.Clear();
-            VideoProgress.Clear();
+            UpdateTrackControl(0, 1);
 
             // Bugfix: Set position to non-zero to keep GIFs looping
             VideoControl.Position = TimeSpan.FromMilliseconds(1);
@@ -652,7 +652,7 @@ namespace TensorStack.WPF.Controls
             {
                 ProgressPosition = VideoControl.Position;
                 var duration = VideoControl.NaturalDuration.HasTimeSpan ? VideoControl.NaturalDuration.TimeSpan : Source?.Duration ?? TimeSpan.Zero;
-                VideoProgress.Update((int)(ProgressPosition.TotalMilliseconds / 10), (int)(duration.TotalMilliseconds / 10));
+                UpdateTrackControl(ProgressPosition.TotalMilliseconds, duration.TotalMilliseconds);
             }
         }
 
@@ -961,5 +961,89 @@ namespace TensorStack.WPF.Controls
                 }
             }
         }
+
+
+        /// <summary>
+        /// Updates the track control position.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="maximum">The maximum.</param>
+        private void UpdateTrackControl(double value, double maximum)
+        {
+            if (!_trackControlSeeking)
+            {
+                TrackControl.Maximum = maximum;
+                TrackControl.Value = value;
+            }
+        }
+
+
+        /// <summary>
+        /// Handles the DragDelta event of the TrackControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.Windows.Controls.Primitives.DragDeltaEventArgs"/> instance containing the event data.</param>
+        private void TrackControl_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            VideoControl.Position = TimeSpan.FromMilliseconds(TrackControl.Value);
+        }
+
+
+        /// <summary>
+        /// Handles the DragStarted event of the TrackControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.Windows.Controls.Primitives.DragStartedEventArgs"/> instance containing the event data.</param>
+        private async void TrackControl_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+            _trackControlPlaying = MediaState == MediaState.Play;
+            await PauseAsync();
+        }
+
+
+        /// <summary>
+        /// Handles the DragCompleted event of the TrackControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.Windows.Controls.Primitives.DragCompletedEventArgs"/> instance containing the event data.</param>
+        private async void TrackControl_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            if (_trackControlPlaying)
+                await PlayAsync();
+        }
+
+
+        /// <summary>
+        /// Handles the MouseUp event of the TrackControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
+        private void TrackControl_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            VideoControl.Position = TimeSpan.FromMilliseconds(TrackControl.Value);
+        }
+
+
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.UIElement.PreviewMouseLeftButtonDown" /> routed event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the left mouse button was pressed.</param>
+        protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            _trackControlSeeking = true;
+            base.OnPreviewMouseLeftButtonDown(e);
+        }
+
+
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.UIElement.PreviewMouseLeftButtonUp" /> routed event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the left mouse button was released.</param>
+        protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            _trackControlSeeking = false;
+            base.OnPreviewMouseLeftButtonUp(e);
+        }
+
     }
 }

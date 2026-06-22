@@ -18,12 +18,21 @@
         <DockPanel>
 
             <!--Controls-->
-            <DockPanel DockPanel.Dock="Bottom" Margin="-1,0,-1,-1" Height="60">
+            <DockPanel DockPanel.Dock="Bottom" Margin="-1,0,-1,-1" Height="70">
 
                 <!--Progress-->
                 <Grid DockPanel.Dock="Top">
-                    <CommonControls:ProgressElement Height="6" Margin="1" Progress="{Binding AudioProgress}" Foreground="#10FFFFFF" />
                     <CommonControls:ProgressElement Height="6" Margin="1" Progress="{Binding Progress}" Background="Transparent"/>
+                    <Slider x:Name="TrackControl"
+                        Margin="1,0,1,1"
+                        TickFrequency="1"
+                        SmallChange="1"
+                        LargeChange="1"
+                        IsSnapToTickEnabled="True"
+                        IsMoveToPointEnabled="True"
+                        MouseLeftButtonUp="TrackControl_MouseUp"
+                        Thumb.DragDelta="TrackControl_DragDelta"
+                        IsEnabled="{Binding Source, Converter={StaticResource InverseNullBooleanConverter}}"/>
                 </Grid>
 
                 <!--Load/Save/View-->
@@ -46,6 +55,32 @@
                         Visibility="{Binding IsSaveEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <CommonControls:FontAwesome Icon="f0c7" />
                     </Button>
+                    <UniformGrid Rows="2" Columns="1" Width="30">
+                        <CommonControls:ToggleButton
+                            IconTrue="f04b"
+                            IconFalse="f04b"
+                            SizeTrue="11"
+                            SizeFalse="11"
+                            ColorTrue="#80FFFFFF"
+                            ColorFalse="#25FFFFFF"
+                            ToolTipTrue="Disable Auto-Play"
+                            ToolTipFalse="Enable Auto-Play"
+                            ToolTipPlacement="Top"
+                            ToolTipInitialDelay="600"
+                            IsChecked="{Binding IsAutoPlayEnabled, Mode=TwoWay}"/>
+                        <CommonControls:ToggleButton
+                            IconTrue="f363"
+                            IconFalse="f363"
+                            SizeTrue="11"
+                            SizeFalse="11"
+                            ColorTrue="#80FFFFFF"
+                            ColorFalse="#25FFFFFF"
+                            ToolTipTrue="Disable Auto-Replay"
+                            ToolTipFalse="Enable Auto-Replay"
+                            ToolTipPlacement="Top"
+                            ToolTipInitialDelay="600"
+                            IsChecked="{Binding IsReplayEnabled, Mode=TwoWay}"/>
+                    </UniformGrid>
                 </StackPanel>
 
                 <!--Clear-->

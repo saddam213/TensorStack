@@ -86,6 +86,7 @@
                                             Volume="{Binding Settings.VolumeInput, Mode=TwoWay}"
                                             IsVolumeMute="{Binding Settings.IsVolumeInputMute, Mode=TwoWay}"
                                             IsReplayEnabled="False"
+                                            IsAutoPlayEnabled="False"
                                             IsSaveEnabled="False"
                                             IsInputEnabled="{Binding IsPipelineLoaded}"
                                             OnMediaImport="OnMediaImport"/>

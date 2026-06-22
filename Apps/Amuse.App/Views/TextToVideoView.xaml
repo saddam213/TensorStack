@@ -123,6 +123,8 @@
                                 SplitterVisibility="Auto"
                                 SplitterPosition="Source"
                                 SplitterDirection="LeftToRight"
+                                IsReplayEnabled="False"
+                                IsAutoPlayEnabled="True"
                                 IsLoadEnabled="False" 
                                 IsLoadOverlayEnabled="False"
                                 IsFrameViewerEnabled="True" 

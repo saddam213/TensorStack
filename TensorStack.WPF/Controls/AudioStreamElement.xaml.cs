@@ -26,6 +26,7 @@ namespace TensorStack.WPF.Controls
         private bool _isToolbarEnabled = true;
         private Point _audioDragStart;
         private bool _isAudioDragging;
+        private bool _trackControlSeeking;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioStreamElement"/> class.
@@ -33,7 +34,6 @@ namespace TensorStack.WPF.Controls
         public AudioStreamElement()
         {
             _progressTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(50), DispatcherPriority.Normal, UpdateProgress, Dispatcher);
-            AudioProgress = new ProgressInfo();
             ClearCommand = new AsyncRelayCommand(ClearAsync, CanClear);
             PlayCommand = new AsyncRelayCommand(PlayAsync, CanSaveSource);
             PauseCommand = new AsyncRelayCommand(PauseAsync, CanSaveSource);
@@ -68,7 +68,6 @@ namespace TensorStack.WPF.Controls
         public AsyncRelayCommand PlayCommand { get; }
         public AsyncRelayCommand PauseCommand { get; }
         public AsyncRelayCommand StopCommand { get; }
-        public ProgressInfo AudioProgress { get; }
         public bool HasAudio => Source != null;
 
         public IUIConfiguration Configuration
@@ -363,7 +362,7 @@ namespace TensorStack.WPF.Controls
             AudioControl.Stop();
             MediaState = MediaState.Stop;
             Progress.Clear();
-            AudioProgress.Clear();
+            UpdateTrackControl(0, 1);
             AudioControl.Position = TimeSpan.FromMilliseconds(1);
             await Task.Delay(50);
         }
@@ -408,7 +407,7 @@ namespace TensorStack.WPF.Controls
             {
                 ProgressPosition = AudioControl.Position;
                 var duration = AudioControl.NaturalDuration.HasTimeSpan ? AudioControl.NaturalDuration.TimeSpan : Source?.Duration ?? TimeSpan.Zero;
-                AudioProgress.Update((int)(ProgressPosition.TotalMilliseconds / 10), (int)(duration.TotalMilliseconds / 10));
+                UpdateTrackControl(ProgressPosition.TotalMilliseconds, duration.TotalMilliseconds);
             }
         }
 
@@ -488,6 +487,65 @@ namespace TensorStack.WPF.Controls
                     }
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Updates the track control position.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="maximum">The maximum.</param>
+        private void UpdateTrackControl(double value, double maximum)
+        {
+            if (!_trackControlSeeking)
+            {
+                TrackControl.Maximum = maximum;
+                TrackControl.Value = value;
+            }
+        }
+
+
+        /// <summary>
+        /// Handles the DragDelta event of the TrackControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.Windows.Controls.Primitives.DragDeltaEventArgs"/> instance containing the event data.</param>
+        private void TrackControl_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            AudioControl.Position = TimeSpan.FromMilliseconds(TrackControl.Value);
+        }
+
+
+        /// <summary>
+        /// Handles the MouseUp event of the TrackControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
+        private void TrackControl_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            AudioControl.Position = TimeSpan.FromMilliseconds(TrackControl.Value);
+        }
+
+
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.UIElement.PreviewMouseLeftButtonDown" /> routed event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the left mouse button was pressed.</param>
+        protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            _trackControlSeeking = true;
+            base.OnPreviewMouseLeftButtonDown(e);
+        }
+
+
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.UIElement.PreviewMouseLeftButtonUp" /> routed event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs" /> that contains the event data. The event data reports that the left mouse button was released.</param>
+        protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            _trackControlSeeking = false;
+            base.OnPreviewMouseLeftButtonUp(e);
         }
 
     }

@@ -57,6 +57,8 @@
                                 MaxHeight="{Binding ActualWidth,ElementName=LeftPanelContainer}"
                                 IsEnabled="{Binding SelectedOption, Mode=OneWay, ElementName=InputControl, Converter={StaticResource InverseEnumToBooleanConverter}, ConverterParameter=Automation}">
                                 <CommonControls:VideoStreamElement
+                                    IsReplayEnabled="False"
+                                    IsAutoPlayEnabled="False"
                                     IsLoadEnabled="True"
                                     IsLoadOverlayEnabled="False" 
                                     IsSaveEnabled="False"
@@ -110,6 +112,8 @@
                                 SplitterVisibility="Auto"
                                 SplitterPosition="Source"
                                 SplitterDirection="LeftToRight"
+                                IsReplayEnabled="False"
+                                IsAutoPlayEnabled="True"
                                 IsLoadEnabled="False" 
                                 IsLoadOverlayEnabled="False"
                                 IsFrameViewerEnabled="True"
