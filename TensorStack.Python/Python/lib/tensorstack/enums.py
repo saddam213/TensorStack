@@ -37,3 +37,10 @@ class QuantBackend(Enum):
 class QuantTarget(Enum):
     TEXT_ENCODER = 0
     TRANSFORMER = 1
+
+
+class VendorType(Enum):
+    CPU = 0
+    AMD = 4098
+    Nvidia = 4318
+    Intel = 32902

@@ -46,6 +46,7 @@ namespace Amuse.Host.PyTorch
                 Device = options.Device,
                 DeviceBusId = options.DeviceBusId,
                 DeviceId = options.DeviceId,
+                DeviceVendor = options.DeviceVendor,
                 IsDeviceQuantizationEnabled = options.IsDeviceQuantizationEnabled,
                 IsOptimizeDeviceEnabled = options.IsOptimizeDeviceEnabled,
                 IsOptimizeChannelsEnabled = options.IsOptimizeChannelsEnabled,

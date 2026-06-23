@@ -211,6 +211,7 @@ namespace Amuse.App
                 Device = device.DeviceCode,
                 DeviceId = device.DeviceId,
                 DeviceBusId = device.PCIBusId,
+                DeviceVendor = device.Vendor,
                 DataType = model.BaseType,
                 IsOptimizeDeviceEnabled = settings.IsOptimizeDeviceEnabled,
                 IsOptimizeChannelsEnabled = settings.IsOptimizeChannelsEnabled,

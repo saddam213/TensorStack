@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using TensorStack.Common;
 using TensorStack.Python.Common;
 
 namespace TensorStack.Python.Config
@@ -29,6 +30,9 @@ namespace TensorStack.Python.Config
 
         [JsonPropertyName("device_bus_id")]
         public int DeviceBusId { get; set; }
+
+        [JsonPropertyName("device_vendor")]
+        public VendorType DeviceVendor { get; set; }
 
         [JsonPropertyName("data_type")]
         public DataType DataType { get; set; } = DataType.Bfloat16;

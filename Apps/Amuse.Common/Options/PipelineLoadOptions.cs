@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TensorStack.Common;
 
 
 namespace Amuse.Common
@@ -14,6 +15,7 @@ namespace Amuse.Common
         public string Device { get; set; }
         public int DeviceId { get; set; }
         public int DeviceBusId { get; set; }
+        public VendorType DeviceVendor { get; set; }
         public DataType DataType { get; set; }
         public QuantizationType QuantType { get; set; }
         public bool IsOptimizeDeviceEnabled { get; set; } = false;

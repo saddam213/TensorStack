@@ -1,7 +1,7 @@
 
 from dataclasses import dataclass, fields
 from typing import Optional, Union, Sequence, get_args, get_origin
-from tensorstack.enums import ProcessType, MemoryMode, QuantType
+from tensorstack.enums import ProcessType, MemoryMode, QuantType, VendorType
 import torch
 
 def get_data_type(dtype: str):
@@ -84,9 +84,10 @@ class PipelineConfig:
     memory_mode: MemoryMode.OffloadCPU
 
     # Device
-    device: str = "cuda"
+    device: str = "cpu"
     device_id: int = 0
     device_bus_id: int = 0
+    device_vendor: VendorType = VendorType.CPU
 
     data_type: Union[str, torch.dtype] = "bfloat16"
     quant_type: QuantType = QuantType.Q16Bit
@@ -106,6 +107,7 @@ class PipelineConfig:
         self.quant_type = QuantType[self.quant_type]
         self.memory_mode = MemoryMode[self.memory_mode]
         self.process_type = ProcessType[self.process_type]
+        self.device_vendor = VendorType[self.device_vendor]
         self.data_type = get_data_type(self.data_type)
         if (self.lora_adapters is not None and isinstance(self.lora_adapters, Sequence)):
             self.lora_adapters = [LoraConfig(**dict(cfg)) for cfg in self.lora_adapters or []]

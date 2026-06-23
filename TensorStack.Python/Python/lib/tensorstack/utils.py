@@ -18,7 +18,7 @@ from pathlib import Path
 from datetime import datetime
 from tqdm import tqdm
 import tensorstack.data_objects as DataObjects
-from tensorstack.enums import ProcessType, MemoryMode
+from tensorstack.enums import ProcessType, MemoryMode, VendorType
 from PIL import Image
 from dataclasses import asdict
 from collections.abc import Buffer
@@ -359,10 +359,11 @@ def get_execution_device(config: DataObjects.PipelineConfig):
     device_index = None
     execution_device = None
     num_devices = torch.cuda.device_count()
-    print(f"[Load] Request Device - Device: {config.device}, DeviceId: {config.device_id}, PCIBusId: {config.device_bus_id}")
+    print(f"[Load] Request Device - {config.device_vendor}, DeviceId: {config.device_id}, PCIBusId: {config.device_bus_id}")
     for i in range(num_devices):
         props = torch.cuda.get_device_properties(i)
-        print(f"[Load] Found Device - Name: {props.name}, Index: {i}, PCIBusId: {props.pci_bus_id}, Arch: {getattr(props, 'gcnArchName', 'N/A')}")
+        arch = getattr(device_props, 'gcnArchName', 'N/A') if config.device_vendor == VendorType.AMD else "cuda"
+        print(f"[Load] Found Device - {i}: {config.device_vendor}, Name: {props.name}, Arch: {arch}, DeviceId: {config.device_id}, PCIBusId: {config.device_bus_id}")
 
         # Priority 1: Match by PCI Bus ID
         if config.device_bus_id > 0 and props.pci_bus_id == config.device_bus_id:
@@ -376,11 +377,11 @@ def get_execution_device(config: DataObjects.PipelineConfig):
 
     if device_props is not None:
         execution_device = f"{config.device}:{device_index}"
-        print(f"[Load] Selected Device - Name: {device_props.name}, Index: {device_index}, PCIBusId: {device_props.pci_bus_id}, Arch: {getattr(device_props, 'gcnArchName', 'N/A')}, ExecutionDevice: {execution_device}")
+        print(f"[Load] Selected Device - {i}: {config.device_vendor}, Name: {props.name}, Arch: {arch}, TorchDevice: {execution_device}")
         optimize_execution_device(config)
         return execution_device
 
-    raise ValueError(f"Selected Device Not Found - Device: {config.device}, DeviceId: {config.device_id}, PCIBusId: {config.device_bus_id}")
+    raise ValueError(f"Selected Device Not Found - {config.device_vendor}, DeviceId: {config.device_id}, PCIBusId: {config.device_bus_id}")
 
 
 #------------------------------------------------
