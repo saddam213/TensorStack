@@ -120,6 +120,7 @@
                             <!--Input-->
                             <Grid Margin="10,10,10,2" >
                                 <CommonControls:VideoStreamElement 
+                                    x:Name="InputVideoControl"
                                     SplitterVisibility="Auto"
                                     SplitterPosition="Source"
                                     SplitterDirection="LeftToRight" 

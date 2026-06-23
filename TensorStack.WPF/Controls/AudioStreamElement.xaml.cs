@@ -356,7 +356,7 @@ namespace TensorStack.WPF.Controls
         /// <summary>
         /// Stops the Video.
         /// </summary>
-        private async Task StopAsync()
+        public async Task StopAsync()
         {
             _progressTimer.Stop();
             AudioControl.Stop();
@@ -434,7 +434,7 @@ namespace TensorStack.WPF.Controls
         {
             if (MediaState == MediaState.Play)
                 await PauseAsync();
-            else if (MediaState == MediaState.Pause)
+            else if (MediaState == MediaState.Pause || MediaState == MediaState.Stop)
                 await PlayAsync();
         }
 

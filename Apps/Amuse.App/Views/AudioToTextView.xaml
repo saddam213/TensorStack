@@ -80,7 +80,9 @@
                                 <StackPanel IsEnabled="{Binding IsAutomating, Converter={StaticResource InverseBoolConverter}}">
                                     <TextBlock Text="Audio Input" Style="{StaticResource FieldTextBlockStyle}" />
                                     <Border Style="{StaticResource AudioDropZoneStyle}" IsEnabled="{Binding DiffusionService.IsExecuting, Converter={StaticResource InverseBoolConverter}}">
-                                        <CommonControls:AudioStreamElement Height="160"
+                                        <CommonControls:AudioStreamElement 
+                                            x:Name="InputAudioControl"
+                                            Height="160"
                                             Source="{Binding SourceAudio, Mode=TwoWay}" 
                                             Configuration="{Binding Settings}" 
                                             Volume="{Binding Settings.VolumeInput, Mode=TwoWay}"

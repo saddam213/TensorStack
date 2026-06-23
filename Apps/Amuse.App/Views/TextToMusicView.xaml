@@ -92,6 +92,7 @@
                                 <DockPanel Margin="0,-6,0,0" Visibility="{Binding SelectedOption, ElementName=InputControl, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Options}">
                                     <TextBlock DockPanel.Dock="Top" Text="Reference Audio (optional)" Style="{StaticResource FieldTextBlockStyle}" Margin="0,0,0,2"/>
                                     <CommonControls:AudioStreamElement 
+                                        x:Name="InputAudioControl"
                                         Height="160"
                                         Source="{Binding SourceAudio, Mode=TwoWay}" 
                                         IsInputEnabled="{Binding IsPipelineLoaded}"
@@ -134,6 +135,7 @@
                                 <DockPanel Height="150">
                                     <TextBlock DockPanel.Dock="Top" Text="Audio Result" Style="{StaticResource FieldTextBlockStyle}"/>
                                     <CommonControls:AudioStreamElement 
+                                        x:Name="ResultControl"
                                         Source="{Binding ResultAudio, Mode=TwoWay}" 
                                         IsReplayEnabled="False"
                                         IsAutoPlayEnabled="True"

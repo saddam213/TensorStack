@@ -98,6 +98,17 @@ namespace Amuse.App.Views
 
 
         /// <summary>
+        /// On View Close
+        /// </summary>
+        public override async Task CloseAsync()
+        {
+            await ResultControl.StopAsync();
+            await InputVideoControl.StopAsync();
+            await base.CloseAsync();
+        }
+
+
+        /// <summary>
         /// Execute thge pipeline.
         /// </summary>
         protected override async Task ExecuteAsync()

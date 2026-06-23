@@ -322,6 +322,7 @@
                                 Progress="{Binding Progress}"
                                 Visibility="{Binding SelectedItem.MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Image}"/>
                             <CommonControls:VideoStreamElement
+                                x:Name="VideoControl"
                                 IsReplayEnabled="True"
                                 IsAutoPlayEnabled="False"
                                 IsLoadEnabled="False"
@@ -337,6 +338,7 @@
                                 IsVolumeMute="{Binding Settings.IsVolumeOutputMute, Mode=TwoWay}"
                                 Visibility="{Binding SelectedItem.MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Video}"/>
                             <CommonControls:AudioStreamElement
+                                x:Name="AudioControl"
                                 IsReplayEnabled="True"
                                 IsAutoPlayEnabled="False"
                                 IsLoadEnabled="False"
@@ -348,7 +350,6 @@
                                 Volume="{Binding Settings.VolumeOutput, Mode=TwoWay}"
                                 IsVolumeMute="{Binding Settings.IsVolumeOutputMute, Mode=TwoWay}"
                                 Visibility="{Binding SelectedItem.MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Audio}"/>
-
                             <CommonControls:TextElement 
                                 IsReadOnly="True"
                                 IsLoadEnabled="False"

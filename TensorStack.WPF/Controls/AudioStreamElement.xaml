@@ -55,7 +55,7 @@
                         Visibility="{Binding IsSaveEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <CommonControls:FontAwesome Icon="f0c7" />
                     </Button>
-                    <UniformGrid Rows="2" Columns="1" Width="30">
+                    <UniformGrid Rows="1" Columns="2" Width="60" Height="26" VerticalAlignment="Center" Margin="10,0,0,0">
                         <CommonControls:ToggleButton
                             IconTrue="f04b"
                             IconFalse="f04b"

@@ -566,7 +566,7 @@ namespace TensorStack.WPF.Controls
         /// <summary>
         /// Stops the Video.
         /// </summary>
-        private async Task StopAsync()
+        public async Task StopAsync()
         {
             _progressTimer.Stop();
             VideoControl.Stop();
@@ -576,11 +576,7 @@ namespace TensorStack.WPF.Controls
             UpdateTrackControl(0, 1);
 
             // Bugfix: Set position to non-zero to keep GIFs looping
-            VideoControl.Position = TimeSpan.FromMilliseconds(1);
-            VideoOverlayControl.Position = TimeSpan.FromMilliseconds(1);
-
-            // Bugfix: Pause to apply GPU queue or MediaElements may freeze globally
-            await Task.Delay(50);
+            SetVideoPosition(TimeSpan.FromMilliseconds(1));
         }
 
 
@@ -622,6 +618,7 @@ namespace TensorStack.WPF.Controls
         private async void VideoControl_MediaEnded(object sender, RoutedEventArgs e)
         {
             await StopAsync();
+            await Task.Delay(50);   // Bugfix: Pause to apply GPU queue or MediaElements may freeze globally
             if (IsReplayEnabled)
                 await PlayAsync();
         }
@@ -636,7 +633,7 @@ namespace TensorStack.WPF.Controls
         {
             if (MediaState == MediaState.Play)
                 await PauseAsync();
-            else if (MediaState == MediaState.Pause)
+            else if (MediaState == MediaState.Pause || MediaState == MediaState.Stop)
                 await PlayAsync();
         }
 
@@ -964,6 +961,18 @@ namespace TensorStack.WPF.Controls
 
 
         /// <summary>
+        /// Sets the video position.
+        /// </summary>
+        /// <param name="position">The position.</param>
+        private void SetVideoPosition(TimeSpan position)
+        {
+            VideoControl.Position = position;
+            if (VideoOverlayControl.Source != null)
+                VideoOverlayControl.Position = position;
+        }
+
+
+        /// <summary>
         /// Updates the track control position.
         /// </summary>
         /// <param name="value">The value.</param>
@@ -985,7 +994,7 @@ namespace TensorStack.WPF.Controls
         /// <param name="e">The <see cref="System.Windows.Controls.Primitives.DragDeltaEventArgs"/> instance containing the event data.</param>
         private void TrackControl_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            VideoControl.Position = TimeSpan.FromMilliseconds(TrackControl.Value);
+            SetVideoPosition(TimeSpan.FromMilliseconds(TrackControl.Value));
         }
 
 
@@ -1020,7 +1029,7 @@ namespace TensorStack.WPF.Controls
         /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
         private void TrackControl_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            VideoControl.Position = TimeSpan.FromMilliseconds(TrackControl.Value);
+            SetVideoPosition(TimeSpan.FromMilliseconds(TrackControl.Value));
         }
 
 

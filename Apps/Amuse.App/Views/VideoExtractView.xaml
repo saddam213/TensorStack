@@ -57,6 +57,7 @@
                                 MaxHeight="{Binding ActualWidth,ElementName=LeftPanelContainer}"
                                 IsEnabled="{Binding SelectedOption, ElementName=InputControl, Converter={StaticResource InverseEnumToBooleanConverter}, ConverterParameter=Automation}">
                                 <CommonControls:VideoStreamElement
+                                    x:Name="InputVideoControl"
                                     IsLoadEnabled="True"
                                     IsLoadOverlayEnabled="False" 
                                     IsSaveEnabled="False"

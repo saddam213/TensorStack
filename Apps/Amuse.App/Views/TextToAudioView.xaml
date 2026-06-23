@@ -122,6 +122,7 @@
                                 <DockPanel Height="150">
                                     <TextBlock DockPanel.Dock="Top" Text="Audio Result" Style="{StaticResource FieldTextBlockStyle}"/>
                                     <CommonControls:AudioStreamElement 
+                                        x:Name="ResultControl"
                                         Source="{Binding ResultAudio, Mode=TwoWay}" 
                                         IsReplayEnabled="False"
                                         IsAutoPlayEnabled="True"

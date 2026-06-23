@@ -135,6 +135,7 @@
                                 <!--SourceVideo/SourceImage1-->
                                 <Grid>
                                     <CommonControls:VideoStreamElement 
+                                        x:Name="InputVideoControl"
                                         SplitterVisibility="Auto"
                                         SplitterPosition="Source"
                                         SplitterDirection="LeftToRight"

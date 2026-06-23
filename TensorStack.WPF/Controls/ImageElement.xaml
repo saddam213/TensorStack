@@ -22,11 +22,11 @@
         <DockPanel>
 
             <!--Controls-->
-            <DockPanel DockPanel.Dock="Bottom" Visibility="{Binding IsToolbarEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="-1,0,-1,-1" Height="60">
+            <DockPanel DockPanel.Dock="Bottom" Visibility="{Binding IsToolbarEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="-1,0,-1,-1" Height="70">
 
                 <!--Progress-->
-                <Grid DockPanel.Dock="Top">
-                    <CommonControls:ProgressElement Height="6" Margin="1" Progress="{Binding Progress}"/>
+                <Grid DockPanel.Dock="Top" Height="19">
+                    <CommonControls:ProgressElement Height="6" Margin="4,1" Progress="{Binding Progress, Mode=OneWay}" VerticalAlignment="Center"/>
                 </Grid>
 
                 <!--Buttons-->

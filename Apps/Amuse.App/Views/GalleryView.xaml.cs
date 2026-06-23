@@ -122,6 +122,15 @@ namespace Amuse.App.Views
             return base.OpenAsync(args);
         }
 
+
+        public override async Task CloseAsync()
+        {
+            await AudioControl.StopAsync();
+            await VideoControl.StopAsync();
+            await base.CloseAsync();
+        }
+
+
         private async Task SetCurrentItem()
         {
             if (_selectedItem == null)
