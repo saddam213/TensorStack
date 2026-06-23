@@ -10,6 +10,9 @@ dotnet pack TensorStack.Image.Bitmap/TensorStack.Image.Bitmap.csproj -c Release
 dotnet build TensorStack.Image.BitmapImage/TensorStack.Image.BitmapImage.csproj -c Release
 dotnet pack TensorStack.Image.BitmapImage/TensorStack.Image.BitmapImage.csproj -c Release
 
+dotnet build TensorStack.Image.SkiaSharp/TensorStack.Image.SkiaSharp.csproj -c Release
+dotnet pack TensorStack.Image.SkiaSharp/TensorStack.Image.SkiaSharp.csproj -c Release
+
 dotnet build TensorStack.Audio/TensorStack.Audio.csproj -c Release
 dotnet pack TensorStack.Audio/TensorStack.Audio.csproj -c Release
 
