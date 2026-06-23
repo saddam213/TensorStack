@@ -58,7 +58,6 @@ Built for performance and flexibility, TensorStack powers all applications devel
 | TensorStack.Image | Shared image utilities | [README](TensorStack.Image/README.md) | [![Image Badge](https://img.shields.io/nuget/v/TensorStack.Image?color=4bc51e&label=TensorStack.Image)](https://www.nuget.org/packages/TensorStack.Image) |
 | TensorStack.Image.Bitmap | Windows Forms `Bitmap` ↔ Tensor conversion | [README](TensorStack.Image.Bitmap/README.md) | [![Bitmap Badge](https://img.shields.io/nuget/v/TensorStack.Image.Bitmap?color=4bc51e&label=TensorStack.Image.Bitmap)](https://www.nuget.org/packages/TensorStack.Image.Bitmap) |
 | TensorStack.Image.BitmapImage |  WPF `BitmapImage` ↔ Tensor conversion | [README](TensorStack.Image.BitmapImage/README.md) | [![BitmapImage Badge](https://img.shields.io/nuget/v/TensorStack.Image.BitmapImage?color=4bc51e&label=TensorStack.Image.BitmapImage)](https://www.nuget.org/packages/TensorStack.Image.BitmapImage) |
-| TensorStack.Image.ImageSharp | ImageSharp `Image` ↔ Tensor conversion | [README](TensorStack.Image.ImageSharp/README.md) | [![ImageSharp Badge](https://img.shields.io/nuget/v/TensorStack.Image.ImageSharp?color=4bc51e&label=TensorStack.Image.ImageSharp)](https://www.nuget.org/packages/TensorStack.Image.ImageSharp) |
 
 #### Video
 
