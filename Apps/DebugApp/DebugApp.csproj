@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\TensorStack.Video.Windows\TensorStack.Video.Windows.csproj" />
     <ProjectReference Include="..\..\TensorStack.Video\TensorStack.Video.csproj" />
     <ProjectReference Include="..\..\TensorStack.Python\TensorStack.Python.csproj" />
+    <ProjectReference Include="..\..\TensorStack.Image.SkiaSharp\TensorStack.Image.SkiaSharp.csproj" />
  
     <!--<ProjectReference Include="..\..\TensorStack.TextGeneration\TensorStack.TextGeneration.csproj" />
     <ProjectReference Include="..\..\TensorStack.Audio\TensorStack.Audio.csproj" />

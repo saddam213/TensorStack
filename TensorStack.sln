@@ -3,35 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.StableDiffusion", "TensorStack.StableDiffusion\TensorStack.StableDiffusion.csproj", "{C0B32504-3BB2-4500-88F6-1057AE0EA193}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Common", "TensorStack.Common\TensorStack.Common.csproj", "{5B6FD5FC-8D38-4453-A17A-7038FC717328}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Image", "TensorStack.Image\TensorStack.Image.csproj", "{81C8112E-5210-472F-93B5-E6D555C1486D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Image.Bitmap", "TensorStack.Image.Bitmap\TensorStack.Image.Bitmap.csproj", "{7BB55960-DD82-4A5C-A488-788BCDFF601C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Image.BitmapImage", "TensorStack.Image.BitmapImage\TensorStack.Image.BitmapImage.csproj", "{D7F2DCDD-D68E-4C23-8FA4-380577C47C34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Video.Windows", "TensorStack.Video.Windows\TensorStack.Video.Windows.csproj", "{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Image.SkiaSharp", "TensorStack.Image.SkiaSharp\TensorStack.Image.SkiaSharp.csproj", "{444A9A3A-CA3B-4539-9456-83ADA25038C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Video", "TensorStack.Video\TensorStack.Video.csproj", "{D78703B6-518D-4135-92E5-2256A6D255A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Upscaler", "TensorStack.Upscaler\TensorStack.Upscaler.csproj", "{0DD66FB9-0BCD-43D9-9B6B-DEBF5F1D3635}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Extractors", "TensorStack.Extractors\TensorStack.Extractors.csproj", "{2D4CFD8B-DCA3-4231-838E-EA0B4CAC8D73}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Common", "TensorStack.Common\TensorStack.Common.csproj", "{5B6FD5FC-8D38-4453-A17A-7038FC717328}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.TextGeneration", "TensorStack.TextGeneration\TensorStack.TextGeneration.csproj", "{F15D8B39-0CD0-446E-80A5-145214860368}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
-	ProjectSection(SolutionItems) = preProject
-		BuildRelease.bat = BuildRelease.bat
-		Directory.Build.props = Directory.Build.props
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Audio.Windows", "TensorStack.Audio.Windows\TensorStack.Audio.Windows.csproj", "{A6B58356-864A-4401-BC5B-50A3A5DA96A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Video.Windows", "TensorStack.Video.Windows\TensorStack.Video.Windows.csproj", "{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Audio", "TensorStack.Audio\TensorStack.Audio.csproj", "{0081AF67-F530-4C47-ACDE-8F56B74F0E99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Image", "TensorStack.Image\TensorStack.Image.csproj", "{81C8112E-5210-472F-93B5-E6D555C1486D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Audio.Windows", "TensorStack.Audio.Windows\TensorStack.Audio.Windows.csproj", "{A6B58356-864A-4401-BC5B-50A3A5DA96A9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Providers.DML", "TensorStack.Providers.DML\TensorStack.Providers.DML.csproj", "{B2768F02-6BF6-48B4-8332-076F659A26D0}"
 EndProject
@@ -39,7 +27,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Providers.CUDA"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Providers.CPU", "TensorStack.Providers.CPU\TensorStack.Providers.CPU.csproj", "{EC5602DD-9237-460C-8681-64A619293D59}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Upscaler", "TensorStack.Upscaler\TensorStack.Upscaler.csproj", "{0DD66FB9-0BCD-43D9-9B6B-DEBF5F1D3635}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Extractors", "TensorStack.Extractors\TensorStack.Extractors.csproj", "{2D4CFD8B-DCA3-4231-838E-EA0B4CAC8D73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.StableDiffusion", "TensorStack.StableDiffusion\TensorStack.StableDiffusion.csproj", "{C0B32504-3BB2-4500-88F6-1057AE0EA193}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.TextGeneration", "TensorStack.TextGeneration\TensorStack.TextGeneration.csproj", "{F15D8B39-0CD0-446E-80A5-145214860368}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Python", "TensorStack.Python\TensorStack.Python.csproj", "{A8E54E85-1A1C-7E88-F163-4B89715D12F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.WPF", "TensorStack.WPF\TensorStack.WPF.csproj", "{7857FE20-AE05-0406-1B43-6D71C008B379}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		BuildRelease.bat = BuildRelease.bat
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{F81721F7-8D43-410F-A452-99A4F51AB2A0}"
 	ProjectSection(SolutionItems) = preProject
@@ -55,8 +59,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amuse.Host.PyTorch", "Apps\Amuse.Host.PyTorch\Amuse.Host.PyTorch.csproj", "{E3E2CB70-0145-7F05-D936-3CE7DB5740FF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugApp", "Apps\DebugApp\DebugApp.csproj", "{CD6962D3-18EA-4113-25AE-EF9BC1FBD4FE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.WPF", "TensorStack.WPF\TensorStack.WPF.csproj", "{7857FE20-AE05-0406-1B43-6D71C008B379}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -197,6 +199,12 @@ Global
 		{7857FE20-AE05-0406-1B43-6D71C008B379}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
 		{7857FE20-AE05-0406-1B43-6D71C008B379}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7857FE20-AE05-0406-1B43-6D71C008B379}.Release|Any CPU.Build.0 = Release|Any CPU
+		{444A9A3A-CA3B-4539-9456-83ADA25038C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{444A9A3A-CA3B-4539-9456-83ADA25038C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{444A9A3A-CA3B-4539-9456-83ADA25038C2}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
+		{444A9A3A-CA3B-4539-9456-83ADA25038C2}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
+		{444A9A3A-CA3B-4539-9456-83ADA25038C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{444A9A3A-CA3B-4539-9456-83ADA25038C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
