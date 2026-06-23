@@ -1,15 +1,10 @@
 ﻿// Copyright (c) TensorStack. All rights reserved.
 // Licensed under the Apache 2.0 License.
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing;
-using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -214,29 +209,29 @@ namespace TensorStack.Extractors.Pipelines
         /// <returns>ImageTensor.</returns>
         private ImageTensor BuildSkeleton(PoseOptions options, Detection[] detections)
         {
-            var fillColor = options.IsTransparent ? Color.Transparent : Color.Black;
-            using (var imageCanvas = new Image<Rgba32>(_model.SampleSize, _model.SampleSize, fillColor))
+            using (var bitmap = new SKBitmap(_model.SampleSize, _model.SampleSize, SKColorType.Rgba8888, SKAlphaType.Premul))
+            using (var canvas = new SKCanvas(bitmap))
             {
-                imageCanvas.Mutate(ctx =>
+                canvas.Clear(options.IsTransparent
+                    ? new SKColor(0, 0, 0, 0)
+                    : new SKColor(0, 0, 0, 255));
+
+                var selectedDetections = options.Detections > 0
+                    ? detections.Take(options.Detections)
+                    : detections;
+
+                foreach (var detection in selectedDetections)
                 {
-                    var selectedDetections = options.Detections > 0
-                        ? detections.Take(options.Detections)
-                        : detections;
-                    foreach (var detection in selectedDetections)
+                    if (detection.Confidence < options.BodyConfidence)
+                        continue;
+
+                    foreach (var keypoint in detection.Keypoints)
                     {
-                        if (detection.Confidence < options.BodyConfidence)
-                            continue;
-
-                        foreach (var keypoint in detection.Keypoints)
-                        {
-                            keypoint.IsValid = keypoint.Confidence > options.JointConfidence;
-                        }
-
-                        DrawSkeleton(ctx, options, detection.Keypoints);
+                        keypoint.IsValid = keypoint.Confidence > options.JointConfidence;
                     }
-                });
-
-                return CreateTensor(imageCanvas);
+                    DrawSkeleton(canvas, options, detection.Keypoints);
+                }
+                return CreateTensor(bitmap);
             }
         }
 
@@ -247,30 +242,28 @@ namespace TensorStack.Extractors.Pipelines
         /// <param name="imageContext">The CTX.</param>
         /// <param name="options">The options.</param>
         /// <param name="keypoints">The keypoints.</param>
-        private static void DrawSkeleton(IImageProcessingContext imageContext, PoseOptions options, IReadOnlyList<Keypoint> keypoints)
+        private static void DrawSkeleton(SKCanvas canvas, PoseOptions options, IReadOnlyList<Keypoint> keypoints)
         {
             if (keypoints == null || keypoints.Count < 17)
                 return;
 
-            // Draw Bones
             foreach (var bone in BoneMap)
             {
-                var keypointA = keypoints[bone.JointA];
-                var keypointB = keypoints[bone.JointB];
-                if (!keypointA.IsValid || !keypointB.IsValid)
+                var a = keypoints[bone.JointA];
+                var b = keypoints[bone.JointB];
+                if (!a.IsValid || !b.IsValid)
                     continue;
 
-                DrawBone(imageContext, keypointA, keypointB, bone.Color.WithAlpha(options.ColorAlpha), options.BoneThickness, options.BoneRadius);
+                DrawBone(canvas, a, b, bone.Color, options.BoneThickness, options.BoneRadius);
             }
 
-            // Draw Joints
             foreach (var joint in JointMap)
             {
-                var keypoint = keypoints[joint.Id];
-                if (!keypoint.IsValid)
+                var k = keypoints[joint.Id];
+                if (!k.IsValid)
                     continue;
 
-                DrawJoint(imageContext, keypoint, joint.Color.WithAlpha(options.ColorAlpha), options.JointRadius);
+                DrawJoint(canvas, k, joint.Color, options.JointRadius);
             }
         }
 
@@ -282,9 +275,16 @@ namespace TensorStack.Extractors.Pipelines
         /// <param name="keypoint">The keypoint.</param>
         /// <param name="color">The color.</param>
         /// <param name="circleRadius">The circle radius.</param>
-        private static void DrawJoint(IImageProcessingContext imageContext, Keypoint keypoint, Color color, float circleRadius)
+        private static void DrawJoint(SKCanvas canvas, Keypoint keypoint, SKColor color, float radius)
         {
-            imageContext.Fill(color, new EllipsePolygon(keypoint.X, keypoint.Y, circleRadius));
+            using var paint = new SKPaint
+            {
+                Color = color,
+                IsAntialias = true,
+                Style = SKPaintStyle.Fill
+            };
+
+            canvas.DrawCircle(keypoint.X, keypoint.Y, radius, paint);
         }
 
 
@@ -297,34 +297,37 @@ namespace TensorStack.Extractors.Pipelines
         /// <param name="color">The color.</param>
         /// <param name="thickness">The thickness.</param>
         /// <param name="curvature">The curvature.</param>
-        private static void DrawBone(IImageProcessingContext imageContext, Keypoint jointA, Keypoint jointB, Color color, float thickness, float curvature)
+        private static void DrawBone(SKCanvas canvas, Keypoint jointA, Keypoint jointB, SKColor color, float thickness, float curvature)
         {
-            var direction = new Vector2(jointB.X - jointA.X, jointB.Y - jointA.Y);
-            float length = direction.Length();
+            var direction = new SKPoint(jointB.X - jointA.X, jointB.Y - jointA.Y);
+            var length = MathF.Sqrt(direction.X * direction.X + direction.Y * direction.Y);
             if (length < 1f)
                 return;
 
-            direction /= length;
-            var perp = new Vector2(-direction.Y, direction.X);
             var curveOffset = thickness * curvature;
+            direction = new SKPoint(direction.X / length, direction.Y / length);
+            var perp = new SKPoint(-direction.Y, direction.X);
+            using (var paint = new SKPaint { Color = color, IsAntialias = true, Style = SKPaintStyle.Fill })
+            using (var path = new SKPath())
+            {
+                // left side
+                var p0 = new SKPoint(jointA.X + perp.X * thickness, jointA.Y + perp.Y * thickness);
+                var p1 = new SKPoint(jointA.X + perp.X * (thickness + curveOffset), jointA.Y + perp.Y * (thickness + curveOffset));
+                var p2 = new SKPoint(jointB.X + perp.X * (thickness + curveOffset), jointB.Y + perp.Y * (thickness + curveOffset));
+                var p3 = new SKPoint(jointB.X + perp.X * thickness, jointB.Y + perp.Y * thickness);
 
-            // left side Bezier
-            var p0 = new PointF(jointA.X + perp.X * thickness, jointA.Y + perp.Y * thickness);
-            var p1 = new PointF(jointA.X + perp.X * (thickness + curveOffset), jointA.Y + perp.Y * (thickness + curveOffset));
-            var p2 = new PointF(jointB.X + perp.X * (thickness + curveOffset), jointB.Y + perp.Y * (thickness + curveOffset));
-            var p3 = new PointF(jointB.X + perp.X * thickness, jointB.Y + perp.Y * thickness);
+                // right side
+                var q0 = new SKPoint(jointB.X - perp.X * thickness, jointB.Y - perp.Y * thickness);
+                var q1 = new SKPoint(jointB.X - perp.X * (thickness + curveOffset), jointB.Y - perp.Y * (thickness + curveOffset));
+                var q2 = new SKPoint(jointA.X - perp.X * (thickness + curveOffset), jointA.Y - perp.Y * (thickness + curveOffset));
+                var q3 = new SKPoint(jointA.X - perp.X * thickness, jointA.Y - perp.Y * thickness);
 
-            // left side Bezier
-            var q0 = new PointF(jointB.X - perp.X * thickness, jointB.Y - perp.Y * thickness);
-            var q1 = new PointF(jointB.X - perp.X * (thickness + curveOffset), jointB.Y - perp.Y * (thickness + curveOffset));
-            var q2 = new PointF(jointA.X - perp.X * (thickness + curveOffset), jointA.Y - perp.Y * (thickness + curveOffset));
-            var q3 = new PointF(jointA.X - perp.X * thickness, jointA.Y - perp.Y * thickness);
-
-            var pb = new PathBuilder();
-            pb.AddCubicBezier(p0, p1, p2, p3);
-            pb.AddCubicBezier(q0, q1, q2, q3);
-            pb.CloseFigure();
-            imageContext.Fill(color, pb.Build());
+                path.MoveTo(p0);
+                path.CubicTo(p1, p2, p3);
+                path.CubicTo(q1, q2, q3);
+                path.Close();
+                canvas.DrawPath(path, paint);
+            }
         }
 
 
@@ -333,24 +336,21 @@ namespace TensorStack.Extractors.Pipelines
         /// </summary>
         /// <param name="image">The image.</param>
         /// <returns>ImageTensor.</returns>
-        private static ImageTensor CreateTensor(Image<Rgba32> image)
+        private static ImageTensor CreateTensor(SKBitmap bitmap)
         {
-            var imageTensor = new Tensor<float>([1, 4, image.Height, image.Width]);
-            image.ProcessPixelRows(img =>
+            var tensor = new Tensor<float>([1, 4, bitmap.Height, bitmap.Width]);
+            for (int y = 0; y < bitmap.Height; y++)
             {
-                for (int x = 0; x < image.Width; x++)
+                for (int x = 0; x < bitmap.Width; x++)
                 {
-                    for (int y = 0; y < image.Height; y++)
-                    {
-                        var pixelSpan = img.GetRowSpan(y);
-                        imageTensor[0, 0, y, x] = GetFloatValue(pixelSpan[x].R);
-                        imageTensor[0, 1, y, x] = GetFloatValue(pixelSpan[x].G);
-                        imageTensor[0, 2, y, x] = GetFloatValue(pixelSpan[x].B);
-                        imageTensor[0, 3, y, x] = GetFloatValue(pixelSpan[x].A);
-                    }
+                    var c = bitmap.GetPixel(x, y);
+                    tensor[0, 0, y, x] = GetFloatValue(c.Red);
+                    tensor[0, 1, y, x] = GetFloatValue(c.Green);
+                    tensor[0, 2, y, x] = GetFloatValue(c.Blue);
+                    tensor[0, 3, y, x] = GetFloatValue(c.Alpha);
                 }
-            });
-            return imageTensor.AsImageTensor();
+            }
+            return tensor.AsImageTensor();
         }
 
 
@@ -365,53 +365,53 @@ namespace TensorStack.Extractors.Pipelines
         }
 
 
-        private record Bone(int JointA, int JointB, Color Color);
-        private record Joint(int Id, Color Color);
+        private record Bone(int JointA, int JointB, SKColor Color);
+        private record Joint(int Id, SKColor Color);
         private record Keypoint(float X, float Y, float Confidence) { public bool IsValid { get; set; } }
         private record Detection(float X1, float Y1, float X2, float Y2, float Confidence, IReadOnlyList<Keypoint> Keypoints);
 
         private static readonly Bone[] BoneMap =
         {
-            new Bone(0, 1,   Color.FromRgb(0, 0, 153)),   // nose -> neck
-            new Bone(0, 2,   Color.FromRgb(153, 0, 153)), // nose -> left eye
-            new Bone(2, 4,   Color.FromRgb(153, 0, 102)), // left eye -> left ear
-            new Bone(0, 3,   Color.FromRgb(51, 0, 153)),  // nose -> right eye
-            new Bone(3, 5,   Color.FromRgb(102, 0, 153)), // right eye -> right ear
-            new Bone(1, 6,   Color.FromRgb(153, 51, 0)),  // neck -> left sholder
-            new Bone(1, 7,   Color.FromRgb(153, 0, 0)),   // neck -> right sholder
-            new Bone(6, 8,   Color.FromRgb(102, 153, 0)), // left sholder -> left arm
-            new Bone(7, 9,   Color.FromRgb(153, 102, 0)), // right sholder -> right arm
-            new Bone(8, 10,  Color.FromRgb(51, 153, 0)),  // left arm -> left wrist
-            new Bone(9, 11,  Color.FromRgb(153, 153, 0)), // right arm -> right wrist
-            new Bone(1, 12,  Color.FromRgb(0, 153, 153)), // neck -> left hip
-            new Bone(1, 13,  Color.FromRgb(0, 153, 0)),   // neck -> right hip
-            new Bone(12, 14, Color.FromRgb(0, 102, 153)), // left hip -> left knee
-            new Bone(13, 15, Color.FromRgb(0, 153, 51)),  // right hip -> right knee
-            new Bone(14, 16, Color.FromRgb(0, 51, 153)),  // left knee -> left ankle
-            new Bone(15, 17, Color.FromRgb(0, 153, 102)), // right knee -> right ankle
+            new Bone(0, 1,   new SKColor(0, 0, 153)),   // nose -> neck
+            new Bone(0, 2,  new SKColor(153, 0, 153)), // nose -> left eye
+            new Bone(2, 4,  new SKColor(153, 0, 102)), // left eye -> left ear
+            new Bone(0, 3,  new SKColor(51, 0, 153)),  // nose -> right eye
+            new Bone(3, 5,  new SKColor(102, 0, 153)), // right eye -> right ear
+            new Bone(1, 6,  new SKColor(153, 51, 0)),  // neck -> left sholder
+            new Bone(1, 7,  new SKColor(153, 0, 0)),   // neck -> right sholder
+            new Bone(6, 8,  new SKColor(102, 153, 0)), // left sholder -> left arm
+            new Bone(7, 9,  new SKColor(153, 102, 0)), // right sholder -> right arm
+            new Bone(8, 10, new SKColor(51, 153, 0)),  // left arm -> left wrist
+            new Bone(9, 11, new SKColor(153, 153, 0)), // right arm -> right wrist
+            new Bone(1, 12, new SKColor(0, 153, 153)), // neck -> left hip
+            new Bone(1, 13, new SKColor(0, 153, 0)),   // neck -> right hip
+            new Bone(12, 14,new SKColor(0, 102, 153)), // left hip -> left knee
+            new Bone(13, 15,new SKColor(0, 153, 51)),  // right hip -> right knee
+            new Bone(14, 16,new SKColor(0, 51, 153)),  // left knee -> left ankle
+            new Bone(15, 17,new SKColor(0, 153, 102)), // right knee -> right ankle
         };
 
 
         private static readonly Joint[] JointMap =
         [
-            new Joint(0,  Color.FromRgb(255,0,0)),     // nose
-            new Joint(1,  Color.FromRgb(255,85,0)),    // neck
-            new Joint(2,  Color.FromRgb(255, 0, 255)), // left_eye
-            new Joint(3,  Color.FromRgb(170, 0, 255)), // right_eye
-            new Joint(4,  Color.FromRgb(255, 0, 85)),  // left_ear
-            new Joint(5,  Color.FromRgb(255, 0, 170)), // right_ear
-            new Joint(6,  Color.FromRgb(85, 255, 0)),  // left_shoulder
-            new Joint(7,  Color.FromRgb(255, 170, 0)), // right_shoulder
-            new Joint(8,  Color.FromRgb(0, 255, 0)),   // left_elbow
-            new Joint(9,  Color.FromRgb(255, 255, 0)), // right_elbow
-            new Joint(10, Color.FromRgb(0, 255, 85)),  // left_wrist
-            new Joint(11, Color.FromRgb(170, 255, 0)), // right_wrist
-            new Joint(12, Color.FromRgb(0, 85, 255)),  // left_hip
-            new Joint(13, Color.FromRgb(0, 255, 170)), // right_hip
-            new Joint(14, Color.FromRgb(0, 0, 255)),   // left_knee
-            new Joint(15, Color.FromRgb(0, 255, 255)), // right_knee
-            new Joint(16, Color.FromRgb(85, 0, 255)),  // left_ankle
-            new Joint(17, Color.FromRgb(0, 170, 255))  // right_ankle
+            new Joint(0, new SKColor(255,0,0)),     // nose
+            new Joint(1, new SKColor(255,85,0)),    // neck
+            new Joint(2, new SKColor(255, 0, 255)), // left_eye
+            new Joint(3, new SKColor(170, 0, 255)), // right_eye
+            new Joint(4, new SKColor(255, 0, 85)),  // left_ear
+            new Joint(5, new SKColor(255, 0, 170)), // right_ear
+            new Joint(6, new SKColor(85, 255, 0)),  // left_shoulder
+            new Joint(7, new SKColor(255, 170, 0)), // right_shoulder
+            new Joint(8, new SKColor(0, 255, 0)),   // left_elbow
+            new Joint(9, new SKColor(255, 255, 0)), // right_elbow
+            new Joint(10,new SKColor(0, 255, 85)),  // left_wrist
+            new Joint(11,new SKColor(170, 255, 0)), // right_wrist
+            new Joint(12,new SKColor(0, 85, 255)),  // left_hip
+            new Joint(13,new SKColor(0, 255, 170)), // right_hip
+            new Joint(14,new SKColor(0, 0, 255)),   // left_knee
+            new Joint(15,new SKColor(0, 255, 255)), // right_knee
+            new Joint(16,new SKColor(85, 0, 255)),  // left_ankle
+            new Joint(17,new SKColor(0, 170, 255))  // right_ankle
         ];
 
 

@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Image.Bitmap", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Image.BitmapImage", "TensorStack.Image.BitmapImage\TensorStack.Image.BitmapImage.csproj", "{D7F2DCDD-D68E-4C23-8FA4-380577C47C34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Image.ImageSharp", "TensorStack.Image.ImageSharp\TensorStack.Image.ImageSharp.csproj", "{49D4640B-A5EB-4FBC-B4C0-80A6F342248B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Video.Windows", "TensorStack.Video.Windows\TensorStack.Video.Windows.csproj", "{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Video", "TensorStack.Video\TensorStack.Video.csproj", "{D78703B6-518D-4135-92E5-2256A6D255A2}"
@@ -85,12 +83,6 @@ Global
 		{D7F2DCDD-D68E-4C23-8FA4-380577C47C34}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
 		{D7F2DCDD-D68E-4C23-8FA4-380577C47C34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7F2DCDD-D68E-4C23-8FA4-380577C47C34}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49D4640B-A5EB-4FBC-B4C0-80A6F342248B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49D4640B-A5EB-4FBC-B4C0-80A6F342248B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49D4640B-A5EB-4FBC-B4C0-80A6F342248B}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
-		{49D4640B-A5EB-4FBC-B4C0-80A6F342248B}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
-		{49D4640B-A5EB-4FBC-B4C0-80A6F342248B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{49D4640B-A5EB-4FBC-B4C0-80A6F342248B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU

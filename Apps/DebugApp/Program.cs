@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using TensorStack.Common;
-using TensorStack.Image;
 using TensorStack.Python;
 using TensorStack.Python.Common;
 using TensorStack.Python.Config;
@@ -135,10 +134,10 @@ namespace DebugApp
                 var response = await pythonPipeline.GenerateAsync(options);
 
                 // Save Image
-                await response
-                    .First()
-                    .AsImageTensor()
-                    .SaveAsync("Result.png");
+                //await response
+                //    .First()
+                //    .AsImageTensor()
+                //    .SaveAsync("Result.png");
             }
         }
 
