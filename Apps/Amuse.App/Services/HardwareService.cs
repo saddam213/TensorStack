@@ -79,7 +79,7 @@ namespace Amuse.App.Services
                 if (gpuDevice.HardwareLUID == 0 || gpuDevice.HardwareLUID >= uint.MaxValue)
                     continue;
 
-                var providerDevice = providerDevices.FirstOrDefault(x => x.HardwareID == gpuDevice.AdapterInfo.DeviceId && x.HardwareVendorId == gpuDevice.AdapterInfo.VendorId);
+                var providerDevice = providerDevices.FirstOrDefault(x => x.Id == gpuDevice.Id && x.HardwareVendorId == gpuDevice.AdapterInfo.VendorId);
                 if (providerDevice == null)
                     continue;
 

@@ -8677,8 +8677,8 @@
           "Path": "transformer",
           "Folder": "acestep-v15-turbo-diffusers",
           "DownloadFiles": [
-            "https://huggingface.co/ACE-Step/acestep-v15-turbo-diffusers/resolve/main/transformer/config.json",
-            "https://huggingface.co/ACE-Step/acestep-v15-turbo-diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors"
+            "https://huggingface.co/Runware/acestep-v15-turbo-diffusers/resolve/main/transformer/config.json",
+            "https://huggingface.co/Runware/acestep-v15-turbo-diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors"
           ]
         }
       },
@@ -8731,7 +8731,7 @@
           }
         ]
       },
-      "Link": "https://huggingface.co/ACE-Step/acestep-v15-turbo-diffusers"
+      "Link": "https://huggingface.co/Runware/acestep-v15-turbo-diffusers"
     },
     {
       "Id": 303,
