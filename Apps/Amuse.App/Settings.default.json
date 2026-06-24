@@ -8514,12 +8514,24 @@
       },
       "Resolutions": [
         {
-          "Width": 1024,
-          "Height": 1792
+          "Width": 640,
+          "Height": 1536
         },
         {
-          "Width": 1024,
-          "Height": 1536
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
         },
         {
           "Width": 1024,
@@ -8527,16 +8539,20 @@
           "IsDefault": true
         },
         {
-          "Width": 1536,
-          "Height": 1024
+          "Width": 1152,
+          "Height": 896
         },
         {
-          "Width": 1920,
-          "Height": 1088
+          "Width": 1280,
+          "Height": 832
         },
         {
-          "Width": 2048,
+          "Width": 1344,
           "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
         }
       ],
       "Link": "https://huggingface.co/krea/Krea-2-Raw"
@@ -8619,12 +8635,24 @@
       },
       "Resolutions": [
         {
-          "Width": 1024,
-          "Height": 1792
+          "Width": 640,
+          "Height": 1536
         },
         {
-          "Width": 1024,
-          "Height": 1536
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
         },
         {
           "Width": 1024,
@@ -8632,16 +8660,20 @@
           "IsDefault": true
         },
         {
-          "Width": 1536,
-          "Height": 1024
+          "Width": 1152,
+          "Height": 896
         },
         {
-          "Width": 1920,
-          "Height": 1088
+          "Width": 1280,
+          "Height": 832
         },
         {
-          "Width": 2048,
+          "Width": 1344,
           "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
         }
       ],
       "Link": "https://huggingface.co/krea/Krea-2-Turbo"
@@ -28324,6 +28356,168 @@
         ]
       },
       "Link": "https://huggingface.co/circlestone-labs/Anima-Official-LoRAs"
+    },
+    {
+      "Id": 300,
+      "Backend": "Pytorch",
+      "Name": "Retro Anime",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "retroanime",
+      "Triggers": [ "Purple retro anime style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-retroanime/resolve/main/retroanime.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-retroanime"
+    },
+    {
+      "Id": 301,
+      "Backend": "Pytorch",
+      "Name": "Soft Watercolor",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "softwatercolor",
+      "Triggers": [ "Art Deco watercolor style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-softwatercolor/resolve/main/softwatercolor.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-softwatercolor"
+    },
+    {
+      "Id": 302,
+      "Backend": "Pytorch",
+      "Name": "Vintage Tarot",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "vintagetarot",
+      "Triggers": [ "vintage tarot style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-vintagetarot/resolve/main/vintagetarot.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-vintagetarot"
+    },
+    {
+      "Id": 303,
+      "Backend": "Pytorch",
+      "Name": "Kids Drawing",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "kidsdrawing",
+      "Triggers": [ "naive expressive sketch style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-kidsdrawing/resolve/main/kidsdrawing.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-kidsdrawing"
+    },
+    {
+      "Id": 304,
+      "Backend": "Pytorch",
+      "Name": "Rainy Window",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "rainywindow",
+      "Triggers": [ "rainy window style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-rainywindow/resolve/main/rainywindow.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-rainywindow"
+    },
+    {
+      "Id": 305,
+      "Backend": "Pytorch",
+      "Name": "Sunset Blur",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "sunsetblur",
+      "Triggers": [ "ethereal motion blur style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-sunsetblur/resolve/main/sunsetblur.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-sunsetblur"
+    },
+    {
+      "Id": 306,
+      "Backend": "Pytorch",
+      "Name": "Dark Brush",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "darkbrush",
+      "Triggers": [ "monochrome ink wash style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-darkbrush/resolve/main/darkbrush.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-darkbrush"
+    },
+    {
+      "Id": 307,
+      "Backend": "Pytorch",
+      "Name": "Dotmatrix",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "dotmatrix",
+      "Triggers": [ "Monochrome stippling style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-dotmatrix/resolve/main/dotmatrix.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-dotmatrix"
+    },
+    {
+      "Id": 308,
+      "Backend": "Pytorch",
+      "Name": "Neon Drip",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "neondrip",
+      "Triggers": [ "Textured abstract style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-neondrip/resolve/main/neondrip.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-neondrip"
     }
   ],
   "ControlNetModels": [
