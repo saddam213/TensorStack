@@ -383,7 +383,8 @@ def generate(
     if _prompt_cache_key != prompt_cache_key:
         print(f"[Generate] Encoding prompt")
         with torch.no_grad():
-            negative_prompt_value = (None, None)
+            negative_prompt_value = None
+            negative_prompt_mask = None
             prompt_value, prompt_mask = _pipeline.encode_prompt(
                 prompt=options.prompt,
                 device=_pipeline._execution_device

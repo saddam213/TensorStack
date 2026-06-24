@@ -401,7 +401,7 @@
         "Name": "TE_Qwen3_8B-VL",
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
-        "Path": "Component",
+        "Path": "Qwen-3-8B-VL-IT",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Qwen-3-8B-VL-IT/chat_template.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Qwen-3-8B-VL-IT/config.json",
@@ -8435,6 +8435,216 @@
         }
       ],
       "Link": "https://huggingface.co/zai-org/GLM-Image"
+    },
+    {
+      "Id": 219,
+      "Backend": "PyTorch",
+      "Name": "Krea2 Raw",
+      "Template": "Krea2",
+      "Pipeline": "Krea2Pipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B-VL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "Krea-2-Raw",
+          "DownloadFiles": [
+            "https://huggingface.co/krea/Krea-2-Raw/resolve/main/transformer/config.json",
+            "https://huggingface.co/krea/Krea-2-Raw/resolve/main/transformer/diffusion_pytorch_model.safetensors.index.json",
+            "https://huggingface.co/krea/Krea-2-Raw/resolve/main/transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "https://huggingface.co/krea/Krea-2-Raw/resolve/main/transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "https://huggingface.co/krea/Krea-2-Raw/resolve/main/transformer/diffusion_pytorch_model-00003-of-00003.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 16, 22 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 18, 24 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 28, 36 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 28,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4.5,
+        "GuidanceScale2": 0,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 1,
+            "UseDynamicShifting": true,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 6400,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1024,
+          "Height": 1792
+        },
+        {
+          "Width": 1024,
+          "Height": 1536
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1536,
+          "Height": 1024
+        },
+        {
+          "Width": 1920,
+          "Height": 1088
+        },
+        {
+          "Width": 2048,
+          "Height": 768
+        }
+      ],
+      "Link": "https://huggingface.co/krea/Krea-2-Raw"
+    },
+    {
+      "Id": 220,
+      "Backend": "PyTorch",
+      "Name": "Krea2 Turbo",
+      "Template": "Krea2_Turbo",
+      "Pipeline": "Krea2Pipeline",
+      "ModelType": "Turbo",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B-VL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "Krea-2-Turbo",
+          "DownloadFiles": [
+            "https://huggingface.co/krea/Krea-2-Turbo/resolve/main/transformer/config.json",
+            "https://huggingface.co/krea/Krea-2-Turbo/resolve/main/transformer/diffusion_pytorch_model.safetensors.index.json",
+            "https://huggingface.co/krea/Krea-2-Turbo/resolve/main/transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "https://huggingface.co/krea/Krea-2-Turbo/resolve/main/transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "https://huggingface.co/krea/Krea-2-Turbo/resolve/main/transformer/diffusion_pytorch_model-00003-of-00003.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 16, 22 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 18, 24 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 28, 36 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 8,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "GuidanceScale2": 0,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 1,
+            "UseDynamicShifting": true,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 6400,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1024,
+          "Height": 1792
+        },
+        {
+          "Width": 1024,
+          "Height": 1536
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1536,
+          "Height": 1024
+        },
+        {
+          "Width": 1920,
+          "Height": 1088
+        },
+        {
+          "Width": 2048,
+          "Height": 768
+        }
+      ],
+      "Link": "https://huggingface.co/krea/Krea-2-Turbo"
     },
     {
       "Id": 300,
