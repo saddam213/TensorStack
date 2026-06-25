@@ -19,7 +19,7 @@ namespace TensorStack.Python.Config
             "wheel==0.46.3",
             "transformers==5.5.4",
             "accelerate==1.13.0",
-            "diffusers@https://github.com/huggingface/diffusers/archive/f3d42be118f9af7ed9697b686fba09a8bdcd71d1.zip",
+            "diffusers@https://github.com/huggingface/diffusers/archive/eb0a900caac8625dd02d4c403b8e7c3ae12b8733.zip",
             "protobuf==7.34.1",
             "sentencepiece==0.2.1",
             "ftfy==6.3.1",

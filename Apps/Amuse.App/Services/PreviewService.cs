@@ -174,6 +174,7 @@ namespace Amuse.App.Services
                     return Path.Combine(_previewModelDirectory, "Flux2.onnx");
                 case PipelineType.AnimaPipeline:
                 case PipelineType.QwenImagePipeline:
+                case PipelineType.Krea2Pipeline:
                     return Path.Combine(_previewModelDirectory, "Qwen.onnx");
                 case PipelineType.Kandinsky5Pipeline:
                     return mediaType switch

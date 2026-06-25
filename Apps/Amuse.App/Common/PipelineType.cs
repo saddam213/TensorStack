@@ -50,6 +50,9 @@ namespace Amuse.App.Common
         [Display(Name = "GLM-Image Pipeline", ShortName = "GLM-Image")]
         GlmImagePipeline = 64,
 
+        [Display(Name = "Krea2 Pipeline", ShortName = "Krea2")]
+        Krea2Pipeline = 65,
+
 
         // Video
         [Display(Name = "Wan Pipeline", ShortName = "Wan")]

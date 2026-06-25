@@ -21,7 +21,7 @@
       "Vendor": "Nvidia",
       "Environment": "cuda-128",
       "PythonVersion": "3.12",
-      "Version": 6,
+      "Version": 7,
       "Status": "Create",
       "IsDefault": true,
       "Variables": {
@@ -37,7 +37,7 @@
         "wheel==0.46.3",
         "transformers==5.5.4",
         "accelerate==1.13.0",
-        "diffusers@https://github.com/huggingface/diffusers/archive/f3d42be118f9af7ed9697b686fba09a8bdcd71d1.zip",
+        "diffusers@https://github.com/huggingface/diffusers/archive/eb0a900caac8625dd02d4c403b8e7c3ae12b8733.zip",
         "protobuf==7.34.1",
         "sentencepiece==0.2.1",
         "ftfy==6.3.1",
@@ -59,7 +59,7 @@
       "Vendor": "Nvidia",
       "Environment": "cuda-130",
       "PythonVersion": "3.14",
-      "Version": 2,
+      "Version": 7,
       "Status": "Create",
       "Variables": {
         "CUDA_VISIBLE_DEVICES": "0,1",
@@ -74,7 +74,7 @@
         "wheel==0.46.3",
         "transformers==5.5.4",
         "accelerate==1.13.0",
-        "diffusers@https://github.com/huggingface/diffusers/archive/f3d42be118f9af7ed9697b686fba09a8bdcd71d1.zip",
+        "diffusers@https://github.com/huggingface/diffusers/archive/eb0a900caac8625dd02d4c403b8e7c3ae12b8733.zip",
         "protobuf==7.34.1",
         "sentencepiece==0.2.1",
         "ftfy==6.3.1",
@@ -96,7 +96,7 @@
       "Vendor": "AMD",
       "Environment": "rocm-721",
       "PythonVersion": "3.12",
-      "Version": 6,
+      "Version": 7,
       "Status": "Create",
       "IsDefault": true,
       "Variables": {
@@ -116,7 +116,7 @@
         "wheel==0.46.3",
         "transformers==5.5.4",
         "accelerate==1.13.0",
-        "diffusers@https://github.com/huggingface/diffusers/archive/f3d42be118f9af7ed9697b686fba09a8bdcd71d1.zip",
+        "diffusers@https://github.com/huggingface/diffusers/archive/eb0a900caac8625dd02d4c403b8e7c3ae12b8733.zip",
         "protobuf==7.34.1",
         "sentencepiece==0.2.1",
         "ftfy==6.3.1",
@@ -401,7 +401,7 @@
         "Name": "TE_Qwen3_8B-VL",
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
-        "Path": "Component",
+        "Path": "Qwen-3-8B-VL-IT",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Qwen-3-8B-VL-IT/chat_template.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Qwen-3-8B-VL-IT/config.json",
@@ -8435,6 +8435,248 @@
         }
       ],
       "Link": "https://huggingface.co/zai-org/GLM-Image"
+    },
+    {
+      "Id": 219,
+      "Backend": "PyTorch",
+      "Name": "Krea2 Raw",
+      "Template": "Krea2",
+      "Pipeline": "Krea2Pipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B-VL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "Krea-2-Raw",
+          "DownloadFiles": [
+            "https://huggingface.co/krea/Krea-2-Raw/resolve/main/transformer/config.json",
+            "https://huggingface.co/krea/Krea-2-Raw/resolve/main/transformer/diffusion_pytorch_model.safetensors.index.json",
+            "https://huggingface.co/krea/Krea-2-Raw/resolve/main/transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "https://huggingface.co/krea/Krea-2-Raw/resolve/main/transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "https://huggingface.co/krea/Krea-2-Raw/resolve/main/transformer/diffusion_pytorch_model-00003-of-00003.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 20, 23 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 28, 30 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 42, 46 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 28,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4.5,
+        "GuidanceScale2": 0,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 1,
+            "UseDynamicShifting": true,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 6400,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ],
+      "Link": "https://huggingface.co/krea/Krea-2-Raw"
+    },
+    {
+      "Id": 220,
+      "Backend": "PyTorch",
+      "Name": "Krea2 Turbo",
+      "Template": "Krea2_Turbo",
+      "Pipeline": "Krea2Pipeline",
+      "ModelType": "Turbo",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B-VL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "Krea-2-Turbo",
+          "DownloadFiles": [
+            "https://huggingface.co/krea/Krea-2-Turbo/resolve/main/transformer/config.json",
+            "https://huggingface.co/krea/Krea-2-Turbo/resolve/main/transformer/diffusion_pytorch_model.safetensors.index.json",
+            "https://huggingface.co/krea/Krea-2-Turbo/resolve/main/transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "https://huggingface.co/krea/Krea-2-Turbo/resolve/main/transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "https://huggingface.co/krea/Krea-2-Turbo/resolve/main/transformer/diffusion_pytorch_model-00003-of-00003.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 20, 23 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 28, 30 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 42, 46 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 8,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "GuidanceScale2": 0,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 1,
+            "UseDynamicShifting": true,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 6400,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ],
+      "Link": "https://huggingface.co/krea/Krea-2-Turbo"
     },
     {
       "Id": 300,
@@ -28114,6 +28356,168 @@
         ]
       },
       "Link": "https://huggingface.co/circlestone-labs/Anima-Official-LoRAs"
+    },
+    {
+      "Id": 300,
+      "Backend": "Pytorch",
+      "Name": "Retro Anime",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "retroanime",
+      "Triggers": [ "Purple retro anime style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-retroanime/resolve/main/retroanime.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-retroanime"
+    },
+    {
+      "Id": 301,
+      "Backend": "Pytorch",
+      "Name": "Soft Watercolor",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "softwatercolor",
+      "Triggers": [ "Art Deco watercolor style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-softwatercolor/resolve/main/softwatercolor.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-softwatercolor"
+    },
+    {
+      "Id": 302,
+      "Backend": "Pytorch",
+      "Name": "Vintage Tarot",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "vintagetarot",
+      "Triggers": [ "vintage tarot style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-vintagetarot/resolve/main/vintagetarot.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-vintagetarot"
+    },
+    {
+      "Id": 303,
+      "Backend": "Pytorch",
+      "Name": "Kids Drawing",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "kidsdrawing",
+      "Triggers": [ "naive expressive sketch style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-kidsdrawing/resolve/main/kidsdrawing.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-kidsdrawing"
+    },
+    {
+      "Id": 304,
+      "Backend": "Pytorch",
+      "Name": "Rainy Window",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "rainywindow",
+      "Triggers": [ "rainy window style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-rainywindow/resolve/main/rainywindow.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-rainywindow"
+    },
+    {
+      "Id": 305,
+      "Backend": "Pytorch",
+      "Name": "Sunset Blur",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "sunsetblur",
+      "Triggers": [ "ethereal motion blur style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-sunsetblur/resolve/main/sunsetblur.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-sunsetblur"
+    },
+    {
+      "Id": 306,
+      "Backend": "Pytorch",
+      "Name": "Dark Brush",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "darkbrush",
+      "Triggers": [ "monochrome ink wash style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-darkbrush/resolve/main/darkbrush.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-darkbrush"
+    },
+    {
+      "Id": 307,
+      "Backend": "Pytorch",
+      "Name": "Dotmatrix",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "dotmatrix",
+      "Triggers": [ "Monochrome stippling style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-dotmatrix/resolve/main/dotmatrix.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-dotmatrix"
+    },
+    {
+      "Id": 308,
+      "Backend": "Pytorch",
+      "Name": "Neon Drip",
+      "RepoName": "krea",
+      "Pipeline": "Krea2Pipeline",
+      "Key": "neondrip",
+      "Triggers": [ "Textured abstract style" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "Folder": "Krea2",
+        "DownloadFiles": [
+          "https://huggingface.co/krea/Krea-2-LoRA-neondrip/resolve/main/neondrip.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/krea/Krea-2-LoRA-neondrip"
     }
   ],
   "ControlNetModels": [

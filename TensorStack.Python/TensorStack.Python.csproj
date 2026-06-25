@@ -144,6 +144,12 @@
     <None Include="Pipelines\Kandinsky5Pipeline.py" Pack="false" />
   </ItemGroup>
 
+  <!--Krea2Pipeline-->
+  <ItemGroup>
+    <Content Include="Pipelines\Krea2Pipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
+    <None Include="Pipelines\Krea2Pipeline.py" Pack="false" />
+  </ItemGroup>
+
   <!--LTXPipeline-->
   <ItemGroup>
     <Content Include="Pipelines\LTXPipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
