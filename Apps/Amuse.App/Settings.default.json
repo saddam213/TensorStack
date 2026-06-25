@@ -8474,15 +8474,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 8, 16, 22 ]
+          "MemoryModes": [ 8, 20, 23 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 8, 18, 24 ]
+          "MemoryModes": [ 8, 28, 30 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 8, 28, 36 ]
+          "MemoryModes": [ 8, 42, 46 ]
         }
       ],
       "DefaultOptions": {
@@ -8595,15 +8595,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 8, 16, 22 ]
+          "MemoryModes": [ 8, 20, 23 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 8, 18, 24 ]
+          "MemoryModes": [ 8, 28, 30 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 8, 28, 36 ]
+          "MemoryModes": [ 8, 42, 46 ]
         }
       ],
       "DefaultOptions": {
