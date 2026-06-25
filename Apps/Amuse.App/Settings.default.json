@@ -8720,15 +8720,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 8, 20, 23 ]
+          "MemoryModes": [ 8, 11, 18 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 8, 28, 30 ]
+          "MemoryModes": [ 8, 17, 26 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 8, 42, 46 ]
+          "MemoryModes": [ 8, 21, 38 ]
         }
       ],
       "DefaultOptions": {
