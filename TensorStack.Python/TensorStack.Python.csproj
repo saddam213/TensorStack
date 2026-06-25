@@ -132,6 +132,12 @@
     <None Include="Pipelines\IdeogramPipeline.py" Pack="false" />
   </ItemGroup>
 
+  <!--JoyImagePipeline-->
+  <ItemGroup>
+    <Content Include="Pipelines\JoyImagePipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
+    <None Include="Pipelines\JoyImagePipeline.py" Pack="false" />
+  </ItemGroup>
+
   <!--LongCatAudioPipeline-->
   <ItemGroup>
     <Content Include="Pipelines\LongCatAudioPipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
