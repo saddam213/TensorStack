@@ -1,0 +1,28 @@
+{
+  "_class_name": "JoyImageEditPipeline",
+  "_diffusers_version": "0.38.0.dev0",
+  "processor": [
+    "transformers",
+    "Qwen3VLProcessor"
+  ],
+  "scheduler": [
+    "diffusers",
+    "FlowMatchEulerDiscreteScheduler"
+  ],
+  "text_encoder": [
+    "transformers",
+    "Qwen3VLForConditionalGeneration"
+  ],
+  "tokenizer": [
+    "transformers",
+    "Qwen2TokenizerFast"
+  ],
+  "transformer": [
+    "diffusers",
+    "JoyImageEditTransformer3DModel"
+  ],
+  "vae": [
+    "diffusers",
+    "AutoencoderKLWan"
+  ]
+}

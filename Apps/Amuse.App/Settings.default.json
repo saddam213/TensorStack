@@ -8679,6 +8679,131 @@
       "Link": "https://huggingface.co/krea/Krea-2-Turbo"
     },
     {
+      "Id": 231,
+      "Backend": "PyTorch",
+      "Name": "JoyAI Image Edit",
+      "Template": "JoyImage",
+      "Pipeline": "JoyImagePipeline",
+      "ModelType": "Turbo",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageEdit" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_8B-VL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "JoyAI-Image-Edit-Diffusers",
+          "DownloadFiles": [
+            "https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers/resolve/main/transformer/config.json",
+            "https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors.index.json",
+            "https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers/resolve/main/transformer/diffusion_pytorch_model-00001-of-00007.safetensors",
+            "https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers/resolve/main/transformer/diffusion_pytorch_model-00002-of-00007.safetensors",
+            "https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers/resolve/main/transformer/diffusion_pytorch_model-00003-of-00007.safetensors",
+            "https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers/resolve/main/transformer/diffusion_pytorch_model-00004-of-00007.safetensors",
+            "https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers/resolve/main/transformer/diffusion_pytorch_model-00005-of-00007.safetensors",
+            "https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers/resolve/main/transformer/diffusion_pytorch_model-00006-of-00007.safetensors",
+            "https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers/resolve/main/transformer/diffusion_pytorch_model-00007-of-00007.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 11, 18 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 17, 26 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 21, 38 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4,
+        "GuidanceScale2": 0,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 1.5,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 6400,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ],
+      "Link": "https://huggingface.co/jdopensource/JoyAI-Image-Edit-Diffusers"
+    },
+    {
       "Id": 300,
       "Backend": "PyTorch",
       "Name": "ACE-Step v1.5",
