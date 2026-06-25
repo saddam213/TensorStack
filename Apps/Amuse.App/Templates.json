@@ -3344,7 +3344,7 @@
       "ModelType": "Base",
       "BaseType": "bfloat16",
       "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage" ],
+      "ProcessTypes": [ "ImageEdit" ],
       "Checkpoint": {
         "Vae": {
           "Name": "AutoEncoder",
@@ -3447,7 +3447,7 @@
       "ModelType": "Base",
       "BaseType": "bfloat16",
       "MediaType": "Image",
-      "ProcessTypes": [ "ImageEdit" ],
+      "ProcessTypes": [ "TextToImage" ],
       "Checkpoint": {
         "Vae": {
           "Name": "AutoEncoder",
