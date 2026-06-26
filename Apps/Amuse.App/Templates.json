@@ -3262,7 +3262,7 @@
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 8, 21, 38 ]
+          "MemoryModes": [ 8, 32, 38 ]
         }
       ],
       "DefaultOptions": {
@@ -3281,7 +3281,7 @@
             "BaseShift": 0.5,
             "MaxShift": 1.15,
             "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 6400,
+            "MaxImageSeqLen": 4096,
             "InvertSigmas": false,
             "ShiftTerminal": 0,
             "UseKarrasSigmas": false,
@@ -5951,6 +5951,223 @@
         {
           "Width": 3840,
           "Height": 2176
+        }
+      ]
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "PrxPixel_Base",
+      "Template": "PrxPixel",
+      "Pipeline": "PrxPixelPipeline",
+      "ModelType": "Turbo",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_PRX"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6, 7, 9 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 6, 10, 12 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 6, 16, 20 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 28,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 5,
+        "GuidanceScale2": 0,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 3,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          },
+          {
+            "Scheduler": "UniPCMultistep",
+            "NumTrainTimesteps": 1000,
+            "BetaStart": 0.0001,
+            "BetaEnd": 0.02,
+            "BetaSchedule": "Linear",
+            "TrainedBetas": null,
+            "SolverOrder": 2,
+            "PredictionType": "FlowPrediction",
+            "Thresholding": false,
+            "DynamicThresholdingRatio": 0.995,
+            "SampleMaxValue": 1,
+            "PredictX0": true,
+            "SolverType": "BH2",
+            "LowerOrderFinal": true,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "UseFlowSigmas": true,
+            "FlowShift": 6,
+            "TimestepSpacing": "Linspace",
+            "StepsOffset": 0,
+            "FinalSigmasType": "Zero",
+            "RescaleBetasZeroSNR": false,
+            "UseDynamicShifting": false,
+            "TimeShiftType": "Exponential",
+            "SigmaMin": 0,
+            "SigmaMax": 0,
+            "ShiftTerminal": 0
+          },
+          {
+            "Scheduler": "DPMSolverMultistep",
+            "NumTrainTimesteps": 1000,
+            "BetaStart": 0.0001,
+            "BetaEnd": 0.02,
+            "BetaSchedule": "ScaledLinear",
+            "TrainedBetas": null,
+            "SolverOrder": 2,
+            "PredictionType": "FlowPrediction",
+            "Thresholding": false,
+            "DynamicThresholdingRatio": 0.995,
+            "SampleMaxValue": 1,
+            "AlgorithmType": "DPMSolverPlus",
+            "SolverType": "Midpoint",
+            "EulerAtFinal": false,
+            "LowerOrderFinal": true,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "UseFlowSigmas": true,
+            "UseLuLambdas": false,
+            "FlowShift": 6,
+            "TimestepSpacing": "Linspace",
+            "StepsOffset": 0,
+            "FinalSigmasType": "Zero",
+            "RescaleBetasZeroSNR": false,
+            "UseDynamicShifting": false,
+            "TimeShiftType": "Exponential"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 704,
+          "Height": 1440
+        },
+        {
+          "Width": 736,
+          "Height": 1408
+        },
+        {
+          "Width": 736,
+          "Height": 1344
+        },
+        {
+          "Width": 768,
+          "Height": 1312
+        },
+        {
+          "Width": 768,
+          "Height": 1280
+        },
+        {
+          "Width": 800,
+          "Height": 1248
+        },
+        {
+          "Width": 832,
+          "Height": 1216
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 928,
+          "Height": 1120
+        },
+        {
+          "Width": 992,
+          "Height": 1056
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1056,
+          "Height": 992
+        },
+        {
+          "Width": 1088,
+          "Height": 960
+        },
+        {
+          "Width": 1120,
+          "Height": 928
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1184,
+          "Height": 864
+        },
+        {
+          "Width": 1216,
+          "Height": 832
+        },
+        {
+          "Width": 1248,
+          "Height": 832
+        },
+        {
+          "Width": 1312,
+          "Height": 768
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1376,
+          "Height": 736
+        },
+        {
+          "Width": 1408,
+          "Height": 736
+        },
+        {
+          "Width": 1440,
+          "Height": 704
         }
       ]
     },
@@ -11787,6 +12004,16 @@
         {
           "Name": "2.3 Distilled",
           "Template": "LTX23_Distilled"
+        }
+      ]
+    },
+    {
+      "Name": "PRX-Pixel",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Base",
+          "Template": "PrxPixel_Base"
         }
       ]
     },

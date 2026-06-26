@@ -451,7 +451,7 @@ def _progress_callback(pipe, step: int, total_steps: int, info: Dict, height: in
     def preview_latents(latents):
         if latents is None:
             return []
-        return latents.float().cpu()
+        return latents.squeeze(0).float().cpu()
 
     steps = pipe._num_timesteps
     elapsed = _stopwatch.reset()
