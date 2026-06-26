@@ -19,6 +19,8 @@ namespace Amuse.App.Services
         private readonly SemaphoreSlim _asyncLock;
         private readonly string _previewModelDirectory;
         private ModelSession<ModelConfig> _previewModelSession;
+        private MediaType _mediaType;
+        private PipelineType _pipelineType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PreviewService"/> class.
@@ -45,33 +47,24 @@ namespace Amuse.App.Services
                 return;
 
             var timestamp = Stopwatch.GetTimestamp();
-            var device = pipeline.Device;
-            var mediaType = pipeline.DiffusionModel.MediaType;
-            var pipelineType = pipeline.DiffusionModel.Pipeline;
-            _logger.LogInformation("[Load] Loading {pipelineType} preview model...", pipelineType);
+            _mediaType = pipeline.DiffusionModel.MediaType;
+            _pipelineType = pipeline.DiffusionModel.Pipeline;
+          
 
             try
             {
-                var previewModelPath = GetModelPath(pipelineType, mediaType);
-                if (!File.Exists(previewModelPath))
+                _previewModelSession = CreateModelSession(pipeline.Device);
+                if (_previewModelSession != null)
                 {
-                    _logger.LogInformation("[Load] No preview model found for {pipelineType}", pipelineType);
-                    return;
+                    await _previewModelSession.LoadAsync(cancellationToken: cancellationToken);
+                    _logger.LogInformation("[Load] {pipelineType} preview model loaded, Elapsed: {Elapsed:c}", _pipelineType, Stopwatch.GetElapsedTime(timestamp));
                 }
-
-                _previewModelSession = new ModelSession<ModelConfig>(new ModelConfig
-                {
-                    Path = previewModelPath,
-                    ExecutionProvider = device.GetProvider(Microsoft.ML.OnnxRuntime.GraphOptimizationLevel.ORT_DISABLE_ALL),
-                });
-                await _previewModelSession.LoadAsync(cancellationToken: cancellationToken);
-                _logger.LogInformation("[Load] {pipelineType} preview model loaded, Elapsed: {Elapsed:c}", pipelineType, Stopwatch.GetElapsedTime(timestamp));
             }
             catch (Exception ex)
             {
                 _previewModelSession?.Dispose();
                 _previewModelSession = null;
-                _logger.LogError(ex, "[Load] An exception occured loading preview model, Pipeline: {pipelineType}", pipelineType);
+                _logger.LogError(ex, "[Load] An exception occured loading preview model, Pipeline: {pipelineType}", _pipelineType);
             }
         }
 
@@ -109,7 +102,7 @@ namespace Amuse.App.Services
         /// <param name="cancellationToken">The cancellation token.</param>
         public async Task<ImageInput> GenerateAsync(Tensor<float> inputTensor, CancellationToken cancellationToken = default)
         {
-            if (!_settings.IsDiffusionImagePreviewEnabled || _previewModelSession == null || !_previewModelSession.IsLoaded())
+            if (!_settings.IsDiffusionImagePreviewEnabled)
                 return default;
 
             if (!await _asyncLock.WaitAsync(0, cancellationToken))
@@ -118,19 +111,41 @@ namespace Amuse.App.Services
             var timestamp = Stopwatch.GetTimestamp();
             try
             {
-                _logger.LogInformation("[Generate] Generating preview image...");
-                using (var modelParameters = new ModelParameters(_previewModelSession.Metadata, cancellationToken))
+                switch (_pipelineType)
                 {
-                    modelParameters.AddInput(inputTensor);
-                    modelParameters.AddOutput();
-                    using (var results = _previewModelSession.RunInference(modelParameters))
-                    {
-                        return await results[0]
-                            .ToTensor()
-                            .AsImageTensor()
-                            .ToImageInputAsync();
-                    }
+                    case PipelineType.GlmImagePipeline:
+                        return default; // not supported
+
+                    // OnnxRuntime Inference
+                    case PipelineType.StableDiffusionPipeline:
+                    case PipelineType.LatentConsistencyPipeline:
+                    case PipelineType.StableDiffusionXLPipeline:
+                    case PipelineType.StableDiffusion3Pipeline:
+                    case PipelineType.FluxPipeline:
+                    case PipelineType.ChromaPipeline:
+                    case PipelineType.ZImagePipeline:
+                    case PipelineType.Flux2Pipeline:
+                    case PipelineType.Flux2KleinPipeline:
+                    case PipelineType.ErniePipeline:
+                    case PipelineType.IdeogramPipeline:
+                    case PipelineType.AnimaPipeline:
+                    case PipelineType.QwenImagePipeline:
+                    case PipelineType.Krea2Pipeline:
+                    case PipelineType.Kandinsky5Pipeline:
+                    case PipelineType.JoyImagePipeline:
+                        return await RunInferenceAsync(inputTensor, cancellationToken);
+
+                    // Pixel Space
+                    case PipelineType.PrxPixelPipeline:
+                        return await inputTensor
+                        .AsImageTensor()
+                        .ToImageInputAsync();
+
+                    default:
+                        break;
                 }
+
+                return default;
             }
             catch (Exception ex)
             {
@@ -146,12 +161,58 @@ namespace Amuse.App.Services
 
 
         /// <summary>
+        /// Creates the model session.
+        /// </summary>
+        /// <param name="device">The device.</param>
+        private ModelSession<ModelConfig> CreateModelSession(DeviceModel device)
+        {
+            var previewModelPath = GetModelPath();
+            if (!File.Exists(previewModelPath))
+            {
+                _logger.LogInformation("[Load] No preview model found for {pipelineType}", _pipelineType);
+                return null;
+            }
+
+            _logger.LogInformation("[Load] Loading {pipelineType} preview model...", _pipelineType);
+            return new ModelSession<ModelConfig>(new ModelConfig
+            {
+                Path = previewModelPath,
+                ExecutionProvider = device.GetProvider(Microsoft.ML.OnnxRuntime.GraphOptimizationLevel.ORT_DISABLE_ALL),
+            });
+        }
+
+
+        /// <summary>
+        /// Run inference
+        /// </summary>
+        /// <param name="inputTensor">The input tensor.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        private async Task<ImageInput> RunInferenceAsync(Tensor<float> inputTensor, CancellationToken cancellationToken = default)
+        {
+            if (_previewModelSession == null || !_previewModelSession.IsLoaded())
+                return default;
+
+            using (var modelParameters = new ModelParameters(_previewModelSession.Metadata, cancellationToken))
+            {
+                modelParameters.AddInput(inputTensor);
+                modelParameters.AddOutput();
+                using (var results = _previewModelSession.RunInference(modelParameters))
+                {
+                    return await results[0]
+                        .ToTensor()
+                        .AsImageTensor()
+                        .ToImageInputAsync();
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Gets the model path.
         /// </summary>
-        /// <param name="pipelineType">Type of the pipeline.</param>
-        private string GetModelPath(PipelineType pipelineType, MediaType mediaType)
+        private string GetModelPath()
         {
-            switch (pipelineType)
+            switch (_pipelineType)
             {
                 case PipelineType.GlmImagePipeline:
                     return null; // not supported
@@ -175,9 +236,10 @@ namespace Amuse.App.Services
                 case PipelineType.AnimaPipeline:
                 case PipelineType.QwenImagePipeline:
                 case PipelineType.Krea2Pipeline:
+                case PipelineType.JoyImagePipeline:
                     return Path.Combine(_previewModelDirectory, "Qwen.onnx");
                 case PipelineType.Kandinsky5Pipeline:
-                    return mediaType switch
+                    return _mediaType switch
                     {
                         MediaType.Image => Path.Combine(_previewModelDirectory, "Flux1.onnx"),
                         _ => null

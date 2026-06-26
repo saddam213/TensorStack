@@ -12,11 +12,10 @@ from threading import Event
 from functools import partial
 from collections.abc import Buffer
 from typing import Dict, Sequence, List, Tuple, Optional, Any
-from transformers import Qwen2Tokenizer, Qwen3VLProcessor, Qwen3VLForConditionalGeneration
+from transformers import Qwen2Tokenizer, Qwen3VLTextModel
 from diffusers import (
-    AutoencoderKLWan,
-    JoyImageEditTransformer3DModel,
-    JoyImageEditPipeline
+    PRXTransformer2DModel,
+    PRXPixelPipeline
 )
 
 # Globals
@@ -36,8 +35,7 @@ _prompt_cache_value = None
 _cancel_event = Event()
 _stopwatch = None
 _pipelineMap = {
-    ProcessType.TextToImage: JoyImageEditPipeline,
-    ProcessType.ImageEdit: JoyImageEditPipeline
+    ProcessType.TextToImage: PRXPixelPipeline
 }
 
 
@@ -171,7 +169,7 @@ def load_tokenizer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str
 
 
 #------------------------------------------------
-# Load Qwen3VLForConditionalGeneration
+# Load Qwen3VLTextModel
 #------------------------------------------------
 def load_text_encoder(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
     if _pipeline and _pipeline.text_encoder:
@@ -183,7 +181,7 @@ def load_text_encoder(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[
 
     # 1. Load from pretrained folder
     print(f"[Load] Loading Pretrained TextEncoder")
-    text_encoder = Qwen3VLForConditionalGeneration.from_pretrained(
+    text_encoder = Qwen3VLTextModel.from_pretrained(
         text_encoder_path,
         config=text_encoder_config,
         dtype=config.data_type,
@@ -196,28 +194,7 @@ def load_text_encoder(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[
 
 
 #------------------------------------------------
-# Load Qwen3VLProcessor
-#------------------------------------------------
-def load_processor(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
-    if _pipeline and _pipeline.processor:
-        print(f"[Load] Loading Cached Processor")
-        return _pipeline.processor
-
-    processor_path: Path = _model_config["text_encoder"]
-    processor_config: Path = _model_config["text_encoder_config"]
-
-    # 1. Load from pretrained folder
-    print(f"[Load] Loading Pretrained Processor")
-    processor = Qwen3VLProcessor.from_pretrained(
-        processor_path,
-        dtype=config.data_type,
-        **pipeline_kwargs
-    )
-    return processor
-
-
-#------------------------------------------------
-# Load JoyImageEditTransformer3DModel
+# Load PRXTransformer2DModel
 #------------------------------------------------
 def load_transformer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
     if _pipeline and _pipeline.transformer:
@@ -231,7 +208,7 @@ def load_transformer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[s
     if transformer_path.is_file():
         is_gguf = Utils.isGGUF(transformer_path)
         print(f"[Load] Loading File Transformer")
-        transformer =  JoyImageEditTransformer3DModel.from_single_file(
+        transformer =  PRXTransformer2DModel.from_single_file(
             str(transformer_path),
             config=str(transformer_config),
             torch_dtype=config.data_type,
@@ -245,7 +222,7 @@ def load_transformer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[s
 
     # 2. Load from pretrained folder
     print(f"[Load] Loading Pretrained Transformer")
-    transformer =  JoyImageEditTransformer3DModel.from_pretrained(
+    transformer =  PRXTransformer2DModel.from_pretrained(
         str(transformer_path),
         torch_dtype=config.data_type,
         device_map=_device_map,
@@ -254,52 +231,6 @@ def load_transformer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[s
     )
     Utils.trim_memory(True)
     return transformer
-
-
-#------------------------------------------------
-# Load AutoencoderKLWan
-#------------------------------------------------
-def load_vae(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
-    if _pipeline and _pipeline.vae:
-        print(f"[Load] Loading Cached Vae")
-        return _pipeline.vae
-
-    vae_path: Path = _model_config["vae"]
-    vae_config: Path = _model_config["vae_config"]
-    single_path: Path = _model_config["single_file"]
-    template_path: Path  = _model_config["template"]
-
-    # 1. Load from single file
-    if vae_path.is_file():
-        print(f"[Load] Loading SingleFile Vae")
-        auto_encoder =  AutoencoderKLWan.from_single_file(
-            str(vae_path),
-            config=str(vae_config),
-            torch_dtype=config.data_type,
-            device_map=_device_map,
-            **pipeline_kwargs
-        )
-        Utils.trim_memory(True)
-        return auto_encoder
-
-    # 2. Load component from single file
-    if single_path and single_path.is_file():
-        print(f"[Load] Loading Component Vae")
-        auto_encoder = Utils.from_component(JoyImageEditPipeline, "vae", single_path, template_path, _device_map, config.data_type)
-        if auto_encoder:
-            Utils.trim_memory(True)
-            return auto_encoder
-
-    # 3. Load from pretrained folder
-    print(f"[Load] Loading Pretrained Vae")
-    auto_encoder = AutoencoderKLWan.from_pretrained(
-        str(vae_path),
-        torch_dtype=config.data_type,
-        device_map=_device_map,
-        **pipeline_kwargs
-    )
-    Utils.trim_memory(True)
-    return auto_encoder
 
 
 #------------------------------------------------
@@ -343,9 +274,7 @@ def create_pipeline(config: DataObjects.PipelineConfig):
     # Load Models
     tokenizer = load_tokenizer(config, pipeline_kwargs)
     text_encoder = load_text_encoder(config, pipeline_kwargs)
-    processor = load_processor(config, pipeline_kwargs)
     transformer = load_transformer(config, pipeline_kwargs)
-    vae = load_vae(config, pipeline_kwargs)
     control_net = load_control_net(config, pipeline_kwargs)
     if control_net is not None:
         pipeline_kwargs.update({"controlnet": control_net})
@@ -357,8 +286,6 @@ def create_pipeline(config: DataObjects.PipelineConfig):
         tokenizer=tokenizer,
         text_encoder=text_encoder,
         transformer=transformer,
-        vae=vae,
-        processor=processor,
         torch_dtype=config.data_type,
         device_map=_pipeline_device_map,
         **pipeline_kwargs
@@ -393,9 +320,6 @@ def generate(
     # Scheduler
     _pipeline.scheduler = Utils.create_scheduler(options.scheduler_options)
 
-    # AutoEncoder
-    Utils.configure_vae_memory(_pipeline, options.enable_vae_tiling, options.enable_vae_slicing)
-
     # Lora Adapters
     Utils.set_lora_weights(_pipeline, options)
 
@@ -403,15 +327,28 @@ def generate(
     Utils.notification_push(key="Generate", subkey="TextEncoder", elapsedkey="Initialize", elapsed=_stopwatch.reset())
 
     # Prompt Cache
-    # None
+    prompt_cache_key = (options.prompt, options.negative_prompt, options.guidance_scale > 1)
+    if _prompt_cache_key != prompt_cache_key:
+        print(f"[Generate] Encoding prompt")
+        with torch.no_grad():
+            _prompt_cache_value = _pipeline.encode_prompt(
+                prompt=options.prompt,
+                negative_prompt=options.negative_prompt,
+                do_classifier_free_guidance=options.guidance_scale > 1,
+                device=_pipeline._execution_device
+            )
+            _prompt_cache_key = prompt_cache_key
 
     # Notify
     Utils.notification_push(key="Generate", subkey="Transformer", elapsedkey="TextEncoder", elapsed=_stopwatch.reset())
 
     # Pipeline Options
+    (prompt_embeds, prompt_attention_mask, negative_prompt_embeds, negative_prompt_attention_mask) = _prompt_cache_value
     pipeline_options = {
-        "prompt": options.prompt,
-        "negative_prompt": options.negative_prompt,
+        "prompt_embeds": prompt_embeds,
+        "prompt_attention_mask": prompt_attention_mask,
+        "negative_prompt_embeds": negative_prompt_embeds,
+        "negative_prompt_attention_mask": negative_prompt_attention_mask,
         "height": options.height,
         "width": options.width,
         "generator": _generator.manual_seed(options.seed),
@@ -422,9 +359,6 @@ def generate(
         "callback_on_step_end_tensor_inputs": ["latents"],
     }
 
-    if _processType == ProcessType.ImageEdit:
-        pipeline_options.update({ "image": images})
-
     # Run Pipeline
     output = _pipeline(**pipeline_options)[0]
 
@@ -432,8 +366,7 @@ def generate(
     output = output.transpose(0, 3, 1, 2).astype(np.float32)
 
     # Notify
-    Utils.notification_push(key="Generate", subkey="AutoEncoder", elapsedkey="Transformer", elapsed = _stopwatch.reset())
-    Utils.notification_push(key="Generate", subkey="Complete", elapsedkey="AutoEncoder", elapsed = _stopwatch.stop())
+    Utils.notification_push(key="Generate", subkey="Complete", elapsedkey="Transformer", elapsed = _stopwatch.stop())
 
     # Cleanup
     Utils.trim_memory(_isMemoryOffload)
@@ -451,9 +384,9 @@ def _progress_callback(pipe, step: int, total_steps: int, info: Dict, height: in
     def preview_latents(latents):
         if latents is None:
             return []
-        return latents.squeeze(0).float().cpu()
+        return latents.float().cpu()
 
-    steps = pipe._num_timesteps
+    steps = len(pipe.scheduler.timesteps)
     elapsed = _stopwatch.reset()
     step_latents = preview_latents(info.get("latents"))
     Utils.notification_push(key="Generate", subkey="Step", elapsedkey="Step", value=step + 1, maximum=steps, elapsed=elapsed, tensor=step_latents)

@@ -56,6 +56,8 @@ namespace Amuse.App.Common
         [Display(Name = "JoyAI Pipeline", ShortName = "JoyAI")]
         JoyImagePipeline = 66,
 
+        [Display(Name = "PRX-Pixel Pipeline", ShortName = "PRX-Pixel")]
+        PrxPixelPipeline = 67,
 
         // Video
         [Display(Name = "Wan Pipeline", ShortName = "Wan")]

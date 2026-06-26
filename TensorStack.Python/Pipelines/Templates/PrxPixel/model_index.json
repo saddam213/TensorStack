@@ -1,0 +1,22 @@
+{
+  "_class_name": "PRXPixelPipeline",
+  "_diffusers_version": "0.37.0.dev0",
+  "_name_or_path": "best-model-diffusers",
+  "default_sample_size": 1024,
+  "scheduler": [
+    "diffusers",
+    "FlowMatchEulerDiscreteScheduler"
+  ],
+  "text_encoder": [
+    "transformers",
+    "Qwen3VLTextModel"
+  ],
+  "tokenizer": [
+    "transformers",
+    "Qwen2TokenizerFast"
+  ],
+  "transformer": [
+    "diffusers",
+    "PRXTransformer2DModel"
+  ]
+}

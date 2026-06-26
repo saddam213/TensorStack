@@ -168,6 +168,12 @@
     <None Include="Pipelines\LTX20Pipeline.py" Pack="false" />
   </ItemGroup>
 
+  <!--PrxPixelPipeline-->
+  <ItemGroup>
+    <Content Include="Pipelines\PrxPixelPipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
+    <None Include="Pipelines\PrxPixelPipeline.py" Pack="false" />
+  </ItemGroup>
+
   <!--QwenImagePipeline-->
   <ItemGroup>
     <Content Include="Pipelines\QwenImagePipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />

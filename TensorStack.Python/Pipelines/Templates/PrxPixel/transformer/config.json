@@ -1,0 +1,21 @@
+{
+  "_class_name": "PRXTransformer2DModel",
+  "_diffusers_version": "0.39.0.dev0",
+  "_name_or_path": "checkpoints_prx/best-model-diffusers/transformer",
+  "axes_dim": [
+    64,
+    64
+  ],
+  "bottleneck_size": 768,
+  "context_in_dim": 2048,
+  "depth": 24,
+  "hidden_size": 3584,
+  "in_channels": 3,
+  "mlp_ratio": 3.5,
+  "num_heads": 28,
+  "patch_size": 16,
+  "resolution_embeds": true,
+  "theta": 10000,
+  "time_factor": 1000.0,
+  "time_max_period": 10000
+}
