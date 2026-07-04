@@ -46,6 +46,12 @@
 
   <!--Python Lib-->
   <ItemGroup>
+    <Content Include="Pipelines\Cosmos2Pipeline.py">
+      <PackagePath>contentFiles\any\any\Pipelines\</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+      <Pack>true</Pack>
+    </Content>
     <Content Include="Python\lib\tensorstack\enums.py" Pack="true" PackagePath="contentFiles\any\any\Python\lib\tensorstack\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
     <Content Include="Python\lib\tensorstack\export.py" Pack="true" PackagePath="contentFiles\any\any\Python\lib\tensorstack\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
     <Content Include="Python\lib\tensorstack\utils.py" Pack="true" PackagePath="contentFiles\any\any\Python\lib\tensorstack\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
