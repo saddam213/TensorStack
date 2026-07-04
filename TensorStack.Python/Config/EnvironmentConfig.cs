@@ -19,7 +19,7 @@ namespace TensorStack.Python.Config
             "wheel==0.46.3",
             "transformers==5.5.4",
             "accelerate==1.13.0",
-            "diffusers@https://github.com/huggingface/diffusers/archive/eb0a900caac8625dd02d4c403b8e7c3ae12b8733.zip",
+            "diffusers==0.39.0",
             "protobuf==7.34.1",
             "sentencepiece==0.2.1",
             "ftfy==6.3.1",
@@ -71,10 +71,10 @@ namespace TensorStack.Python.Config
             },
             Requirements =
             [
-                "--extra-index-url https://download.pytorch.org/whl/cu128",
-                "torch==2.9.1+cu128",
-                "torchaudio==2.9.1+cu128",
-                "torchvision==0.24.1+cu128",
+                "--extra-index-url https://download.pytorch.org/whl/cu130",
+                "torch==2.11.0+cu130",
+                "torchaudio==2.11.0+cu130",
+                "torchvision==0.26.0+cu130",
                 ..DefaultRequirements,
             ]
         };
