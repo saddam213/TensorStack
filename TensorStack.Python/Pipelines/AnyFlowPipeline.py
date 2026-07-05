@@ -405,7 +405,6 @@ def generate(
         "num_frames": options.frames,
         "generator": _generator.manual_seed(options.seed),
         "guidance_scale": options.guidance_scale,
-        "guidance_scale_2": options.guidance_scale2 if options.guidance_scale2 > 0 else None,
         "num_inference_steps": options.steps,
         "output_type": "np",
         "callback_on_step_end": partial(_progress_callback, height=options.height, width=options.width),

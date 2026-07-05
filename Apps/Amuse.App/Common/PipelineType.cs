@@ -81,6 +81,9 @@ namespace Amuse.App.Common
         [Display(Name = "Motif Video Pipeline", ShortName = "Motif")]
         MotifVideoPipeline = 111,
 
+        [Display(Name = "AnyFlow Pipeline", ShortName = "AnyFlow")]
+        AnyFlowPipeline = 112,
+
 
         // Audio
         [Display(Name = "AceStep Pipeline", ShortName = "AceStep")]

@@ -8825,6 +8825,204 @@
       "Link": "https://huggingface.co/Motif-Technologies/Motif-Video-2B"
     },
     {
+      "Id": 234,
+      "Backend": "PyTorch",
+      "Name": "AnyFlow 1B",
+      "Template": "AnyFlow_1B",
+      "Pipeline": "AnyFlowPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "AnyFlow-Wan2.1-T2V-1.3B-Diffusers",
+          "DownloadFiles": [
+            "https://huggingface.co/nvidia/AnyFlow-Wan2.1-T2V-1.3B-Diffusers/resolve/main/transformer/config.json",
+            "https://huggingface.co/nvidia/AnyFlow-Wan2.1-T2V-1.3B-Diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 6, 10 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 8, 12 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 12, 18 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 4,
+        "Frames": 81,
+        "FrameRate": 16,
+        "Width": 720,
+        "Height": 480,
+        "GuidanceScale": 1,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 5,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          33,
+          49,
+          65,
+          81,
+          97,
+          113,
+          129,
+          161,
+          193,
+          257
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 720,
+          "Height": 480,
+          "IsDefault": true
+        }
+      ],
+      "Link": "https://huggingface.co/nvidia/AnyFlow-Wan2.1-T2V-1.3B-Diffusers"
+    },
+    {
+      "Id": 235,
+      "Backend": "PyTorch",
+      "Name": "AnyFlow 14B",
+      "Template": "AnyFlow_14B",
+      "Pipeline": "AnyFlowPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "AnyFlow-Wan2.1-T2V-14B-Diffusers",
+          "DownloadFiles": [
+            "https://huggingface.co/nvidia/AnyFlow-Wan2.1-T2V-14B-Diffusers/resolve/main/transformer/config.json",
+            "https://huggingface.co/nvidia/AnyFlow-Wan2.1-T2V-14B-Diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors.index.json",
+            "https://huggingface.co/nvidia/AnyFlow-Wan2.1-T2V-14B-Diffusers/resolve/main/transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+            "https://huggingface.co/nvidia/AnyFlow-Wan2.1-T2V-14B-Diffusers/resolve/main/transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+            "https://huggingface.co/nvidia/AnyFlow-Wan2.1-T2V-14B-Diffusers/resolve/main/transformer/diffusion_pytorch_model-00003-of-00003.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 21, 38 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 21, 38 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 34, 52 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 4,
+        "Frames": 81,
+        "FrameRate": 16,
+        "Width": 720,
+        "Height": 480,
+        "GuidanceScale": 1,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 5,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ],
+        "FrameOptions": [
+          33,
+          49,
+          65,
+          81,
+          97,
+          113,
+          129,
+          161,
+          193,
+          257
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 720,
+          "Height": 480,
+          "IsDefault": true
+        }
+      ],
+      "Link": "https://huggingface.co/nvidia/AnyFlow-Wan2.1-T2V-14B-Diffusers"
+    },
+    {
       "Id": 300,
       "Backend": "PyTorch",
       "Name": "ACE-Step v1.5",
