@@ -381,6 +381,9 @@ def generate(
     # Notify
     Utils.notification_push(key="Generate", subkey="TextEncoder", elapsedkey="Initialize", elapsed=_stopwatch.reset())
 
+    # Guidance
+    _pipeline.guider = _pipeline.guider.new(guidance_scale=options.guidance_scale)
+
     # Prompt Cache
     prompt_cache_key = (options.prompt, options.negative_prompt, options.guidance_scale > 1)
     if _prompt_cache_key != prompt_cache_key:
@@ -389,7 +392,6 @@ def generate(
             _prompt_cache_value = _pipeline.encode_prompt(
                 prompt=options.prompt,
                 negative_prompt=options.negative_prompt,
-                do_classifier_free_guidance=options.guidance_scale > 1,
                 device=_pipeline._execution_device
             )
             _prompt_cache_key = prompt_cache_key
@@ -408,8 +410,6 @@ def generate(
         "width": options.width,
         "num_frames": options.frames,
         "generator": _generator.manual_seed(options.seed),
-        "guidance_scale": options.guidance_scale,
-        "guidance_scale_2": options.guidance_scale2 if options.guidance_scale2 > 0 else None,
         "num_inference_steps": options.steps,
         "output_type": "np",
         "callback_on_step_end": partial(_progress_callback, height=options.height, width=options.width),
