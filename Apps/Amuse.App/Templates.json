@@ -5681,6 +5681,92 @@
     },
     {
       "Backend": "PyTorch",
+      "Name": "MotifVideo_2B",
+      "Template": "MotifVideo_2B",
+      "Pipeline": "MotifVideoPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo", "ImageToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_T5_G_4B"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 11, 18 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 24, 32 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 32, 42 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "Width": 1280,
+        "Height": 736,
+        "Frames": 121,
+        "FrameRate": 24,
+        "GuidanceScale": 8,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 3,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ],
+        "FrameOptions": [
+          65,
+          97,
+          121,
+          137,
+          161,
+          257
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1280,
+          "Height": 736,
+          "IsDefault": true
+        }
+      ]
+    },
+    {
+      "Backend": "PyTorch",
       "Name": "PrxPixel_Base",
       "Template": "PrxPixel",
       "Pipeline": "PrxPixelPipeline",
@@ -11615,6 +11701,16 @@
         {
           "Name": "2.3 Distilled",
           "Template": "LTX23_Distilled"
+        }
+      ]
+    },
+    {
+      "Name": "Motif",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Video 2B",
+          "Template": "MotifVideo_2B"
         }
       ]
     },
