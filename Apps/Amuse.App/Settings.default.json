@@ -974,6 +974,32 @@
           "https://huggingface.co/saddam213/Components/resolve/main/PRX_TextEncoder/vocab.json"
         ]
       }
+    },
+    {
+      "Id": 365,
+      "Backend": "PyTorch",
+      "Name": "T5 Gemma2 4B",
+      "Key": "TE_T5_G_4B",
+      "Link": "https://huggingface.co/google/t5gemma-2-4b-4b",
+      "Checkpoint": {
+        "Name": "Component",
+        "Type": "OnlineFolder",
+        "Folder": "TextEncoder",
+        "Path": "T5-Gemma-2-4B",
+        "DownloadFiles": [
+          "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/config.json",
+          "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/generation_config.json",
+          "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/model-00001-of-00004.safetensors",
+          "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/model-00002-of-00004.safetensors",
+          "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/model-00003-of-00004.safetensors",
+          "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/model-00004-of-00004.safetensors",
+          "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/model.safetensors.index.json",
+          "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/processor_config.json",
+          "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/special_tokens_map.json",
+          "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/tokenizer.json",
+          "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/tokenizer_config.json"
+        ]
+      }
     }
   ],
   "DiffusionModels": [
@@ -8704,6 +8730,99 @@
         }
       ],
       "Link": "https://huggingface.co/Photoroom/prxpixel-t2i"
+    },
+    {
+      "Id": 233,
+      "Backend": "PyTorch",
+      "Name": "Motif Video 2B",
+      "Template": "MotifVideo_2B",
+      "Pipeline": "MotifVideoPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo", "ImageToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_T5_G_4B"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFolder",
+          "Path": "transformer",
+          "Folder": "Motif-Video-2B",
+          "DownloadFiles": [
+            "https://huggingface.co/Motif-Technologies/Motif-Video-2B/resolve/main/transformer/config.json",
+            "https://huggingface.co/Motif-Technologies/Motif-Video-2B/resolve/main/transformer/diffusion_pytorch_model.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 11, 18 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 24, 32 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 32, 42 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "Width": 1280,
+        "Height": 736,
+        "Frames": 121,
+        "FrameRate": 24,
+        "GuidanceScale": 8,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "FlowMatchEuler",
+        "Schedulers": [
+          {
+            "Scheduler": "FlowMatchEuler",
+            "NumTrainTimesteps": 1000,
+            "Shift": 3,
+            "UseDynamicShifting": false,
+            "BaseShift": 0.5,
+            "MaxShift": 1.15,
+            "BaseImageSeqLen": 256,
+            "MaxImageSeqLen": 4096,
+            "InvertSigmas": false,
+            "ShiftTerminal": 0,
+            "UseKarrasSigmas": false,
+            "UseExponentialSigmas": false,
+            "UseBetaSigmas": false,
+            "TimeShiftType": "Exponential",
+            "StochasticSampling": false
+          }
+        ],
+        "FrameOptions": [
+          65,
+          97,
+          121,
+          137,
+          161,
+          257
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1280,
+          "Height": 736,
+          "IsDefault": true
+        }
+      ],
+      "Link": "https://huggingface.co/Motif-Technologies/Motif-Video-2B"
     },
     {
       "Id": 300,
