@@ -21,8 +21,6 @@ namespace Amuse.App.Common
 
         public int PCIBusId => _baseDevice.PCIBusId;
         public string DeviceType => _baseDevice.DeviceType;
-        public long HardwareLUID => _baseDevice.HardwareLUID;
-
         public string DeviceCode { get; init; }
         public QualityMode[] QualityModes { get; init; }
         public QualityMode DefaultQualityMode { get; init; }
