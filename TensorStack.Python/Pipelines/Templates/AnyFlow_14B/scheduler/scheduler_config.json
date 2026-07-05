@@ -1,0 +1,6 @@
+{
+  "_class_name": "FlowMapEulerDiscreteScheduler",
+  "_diffusers_version": "0.35.1",
+  "num_train_timesteps": 1000,
+  "shift": 5
+}

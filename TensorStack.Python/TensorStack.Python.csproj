@@ -78,6 +78,12 @@
     <None Include="Pipelines\AnimaPipeline.py" Pack="false" />
   </ItemGroup>
 
+  <!--AnyFlowPipeline-->
+  <ItemGroup>
+    <Content Include="Pipelines\AnyFlowPipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
+    <None Include="Pipelines\AnyFlowPipeline.py" Pack="false" />
+  </ItemGroup>
+
   <!--ChromaPipeline-->
   <ItemGroup>
     <Content Include="Pipelines\ChromaPipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
