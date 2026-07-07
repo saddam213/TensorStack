@@ -101,27 +101,27 @@ def pretrained_config(target: QuantTarget, backend: QuantBackend, vendor: Vendor
             if quant_type == QuantType.Q8Bit:
                 return TransformersBitsAndBytesConfig(load_in_8bit=True)
             elif quant_type == QuantType.Q4Bit:
-                return TransformersBitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=vendor_quant)
+                return TransformersBitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=vendor_quant, bnb_4bit_use_double_quant=True)
 
         elif target == QuantTarget.TRANSFORMER:
             if quant_type == QuantType.Q8Bit:
                 return DiffusersBitsAndBytesConfig(load_in_8bit=True)
             elif quant_type == QuantType.Q4Bit:
-                return DiffusersBitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=vendor_quant)
+                return DiffusersBitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=vendor_quant, bnb_4bit_use_double_quant=True)
 
     # TorchAO
     elif backend == QuantBackend.TorchAO:
         if target == QuantTarget.TEXT_ENCODER:
             if quant_type == QuantType.Q8Bit:
-                return TransformersTorchAoConfig(Int8WeightOnlyConfig(group_size=128, version=2))
+                return TransformersTorchAoConfig(Int8WeightOnlyConfig())
             elif quant_type == QuantType.Q4Bit:
-                return TransformersTorchAoConfig(Int4WeightOnlyConfig(group_size=128, version=2))
+                return TransformersTorchAoConfig(Int4WeightOnlyConfig())
 
         elif target == QuantTarget.TRANSFORMER:
             if quant_type == QuantType.Q8Bit:
-                return DiffusersTorchAoConfig(Int8WeightOnlyConfig(group_size=128, version=2))
+                return DiffusersTorchAoConfig(Int8WeightOnlyConfig())
             elif quant_type == QuantType.Q4Bit:
-                return DiffusersTorchAoConfig(Int4WeightOnlyConfig(group_size=128, version=2))
+                return DiffusersTorchAoConfig(Int4WeightOnlyConfig())
 
     return None
 

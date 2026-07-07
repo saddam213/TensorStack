@@ -16,22 +16,22 @@ namespace TensorStack.Python.Config
         public readonly static string[] DefaultRequirements =
         [
             "typing==3.7.4.3",
-            "wheel==0.46.3",
+            "wheel==0.47.0",
             "transformers==5.5.4",
-            "accelerate==1.13.0",
+            "accelerate==1.14.0",
             "diffusers==0.39.0",
-            "protobuf==7.34.1",
+            "protobuf==7.35.1",
             "sentencepiece==0.2.1",
             "ftfy==6.3.1",
-            "scipy==1.17.1",
+            "scipy==1.18.0",
             "peft==0.19.1",
-            "hf-xet==1.4.3",
             "torchsde==0.2.6",
-            "gguf==0.18.0",
-            "av==17.0.1",
+            "gguf==0.19.0",
+            "av==18.0.0",
+            "soundfile==0.14.0",
+            "torchao==0.17.0",
             "optimum-quanto==0.2.7",
-            "bitsandbytes==0.49.2",
-            "soundfile==0.13.1"
+            "bitsandbytes==0.49.2"
         ];
 
 
