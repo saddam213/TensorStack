@@ -192,7 +192,7 @@
 
                         <!--QualityMode-->
                         <ComboBox SelectedItem="{Binding SelectedQualityMode}" 
-                            ItemsSource="{Binding SelectedDevice.QualityModes}" 
+                            ItemsSource="{Binding SelectedDevice.QualityModes, TargetNullValue={x:Null}}" 
                             SelectionChanged="Memory_SelectionChanged" 
                             HorizontalContentAlignment="Stretch"
                             ToolTip="{Binding SelectedQualityMode, Converter={StaticResource EnumDescriptionConverter}}"

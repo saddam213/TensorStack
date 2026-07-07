@@ -23,6 +23,7 @@ namespace Amuse.App
         private bool _isVolumeOutputMute;
         private bool _isAutoUpdateEnabled = true;
         private bool _isUpdateAvailable;
+        private VendorType[] vendors;
 
         public Settings()
         {
@@ -34,7 +35,13 @@ namespace Amuse.App
         public int Version { get; set; }
         [AppDefault]
         public bool RunMigrations { get; set; }
-        public VendorType[] Vendors { get; set; }
+
+        [JsonIgnore]
+        public VendorType[] Vendors
+        {
+            get { return vendors; }
+            set { SetProperty(ref vendors, value); }
+        }
         public int DefaultDeviceId { get; set; }
         public string DirectoryTemp { get; set; }
         public string DirectoryHistory { get; set; }
@@ -172,6 +179,7 @@ namespace Amuse.App
             }
 
             ScanModels();
+            Vendors = [.. Environments.Select(x => x.Vendor).Distinct()];
             SettingsManager.Save(this);
         }
 
@@ -179,14 +187,15 @@ namespace Amuse.App
         public void InitializeDevices(IReadOnlyList<DeviceModel> devices)
         {
             Devices = devices
-                .Where(x => x.Type == DeviceType.GPU && Vendors.Contains(x.Vendor))
+                .Where(x => x.Type == DeviceType.GPU)
                 .ToList();
         }
 
 
         public DeviceModel GetDefaultDevice()
         {
-            return Devices.FirstOrDefault(x => x.Id == DefaultDeviceId) ?? Devices.FirstOrDefault();
+            var vendorDevices = Devices.Where(x => Vendors.Contains(x.Vendor));
+            return vendorDevices.FirstOrDefault(x => x.Id == DefaultDeviceId) ?? vendorDevices.FirstOrDefault();
         }
 
 

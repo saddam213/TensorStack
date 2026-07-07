@@ -45,7 +45,7 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> AddAsync()
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.ExtractModels.NextId();
             ExtractModel = new ExtractModel
             {
                 Id = modelId,
@@ -79,7 +79,7 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> CopyAsync(ExtractModel extractModel)
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.ExtractModels.NextId();
             ExtractModel = extractModel.DeepClone(modelId);
             ExtractModel.Name += " copy";
             return base.ShowDialogAsync();
@@ -88,7 +88,7 @@ namespace Amuse.App.Dialogs
 
         public async Task<bool> ImportAsync(ExtractModel[] modelImports)
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.ExtractModels.NextId();
             if (modelImports.Length == 1)
             {
                 var modelImport = modelImports[0];
@@ -152,12 +152,6 @@ namespace Amuse.App.Dialogs
         protected override async Task CloseAsync()
         {
             await base.CloseAsync();
-        }
-
-
-        private int GetNextModelId()
-        {
-            return Math.Max(Utils.FixedIdRange, Settings.ExtractModels.Max(x => x.Id)) + 1;
         }
 
 

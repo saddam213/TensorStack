@@ -299,7 +299,7 @@ namespace Amuse.App.Controls
 
         private bool CanLoad()
         {
-            return !IsSelectionValid;
+            return _selectedDevice != null && !IsSelectionValid;
         }
 
 
@@ -382,7 +382,7 @@ namespace Amuse.App.Controls
                 || HasLoraChanged()
                 || _currentUpscaler != SelectedUpscaler
                 || _currentUpscalerEnabled != _isUpscalerEnabled
-                || _currentMemoryMode != SelectedMemoryMode.MemoryMode
+                || _currentMemoryMode != SelectedMemoryMode?.MemoryMode
                 || _currentQualityMode != SelectedQualityMode;
         }
 
@@ -394,6 +394,9 @@ namespace Amuse.App.Controls
             DeviceCollectionView.Filter = (obj) =>
             {
                 if (obj is not DeviceModel device)
+                    return false;
+
+                if (!Settings.Vendors.Contains(device.Vendor))
                     return false;
 
                 return true;
@@ -527,6 +530,16 @@ namespace Amuse.App.Controls
 
             SelectedDevice = Settings.GetDefaultDevice();
             Device_SelectionChanged(default, default);
+
+            Settings.PropertyChanged += (s, p) =>
+            {
+                if (p.PropertyName == nameof(Settings.Vendors))
+                {
+                    DeviceCollectionView.Refresh();
+                    SelectedDevice = Settings.GetDefaultDevice();
+                }
+            };
+
             return Task.CompletedTask;
         }
 

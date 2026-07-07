@@ -58,7 +58,7 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> AddAsync()
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.LoraAdapterModels.NextId();
             LoraModel = new LoraAdapterModel
             {
                 Id = modelId,
@@ -87,7 +87,7 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> CopyAsync(LoraAdapterModel loraModel)
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.LoraAdapterModels.NextId();
             LoraModel = loraModel.DeepClone(modelId);
             LoraModel.Name += " copy";
             Populate();
@@ -97,7 +97,7 @@ namespace Amuse.App.Dialogs
 
         public async Task<bool> ImportAsync(LoraAdapterModel[] modelImports)
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.LoraAdapterModels.NextId();
             if (modelImports.Length == 1)
             {
                 var modelImport = modelImports[0];
@@ -187,12 +187,6 @@ namespace Amuse.App.Dialogs
             Trigger.Remove(trigger);
             SelectedTrigger = null;
             return Task.CompletedTask;
-        }
-
-
-        private int GetNextModelId()
-        {
-            return Math.Max(Utils.FixedIdRange, Settings.LoraAdapterModels.Max(x => x.Id)) + 1;
         }
 
 

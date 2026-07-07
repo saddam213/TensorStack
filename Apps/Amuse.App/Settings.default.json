@@ -2,7 +2,6 @@
   "Version": 2,
   "DefaultDeviceId": -1,
   "RunMigrations": true,
-  "Vendors": [ "Nvidia" ],
   "AccessTokens": [
     {
       "Name": "HuggingFace",

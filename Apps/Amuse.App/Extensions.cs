@@ -3,6 +3,7 @@ using Amuse.Common;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -375,6 +376,23 @@ namespace Amuse.App
             }
             return removed;
         }
+
+
+        public static int NextId<T>(this Collection<T> collection) where T : IDownloadModel
+        {
+            return collection.NextId(x => x.Id);
+        }
+
+
+        public static int NextId<T>(this Collection<T> collection, Func<T, int> selector)
+        {
+            var nextId = Utils.FixedIdRange + 1;
+            if (collection.IsNullOrEmpty())
+                return nextId;
+
+            return Math.Max(nextId, collection.Max(selector) + 1);
+        }
+
     }
 
     public static partial class Utils

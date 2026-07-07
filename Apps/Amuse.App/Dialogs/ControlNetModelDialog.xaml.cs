@@ -46,7 +46,7 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> AddAsync()
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.ControlNetModels.NextId();
             ControlNetModel = new ControlNetModel
             {
                 Id = modelId,
@@ -74,7 +74,7 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> CopyAsync(ControlNetModel controlNetModel)
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.ControlNetModels.NextId();
             ControlNetModel = controlNetModel.DeepClone(modelId);
             ControlNetModel.Name += " copy";
             return base.ShowDialogAsync();
@@ -83,7 +83,7 @@ namespace Amuse.App.Dialogs
 
         public async Task<bool> ImportAsync(ControlNetModel[] modelImports)
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.ControlNetModels.NextId();
             if (modelImports.Length == 1)
             {
                 var modelImport = modelImports[0];
@@ -147,12 +147,6 @@ namespace Amuse.App.Dialogs
         protected override async Task CloseAsync()
         {
             await base.CloseAsync();
-        }
-
-
-        private int GetNextModelId()
-        {
-            return Math.Max(Utils.FixedIdRange, Settings.ControlNetModels.Max(x => x.Id)) + 1;
         }
 
 

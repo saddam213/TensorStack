@@ -90,10 +90,10 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> AddAsync()
         {
-            var modelId = GetNextModelId();
+            var environmentId = Settings.Environments.NextId(x => x.Id);
             EnvironmentModel = new EnvironmentModel
             {
-                Id = modelId,
+                Id = environmentId,
                 Name = "My Environment",
                 Environment = "environment-new",
                 PythonVersion = PythonVersions.Last(),
@@ -107,10 +107,10 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> UpdateAsync(EnvironmentModel environmentModel)
         {
-            var modelId = environmentModel.Id;
+            var environmentId = Settings.Environments.NextId(x => x.Id);
             _originalEnvironmentModel = environmentModel;
-            EnvironmentModel = environmentModel.DeepClone(modelId);
-            IsFixedEnvironment = modelId <= Utils.FixedIdRange;
+            EnvironmentModel = environmentModel.DeepClone(environmentId);
+            IsFixedEnvironment = environmentId <= Utils.FixedIdRange;
             Populate();
             return base.ShowDialogAsync();
         }
@@ -118,8 +118,8 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> CopyAsync(EnvironmentModel environmentModel)
         {
-            var modelId = GetNextModelId();
-            EnvironmentModel = environmentModel.DeepClone(modelId);
+            var environmentId = Settings.Environments.NextId(x => x.Id);
+            EnvironmentModel = environmentModel.DeepClone(environmentId);
             Populate();
             EnvironmentModel.Name += " copy";
             EnvironmentModel.Environment += "-copy";
@@ -129,7 +129,7 @@ namespace Amuse.App.Dialogs
 
         public async Task<bool> ImportAsync(EnvironmentModel[] environmentImports)
         {
-            var environmentId = GetNextModelId();
+            var environmentId = Settings.Environments.NextId(x => x.Id);
             if (environmentImports.Length == 1)
             {
                 var environmentImport = environmentImports[0];
@@ -248,12 +248,6 @@ namespace Amuse.App.Dialogs
         protected override async Task CloseAsync()
         {
             await base.CloseAsync();
-        }
-
-
-        private int GetNextModelId()
-        {
-            return Math.Max(Utils.FixedIdRange, Settings.Environments.Max(x => x.Id)) + 1;
         }
 
 

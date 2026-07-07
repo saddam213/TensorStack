@@ -225,7 +225,7 @@ namespace Amuse.App.Dialogs
             if (template == null)
                 return null;
 
-            var modelId = GetNextModelId();
+            var modelId = Settings.DiffusionModels.NextId();
             return template.DeepClone(modelId);
         }
 
@@ -262,12 +262,6 @@ namespace Amuse.App.Dialogs
                 PipelineOptions.Add(pipelineOption);
             }
             SelectedPipelineOption = PipelineOptions.FirstOrDefault();
-        }
-
-
-        private int GetNextModelId()
-        {
-            return Math.Max(Utils.FixedIdRange, Settings.DiffusionModels.Max(x => x.Id)) + 1;
         }
 
 

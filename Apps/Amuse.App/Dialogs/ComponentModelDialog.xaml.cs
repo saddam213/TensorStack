@@ -47,7 +47,7 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> AddAsync()
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.Components.NextId();
             ComponentModel = new ComponentModel
             {
                 Id = modelId,
@@ -76,7 +76,7 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> CopyAsync(ComponentModel componentModel)
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.Components.NextId();
             ComponentModel = componentModel.DeepClone(modelId);
             ComponentModel.Name += " copy";
             return base.ShowDialogAsync();
@@ -85,7 +85,7 @@ namespace Amuse.App.Dialogs
 
         public async Task<bool> ImportAsync(ComponentModel[] modelImports)
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.Components.NextId();
             if (modelImports.Length == 1)
             {
                 var modelImport = modelImports[0];
@@ -149,12 +149,6 @@ namespace Amuse.App.Dialogs
         protected override async Task CloseAsync()
         {
             await base.CloseAsync();
-        }
-
-
-        private int GetNextModelId()
-        {
-            return Math.Max(Utils.FixedIdRange, Settings.Components.Max(x => x.Id)) + 1;
         }
 
 

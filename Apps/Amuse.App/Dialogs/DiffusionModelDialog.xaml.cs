@@ -88,7 +88,7 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> CopyAsync(DiffusionModel diffusionModel)
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.DiffusionModels.NextId();
             DiffusionModel = diffusionModel.DeepClone(modelId);
             Populate();
             return base.ShowDialogAsync();
@@ -97,7 +97,7 @@ namespace Amuse.App.Dialogs
 
         public async Task<bool> ImportAsync(DiffusionModel[] modelImports)
         {
-            var modelId = GetNextModelId();
+            var modelId = Settings.DiffusionModels.NextId();
             if (modelImports.Length == 1)
             {
                 var modelImport = modelImports[0];
@@ -233,12 +233,6 @@ namespace Amuse.App.Dialogs
             NotifyPropertyChanged(nameof(AccessTokens));
             NotifyPropertyChanged(nameof(IsUpdateMode));
             DiffusionModel.NotifyPropertyChanged(nameof(DiffusionModel.AccessToken));
-        }
-
-
-        private int GetNextModelId()
-        {
-            return Math.Max(Utils.FixedIdRange, Settings.DiffusionModels.Max(x => x.Id)) + 1;
         }
 
 

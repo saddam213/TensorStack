@@ -14,10 +14,6 @@
         Style="{StaticResource {x:Type CommonControls:DialogControl}}">
     <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:EnvironmentModelDialog}}}" Margin="15, 15, 15, 10">
 
-        <StackPanel DockPanel.Dock="Top" Visibility="{Binding IsFixedEnvironment, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="To maintain operational stability and debug accuracy, core settings in this default environment are read-only" Foreground="{StaticResource WarningColour}" HorizontalAlignment="Center" Margin="0,0,0,0" Opacity=".9"/>
-            <TextBlock Text="Feel free to create a copy of this environment to safely experiment with different configurations" Foreground="{StaticResource WarningColour}" HorizontalAlignment="Center" Margin="0,0,0,10" Opacity=".9"/>
-        </StackPanel>
 
         <!--Environment Settings-->
         <UniformGrid DockPanel.Dock="Top" Columns="4" >
@@ -38,7 +34,7 @@
             </StackPanel>
             <StackPanel Margin="0,0,2,0" IsEnabled="{Binding IsFixedEnvironment, Converter={StaticResource InverseBoolConverter}}">
                 <TextBlock Text="Vendor" Style="{StaticResource FieldTextBlockStyle}"/>
-                <ComboBox ItemsSource="{Binding Settings.Vendors}" SelectedItem="{Binding EnvironmentModel.Vendor}" SelectedIndex="0" Style="{StaticResource EnumComboBox}"/>
+                <ComboBox ItemsSource="{Binding Source={StaticResource VendorType}}" SelectedItem="{Binding EnvironmentModel.Vendor}" SelectedIndex="0" Style="{StaticResource EnumComboBox}"/>
             </StackPanel>
             <StackPanel Margin="2,0,2,0" IsEnabled="{Binding IsFixedEnvironment, Converter={StaticResource InverseBoolConverter}}">
                 <TextBlock Text="Type" Style="{StaticResource FieldTextBlockStyle}" IsEnabled="{Binding IsFixedEnvironment, Converter={StaticResource InverseBoolConverter}}"/>

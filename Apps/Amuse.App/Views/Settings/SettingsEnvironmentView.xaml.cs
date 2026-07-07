@@ -90,9 +90,6 @@ namespace Amuse.App.Views
                 if (obj is not EnvironmentModel model)
                     return false;
 
-                if (!Settings.Vendors.Contains(model.Vendor))
-                    return false;
-
                 if (!string.IsNullOrEmpty(_filterText))
                 {
                     return model.Name.Contains(_filterText, StringComparison.OrdinalIgnoreCase);
@@ -161,7 +158,9 @@ namespace Amuse.App.Views
                 await EnvironmentService.DeleteAsync(_selectedEnvironment);
                 Settings.Environments.Remove(_selectedEnvironment);
                 SelectedEnvironment = Settings.Environments.FirstOrDefault();
+                Settings.Vendors = [.. Settings.Environments.Select(x => x.Vendor).Distinct()];
                 await SaveAsync();
+                ModelCollection.Refresh();
             }
         }
 
@@ -181,7 +180,9 @@ namespace Amuse.App.Views
                 var dialog = DialogService.GetDialog<EnvironmentModelDialog>();
                 if (await dialog.ImportAsync(environmentImports))
                 {
+                    Settings.Vendors = [.. Settings.Environments.Select(x => x.Vendor).Distinct()];
                     await SaveAsync();
+                    ModelCollection.Refresh();
                 }
             }
         }
