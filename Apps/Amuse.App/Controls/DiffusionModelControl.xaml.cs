@@ -416,7 +416,7 @@ namespace Amuse.App.Controls
                 if (_selectedDevice is null)
                     return false;
 
-                if (!Settings.IsBackendOverrideEnabled && !_selectedDevice.SupportedBackends.Contains(viewModel.Backend))
+                if (!_selectedDevice.SupportedBackends.Contains(viewModel.Backend))
                     return false;
 
                 if (!viewModel.ProcessTypes.Contains(_processType))

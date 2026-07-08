@@ -70,7 +70,6 @@ namespace Amuse.App
         public bool IsOptimizeDeviceEnabled { get; set; } = false;
         public bool IsOptimizeChannelsEnabled { get; set; } = false;
         public bool IsDeviceQuantizationEnabled { get; set; } = false;
-        public bool IsBackendOverrideEnabled { get; set; } = false;
         public bool IsHistoryRecentItemsEnabled { get; set; } = true;
         public bool IsHistoryAutoSortEnabled { get; set; } = true;
         public bool IsDiffusionImagePreviewEnabled { get; set; } = true;

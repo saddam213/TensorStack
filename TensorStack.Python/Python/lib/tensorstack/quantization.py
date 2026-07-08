@@ -4,19 +4,25 @@ import tensorstack.data_objects as DataObjects
 from tensorstack.enums import QuantType, QuantBackend, QuantTarget, MemoryMode, VendorType
 import bitsandbytes
 from optimum.quanto import freeze, quantize, qint8, qint4
-from torchao.quantization import Int8WeightOnlyConfig, Int4WeightOnlyConfig
 from transformers import (
     QuantoConfig as TransformersQuantoConfig,
-    BitsAndBytesConfig as TransformersBitsAndBytesConfig,
-    TorchAoConfig as TransformersTorchAoConfig
+    BitsAndBytesConfig as TransformersBitsAndBytesConfig
 )
 from diffusers import (
     GGUFQuantizationConfig as DiffusersGGUFConfig,
     QuantoConfig as DiffusersQuantoConfig,
-    BitsAndBytesConfig as DiffusersBitsAndBytesConfig,
-    TorchAoConfig as DiffusersTorchAoConfig
+    BitsAndBytesConfig as DiffusersBitsAndBytesConfig
 )
 
+try:
+    from torchao.quantization import (Int8WeightOnlyConfig, Int4WeightOnlyConfig)
+    from transformers import (TorchAoConfig as TransformersTorchAoConfig)
+    from diffusers import (TorchAoConfig as DiffusersTorchAoConfig)
+except ImportError:
+    Int8WeightOnlyConfig = None
+    Int4WeightOnlyConfig = None
+    TransformersTorchAoConfig = None
+    DiffusersTorchAoConfig = None
 
 #------------------------------------------------
 # Quantize a PyTorch model
@@ -55,18 +61,33 @@ def auto_pretrained_config(config: DataObjects.PipelineConfig, target: QuantTarg
     quant_type = config.quant_type
     device_vendor = config.device_vendor
     if quant_type == QuantType.Q16Bit:
-        return pretrained_config(target, QuantBackend.NONE, device_vendor, QuantType.Q16Bit, data_type)
-    elif target == QuantTarget.TEXT_ENCODER:
-        if quant_type == QuantType.Q8Bit:
-            return pretrained_config(target, QuantBackend.TorchAO, device_vendor, QuantType.Q8Bit, data_type)
-        elif quant_type == QuantType.Q4Bit:
-            return pretrained_config(target, QuantBackend.BITSANDBYTES, device_vendor, QuantType.Q4Bit, data_type)
+        return pretrained_config(target, QuantBackend.NONE, QuantType.Q16Bit, data_type)
 
-    elif target == QuantTarget.TRANSFORMER:
-        if quant_type == QuantType.Q8Bit:
-            return pretrained_config(target, QuantBackend.TorchAO, device_vendor, QuantType.Q8Bit, data_type)
-        elif quant_type == QuantType.Q4Bit:
-            return pretrained_config(target, QuantBackend.BITSANDBYTES, device_vendor, QuantType.Q4Bit, data_type)
+    # AMD
+    if device_vendor == VendorType.AMD:
+        if target == QuantTarget.TEXT_ENCODER:
+            if quant_type == QuantType.Q8Bit:
+                return pretrained_config(target, QuantBackend.QUANTO, QuantType.Q8Bit, data_type)
+            elif quant_type == QuantType.Q4Bit:
+                return pretrained_config(target, QuantBackend.BITSANDBYTES, QuantType.Q4Bit, data_type)
+        elif target == QuantTarget.TRANSFORMER:
+            if quant_type == QuantType.Q8Bit:
+                return pretrained_config(target, QuantBackend.QUANTO, QuantType.Q8Bit, data_type)
+            elif quant_type == QuantType.Q4Bit:
+                return pretrained_config(target, QuantBackend.BITSANDBYTES, QuantType.Q4Bit, data_type)
+
+    # Nvidia
+    elif device_vendor == VendorType.Nvidia:
+        if target == QuantTarget.TEXT_ENCODER:
+            if quant_type == QuantType.Q8Bit:
+                return pretrained_config(target, QuantBackend.TorchAO, QuantType.Q8Bit, data_type)
+            elif quant_type == QuantType.Q4Bit:
+                return pretrained_config(target, QuantBackend.BITSANDBYTES, QuantType.Q4Bit, data_type)
+        elif target == QuantTarget.TRANSFORMER:
+            if quant_type == QuantType.Q8Bit:
+                return pretrained_config(target, QuantBackend.TorchAO, QuantType.Q8Bit, data_type)
+            elif quant_type == QuantType.Q4Bit:
+                return pretrained_config(target, QuantBackend.BITSANDBYTES, QuantType.Q4Bit, data_type)
 
     return None
 
@@ -74,26 +95,26 @@ def auto_pretrained_config(config: DataObjects.PipelineConfig, target: QuantTarg
 #------------------------------------------------
 # Quantization Configuration for from_pretrained
 #------------------------------------------------
-def pretrained_config(target: QuantTarget, backend: QuantBackend, vendor: VendorType, quant_type: QuantType, compute_type: torch.dtype):
+def pretrained_config(target: QuantTarget, backend: QuantBackend, quant_type: QuantType, compute_type: torch.dtype):
     if quant_type == QuantType.Q16Bit or backend == QuantBackend.NONE:
         print(f"[Quantize] {quant_type} not supported")
         return None
 
-    vendor_quant = get_vendor_quant(backend, quant_type, vendor)
-    print(f"[Quantize] {backend}, {compute_type} -> {quant_type} ({vendor_quant})")
+    quant_datatype = get_quant_datatype(backend, quant_type)
+    print(f"[Quantize] {backend}, {compute_type} -> {quant_type} ({quant_datatype})")
+
     # QUANTO
     if backend == QuantBackend.QUANTO:
         if target == QuantTarget.TEXT_ENCODER:
             if quant_type == QuantType.Q8Bit:
-                return TransformersQuantoConfig(weights_dtype=vendor_quant)
+                return TransformersQuantoConfig(weights_dtype=quant_datatype)
             elif quant_type == QuantType.Q4Bit:
-                return TransformersQuantoConfig(weights_dtype=vendor_quant)
-
+                return TransformersQuantoConfig(weights_dtype=quant_datatype)
         elif target == QuantTarget.TRANSFORMER:
             if quant_type == QuantType.Q8Bit:
-                return DiffusersQuantoConfig(weights_dtype=vendor_quant)
+                return DiffusersQuantoConfig(weights_dtype=quant_datatype)
             elif quant_type == QuantType.Q4Bit:
-                return DiffusersQuantoConfig(weights_dtype=vendor_quant)
+                return DiffusersQuantoConfig(weights_dtype=quant_datatype)
 
     #BITSANDBYTES
     elif backend == QuantBackend.BITSANDBYTES:
@@ -101,13 +122,12 @@ def pretrained_config(target: QuantTarget, backend: QuantBackend, vendor: Vendor
             if quant_type == QuantType.Q8Bit:
                 return TransformersBitsAndBytesConfig(load_in_8bit=True)
             elif quant_type == QuantType.Q4Bit:
-                return TransformersBitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=vendor_quant, bnb_4bit_use_double_quant=True)
-
+                return TransformersBitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=quant_datatype, bnb_4bit_use_double_quant=True)
         elif target == QuantTarget.TRANSFORMER:
             if quant_type == QuantType.Q8Bit:
                 return DiffusersBitsAndBytesConfig(load_in_8bit=True)
             elif quant_type == QuantType.Q4Bit:
-                return DiffusersBitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=vendor_quant, bnb_4bit_use_double_quant=True)
+                return DiffusersBitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=quant_datatype, bnb_4bit_use_double_quant=True)
 
     # TorchAO
     elif backend == QuantBackend.TorchAO:
@@ -116,7 +136,6 @@ def pretrained_config(target: QuantTarget, backend: QuantBackend, vendor: Vendor
                 return TransformersTorchAoConfig(Int8WeightOnlyConfig())
             elif quant_type == QuantType.Q4Bit:
                 return TransformersTorchAoConfig(Int4WeightOnlyConfig())
-
         elif target == QuantTarget.TRANSFORMER:
             if quant_type == QuantType.Q8Bit:
                 return DiffusersTorchAoConfig(Int8WeightOnlyConfig())
@@ -129,11 +148,11 @@ def pretrained_config(target: QuantTarget, backend: QuantBackend, vendor: Vendor
 #------------------------------------------------
 # Get quant datatype
 #------------------------------------------------
-def get_vendor_quant(backend: QuantBackend, quant: QuantType, vendor: VendorType):
+def get_quant_datatype(backend: QuantBackend, quant: QuantType):
      # QUANTO
     if backend == QuantBackend.QUANTO:
         if quant == QuantType.Q8Bit:
-            return "int8" # "float8"
+            return "int8"
         elif quant == QuantType.Q4Bit:
             return "int4"
 
@@ -142,7 +161,7 @@ def get_vendor_quant(backend: QuantBackend, quant: QuantType, vendor: VendorType
         if quant == QuantType.Q8Bit:
             return "int8"
         elif quant == QuantType.Q4Bit:
-            return "nf4" if vendor == VendorType.Nvidia else "fp4"
+            return "nf4"
 
     # TorchAO
     elif backend == QuantBackend.TorchAO:
@@ -164,13 +183,3 @@ def auto_single_file_config(config: DataObjects.PipelineConfig, target: QuantTar
         return None
 
     return None
-
-
-#------------------------------------------------
-# Quantization Configuration for from_single_file
-#------------------------------------------------
-def single_file_config(target: QuantTarget, backend: QuantBackend, vendor: VendorType, quant_type: QuantType, compute_type: torch.dtype, is_gguf: bool):
-    if is_gguf:
-        return DiffusersGGUFConfig(compute_dtype=compute_type)
-
-    return pretrained_config(target, backend, vendor, quant_type, compute_type)

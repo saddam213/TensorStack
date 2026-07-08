@@ -131,10 +131,6 @@
                                     <TextBlock Text="Show the pipeline status in a seperate console window" FontSize="11" FontStyle="Italic" Opacity=".6" Margin="22,0,0,0"/>
                                 </StackPanel>
                                 <StackPanel Margin="0,4,0,0">
-                                    <CheckBox Content="Supported Backend Override" IsChecked="{Binding Settings.IsBackendOverrideEnabled}" />
-                                    <TextBlock Text="Enable unsupported inference backends (Amuse restart required)" FontSize="11" FontStyle="Italic" Opacity=".6" Margin="22,0,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,4,0,0">
                                     <CheckBox Content="Optimize Device" IsChecked="{Binding Settings.IsOptimizeDeviceEnabled}"  />
                                     <TextBlock Text="Set device specific optimizations (matmul_precision, reduced_precision, allow_tf32 etc.)" FontSize="11" FontStyle="Italic" Opacity=".6" Margin="22,0,0,0"/>
                                 </StackPanel>
