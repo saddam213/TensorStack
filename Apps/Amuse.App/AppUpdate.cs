@@ -10,11 +10,11 @@ namespace Amuse.App
         private readonly AppAsset _assetInstaller;
         private readonly AppAsset _assetStandalone;
 
-        public AppUpdate(AppVersion version)
+        public AppUpdate(AppVersion version, string appPrefix)
         {
             _version = version;
-            _assetInstaller = version.Assets?.FirstOrDefault(x => x.DownloadLink.EndsWith(".exe"));
-            _assetStandalone = version.Assets?.FirstOrDefault(x => x.DownloadLink.EndsWith(".zip"));
+            _assetInstaller = version.Assets?.FirstOrDefault(x => x.Name.StartsWith(appPrefix) && x.Name.EndsWith(".exe"));
+            _assetStandalone = version.Assets?.FirstOrDefault(x => x.Name.StartsWith(appPrefix) && x.Name.EndsWith(".zip"));
         }
 
         public string Link => _version.Link;

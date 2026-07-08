@@ -27,6 +27,7 @@ namespace Amuse.App
     public partial class App : Application
     {
         public static readonly string AppName = "Amuse";                            // Amuse
+        public static readonly string AppPrefix = "Amuse_v";                        // Amuse_v
         public static readonly string AppVersion = GetAppVersion();                 // 0.3.0
         public static readonly string AppVersionTag = GetAppVersionTag();           // v0.3.0
         public static readonly string AppVersionDisplay = GetAppVersionDisplay();   // v0.3.0-dev
@@ -405,7 +406,7 @@ namespace Amuse.App
                     }
 
                     Log.Logger.Information("[GetUpdateInfo] - Check for update success.");
-                    return new AppUpdate(versionResponse);
+                    return new AppUpdate(versionResponse, AppPrefix);
                 }
             }
             catch (Exception ex)
