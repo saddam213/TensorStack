@@ -9782,9 +9782,8 @@
     {
       "Id": 350,
       "Backend": "OnnxRuntime",
-      "Name": "Supertonic v2",
-      "RepoName": "Supertonic-amuse",
-      "Template": null,
+      "Name": "Supertonic v3",
+      "Template": "Supertonic3",
       "Pipeline": "SupertonicPipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
@@ -9796,23 +9795,23 @@
           "AutoMap": true,
           "Name": "Supertonic Model",
           "Type": "OnlineFolder",
-          "Folder": "Supertonic-v2",
+          "Folder": "Supertonic-v3",
           "DownloadFiles": [
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/duration_predictor.onnx",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/text_encoder.onnx",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/unicode_indexer.json",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/vector_estimator.onnx",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/vocoder.onnx",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/voice_styles/Female1.json",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/voice_styles/Female2.json",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/voice_styles/Female3.json",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/voice_styles/Female4.json",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/voice_styles/Female5.json",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/voice_styles/Male1.json",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/voice_styles/Male2.json",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/voice_styles/Male3.json",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/voice_styles/Male4.json",
-            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic/voice_styles/Male5.json"
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/duration_predictor.onnx",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/text_encoder.onnx",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/unicode_indexer.json",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/vector_estimator.onnx",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/vocoder.onnx",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/voice_styles/Female1.json",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/voice_styles/Female2.json",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/voice_styles/Female3.json",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/voice_styles/Female4.json",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/voice_styles/Female5.json",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/voice_styles/Male1.json",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/voice_styles/Male2.json",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/voice_styles/Male3.json",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/voice_styles/Male4.json",
+            "https://huggingface.co/saddam213/Amuse/resolve/main/Audio/Supertonic-v3/voice_styles/Male5.json"
           ]
         }
       },
@@ -9841,7 +9840,7 @@
         "Task": "Female4",
         "Tasks": [ "Female1", "Female2", "Female3", "Female4", "Female5", "Male1", "Male2", "Male3", "Male4", "Male5" ],
         "Language": "English",
-        "Languages": [ "English", "Korean", "Spanish", "Portuguese", "French" ]
+        "Languages": [ "English", "Korean", "Japanese", "Arabic", "Bulgarian", "Czech", "Danish", "German", "Greek", "Spanish", "Estonian", "Finnish", "French", "Hindi", "Croatian", "Hungarian", "Indonesian", "Italian", "Lithuanian", "Latvian", "Dutch", "Polish", "Portuguese", "Romanian", "Russian", "Slovak", "Slovenian", "Swedish", "Turkish", "Ukrainian", "Vietnamese" ]
       },
       "IsDefault": true,
       "Link": "https://huggingface.co/saddam213/Amuse/tree/main/Audio/Supertonic"

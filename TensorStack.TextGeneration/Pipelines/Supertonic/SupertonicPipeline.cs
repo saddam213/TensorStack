@@ -81,7 +81,7 @@ namespace TensorStack.TextGeneration.Pipelines.Supertonic
             var silenceBuffer = new float[silenceLength];
 
             // Process text
-            var textChunks = Processor.GetTextIds(options.TextInput);
+            var textChunks = Processor.GetTextIds(options.TextInput, options.Language);
             var progress = 0;
             var progressTotal = options.Steps * textChunks.Count;
             var relayProgressCallback = new Action<long>((timestamp) =>

@@ -10,5 +10,6 @@ namespace TensorStack.TextGeneration.Pipelines.Supertonic
         public float Speed { get; set; } = 1f;
         public float SilenceDuration { get; set; } = 0.3f;
         public int Seed { get; set; }
+        public string Language { get; set; }
     }
 }

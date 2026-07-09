@@ -225,299 +225,305 @@ namespace Amuse.Common
 
     public enum LanguageType
     {
+        [Display(Name = "None", ShortName = "")]
+        None = 0,
+
+        [Display(Name = "Auto", ShortName = "en")]
+        Auto = 1,
+
         [Display(Name = "Afrikaans", ShortName = "af")]
-        Afrikaans = 0,
+        Afrikaans = 2,
 
         [Display(Name = "Albanian", ShortName = "sq")]
-        Albanian = 1,
+        Albanian = 3,
 
         [Display(Name = "Amharic", ShortName = "am")]
-        Amharic = 2,
+        Amharic = 4,
 
         [Display(Name = "Arabic", ShortName = "ar")]
-        Arabic = 3,
+        Arabic = 5,
 
         [Display(Name = "Armenian", ShortName = "hy")]
-        Armenian = 4,
+        Armenian = 6,
 
         [Display(Name = "Assamese", ShortName = "as")]
-        Assamese = 5,
+        Assamese = 7,
 
         [Display(Name = "Azerbaijani", ShortName = "az")]
-        Azerbaijani = 6,
+        Azerbaijani = 8,
 
         [Display(Name = "Bashkir", ShortName = "ba")]
-        Bashkir = 7,
+        Bashkir = 9,
 
         [Display(Name = "Basque", ShortName = "eu")]
-        Basque = 8,
+        Basque = 10,
 
         [Display(Name = "Belarusian", ShortName = "be")]
-        Belarusian = 9,
+        Belarusian = 11,
 
         [Display(Name = "Bengali", ShortName = "bn")]
-        Bengali = 10,
+        Bengali = 12,
 
         [Display(Name = "Bosnian", ShortName = "bs")]
-        Bosnian = 11,
+        Bosnian = 13,
 
         [Display(Name = "Breton", ShortName = "br")]
-        Breton = 12,
+        Breton = 14,
 
         [Display(Name = "Bulgarian", ShortName = "bg")]
-        Bulgarian = 13,
+        Bulgarian = 15,
 
         [Display(Name = "Burmese", ShortName = "my")]
-        Burmese = 14,
+        Burmese = 16,
 
         [Display(Name = "Catalan", ShortName = "ca")]
-        Catalan = 15,
+        Catalan = 17,
 
         [Display(Name = "Chinese", ShortName = "zh")]
-        Chinese = 16,
+        Chinese = 18,
 
         [Display(Name = "Croatian", ShortName = "hr")]
-        Croatian = 17,
+        Croatian = 19,
 
         [Display(Name = "Czech", ShortName = "cs")]
-        Czech = 18,
+        Czech = 20,
 
         [Display(Name = "Danish", ShortName = "da")]
-        Danish = 19,
+        Danish = 21,
 
         [Display(Name = "Dutch", ShortName = "nl")]
-        Dutch = 20,
+        Dutch = 22,
 
         [Display(Name = "English", ShortName = "en")]
-        English = 21,
+        English = 23,
 
         [Display(Name = "Estonian", ShortName = "et")]
-        Estonian = 22,
+        Estonian = 24,
 
         [Display(Name = "Faroese", ShortName = "fo")]
-        Faroese = 23,
+        Faroese = 25,
 
         [Display(Name = "Finnish", ShortName = "fi")]
-        Finnish = 24,
+        Finnish = 26,
 
         [Display(Name = "French", ShortName = "fr")]
-        French = 25,
+        French = 27,
 
         [Display(Name = "Galician", ShortName = "gl")]
-        Galician = 26,
+        Galician = 28,
 
         [Display(Name = "Georgian", ShortName = "ka")]
-        Georgian = 27,
+        Georgian = 29,
 
         [Display(Name = "German", ShortName = "de")]
-        German = 28,
+        German = 30,
 
         [Display(Name = "Greek", ShortName = "el")]
-        Greek = 29,
+        Greek = 31,
 
         [Display(Name = "Gujarati", ShortName = "gu")]
-        Gujarati = 30,
+        Gujarati = 32,
 
         [Display(Name = "Haitian", ShortName = "ht")]
-        Haitian = 31,
+        Haitian = 33,
 
         [Display(Name = "Hausa", ShortName = "ha")]
-        Hausa = 32,
+        Hausa = 34,
 
         [Display(Name = "Hawaiian", ShortName = "haw")]
-        Hawaiian = 33,
+        Hawaiian = 35,
 
         [Display(Name = "Hebrew", ShortName = "he")]
-        Hebrew = 34,
+        Hebrew = 36,
 
         [Display(Name = "Hindi", ShortName = "hi")]
-        Hindi = 35,
+        Hindi = 37,
 
         [Display(Name = "Hungarian", ShortName = "hu")]
-        Hungarian = 36,
+        Hungarian = 38,
 
         [Display(Name = "Icelandic", ShortName = "is")]
-        Icelandic = 37,
+        Icelandic = 39,
 
         [Display(Name = "Indonesian", ShortName = "id")]
-        Indonesian = 38,
+        Indonesian = 40,
 
         [Display(Name = "Italian", ShortName = "it")]
-        Italian = 39,
+        Italian = 41,
 
         [Display(Name = "Japanese", ShortName = "ja")]
-        Japanese = 40,
+        Japanese = 42,
 
         [Display(Name = "Javanese", ShortName = "jw")]
-        Javanese = 41,
+        Javanese = 43,
 
         [Display(Name = "Kannada", ShortName = "kn")]
-        Kannada = 42,
+        Kannada = 44,
 
         [Display(Name = "Kazakh", ShortName = "kk")]
-        Kazakh = 43,
+        Kazakh = 45,
 
         [Display(Name = "Khmer", ShortName = "km")]
-        Khmer = 44,
+        Khmer = 46,
 
         [Display(Name = "Korean", ShortName = "ko")]
-        Korean = 45,
+        Korean = 47,
 
         [Display(Name = "Lao", ShortName = "lo")]
-        Lao = 46,
+        Lao = 48,
 
         [Display(Name = "Latin", ShortName = "la")]
-        Latin = 47,
+        Latin = 49,
 
         [Display(Name = "Latvian", ShortName = "lv")]
-        Latvian = 48,
+        Latvian = 50,
 
         [Display(Name = "Lingala", ShortName = "ln")]
-        Lingala = 49,
+        Lingala = 51,
 
         [Display(Name = "Lithuanian", ShortName = "lt")]
-        Lithuanian = 50,
+        Lithuanian = 52,
 
         [Display(Name = "Luxembourgish", ShortName = "lb")]
-        Luxembourgish = 51,
+        Luxembourgish = 53,
 
         [Display(Name = "Macedonian", ShortName = "mk")]
-        Macedonian = 52,
+        Macedonian = 54,
 
         [Display(Name = "Malagasy", ShortName = "mg")]
-        Malagasy = 53,
+        Malagasy = 55,
 
         [Display(Name = "Malay", ShortName = "ms")]
-        Malay = 54,
+        Malay = 56,
 
         [Display(Name = "Malayalam", ShortName = "ml")]
-        Malayalam = 55,
+        Malayalam = 57,
 
         [Display(Name = "Maltese", ShortName = "mt")]
-        Maltese = 56,
+        Maltese = 58,
 
         [Display(Name = "Maori", ShortName = "mi")]
-        Maori = 57,
+        Maori = 59,
 
         [Display(Name = "Marathi", ShortName = "mr")]
-        Marathi = 58,
+        Marathi = 60,
 
         [Display(Name = "Mongolian", ShortName = "mn")]
-        Mongolian = 59,
+        Mongolian = 61,
 
         [Display(Name = "Nepali", ShortName = "ne")]
-        Nepali = 60,
+        Nepali = 62,
 
         [Display(Name = "Norwegian", ShortName = "no")]
-        Norwegian = 61,
+        Norwegian = 63,
 
         [Display(Name = "Norwegian Nynorsk", ShortName = "nn")]
-        NorwegianNynorsk = 62,
+        NorwegianNynorsk = 64,
 
         [Display(Name = "Occitan", ShortName = "oc")]
-        Occitan = 63,
+        Occitan = 65,
 
         [Display(Name = "Persian", ShortName = "fa")]
-        Persian = 64,
+        Persian = 66,
 
         [Display(Name = "Polish", ShortName = "pl")]
-        Polish = 65,
+        Polish = 67,
 
         [Display(Name = "Portuguese", ShortName = "pt")]
-        Portuguese = 66,
+        Portuguese = 68,
 
         [Display(Name = "Punjabi", ShortName = "pa")]
-        Punjabi = 67,
+        Punjabi = 69,
 
         [Display(Name = "Romanian", ShortName = "ro")]
-        Romanian = 68,
+        Romanian = 70,
 
         [Display(Name = "Russian", ShortName = "ru")]
-        Russian = 69,
+        Russian = 71,
 
         [Display(Name = "Sanskrit", ShortName = "sa")]
-        Sanskrit = 70,
+        Sanskrit = 72,
 
         [Display(Name = "Serbian", ShortName = "sr")]
-        Serbian = 71,
+        Serbian = 73,
 
         [Display(Name = "Shona", ShortName = "sn")]
-        Shona = 72,
+        Shona = 74,
 
         [Display(Name = "Sindhi", ShortName = "sd")]
-        Sindhi = 73,
+        Sindhi = 75,
 
         [Display(Name = "Sinhala", ShortName = "si")]
-        Sinhala = 74,
+        Sinhala = 76,
 
         [Display(Name = "Slovak", ShortName = "sk")]
-        Slovak = 75,
+        Slovak = 77,
 
         [Display(Name = "Slovenian", ShortName = "sl")]
-        Slovenian = 76,
+        Slovenian = 78,
 
         [Display(Name = "Somali", ShortName = "so")]
-        Somali = 77,
+        Somali = 79,
 
         [Display(Name = "Spanish", ShortName = "es")]
-        Spanish = 78,
+        Spanish = 80,
 
         [Display(Name = "Sundanese", ShortName = "su")]
-        Sundanese = 79,
+        Sundanese = 81,
 
         [Display(Name = "Swahili", ShortName = "sw")]
-        Swahili = 80,
+        Swahili = 82,
 
         [Display(Name = "Swedish", ShortName = "sv")]
-        Swedish = 81,
+        Swedish = 83,
 
         [Display(Name = "Tagalog", ShortName = "tl")]
-        Tagalog = 82,
+        Tagalog = 84,
 
         [Display(Name = "Tajik", ShortName = "tg")]
-        Tajik = 83,
+        Tajik = 85,
 
         [Display(Name = "Tamil", ShortName = "ta")]
-        Tamil = 84,
+        Tamil = 86,
 
         [Display(Name = "Tatar", ShortName = "tt")]
-        Tatar = 85,
+        Tatar = 87,
 
         [Display(Name = "Telugu", ShortName = "te")]
-        Telugu = 86,
+        Telugu = 88,
 
         [Display(Name = "Thai", ShortName = "th")]
-        Thai = 87,
+        Thai = 89,
 
         [Display(Name = "Tibetan", ShortName = "bo")]
-        Tibetan = 88,
+        Tibetan = 90,
 
         [Display(Name = "Turkish", ShortName = "tr")]
-        Turkish = 89,
+        Turkish = 91,
 
         [Display(Name = "Turkmen", ShortName = "tk")]
-        Turkmen = 90,
+        Turkmen = 92,
 
         [Display(Name = "Ukrainian", ShortName = "uk")]
-        Ukrainian = 91,
+        Ukrainian = 93,
 
         [Display(Name = "Urdu", ShortName = "ur")]
-        Urdu = 92,
+        Urdu = 94,
 
         [Display(Name = "Uzbek", ShortName = "uz")]
-        Uzbek = 93,
+        Uzbek = 95,
 
         [Display(Name = "Vietnamese", ShortName = "vi")]
-        Vietnamese = 94,
+        Vietnamese = 96,
 
         [Display(Name = "Welsh", ShortName = "cy")]
-        Welsh = 95,
+        Welsh = 97,
 
         [Display(Name = "Yiddish", ShortName = "yi")]
-        Yiddish = 96,
+        Yiddish = 98,
 
         [Display(Name = "Yoruba", ShortName = "yo")]
-        Yoruba = 97,
+        Yoruba = 99
     }
 
 }

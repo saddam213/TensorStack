@@ -213,6 +213,7 @@ namespace Amuse.Host.Onnx
                 Speed = options.Speed,
                 SilenceDuration = options.SilenceDuration,
                 Seed = options.Seed,
+                Language = options.Language.GetShortName(),
             };
             return await supertonicPipeline.RunAsync(pipelineOptions, _progressRelayRunCallback, cancellationToken);
         }

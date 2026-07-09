@@ -46,12 +46,12 @@ namespace TensorStack.TextGeneration.Pipelines.Supertonic
         /// </summary>
         /// <param name="textInput">The text input.</param>
         /// <returns>List&lt;Tensor&lt;System.Int64&gt;&gt;.</returns>
-        public List<Tensor<long>> GetTextIds(string textInput)
+        public List<Tensor<long>> GetTextIds(string textInput, string language)
         {
             var textInputChunks = new List<Tensor<long>>();
             foreach (var textInputChunk in ChunkText(textInput))
             {
-                textInputChunks.Add(GetTextIdsInternal(textInputChunk));
+                textInputChunks.Add(GetTextIdsInternal(textInputChunk, language));
             }
             return textInputChunks;
         }
@@ -75,9 +75,9 @@ namespace TensorStack.TextGeneration.Pipelines.Supertonic
         /// Gets the textds.
         /// </summary>
         /// <param name="textInput">The text input.</param>
-        private Tensor<long> GetTextIdsInternal(string textInput)
+        private Tensor<long> GetTextIdsInternal(string textInput, string language)
         {
-            var processedText = PreprocessText(textInput);
+            var processedText = PreprocessText(textInput, language);
             var unicodeVals = TextToUnicodeValues(processedText);
             var textIds = new Tensor<long>([1, processedText.Length]);
             for (int j = 0; j < unicodeVals.Length; j++)
@@ -220,7 +220,7 @@ namespace TensorStack.TextGeneration.Pipelines.Supertonic
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns>System.String.</returns>
-        private static string PreprocessText(string text)
+        private static string PreprocessText(string text, string language)
         {
             // TODO: Need advanced normalizer for better performance
             text = text.Normalize(NormalizationForm.FormKD);
@@ -309,6 +309,9 @@ namespace TensorStack.TextGeneration.Pipelines.Supertonic
             {
                 text += ".";
             }
+
+            if (!string.IsNullOrEmpty(language))
+                return $"<{language}>" + text + $"</{language}>";
 
             return text;
         }
