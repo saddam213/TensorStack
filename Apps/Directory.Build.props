@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
-    <Version>3.5.8</Version>
-    <PackageVersion>0.8.24</PackageVersion>
+    <Version>3.5.9</Version>
+    <PackageVersion>0.8.25</PackageVersion>
     <RepositoryUrl>https://github.com/saddam213/AmuseAI</RepositoryUrl>
   </PropertyGroup>
 </Project>

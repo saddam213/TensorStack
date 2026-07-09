@@ -29,7 +29,6 @@ namespace TensorStack.Python.Config
             "gguf==0.19.0",
             "av==18.0.0",
             "soundfile==0.14.0",
-            "torchao==0.17.0",
             "optimum-quanto==0.2.7",
             "bitsandbytes==0.49.2"
         ];
@@ -55,6 +54,7 @@ namespace TensorStack.Python.Config
                 "torch==2.9.1",
                 "torchvaudio==2.9.1",
                 "torchvision==0.24.1",
+                "torchao==0.17.0",
                 ..DefaultRequirements,
             ]
         };
@@ -75,6 +75,7 @@ namespace TensorStack.Python.Config
                 "torch==2.11.0+cu130",
                 "torchaudio==2.11.0+cu130",
                 "torchvision==0.26.0+cu130",
+                "torchao==0.17.0",
                 ..DefaultRequirements,
             ]
         };

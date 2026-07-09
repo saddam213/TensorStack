@@ -442,7 +442,7 @@ def load_connectors(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[st
 
     # 1. Load from single file
     if connectors_path.is_file():
-        print(f"[Load] Loading SingleFile AudioVae")
+        print(f"[Load] Loading SingleFile Connectors")
         connectors =  LTX2TextConnectors.from_single_file(
             str(connectors_path),
             config=str(connectors_config),
@@ -450,19 +450,20 @@ def load_connectors(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[st
             device_map=_device_map,
             **pipeline_kwargs
         )
+
         Utils.trim_memory(True)
         return connectors
 
     # 2. Load component from single file
     if single_path and single_path.is_file():
-        print(f"[Load] Loading Component AudioVae")
+        print(f"[Load] Loading Component Connectors")
         connectors = Utils.from_component(LTX2Pipeline, "connectors", single_path, template_path, _device_map, config.data_type)
         if connectors:
             Utils.trim_memory(True)
             return connectors
 
     # 3. Load from pretrained folder
-    print(f"[Load] Loading Pretrained AudioVae")
+    print(f"[Load] Loading Pretrained Connectors")
     connectors = LTX2TextConnectors.from_pretrained(
         str(connectors_path),
         torch_dtype=config.data_type,
