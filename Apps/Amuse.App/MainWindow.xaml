@@ -107,6 +107,15 @@
                         IsSelected="{Binding ViewCategory, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Audio}">
                     </CommonControls:IconButton>
                     <CommonControls:IconButton 
+                        Text="Text" 
+                        Icon="f001" 
+                        IconMargin="0,-1,0,0"
+                        Style="{StaticResource MenuIconButton}"
+                        Command="{Binding NavigateCategoryCommand}" 
+                        CommandParameter="{x:Static Views:ViewCategory.Text}" 
+                        IsSelected="{Binding ViewCategory, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Text}">
+                    </CommonControls:IconButton>
+                    <CommonControls:IconButton 
                         Text="Gallery" 
                         Icon="e228" 
                         IconMargin="0,-2,0,0"
@@ -478,6 +487,20 @@
                         </UniformGrid>
                     </Grid>
 
+
+                    <!--Text-->
+                    <Grid Visibility="{Binding ViewCategory, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
+                        <UniformGrid Columns="1" VerticalAlignment="Top" >
+                            <CommonControls:IconButton 
+                                Text="Text Instruct" 
+                                Icon="f8c9"
+                                Style="{StaticResource SubmenuIconButton}"
+                                Command="{Binding NavigateCommand}" 
+                                CommandParameter="{x:Static Views:View.TextInstruct}" 
+                                IsSelected="{Binding View, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=TextInstruct}">
+                            </CommonControls:IconButton>
+                        </UniformGrid>
+                    </Grid>
                 </Grid>
             </DockPanel>
 

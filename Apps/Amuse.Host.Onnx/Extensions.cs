@@ -3,15 +3,14 @@ using System;
 using System.IO;
 using System.Linq;
 using TensorStack.Common;
-using TensorStack.StableDiffusion.Common;
 
 namespace Amuse.Host.Onnx
 {
     public static class Extensions
     {
-        public static GenerateOptions ToOnnxOptions(this PipelineRunOptions options, PipelineLoadOptions loadOptions, ExecutionProvider executionProvider)
+        public static TensorStack.StableDiffusion.Common.GenerateOptions ToOnnxOptions(this Common.GenerateImageOptions options, PipelineLoadOptions loadOptions, ExecutionProvider executionProvider)
         {
-            var generateOptions = new GenerateOptions
+            var generateOptions = new TensorStack.StableDiffusion.Common.GenerateOptions
             {
                 Width = options.Width,
                 Height = options.Height,
@@ -35,7 +34,7 @@ namespace Amuse.Host.Onnx
         }
 
 
-        public static TensorStack.TextGeneration.Pipelines.Whisper.LanguageType GetLanguageType(this PipelineRunOptions options)
+        public static TensorStack.TextGeneration.Pipelines.Whisper.LanguageType GetLanguageType(this Common.GenerateTextOptions options)
         {
             if (Enum.TryParse<TensorStack.TextGeneration.Pipelines.Whisper.LanguageType>(options.Language.GetShortName(), true, out var languageType))
                 return languageType;
@@ -44,7 +43,7 @@ namespace Amuse.Host.Onnx
         }
 
 
-        private static void SetMemoryOptions(PipelineLoadOptions options, GenerateOptions generateOptions)
+        private static void SetMemoryOptions(PipelineLoadOptions options, TensorStack.StableDiffusion.Common.GenerateOptions generateOptions)
         {
             var memoryMode = options.MemoryMode;
             generateOptions.IsPipelineCacheEnabled = true;
@@ -67,7 +66,7 @@ namespace Amuse.Host.Onnx
         }
 
 
-        private static void SetSchedulerOptions(GenerateOptions generateOptions, SchedulerOptions schedulerOptions)
+        private static void SetSchedulerOptions(TensorStack.StableDiffusion.Common.GenerateOptions generateOptions, SchedulerOptions schedulerOptions)
         {
             generateOptions.AestheticNegativeScore = schedulerOptions.Shift;
             generateOptions.AestheticScore = schedulerOptions.Shift;
@@ -141,7 +140,7 @@ namespace Amuse.Host.Onnx
         }
 
 
-        private static void SetControlNet(ExecutionProvider executionProvider, PipelineLoadOptions options, GenerateOptions generateOptions)
+        private static void SetControlNet(ExecutionProvider executionProvider, PipelineLoadOptions options, TensorStack.StableDiffusion.Common.GenerateOptions generateOptions)
         {
             if (options.ControlNet != null)
             {

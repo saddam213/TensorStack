@@ -131,7 +131,7 @@ namespace Amuse.App.Services
                     case PipelineType.AnimaPipeline:
                     case PipelineType.QwenImagePipeline:
                     case PipelineType.Krea2Pipeline:
-                    case PipelineType.Kandinsky5Pipeline:
+                    case PipelineType.Kandinsky5ImagePipeline:
                     case PipelineType.JoyImagePipeline:
                         return await RunInferenceAsync(inputTensor, cancellationToken);
 
@@ -238,12 +238,8 @@ namespace Amuse.App.Services
                 case PipelineType.Krea2Pipeline:
                 case PipelineType.JoyImagePipeline:
                     return Path.Combine(_previewModelDirectory, "Qwen.onnx");
-                case PipelineType.Kandinsky5Pipeline:
-                    return _mediaType switch
-                    {
-                        MediaType.Image => Path.Combine(_previewModelDirectory, "Flux1.onnx"),
-                        _ => null
-                    };
+                case PipelineType.Kandinsky5ImagePipeline:
+                    return Path.Combine(_previewModelDirectory, "Flux1.onnx");
             }
             return null;
         }

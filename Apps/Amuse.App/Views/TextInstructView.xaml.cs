@@ -1,36 +1,60 @@
 ﻿using Amuse.App.Common;
 using Amuse.App.Services;
+using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
-using TensorStack.Image;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
 
 namespace Amuse.App.Views
 {
     /// <summary>
-    /// Interaction logic for TextToImageView.xaml
+    /// Interaction logic for TextInstructView.xaml
     /// </summary>
-    public partial class TextToImageView : ViewBaseDiffusion
+    public partial class TextInstructView : ViewBaseDiffusion
     {
+        private TextInput _sourceText;
+        private string _previewResult;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="TextToImageView"/> class.
+        /// Initializes a new instance of the <see cref="TextInstructView"/> class.
         /// </summary>
-        public TextToImageView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextToImageView> logger)
+        public TextInstructView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextInstructView> logger)
             : base(settings, navigationService, downloadService, diffusionService, extractService, upscaleService, historyService, logger)
         {
+            _sourceText = new TextInput(string.Empty);
             InitializeComponent();
         }
 
         /// <summary>
         /// Gets the view.
         /// </summary>
-        public override View View => View.TextToImage;
+        public override View View => View.TextInstruct;
+
+        /// <summary>
+        /// Gets or sets the source text.
+        /// </summary>
+        public TextInput SourceText
+        {
+            get { return _sourceText; }
+            set { SetProperty(ref _sourceText, value); }
+        }
+
+
+        /// <summary>
+        /// Gets or sets the preview result.
+        /// </summary>
+        public string PreviewResult
+        {
+            get { return _previewResult; }
+            set { SetProperty(ref _previewResult, value); }
+        }
 
 
         /// <summary>
@@ -50,49 +74,51 @@ namespace Amuse.App.Views
         protected override async Task ExecuteAsync()
         {
             var timestamp = Stopwatch.GetTimestamp();
-            Logger.LogInformation($"[TextToImage] [Execute] Executing pipeline...");
+            Logger.LogInformation($"[AudioToText] [Execute] Executing pipeline...");
 
             try
             {
-                var previousImage = ResultImage;
                 Progress.Clear();
                 Statistics.Clear();
-                ResultImage = default;
-                CompareImage = default;
+                ResultText = default;
+                PreviewResult = default;
                 Statistics.Start();
 
-                // Diffusion
-                var options = Options with { };
-                var resultTensor = await ExecuteImageDiffusionAsync(options);
+                var conversation = new List<ConversationModel>
+                {
+                    new ConversationModel{ Role = "user", Content = _sourceText.Text }
+                };
 
-                // Upscale
-                resultTensor = await ExecuteImageUpscaleAsync(resultTensor);
+                // Options
+                var options = Options with { Conversation = conversation };
+
+                // Execute
+                var textResult = await ExecuteTextDiffusionAsync(options);
 
                 // Result
                 Statistics.Stop();
-                ResultImage = await resultTensor.ToImageInputAsync();
-                CompareImage = previousImage;
+
+                ResultText = textResult;
 
                 // History
-                await SaveHistoryAsync(options);
-                Logger.LogInformation("[TextToImage] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+              //  await SaveHistoryAsync(options);
+                Logger.LogInformation("[AudioToText] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)
             {
                 Statistics.Clear();
-                Logger.LogInformation("[TextToImage] [Execute] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[AudioToText] [Execute] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (Exception ex)
             {
                 Statistics.Clear();
                 IsPipelineLoaded = DiffusionService.IsLoaded;
-                Logger.LogError(ex, "[TextToImage] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogError(ex, "[AudioToText] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Pipeline", ex.Message);
             }
             finally
             {
                 Progress.Clear();
-                PreviewImage = default;
             }
         }
 
@@ -100,64 +126,59 @@ namespace Amuse.App.Views
         /// <summary>
         /// Executes the pipeline automation.
         /// </summary>
-        /// <returns>A Task representing the asynchronous operation.</returns>
         protected override async Task ExecuteAutomationAsync()
         {
             IsAutomating = true;
             var timestamp = Stopwatch.GetTimestamp();
-            Logger.LogInformation($"[TextToImage] [ExecuteAutomation] Executing pipeline...");
+            Logger.LogInformation($"[AudioToText] [ExecuteAutomation] Executing pipeline...");
 
             try
             {
-                var previousImage = ResultImage;
                 Progress.Clear();
                 AutomationProgress.Clear();
                 Statistics.Clear();
-                ResultImage = default;
-                CompareImage = default;
+                ResultText = default;
+                PreviewResult = default;
                 Statistics.Start();
                 CancellationTokenSource = new CancellationTokenSource();
 
                 AutomationProgress.Indeterminate($"Automation Started");
                 var cancellationToken = CancellationTokenSource.Token;
-                await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Image, MediaType.Text))
+                await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Text, MediaType.Audio))
                 {
-                    PreviewImage = default;
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    // Diffusion
-                    var resultTensor = await ExecuteImageDiffusionAsync(automationJob.DiffusionOptions);
+                    PreviewResult = default;
 
-                    // Upscale
-                    resultTensor = await ExecuteImageUpscaleAsync(resultTensor);
+                    // Diffusion
+                    var textResult = await ExecuteTextDiffusionAsync(automationJob.DiffusionOptions);
 
                     // Result
-                    ResultImage = await resultTensor.ToImageInputAsync();
-
+                    ResultText = textResult;
+    
                     // History
                     if (AutomationOptions.IsHistoryEnabled)
                     {
                         await SaveHistoryAsync(automationJob.DiffusionOptions);
                     }
 
-                    // Output
-                    await automationJob.SaveAsync(ResultImage);
+                    await automationJob.SaveAsync(ResultAudio);
                     AutomationProgress.Update(automationJob.Id, automationJob.Count, $"Automation: {automationJob.Id}/{automationJob.Count}");
                 }
 
                 Statistics.Stop();
-                Logger.LogInformation("[TextToImage] [ExecuteAutomation] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[AudioToText] [ExecuteAutomation] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)
             {
                 Statistics.Clear();
-                Logger.LogInformation("[TextToImage] [ExecuteAutomation] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[AudioToText] [ExecuteAutomation] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (Exception ex)
             {
                 Statistics.Clear();
                 IsPipelineLoaded = DiffusionService.IsLoaded;
-                Logger.LogError(ex, "[TextToImage] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogError(ex, "[AudioToText] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Automation", ex.Message);
             }
             finally
@@ -167,7 +188,6 @@ namespace Amuse.App.Views
                 IsAutomating = false;
                 CancellationTokenSource?.Dispose();
                 CancellationTokenSource = null;
-                PreviewImage = default;
             }
         }
 
@@ -176,20 +196,28 @@ namespace Amuse.App.Views
         /// Save history
         /// </summary>
         /// <param name="options">The options.</param>
-        private async Task<ImageInput> SaveHistoryAsync(DiffusionInputOptions options)
+        private async Task<TextInput> SaveHistoryAsync(DiffusionInputOptions options)
         {
             Logger.LogInformation($"[TextToImage] [SaveHistory] Saving history...");
-            var result = await HistoryService.AddAsync(ResultImage, new DiffusionHistory
+            var result = await HistoryService.AddAsync(ResultText.Result, new DiffusionHistory
             {
                 Options = options,
                 Model = CurrentPipeline.DiffusionModel.Name,
                 LoraModels = CurrentPipeline.LoraAdapterModel?.Select(x => x.Name).ToArray(),
-                UpscaleModel = CurrentPipeline.UpscaleModel?.Name,
-                UpscaleOptions = CurrentPipeline.UpscaleModel is not null ? UpscaleOptions : null,
-                Source = View.TextToImage,
+                Source = View.AudioToText,
             });
             Logger.LogInformation($"[TextToImage] [SaveHistory] History saved.");
             return result;
+        }
+
+
+        protected override void OnProgress(PipelineProgress progress)
+        {
+            base.OnProgress(progress);
+            if (progress.Subkey == "Step")
+            {
+                PreviewResult += progress.Message;
+            }
         }
     }
 }

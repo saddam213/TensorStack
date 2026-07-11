@@ -181,8 +181,8 @@ namespace Amuse.App.Runtime
                 var imageFileName = _mediaService.GetTempFile(MediaType.Image);
                 options.Seed = options.Seed > 0 ? options.Seed : Random.Shared.Next();
                 options.NegativePrompt = options.GuidanceScale > 1f && string.IsNullOrEmpty(options.NegativePrompt) ? " " : options.NegativePrompt;
-                var generateOptions = options.ToClientOptions(_defaultOptions, imageFileName);
-                var tensorResult = await _pipeline.RunAsync(generateOptions);
+                var generateOptions = options.ToClientImageOptions(_defaultOptions, imageFileName);
+                var tensorResult = await _pipeline.GenerateImageAsync(generateOptions);
                 return tensorResult.AsImageTensor();
             }
             catch (IOException ex)
@@ -206,8 +206,8 @@ namespace Amuse.App.Runtime
                 var videoFileName = _mediaService.GetTempFile(MediaType.Video);
                 options.Seed = options.Seed > 0 ? options.Seed : Random.Shared.Next();
                 options.NegativePrompt = options.GuidanceScale > 1f && string.IsNullOrEmpty(options.NegativePrompt) ? " " : options.NegativePrompt;
-                var generateOptions = options.ToClientOptions(_defaultOptions, videoFileName);
-                var tensorResult = await _pipeline.RunAsync(generateOptions);
+                var generateOptions = options.ToClientVideoOptions(_defaultOptions, videoFileName);
+                var tensorResult = await _pipeline.GenerateVideoAsync(generateOptions);
                 if (tensorResult is null)
                 {
                     if (!File.Exists(videoFileName))
@@ -240,14 +240,14 @@ namespace Amuse.App.Runtime
             {
                 var audioFileName = _mediaService.GetTempFile(MediaType.Audio);
                 options.Seed = options.Seed > 0 ? options.Seed : Random.Shared.Next();
-                var generateOptions = options.ToClientOptions(_defaultOptions, audioFileName);
+                var generateOptions = options.ToClientAudioOptions(_defaultOptions, audioFileName);
                 foreach (var inputAudios in options.InputAudios)
                 {
                     // TODO: Cancellation of audio fetch
                     generateOptions.InputAudios.Add(await inputAudios.GetAsync(_defaultOptions.SampleRate, _defaultOptions.Channels));
                 }
 
-                var tensorResult = await _pipeline.RunAsync(generateOptions);
+                var tensorResult = await _pipeline.GenerateAudioAsync(generateOptions);
                 if (!File.Exists(audioFileName))
                     throw new Exception("Generated video result not found.");
 
@@ -261,11 +261,20 @@ namespace Amuse.App.Runtime
         }
 
 
-        public Task<TextResult> GenerateTextAsync(DiffusionInputOptions options)
+        public async Task<TextResult> GenerateTextAsync(DiffusionInputOptions options)
         {
             try
             {
-                return Task.FromResult(default(TextResult));
+                var textResult = new TextResult();
+                var textFileName = _mediaService.GetTempFile(MediaType.Text);
+                options.Seed = options.Seed > 0 ? options.Seed : Random.Shared.Next();
+                var generateOptions = options.ToClientTextOptions(_defaultOptions, textFileName);
+                var pipelineResult = await _pipeline.GenerateTextAsync(generateOptions);
+                foreach (var beamResult in pipelineResult)
+                {
+                    textResult.Results.Add(beamResult);
+                }
+                return textResult;
             }
             catch (IOException ex)
             {

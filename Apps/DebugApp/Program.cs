@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Linq;
 using System.Threading.Tasks;
-using TensorStack.Common;
 using TensorStack.Python;
 using TensorStack.Python.Common;
 using TensorStack.Python.Config;
@@ -115,7 +113,7 @@ namespace DebugApp
                 await pythonPipeline.LoadAsync();
 
                 // Generate Option
-                var options = new PipelineOptions
+                var options = new GenerateImageOptions
                 {
                     Prompt = "Cat",
                     Seed = 123456,
@@ -131,7 +129,7 @@ namespace DebugApp
                 };
 
                 // Generate
-                var response = await pythonPipeline.GenerateAsync(options);
+                var response = await pythonPipeline.GenerateImageAsync(options);
 
                 // Save Image
                 //await response

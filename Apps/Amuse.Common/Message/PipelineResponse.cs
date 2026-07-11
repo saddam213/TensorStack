@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using TensorStack.Common;
 using TensorStack.Common.Tensor;
 
 namespace Amuse.Common.Message
@@ -25,14 +26,14 @@ namespace Amuse.Common.Message
         }
 
 
-        public PipelineResponse(params PipelineTextResult[] textResults)
+        public PipelineResponse(params TextInput[] textResults)
         {
             Type = ResponseType.Object;
-            TextResponse = new PipelineTextResponse(textResults);
+            TextResponse = textResults;
         }
 
         public ResponseType Type { get; init; }
-        public PipelineTextResponse TextResponse { get; set; }
+        public TextInput[] TextResponse { get; set; }
 
         public string Error { get; init; }
         public bool IsCanceled { get; init; }
@@ -43,24 +44,5 @@ namespace Amuse.Common.Message
 
         [JsonIgnore]
         public bool IsError => !string.IsNullOrEmpty(Error);
-    }
-
-
-    public sealed record PipelineTextResponse
-    {
-        public PipelineTextResponse() { }
-        public PipelineTextResponse(PipelineTextResult[] results)
-        {
-            Results = results;
-        }
-        public PipelineTextResult[] Results { get; set; }
-    }
-
-    public sealed record PipelineTextResult
-    {
-        public int Beam { get; set; }
-        public float Score { get; set; }
-        public float PenaltyScore { get; set; }
-        public string Text { get; set; }
     }
 }

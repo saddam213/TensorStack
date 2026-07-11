@@ -283,65 +283,148 @@ namespace Amuse.App
         }
 
 
-        public static PipelineRunOptions ToClientOptions(this DiffusionInputOptions options, DiffusionDefaultOptions defaultOptions, string tempFileName)
+        public static GenerateImageOptions ToClientImageOptions(this DiffusionInputOptions options, DiffusionDefaultOptions defaultOptions, string tempFileName)
         {
-            return new PipelineRunOptions
+            return new GenerateImageOptions
             {
                 Seed = options.Seed,
-                Steps = options.Steps,
-                Steps2 = options.Steps2,
-                GuidanceScale = options.GuidanceScale,
-                GuidanceScale2 = options.GuidanceScale2,
                 Prompt = options.Prompt,
                 Prompt2 = options.Prompt2,
                 NegativePrompt = options.NegativePrompt,
+                GuidanceScale = options.GuidanceScale,
+                GuidanceScale2 = options.GuidanceScale2,
+                Steps = options.Steps,
+                Steps2 = options.Steps2,
+                Width = options.Width,
+                Height = options.Height,
                 Strength = options.Strength,
-                Duration = options.Duration,
-                Bpm = options.Bpm,
-                Instruction = options.Instruction,
-                Keyscale = options.Keyscale,
-                MaxLength = defaultOptions.MaxLength,
-                MaxLength2 = defaultOptions.MaxLength2,
-                Task = options.Task,
-                TimeSignature = options.TimeSignature,
-                TrackName = options.TrackName,
+                ControlNetScale = options.ControlNetStrength,
                 TempFileName = tempFileName,
                 EnableVaeSlicing = options.IsVaeSlicingEnabled,
                 EnableVaeTiling = options.IsVaeTilingEnabled,
+                Language = options.Language,
+                Instruction = options.Instruction,
+                Task = options.Task,
+                MaxLength = defaultOptions.MaxLength,
+                MaxLength2 = defaultOptions.MaxLength2,
                 SchedulerOptions = options.SchedulerOptions?.ToClientOptions(),
                 LoraOptions = options.GetLoraOptions(),
+                InputImages = options.InputImages,
+                InputControlImages = options.InputControlImages
+            };
+        }
 
-                Beams = options.Beams,
-                TopK = options.TopK,
-                TopP = options.TopP,
-                Temperature = options.Temperature,
-                MinLength = options.MinLength,
-                NoRepeatNgramSize = options.NoRepeatNgramSize,
-                LengthPenalty = options.LengthPenalty,
-                DiversityLength = options.DiversityLength,
-                EarlyStopping = options.EarlyStopping.ToString(),
-                Language = options.Language,
-                ChunkSize = options.ChunkSize,
-
+        public static GenerateVideoOptions ToClientVideoOptions(this DiffusionInputOptions options, DiffusionDefaultOptions defaultOptions, string tempFileName)
+        {
+            return new GenerateVideoOptions
+            {
+                Seed = options.Seed,
+                Prompt = options.Prompt,
+                Prompt2 = options.Prompt2,
+                NegativePrompt = options.NegativePrompt,
+                GuidanceScale = options.GuidanceScale,
+                GuidanceScale2 = options.GuidanceScale2,
+                Steps = options.Steps,
+                Steps2 = options.Steps2,
+                Width = options.Width,
+                Height = options.Height,
+                Frames = options.Frames,
+                FrameRate = options.FrameRate,
+                Strength = options.Strength,
                 ControlNetScale = options.ControlNetStrength,
+                TempFileName = tempFileName,
                 FrameChunk = options.FrameChunk,
                 FrameChunkOverlap = options.FrameChunkOverlap,
-                FrameRate = options.FrameRate,
-                Frames = options.Frames,
-                Height = options.Height,
                 NoiseCondition = options.NoiseCondition,
-                SilenceDuration = options.SilenceDuration,
-                Speed = options.Speed,
-                Width = options.Width,
-
+                EnableVaeSlicing = options.IsVaeSlicingEnabled,
+                EnableVaeTiling = options.IsVaeTilingEnabled,
+                Duration = options.Duration,
+                Language = options.Language,
+                Instruction = options.Instruction,
+                Task = options.Task,
+                MaxLength = defaultOptions.MaxLength,
+                MaxLength2 = defaultOptions.MaxLength2,
                 SampleRate = defaultOptions.SampleRate,
-
+                SchedulerOptions = options.SchedulerOptions?.ToClientOptions(),
+                LoraOptions = options.GetLoraOptions(),
                 InputImages = options.InputImages,
                 InputControlImages = options.InputControlImages
             };
         }
 
 
+        public static GenerateAudioOptions ToClientAudioOptions(this DiffusionInputOptions options, DiffusionDefaultOptions defaultOptions, string tempFileName)
+        {
+            return new GenerateAudioOptions
+            {
+                Seed = options.Seed,
+                Prompt = options.Prompt,
+                Prompt2 = options.Prompt2,
+                NegativePrompt = options.NegativePrompt,
+                GuidanceScale = options.GuidanceScale,
+                GuidanceScale2 = options.GuidanceScale2,
+                Steps = options.Steps,
+                Steps2 = options.Steps2,
+                Strength = options.Strength,
+                TempFileName = tempFileName,
+                EnableVaeSlicing = options.IsVaeSlicingEnabled,
+                EnableVaeTiling = options.IsVaeTilingEnabled,
+                Duration = options.Duration,
+                Language = options.Language,
+                Instruction = options.Instruction,
+                MaxLength = defaultOptions.MaxLength,
+                MaxLength2 = defaultOptions.MaxLength2,
+                Bpm = options.Bpm,
+                Keyscale = options.Keyscale,
+                Task = options.Task,
+                TrackName = options.TrackName,
+                TimeSignature = options.TimeSignature,
+                Speed = options.Speed,
+                SilenceDuration = options.SilenceDuration,
+                SampleRate = defaultOptions.SampleRate,
+                SchedulerOptions = options.SchedulerOptions?.ToClientOptions(),
+                LoraOptions = options.GetLoraOptions()
+            };
+        }
+
+
+        public static GenerateTextOptions ToClientTextOptions(this DiffusionInputOptions options, DiffusionDefaultOptions defaultOptions, string tempFileName)
+        {
+            return new GenerateTextOptions
+            {
+                Seed = options.Seed,
+                Prompt = options.Prompt,
+                Conversation = options.Conversation?.ToClientOptions(),
+                TempFileName = tempFileName,
+                Language = options.Language,
+                MinLength = options.MinLength,
+                MaxLength = defaultOptions.MaxLength,
+                Beams = options.Beams,
+                NoRepeatNgramSize = options.NoRepeatNgramSize,
+                LengthPenalty = options.LengthPenalty,
+                Temperature = options.Temperature,
+                TopK = options.TopK,
+                TopP = options.TopP,
+                TopH = options.TopH,
+                TypicalP = options.TypicalP,
+                RepetitionPenalty = options.RepetitionPenalty,
+                IsSamplingEnabled = options.IsSamplingEnabled,
+                ChunkSize = options.ChunkSize,
+                EarlyStopping = options.EarlyStopping.ToString(),
+                Instruction = options.Instruction,
+                Task = options.Task,
+                InputImages = options.InputImages,
+            };
+        }
+
+
+        public static ConversationMessage[] ToClientOptions(this List<ConversationModel> conversation)
+        {
+            if (conversation.IsNullOrEmpty())
+                return default;
+
+            return [.. conversation.Select(x => new ConversationMessage(x.Role, x.Content))];
+        }
 
 
         public static bool IsValidPath(string path)

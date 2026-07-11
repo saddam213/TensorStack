@@ -4815,7 +4815,7 @@
       "Backend": "PyTorch",
       "Name": "Kandinsky5 T2I Lite",
       "Template": "Kandinsky50_Lite_T2I",
-      "Pipeline": "Kandinsky5Pipeline",
+      "Pipeline": "Kandinsky5ImagePipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
       "MediaType": "Image",
@@ -4925,7 +4925,7 @@
       "Backend": "PyTorch",
       "Name": "Kandinsky5 I2I Lite",
       "Template": "Kandinsky50_Lite_I2I",
-      "Pipeline": "Kandinsky5Pipeline",
+      "Pipeline": "Kandinsky5ImagePipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
       "MediaType": "Image",
@@ -5035,7 +5035,7 @@
       "Backend": "PyTorch",
       "Name": "Kandinsky5 T2V Lite",
       "Template": "Kandinsky50_Lite_T2V",
-      "Pipeline": "Kandinsky5Pipeline",
+      "Pipeline": "Kandinsky5VideoPipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
       "MediaType": "Video",
@@ -5133,7 +5133,7 @@
       "Backend": "PyTorch",
       "Name": "Kandinsky5 I2V Pro",
       "Template": "Kandinsky50_Pro",
-      "Pipeline": "Kandinsky5Pipeline",
+      "Pipeline": "Kandinsky5VideoPipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
       "MediaType": "Video",
@@ -10146,6 +10146,52 @@
         "Tasks": [ "Transcribe", "Translate" ]
       },
       "Link": "https://huggingface.co/saddam213/Amuse/tree/main/Audio/Whisper-Large"
+    },
+    {
+      "Id": 800,
+      "Backend": "PyTorch",
+      "Name": "Qwen3 4B",
+      "Template": "Qwen3_4B",
+      "Pipeline": "QwenTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText" ],
+      "ViewFilter": [ "TextInstruct" ],
+      "Checkpoint": {
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 6, 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 6, 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 10, 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 40960,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 0,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.6,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
     }
   ],
   "LoraAdapterModels": [
