@@ -345,8 +345,7 @@ def create_pipeline(config: DataObjects.PipelineConfig):
 #------------------------------------------------
 def generate(
         inference_args: Dict[str, Any],
-        input_tensors: Optional[List[Tuple[Sequence[float],Sequence[int]]]] = None,
-        control_tensors: Optional[List[Tuple[Sequence[float],Sequence[int]]]] = None,
+        input_tensors: Optional[List[Tuple[Sequence[float],Sequence[int]]]] = None
     ) -> Sequence[Buffer]:
     global _prompt_cache_key, _prompt_cache_value, _stopwatch
     _cancel_event.clear()
@@ -361,7 +360,7 @@ def generate(
     print(f"[Generate] Input Received - Tensors: {audio_count}")
 
     # Options
-    options = DataObjects.PipelineOptions(**inference_args)
+    options = DataObjects.GenerateAudioOptions(**inference_args)
 
     # Scheduler
     _pipeline.scheduler = Utils.create_scheduler(options.scheduler_options)

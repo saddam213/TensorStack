@@ -14,6 +14,8 @@
         VideoToVideo = 302,
 
         TextToAudio = 400,
-        AudioToText = 500
+        AudioToText = 500,
+
+        TextToText = 800
     }
 }

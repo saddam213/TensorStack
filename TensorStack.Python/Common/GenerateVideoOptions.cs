@@ -5,7 +5,7 @@ using TensorStack.Python.Scheduler;
 
 namespace TensorStack.Python.Common
 {
-    public record PipelineOptions
+    public record GenerateVideoOptions
     {
         [JsonPropertyName("seed")]
         public int Seed { get; set; }
@@ -49,12 +49,6 @@ namespace TensorStack.Python.Common
         [JsonPropertyName("control_net_scale")]
         public float ControlNetScale { get; set; } = 1;
 
-        [JsonPropertyName("scheduler_options")]
-        public SchedulerOptions SchedulerOptions { get; set; }
-
-        [JsonPropertyName("lora_options")]
-        public List<LoraOptions> LoraOptions { get; set; }
-
         [JsonPropertyName("temp_filename")]
         public string TempFileName { get; set; }
 
@@ -82,28 +76,20 @@ namespace TensorStack.Python.Common
         [JsonPropertyName("instruction")]
         public string Instruction { get; set; }
 
+        [JsonPropertyName("task")]
+        public string Task { get; set; }
+
         [JsonPropertyName("max_length")]
         public int MaxLength { get; set; }
 
         [JsonPropertyName("max_length2")]
         public int MaxLength2 { get; set; }
 
-        [JsonPropertyName("bpm")]
-        public int Bpm { get; set; }
+        [JsonPropertyName("scheduler_options")]
+        public SchedulerOptions SchedulerOptions { get; set; }
 
-        [JsonPropertyName("keyscale")]
-        public string Keyscale { get; set; }
-
-        [JsonPropertyName("time_signature")]
-        public string TimeSignature { get; set; }
-
-        [JsonPropertyName("task")]
-        public string Task { get; set; }
-
-        [JsonPropertyName("track_name")]
-        public string TrackName { get; set; }
-
-
+        [JsonPropertyName("lora_options")]
+        public List<LoraOptions> LoraOptions { get; set; }
 
 
         [JsonIgnore]

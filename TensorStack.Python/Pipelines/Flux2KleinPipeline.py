@@ -368,7 +368,7 @@ def generate(
     print(f"[Generate] Input Received - Tensors: {image_count}, Control Tensors: {control_image_count}")
 
     # Options
-    options = DataObjects.PipelineOptions(**inference_args)
+    options = DataObjects.GenerateImageOptions(**inference_args)
 
     # Scheduler
     _pipeline.scheduler = Utils.create_scheduler(options.scheduler_options)

@@ -166,11 +166,11 @@ namespace TensorStack.Python
 
 
         /// <summary>
-        /// Generate
+        /// Generates Image.
         /// </summary>
         /// <param name="options">The options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public Task<IReadOnlyList<Tensor<float>>> GenerateAsync(PipelineOptions options, CancellationToken cancellationToken = default)
+        public Task<IReadOnlyList<Tensor<float>>> GenerateImageAsync(GenerateImageOptions options, CancellationToken cancellationToken = default)
         {
             return Task.Run<IReadOnlyList<Tensor<float>>>(() =>
             {
@@ -181,17 +181,133 @@ namespace TensorStack.Python
                         _logger?.LogInformation("[PythonPipeline] [Generate] Executing pipeline.");
                         cancellationToken.Register(() => GenerateCancelAsync(), true);
 
-                        var inputTensors = GetInputData(options);
-                        var controlInputTensors = GetControlInputData(options);
+                        var inputTensors = GetInputData(inputImages: options.InputImages);
+                        var controlInputTensors = GetControlInputData(options.InputControlImages);
                         var inferenceOptionsDict = options.ToPythonDictionary();
                         using (var inferenceOptions = PyObject.From(inferenceOptionsDict))
-                        using (var imageData = PyObject.From(inputTensors))
-                        using (var controlNetData = PyObject.From(controlInputTensors))
-                        using (var pythonResults = _functionGenerate.Call(inferenceOptions, imageData, controlNetData))
+                        using (var inputTensorData = PyObject.From(inputTensors))
+                        using (var controlInputTensorData = PyObject.From(controlInputTensors))
+                        using (var pythonResults = _functionGenerate.Call(inferenceOptions, inputTensorData, controlInputTensorData))
                         {
                             return pythonResults.AsBareEnumerable<IPyBuffer, PyObjectImporters.Buffer>()
                                 .Select(x => x.ToTensor().Normalize(Normalization.OneToOne))
                                 .ToList();
+                        }
+                    }
+                    catch (PythonInvocationException ex)
+                    {
+                        throw HandlePythonException(ex);
+                    }
+                }
+            });
+        }
+
+
+        /// <summary>
+        /// Generates Video.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public Task<IReadOnlyList<Tensor<float>>> GenerateVideoAsync(GenerateVideoOptions options, CancellationToken cancellationToken = default)
+        {
+            return Task.Run<IReadOnlyList<Tensor<float>>>(() =>
+            {
+                using (GIL.Acquire())
+                {
+                    try
+                    {
+                        _logger?.LogInformation("[PythonPipeline] [Generate] Executing pipeline.");
+                        cancellationToken.Register(() => GenerateCancelAsync(), true);
+
+                        var inputTensors = GetInputData(inputImages: options.InputImages);
+                        var controlInputTensors = GetControlInputData(options.InputControlImages);
+                        var inferenceOptionsDict = options.ToPythonDictionary();
+                        using (var inferenceOptions = PyObject.From(inferenceOptionsDict))
+                        using (var inputTensorData = PyObject.From(inputTensors))
+                        using (var controlInputTensorData = PyObject.From(controlInputTensors))
+                        using (var pythonResults = _functionGenerate.Call(inferenceOptions, inputTensorData, controlInputTensorData))
+                        {
+                            return pythonResults.AsBareEnumerable<IPyBuffer, PyObjectImporters.Buffer>()
+                                .Select(x => x.ToTensor().Normalize(Normalization.OneToOne))
+                                .ToList();
+                        }
+                    }
+                    catch (PythonInvocationException ex)
+                    {
+                        throw HandlePythonException(ex);
+                    }
+                }
+            });
+        }
+
+
+        /// <summary>
+        /// Generates Audio.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public Task<IReadOnlyList<Tensor<float>>> GenerateAudioAsync(GenerateAudioOptions options, CancellationToken cancellationToken = default)
+        {
+            return Task.Run<IReadOnlyList<Tensor<float>>>(() =>
+            {
+                using (GIL.Acquire())
+                {
+                    try
+                    {
+                        _logger?.LogInformation("[PythonPipeline] [Generate] Executing pipeline.");
+                        cancellationToken.Register(() => GenerateCancelAsync(), true);
+
+                        var inputTensors = GetInputData(inputAudios: options.InputAudios);
+                        var inferenceOptionsDict = options.ToPythonDictionary();
+                        using (var inferenceOptions = PyObject.From(inferenceOptionsDict))
+                        using (var inputTensorsData = PyObject.From(inputTensors))
+                        using (var pythonResults = _functionGenerate.Call(inferenceOptions, inputTensorsData))
+                        {
+                            return pythonResults.AsBareEnumerable<IPyBuffer, PyObjectImporters.Buffer>()
+                                .Select(x => x.ToTensor().Normalize(Normalization.OneToOne))
+                                .ToList();
+                        }
+                    }
+                    catch (PythonInvocationException ex)
+                    {
+                        throw HandlePythonException(ex);
+                    }
+                }
+            });
+        }
+
+
+        /// <summary>
+        /// Generates Text.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public Task<TextInput[]> GenerateTextAsync(GenerateTextOptions options, CancellationToken cancellationToken = default)
+        {
+            return Task.Run<TextInput[]>(() =>
+            {
+                using (GIL.Acquire())
+                {
+                    try
+                    {
+                        _logger?.LogInformation("[PythonPipeline] [Generate] Executing pipeline.");
+                        cancellationToken.Register(() => GenerateCancelAsync(), true);
+
+                        var inputTensors = GetInputData(inputImages: options.InputImages);
+                        var inferenceOptionsDict = options.ToPythonDictionary();
+                        using (var inputTensorsData = PyObject.From(inputTensors))
+                        using (var inferenceOptions = PyObject.From(inferenceOptionsDict))
+                        using (var pythonResults = _functionGenerate.Call(inferenceOptions, inputTensorsData))
+                        {
+                            return pythonResults
+                                .AsEnumerable<Tuple<string, int, float, float>>()
+                                .Select(x => new TextInput
+                                {
+                                    Text = x.Item1,
+                                    Beam = x.Item2,
+                                    Score = x.Item3,
+                                    PenaltyScore = x.Item4,
+                                }).ToArray();
                         }
                     }
                     catch (PythonInvocationException ex)
@@ -388,22 +504,22 @@ namespace TensorStack.Python
         }
 
 
-        private List<(float[], int[])> GetInputData(PipelineOptions options)
+        private List<(float[], int[])> GetInputData(IReadOnlyList<ImageTensor> inputImages = default, IReadOnlyList<AudioTensor> inputAudios = default)
         {
-            if (!options.InputImages.IsNullOrEmpty())
+            if (!inputImages.IsNullOrEmpty())
             {
                 var inputData = new List<(float[], int[])>();
-                foreach (var imageInput in options.InputImages)
+                foreach (var imageInput in inputImages)
                 {
                     var imageTensor = imageInput.GetChannels(3);
                     inputData.Add((imageTensor.Span.ToArray(), imageTensor.Dimensions.ToArray()));
                 }
                 return inputData;
             }
-            else if (!options.InputAudios.IsNullOrEmpty())
+            else if (!inputAudios.IsNullOrEmpty())
             {
                 var inputData = new List<(float[], int[])>();
-                foreach (var audioInput in options.InputAudios)
+                foreach (var audioInput in inputAudios)
                 {
                     inputData.Add((audioInput.Span.ToArray(), audioInput.Dimensions.ToArray()));
                 }
@@ -413,13 +529,13 @@ namespace TensorStack.Python
         }
 
 
-        private List<(float[], int[])> GetControlInputData(PipelineOptions options)
+        private List<(float[], int[])> GetControlInputData(IReadOnlyList<ImageTensor> controlImages)
         {
-            if (options.InputControlImages.IsNullOrEmpty())
+            if (controlImages.IsNullOrEmpty())
                 return null;
 
             var inputData = new List<(float[], int[])>();
-            foreach (var imageInput in options.InputControlImages)
+            foreach (var imageInput in controlImages)
             {
                 var imageTensor = imageInput.GetChannels(3);
                 inputData.Add((imageTensor.Span.ToArray(), imageTensor.Dimensions.ToArray()));

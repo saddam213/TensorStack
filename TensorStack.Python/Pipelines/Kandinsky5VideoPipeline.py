@@ -14,11 +14,8 @@ from collections.abc import Buffer
 from typing import Dict, Sequence, List, Tuple, Optional, Any
 from transformers import CLIPTokenizer, CLIPTextModel, AutoProcessor, Qwen2_5_VLForConditionalGeneration
 from diffusers import (
-    AutoencoderKL,
     AutoencoderKLHunyuanVideo,
     Kandinsky5Transformer3DModel,
-    Kandinsky5T2IPipeline,
-    Kandinsky5I2IPipeline,
     Kandinsky5T2VPipeline,
     Kandinsky5I2VPipeline
 )
@@ -37,12 +34,9 @@ _generator = None
 _isMemoryOffload = False
 _prompt_cache_key = None
 _prompt_cache_value = None
-_is_video_pipeline = False
 _cancel_event = Event()
 _stopwatch = None
 _pipelineMap = {
-    ProcessType.TextToImage: Kandinsky5T2IPipeline,
-    ProcessType.ImageEdit: Kandinsky5I2IPipeline,
     ProcessType.TextToVideo: Kandinsky5T2VPipeline,
     ProcessType.ImageToVideo: Kandinsky5I2VPipeline
 }
@@ -300,55 +294,9 @@ def load_transformer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[s
 
 
 #------------------------------------------------
-# Load AutoencoderKL
-#------------------------------------------------
-def load_vae_image(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
-    if _pipeline and _pipeline.vae:
-        print(f"[Load] Loading Cached Vae")
-        return _pipeline.vae
-
-    vae_path: Path = _model_config["vae"]
-    vae_config: Path = _model_config["vae_config"]
-    single_path: Path = _model_config["single_file"]
-    template_path: Path  = _model_config["template"]
-
-    # 1. Load from single file
-    if vae_path.is_file():
-        print(f"[Load] Loading SingleFile Vae")
-        auto_encoder =  AutoencoderKL.from_single_file(
-            str(vae_path),
-            config=str(vae_config),
-            torch_dtype=config.data_type,
-            device_map=_device_map,
-            **pipeline_kwargs
-        )
-        Utils.trim_memory(True)
-        return auto_encoder
-
-    # 2. Load component from single file
-    if single_path and single_path.is_file():
-        print(f"[Load] Loading Component Vae")
-        auto_encoder = Utils.from_component(Kandinsky5T2IPipeline, "vae", single_path, template_path, _device_map, config.data_type)
-        if auto_encoder:
-            Utils.trim_memory(True)
-            return auto_encoder
-
-    # 3. Load from pretrained folder
-    print(f"[Load] Loading Pretrained Vae")
-    auto_encoder = AutoencoderKL.from_pretrained(
-        str(vae_path),
-        torch_dtype=config.data_type,
-        device_map=_device_map,
-        **pipeline_kwargs
-    )
-    Utils.trim_memory(True)
-    return auto_encoder
-
-
-#------------------------------------------------
 # Load AutoencoderKLHunyuanVideo
 #------------------------------------------------
-def load_vae_video(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
+def load_vae(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
     if _pipeline and _pipeline.vae:
         print(f"[Load] Loading Cached Vae")
         return _pipeline.vae
@@ -422,7 +370,6 @@ def load_control_net(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[s
 # Create a new pipeline
 #------------------------------------------------
 def create_pipeline(config: DataObjects.PipelineConfig):
-    global _is_video_pipeline
     template_path: Path = _model_config["template"]
     pipeline_kwargs = {
         "variant": config.variant,
@@ -431,20 +378,13 @@ def create_pipeline(config: DataObjects.PipelineConfig):
         "local_files_only":True,
     }
 
-    if _processType in (ProcessType.TextToVideo, ProcessType.ImageToVideo):
-        _is_video_pipeline = True
-
     # Load Models
     tokenizer = load_tokenizer(config, pipeline_kwargs)
     tokenizer_2 = load_tokenizer_2(config, pipeline_kwargs)
     text_encoder = load_text_encoder(config, pipeline_kwargs)
     text_encoder_2 = load_text_encoder_2(config, pipeline_kwargs)
     transformer = load_transformer(config, pipeline_kwargs)
-    vae = (
-        load_vae_video(config, pipeline_kwargs)
-        if _is_video_pipeline
-        else load_vae_image(config, pipeline_kwargs)
-    )
+    vae = load_vae(config, pipeline_kwargs)
     control_net = load_control_net(config, pipeline_kwargs)
     if control_net is not None:
         pipeline_kwargs.update({"controlnet": control_net})
@@ -558,13 +498,8 @@ def generate(
     # Notify
     Utils.notification_push(key="Generate", subkey="AutoEncoder", elapsedkey="Transformer", elapsed = _stopwatch.reset())
 
-    if _is_video_pipeline == True:
-        # (Frames, Channel, Height, Width)
-        output = output.transpose(0, 1, 4, 2, 3).squeeze(axis=0).astype(np.float32)
-
-    if _is_video_pipeline == False:
-        # (Batch, Channel, Height, Width)
-        output = output.transpose(0, 3, 1, 2).astype(np.float32)
+    # (Frames, Channel, Height, Width)
+    output = output.transpose(0, 1, 4, 2, 3).squeeze(axis=0).astype(np.float32)
 
     # Notify
     Utils.notification_push(key="Generate", subkey="Complete", elapsedkey="AutoEncoder", elapsed = _stopwatch.stop())
@@ -583,10 +518,7 @@ def _progress_callback(pipe, step: int, total_steps: int, info: Dict, height: in
         raise Exception("Operation Canceled")
 
     def preview_latents(latents):
-        if latents is None or _is_video_pipeline == True:
-            return []
-        latents = latents.permute(0, 1, 4, 2, 3).squeeze(0)
-        return latents.float().cpu()
+        return []
 
     steps = pipe._num_timesteps
     elapsed = _stopwatch.reset()

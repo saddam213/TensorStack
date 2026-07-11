@@ -8,7 +8,7 @@ namespace TensorStack.Common
     public class TextInput
     {
         private readonly string _sourceFile;
-
+        public TextInput(){ }
         public TextInput(string textInput)
         {
             Text = textInput;

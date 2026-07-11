@@ -454,7 +454,7 @@ def unload_lora_weights(pipeline: Any):
 #------------------------------------------------
 # Set the LoRA weights for inference
 #------------------------------------------------
-def set_lora_weights(pipeline: Any, config: DataObjects.PipelineOptions):
+def set_lora_weights(pipeline: Any, config: Any):
     if config.lora_options is not None:
         lora_map = {
             opt.name: opt.strength

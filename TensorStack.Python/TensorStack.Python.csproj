@@ -150,10 +150,16 @@
     <None Include="Pipelines\LongCatAudioPipeline.py" Pack="false" />
   </ItemGroup>
 
-  <!--Kandinsky5Pipeline-->
+  <!--Kandinsky5ImagePipeline-->
   <ItemGroup>
-    <Content Include="Pipelines\Kandinsky5Pipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
-    <None Include="Pipelines\Kandinsky5Pipeline.py" Pack="false" />
+    <Content Include="Pipelines\Kandinsky5ImagePipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
+    <None Include="Pipelines\Kandinsky5ImagePipeline.py" Pack="false" />
+  </ItemGroup>
+
+  <!--Kandinsky5VideoPipeline-->
+  <ItemGroup>
+    <Content Include="Pipelines\Kandinsky5VideoPipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
+    <None Include="Pipelines\Kandinsky5VideoPipeline.py" Pack="false" />
   </ItemGroup>
 
   <!--Krea2Pipeline-->
@@ -190,6 +196,12 @@
   <ItemGroup>
     <Content Include="Pipelines\QwenImagePipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
     <None Include="Pipelines\QwenImagePipeline.py" Pack="false" />
+  </ItemGroup>
+
+  <!--QwenTextPipeline-->
+  <ItemGroup>
+    <Content Include="Pipelines\QwenTextPipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
+    <None Include="Pipelines\QwenTextPipeline.py" Pack="false" />
   </ItemGroup>
 
   <!--SkyReelsV2Pipeline-->

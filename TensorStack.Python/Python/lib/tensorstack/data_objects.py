@@ -218,7 +218,43 @@ class SchedulerOptions:
 
 
 @dataclass(slots=True)
-class PipelineOptions:
+class GenerateImageOptions:
+    seed: int
+    prompt: str
+    prompt2: Optional[str] = None
+    negative_prompt: Optional[str] = None
+    guidance_scale: float = 1.0
+    guidance_scale2: float = 1.0
+    steps: int = 50
+    steps2: int = 0
+    height: int = 0
+    width: int = 0
+    strength: float = 1.0
+    control_net_scale: float = 1.0
+    temp_filename: str = None
+    enable_vae_tiling: bool = False
+    enable_vae_slicing: bool = False
+    language: Optional[str] = None
+    instruction: Optional[str] = None
+    task: Optional[str] = None
+    max_length: int = 0
+    max_length2: int = 0
+    scheduler_options: SchedulerOptions = None
+    lora_options: Optional[Sequence[LoraOption]] = None
+
+    def __post_init__(self):
+        self.guidance_scale = float(self.guidance_scale)
+        self.guidance_scale2 = float(self.guidance_scale2)
+        self.strength = float(self.strength)
+        self.control_net_scale = float(self.control_net_scale)
+        if (self.scheduler_options is not None and isinstance(self.scheduler_options, dict)):
+            self.scheduler_options = SchedulerOptions(**self.scheduler_options)
+        if (self.lora_options is not None and isinstance(self.lora_options, Sequence)):
+            self.lora_options = [LoraOption(**dict(cfg)) for cfg in self.lora_options or []]
+
+
+@dataclass(slots=True)
+class GenerateVideoOptions:
     seed: int
     prompt: str
     prompt2: Optional[str] = None
@@ -233,8 +269,6 @@ class PipelineOptions:
     frame_rate: float = 0.0
     strength: float = 1.0
     control_net_scale: float = 1.0
-    lora_options: Optional[Sequence[LoraOption]] = None
-    scheduler_options: SchedulerOptions = None
     temp_filename: str = None
     frame_chunk: int = 0
     frame_chunk_overlap: int = 0
@@ -244,13 +278,12 @@ class PipelineOptions:
     duration: float = 5.0
     language: Optional[str] = None
     instruction: Optional[str] = None
+    task: Optional[str] = None
     max_length: int = 0
     max_length2: int = 0
-    bpm: int = 0
-    keyscale: Optional[str] = None
-    task: Optional[str] = None
-    track_name: Optional[str] = None
-    time_signature: Optional[str] = None
+    sample_rate: int = 0
+    scheduler_options: SchedulerOptions = None
+    lora_options: Optional[Sequence[LoraOption]] = None
 
     def __post_init__(self):
         self.guidance_scale = float(self.guidance_scale)
@@ -264,3 +297,78 @@ class PipelineOptions:
             self.scheduler_options = SchedulerOptions(**self.scheduler_options)
         if (self.lora_options is not None and isinstance(self.lora_options, Sequence)):
             self.lora_options = [LoraOption(**dict(cfg)) for cfg in self.lora_options or []]
+
+
+@dataclass(slots=True)
+class GenerateAudioOptions:
+    seed: int
+    prompt: str
+    prompt2: Optional[str] = None
+    negative_prompt: Optional[str] = None
+    guidance_scale: float = 1.0
+    guidance_scale2: float = 1.0
+    steps: int = 50
+    steps2: int = 0
+    strength: float = 1.0
+    temp_filename: str = None
+    enable_vae_tiling: bool = False
+    enable_vae_slicing: bool = False
+    duration: float = 5.0
+    language: Optional[str] = None
+    instruction: Optional[str] = None
+    task: Optional[str] = None
+    max_length: int = 0
+    max_length2: int = 0
+    bpm: int = 0
+    keyscale: Optional[str] = None
+    track_name: Optional[str] = None
+    time_signature: Optional[str] = None
+    speed: float = 1.0
+    silence_duration: float = 0.0
+    sample_rate: int = 0
+    scheduler_options: SchedulerOptions = None
+    lora_options: Optional[Sequence[LoraOption]] = None
+
+    def __post_init__(self):
+        self.guidance_scale = float(self.guidance_scale)
+        self.guidance_scale2 = float(self.guidance_scale2)
+        self.strength = float(self.strength)
+        self.duration = float(self.duration)
+        self.speed = float(self.speed)
+        self.silence_duration = float(self.silence_duration)
+        if (self.scheduler_options is not None and isinstance(self.scheduler_options, dict)):
+            self.scheduler_options = SchedulerOptions(**self.scheduler_options)
+        if (self.lora_options is not None and isinstance(self.lora_options, Sequence)):
+            self.lora_options = [LoraOption(**dict(cfg)) for cfg in self.lora_options or []]
+
+
+@dataclass(slots=True)
+class GenerateTextOptions:
+    seed: int
+    prompt: Optional[str] = None
+    conversation: Optional[list[dict[str, str]]] = None
+    temp_filename: str = None
+    language: Optional[str] = None
+    instruction: Optional[str] = None
+    task: Optional[str] = None
+    min_length: int = 0
+    max_length: int = 0
+    do_sample: bool = False
+    num_beams: int = 1
+    temperature: float = 0.00
+    top_k: int = 50
+    top_p: float = 1.0
+    top_h: float = 0.6
+    typical_p: float = 1.0
+    repetition_penalty: float = 0
+    length_penalty: float = 0
+    no_repeat_ngram_size: int = 0
+
+    def __post_init__(self):
+        self.temperature = float(self.temperature)
+        self.top_p = float(self.top_p)
+        self.top_h = float(self.top_h)
+        self.typical_p = float(self.typical_p)
+        self.repetition_penalty = float(self.repetition_penalty)
+        self.length_penalty = float(self.length_penalty)
+

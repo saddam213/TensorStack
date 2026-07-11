@@ -34,7 +34,7 @@ namespace TensorStack.Python.Common
                 return null;
 
             // {Key}|{Subkey}|{elapsedkey}|{Timestamp}|{Elapsed}|{Value}|{Maximum}|{BatchValue}|{BatchMaximum}|{Message}
-            var parameters = inputData.Split('|', 10, StringSplitOptions.TrimEntries);
+            var parameters = inputData.Split('|', 10);
             if (parameters.Length < 10)
                 return null;
 

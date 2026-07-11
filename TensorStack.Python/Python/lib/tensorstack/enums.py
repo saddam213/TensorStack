@@ -5,14 +5,13 @@ class ProcessType(Enum):
     ImageToImage = 1
     ImageEdit = 2
     ImageInpaint = 3
-    ImageControlNet = 4,
-    ImageToImageControlNet = 5,
-
+    ImageControlNet = 4
+    ImageToImageControlNet = 5
     TextToVideo = 300
     ImageToVideo = 301
-    VideoToVideo = 302,
-
+    VideoToVideo = 302
     TextToAudio = 400
+    TextToText = 800
 
 
 class MemoryMode(Enum):

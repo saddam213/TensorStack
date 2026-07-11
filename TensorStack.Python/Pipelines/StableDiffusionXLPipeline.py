@@ -428,7 +428,7 @@ def generate(
         switch(ProcessType.ImageControlNet)
 
     # Options
-    options = DataObjects.PipelineOptions(**inference_args)
+    options = DataObjects.GenerateImageOptions(**inference_args)
 
     # Scheduler
     _pipeline.scheduler = Utils.create_scheduler(options.scheduler_options)

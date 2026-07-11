@@ -1,0 +1,83 @@
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using TensorStack.Common.Tensor;
+using TensorStack.Python.Scheduler;
+
+namespace TensorStack.Python.Common
+{
+    public record GenerateImageOptions
+    {
+        [JsonPropertyName("seed")]
+        public int Seed { get; set; }
+
+        [JsonPropertyName("prompt")]
+        public string Prompt { get; set; }
+
+        [JsonPropertyName("prompt2")]
+        public string Prompt2 { get; set; }
+
+        [JsonPropertyName("negative_prompt")]
+        public string NegativePrompt { get; set; }
+
+        [JsonPropertyName("guidance_scale")]
+        public float GuidanceScale { get; set; } = 1;
+
+        [JsonPropertyName("guidance_scale2")]
+        public float GuidanceScale2 { get; set; } = 1;
+
+        [JsonPropertyName("steps")]
+        public int Steps { get; set; } = 50;
+
+        [JsonPropertyName("steps2")]
+        public int Steps2 { get; set; } = 20;
+
+        [JsonPropertyName("height")]
+        public int Height { get; set; }
+
+        [JsonPropertyName("width")]
+        public int Width { get; set; }
+
+        [JsonPropertyName("strength")]
+        public float Strength { get; set; } = 1;
+
+        [JsonPropertyName("control_net_scale")]
+        public float ControlNetScale { get; set; } = 1;
+
+        [JsonPropertyName("temp_filename")]
+        public string TempFileName { get; set; }
+
+        [JsonPropertyName("enable_vae_tiling")]
+        public bool EnableVaeTiling { get; set; }
+
+        [JsonPropertyName("enable_vae_slicing")]
+        public bool EnableVaeSlicing { get; set; }
+
+        [JsonPropertyName("language")]
+        public string Language { get; set; }
+
+        [JsonPropertyName("instruction")]
+        public string Instruction { get; set; }
+
+        [JsonPropertyName("task")]
+        public string Task { get; set; }
+
+        [JsonPropertyName("max_length")]
+        public int MaxLength { get; set; }
+
+        [JsonPropertyName("max_length2")]
+        public int MaxLength2 { get; set; }
+
+        [JsonPropertyName("scheduler_options")]
+        public SchedulerOptions SchedulerOptions { get; set; }
+
+        [JsonPropertyName("lora_options")]
+        public List<LoraOptions> LoraOptions { get; set; }
+
+
+        [JsonIgnore]
+        public List<ImageTensor> InputImages { get; set; } = [];
+
+        [JsonIgnore]
+        public List<ImageTensor> InputControlImages { get; set; } = [];
+    }
+}
