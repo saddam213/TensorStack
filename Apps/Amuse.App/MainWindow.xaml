@@ -47,8 +47,8 @@
                 <Grid DockPanel.Dock="Right" Width="290" >
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                         <CommonControls:IconButton 
-                            Width="90"
-                            Text="Settings"
+                            Width="40"
+                            
                             Icon="f013" 
                             IconStyle="Solid"
                             FontWeight="Bold"
@@ -108,8 +108,9 @@
                     </CommonControls:IconButton>
                     <CommonControls:IconButton 
                         Text="Text" 
-                        Icon="f001" 
-                        IconMargin="0,-1,0,0"
+                        Icon="f893" 
+                        IconMargin="0,-2,0,0"
+                        IconStyle="Regular"
                         Style="{StaticResource MenuIconButton}"
                         Command="{Binding NavigateCategoryCommand}" 
                         CommandParameter="{x:Static Views:ViewCategory.Text}" 
@@ -492,12 +493,20 @@
                     <Grid Visibility="{Binding ViewCategory, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
                         <UniformGrid Columns="1" VerticalAlignment="Top" >
                             <CommonControls:IconButton 
-                                Text="Text Instruct" 
-                                Icon="f8c9"
+                                Text="Instruct" 
+                                Icon="e1e3"
                                 Style="{StaticResource SubmenuIconButton}"
                                 Command="{Binding NavigateCommand}" 
                                 CommandParameter="{x:Static Views:View.TextInstruct}" 
                                 IsSelected="{Binding View, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=TextInstruct}">
+                            </CommonControls:IconButton>
+                            <CommonControls:IconButton 
+                                Text="Converse" 
+                                Icon="e1e7"
+                                Style="{StaticResource SubmenuIconButton}"
+                                Command="{Binding NavigateCommand}" 
+                                CommandParameter="{x:Static Views:View.TextConverse}" 
+                                IsSelected="{Binding View, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=TextConverse}">
                             </CommonControls:IconButton>
                         </UniformGrid>
                     </Grid>
@@ -542,6 +551,9 @@
                             <Setter Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding ViewCategory, ElementName=UI}" Value="Other">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ViewCategory, ElementName=UI}" Value="Text">
                             <Setter Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
                     </Style.Triggers>

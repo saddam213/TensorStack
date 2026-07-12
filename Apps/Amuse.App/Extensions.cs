@@ -423,7 +423,7 @@ namespace Amuse.App
             if (conversation.IsNullOrEmpty())
                 return default;
 
-            return [.. conversation.Select(x => new ConversationMessage(x.Role, x.Content))];
+            return [.. conversation.Select(x => new ConversationMessage(x.Role, x.Content, [.. x.ImageIndex]))];
         }
 
 

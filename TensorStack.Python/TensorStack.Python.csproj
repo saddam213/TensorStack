@@ -46,6 +46,7 @@
 
   <!--Python Lib-->
   <ItemGroup>
+    <Content Include="Python\lib\tensorstack\llm_utils.py" Pack="true" PackagePath="contentFiles\any\any\Python\lib\tensorstack\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
     <Content Include="Python\lib\tensorstack\enums.py" Pack="true" PackagePath="contentFiles\any\any\Python\lib\tensorstack\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
     <Content Include="Python\lib\tensorstack\export.py" Pack="true" PackagePath="contentFiles\any\any\Python\lib\tensorstack\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
     <Content Include="Python\lib\tensorstack\utils.py" Pack="true" PackagePath="contentFiles\any\any\Python\lib\tensorstack\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
@@ -58,6 +59,7 @@
     <None Include="Python\lib\tensorstack\quantization.py" Pack="false" />
     <None Include="Python\lib\tensorstack\export.py" Pack="false" />
     <None Include="Python\lib\tensorstack\enums.py" Pack="false" />
+    <None Include="Python\lib\tensorstack\llm_utils.py" Pack="false" />
 
     <Content Include="Python\lib\tensorstack\pipelines\custom_pipeline_anima.py" Pack="true" PackagePath="contentFiles\any\any\Python\lib\tensorstack\pipelines\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
     <None Include="Python\lib\tensorstack\pipelines\custom_pipeline_anima.py" Pack="false" />
@@ -198,10 +200,9 @@
     <None Include="Pipelines\QwenImagePipeline.py" Pack="false" />
   </ItemGroup>
 
-  <!--QwenTextPipeline-->
+  <!--AutoTextPipeline-->
   <ItemGroup>
-    <Content Include="Pipelines\QwenTextPipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
-    <None Include="Pipelines\QwenTextPipeline.py" Pack="false" />
+    <Content Include="Pipelines\AutoTextPipeline.py" PackagePath="contentFiles\any\any\Pipelines\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
   </ItemGroup>
 
   <!--SkyReelsV2Pipeline-->

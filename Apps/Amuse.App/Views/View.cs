@@ -39,6 +39,7 @@ namespace Amuse.App.Views
         TextToMusic = 302,
 
         TextInstruct = 400,
+        TextConverse = 401,
 
         Recent = 1000,
         Gallery = 1001
@@ -111,6 +112,7 @@ namespace Amuse.App.Views
 
             // Text
             { View.TextInstruct, ViewCategory.Text  },
+            { View.TextConverse, ViewCategory.Text  },
         };
 
 

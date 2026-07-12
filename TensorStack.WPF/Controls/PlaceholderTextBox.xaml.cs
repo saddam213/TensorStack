@@ -17,6 +17,9 @@ namespace TensorStack.WPF.Controls
         public static readonly DependencyProperty PlaceholderMarginProperty = DependencyProperty.Register(nameof(PlaceholderMargin), typeof(Thickness), typeof(PlaceholderTextBox), new PropertyMetadata(new Thickness(4,2,0,0)));
         public static readonly DependencyProperty PlaceholderOpacityProperty = DependencyProperty.Register(nameof(PlaceholderOpacity), typeof(double), typeof(PlaceholderTextBox), new PropertyMetadata(0.7d));
         public static readonly DependencyProperty PlaceholderFontStyleProperty = DependencyProperty.Register(nameof(PlaceholderFontStyle), typeof(FontStyle), typeof(PlaceholderTextBox), new PropertyMetadata(FontStyles.Italic));
+        public static readonly DependencyProperty AcceptsReturnProperty = DependencyProperty.Register(nameof(AcceptsReturn), typeof(bool), typeof(PlaceholderTextBox), new PropertyMetadata(false));
+        public static readonly DependencyProperty TextWrappingProperty = DependencyProperty.Register(nameof(TextWrapping), typeof(TextWrapping), typeof(PlaceholderTextBox), new PropertyMetadata(TextWrapping.NoWrap));
+        public static readonly DependencyProperty TextPaddingProperty = DependencyProperty.Register(nameof(TextPadding), typeof(Thickness), typeof(PlaceholderTextBox), new PropertyMetadata(new Thickness(2)));
 
         public string Text
         {
@@ -46,6 +49,24 @@ namespace TensorStack.WPF.Controls
         {
             get { return (FontStyle)GetValue(PlaceholderFontStyleProperty); }
             set { SetValue(PlaceholderFontStyleProperty, value); }
+        }
+
+        public bool AcceptsReturn
+        {
+            get { return (bool)GetValue(AcceptsReturnProperty); }
+            set { SetValue(AcceptsReturnProperty, value); }
+        }
+
+        public TextWrapping TextWrapping
+        {
+            get { return (TextWrapping)GetValue(TextWrappingProperty); }
+            set { SetValue(TextWrappingProperty, value); }
+        }
+
+        public Thickness TextPadding
+        {
+            get { return (Thickness)GetValue(TextPaddingProperty); }
+            set { SetValue(TextPaddingProperty, value); }
         }
     }
 }

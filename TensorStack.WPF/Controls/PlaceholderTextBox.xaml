@@ -8,10 +8,10 @@
              d:DesignWidth="200" 
              x:Name="PlaceholderTextBoxControl">
     <Grid DataContext="{Binding ElementName=PlaceholderTextBoxControl}" >
-        <TextBox x:Name="TextBoxControl" Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox x:Name="TextBoxControl" Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="{Binding AcceptsReturn}" TextWrapping="{Binding TextWrapping}" Padding="{Binding TextPadding}"/>
         <Grid Visibility="{Binding IsFocused, ElementName=TextBoxControl, Converter={StaticResource InverseBooleanToVisibilityConverter}}" IsHitTestVisible="False">
             <Grid Visibility="{Binding Text, Converter={StaticResource InverseNullOrEmptyVisibilityConverter}}">
-                <TextBlock Text="{Binding Placeholder}" FontStyle="{Binding PlaceholderFontStyle}" Opacity="{Binding PlaceholderOpacity}" Margin="{Binding PlaceholderMargin}"/>
+                <TextBlock Text="{Binding Placeholder}" FontStyle="{Binding PlaceholderFontStyle}" Opacity="{Binding PlaceholderOpacity}" Margin="{Binding PlaceholderMargin}" Padding="{Binding TextPadding}"/>
             </Grid>
         </Grid>
     </Grid>

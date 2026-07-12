@@ -17,17 +17,17 @@ using TensorStack.WPF.Services;
 namespace Amuse.App.Views
 {
     /// <summary>
-    /// Interaction logic for TextInstructView.xaml
+    /// Interaction logic for TextConverseView.xaml
     /// </summary>
-    public partial class TextInstructView : ViewBaseDiffusion
+    public partial class TextConverseView : ViewBaseDiffusion
     {
         private TextInput _sourceText;
         private string _previewResult;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TextInstructView"/> class.
+        /// Initializes a new instance of the <see cref="TextConverseView"/> class.
         /// </summary>
-        public TextInstructView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextInstructView> logger)
+        public TextConverseView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextConverseView> logger)
             : base(settings, navigationService, downloadService, diffusionService, extractService, upscaleService, historyService, logger)
         {
             _sourceText = new TextInput(string.Empty);
@@ -37,7 +37,7 @@ namespace Amuse.App.Views
         /// <summary>
         /// Gets the view.
         /// </summary>
-        public override View View => View.TextInstruct;
+        public override View View => View.TextConverse;
 
         /// <summary>
         /// Gets or sets the source text.
@@ -96,7 +96,7 @@ namespace Amuse.App.Views
                 var options = Options with
                 {
                     Conversation = conversation,
-                    InputImages = [await ImageInput.CreateAsync("C:\\Users\\Administrator\\Pictures\\2Untitled.png")]
+                    InputImages = [await ImageInput.CreateAsync("C:\\Users\\Administrator\\Pictures\\1low_res_cat.png")]
                 };
 
                 // Execute
@@ -105,7 +105,7 @@ namespace Amuse.App.Views
                 // Result
                 Statistics.Stop();
 
-                PreviewResult = textResult.Result.Text;
+                ResultText = textResult;
 
                 // History
                 //  await SaveHistoryAsync(options);

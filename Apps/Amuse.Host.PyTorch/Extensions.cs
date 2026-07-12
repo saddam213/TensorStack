@@ -1337,7 +1337,7 @@ namespace Amuse.Host.PyTorch
 
         public static TensorStack.Python.Common.ConversationMessage[] ToPythonOptions(this Common.ConversationMessage[] messages)
         {
-            return messages.Select(x => new TensorStack.Python.Common.ConversationMessage(x.Role, x.Content)).ToArray();
+            return messages.Select(x => new TensorStack.Python.Common.ConversationMessage(x.Role, x.Content, x.ImageIndex)).ToArray();
         }
 
 

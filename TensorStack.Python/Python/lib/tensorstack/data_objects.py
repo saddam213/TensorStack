@@ -1,6 +1,6 @@
 
 from dataclasses import dataclass, fields
-from typing import Optional, Union, Sequence, get_args, get_origin
+from typing import Optional, Union, Sequence, get_args, get_origin, TypedDict, NotRequired, Any
 from tensorstack.enums import ProcessType, MemoryMode, QuantType, VendorType
 import torch
 
@@ -342,12 +342,18 @@ class GenerateAudioOptions:
             self.lora_options = [LoraOption(**dict(cfg)) for cfg in self.lora_options or []]
 
 
+class ConversationMessage(TypedDict):
+    role: str
+    content: str
+    image_index: Sequence[int]
+
+
 @dataclass(slots=True)
 class GenerateTextOptions:
     seed: int
     prompt: Optional[str] = None
-    conversation: Optional[list[dict[str, str]]] = None
-    temp_filename: str = None
+    conversation: Optional[list[ConversationMessage]] = None
+    temp_filename: Optional[str] = None
     language: Optional[str] = None
     instruction: Optional[str] = None
     task: Optional[str] = None
@@ -363,6 +369,32 @@ class GenerateTextOptions:
     repetition_penalty: float = 0
     length_penalty: float = 0
     no_repeat_ngram_size: int = 0
+
+    def get_conversation(self, images: Any | list[Any]) -> list[dict[str, Any]]:
+        messages = []
+        if self.conversation is None:
+            return messages
+
+        if not isinstance(images, list):
+            images = [images]
+
+        for message in self.conversation:
+            image_indices = message.get("image_index", [])
+            role = message["role"]
+            text = message["content"]
+
+            if not image_indices:
+                messages.append({ "role": role, "content": text })
+                continue
+
+            content = []
+            for idx in image_indices:
+                content.append({ "type": "image", "image": images[idx] })
+
+            content.append({ "type": "text", "text": text })
+            messages.append({ "role": role, "content": content })
+        return messages
+
 
     def __post_init__(self):
         self.temperature = float(self.temperature)

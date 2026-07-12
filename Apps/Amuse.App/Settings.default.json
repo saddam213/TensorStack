@@ -10152,7 +10152,7 @@
       "Backend": "PyTorch",
       "Name": "Qwen3 4B",
       "Template": "Qwen3_4B",
-      "Pipeline": "QwenTextPipeline",
+      "Pipeline": "AutoTextPipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
       "MediaType": "Text",
@@ -10184,7 +10184,53 @@
         "Beams": 1,
         "TopK": 20,
         "TopP": 0.95,
-        "TopH": 0,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.6,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Id": 801,
+      "Backend": "PyTorch",
+      "Name": "Qwen3 4B VL",
+      "Template": "Qwen3_4B_VL",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText" ],
+      "ViewFilter": [ "TextInstruct" ],
+      "Checkpoint": {
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B-VL"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 6, 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 6, 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 10, 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
         "TypicalP": 1,
         "LengthPenalty": 0,
         "RepetitionPenalty": 1,

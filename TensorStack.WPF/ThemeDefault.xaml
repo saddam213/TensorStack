@@ -92,7 +92,9 @@
     <CommonConverters:StringArrayConverter x:Key="StringArrayConverter" />
     <CommonConverters:StringArrayCommaConverter x:Key="StringArrayCommaConverter" />
     <CommonConverters:IntArrayCommaConverter x:Key="IntArrayCommaConverter" />
-    
+    <CommonConverters:DivideByConverter x:Key="DivideByConverter" />
+    <CommonConverters:MultiplyByConverter x:Key="MultiplyByConverter" />
+
     <ObjectDataProvider x:Key="Stretch" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
         <ObjectDataProvider.MethodParameters>
             <x:Type TypeName="WindowsMedia:Stretch"/>
