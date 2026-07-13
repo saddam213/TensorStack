@@ -16,7 +16,6 @@ import threading
 import numpy as np
 from pathlib import Path
 from datetime import datetime
-from tqdm import tqdm
 import tensorstack.data_objects as DataObjects
 from tensorstack.enums import ProcessType, MemoryMode, VendorType
 from PIL import Image

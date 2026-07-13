@@ -1,6 +1,6 @@
 
 from dataclasses import dataclass, fields
-from typing import Optional, Union, Sequence, get_args, get_origin, TypedDict, NotRequired, Any
+from typing import Optional, Union, Sequence, get_args, get_origin
 from tensorstack.enums import ProcessType, MemoryMode, QuantType, VendorType
 import torch
 
@@ -69,8 +69,6 @@ class LoraOption:
 
     def __post_init__(self):
         self.strength = float(self.strength)
-
-
 
 
 @dataclass(slots=True)
@@ -216,7 +214,6 @@ class SchedulerOptions:
                 setattr(self, field.name, [float(x) for x in value])
 
 
-
 @dataclass(slots=True)
 class GenerateImageOptions:
     seed: int
@@ -342,7 +339,8 @@ class GenerateAudioOptions:
             self.lora_options = [LoraOption(**dict(cfg)) for cfg in self.lora_options or []]
 
 
-class ConversationMessage(TypedDict):
+@dataclass(slots=True)
+class ConversationMessage:
     role: str
     content: str
     image_index: Sequence[int]
@@ -370,32 +368,6 @@ class GenerateTextOptions:
     length_penalty: float = 0
     no_repeat_ngram_size: int = 0
 
-    def get_conversation(self, images: Any | list[Any]) -> list[dict[str, Any]]:
-        messages = []
-        if self.conversation is None:
-            return messages
-
-        if not isinstance(images, list):
-            images = [images]
-
-        for message in self.conversation:
-            image_indices = message.get("image_index", [])
-            role = message["role"]
-            text = message["content"]
-
-            if not image_indices:
-                messages.append({ "role": role, "content": text })
-                continue
-
-            content = []
-            for idx in image_indices:
-                content.append({ "type": "image", "image": images[idx] })
-
-            content.append({ "type": "text", "text": text })
-            messages.append({ "role": role, "content": content })
-        return messages
-
-
     def __post_init__(self):
         self.temperature = float(self.temperature)
         self.top_p = float(self.top_p)
@@ -403,4 +375,3 @@ class GenerateTextOptions:
         self.typical_p = float(self.typical_p)
         self.repetition_penalty = float(self.repetition_penalty)
         self.length_penalty = float(self.length_penalty)
-

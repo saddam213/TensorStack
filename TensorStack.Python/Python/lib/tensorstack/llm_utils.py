@@ -1,10 +1,12 @@
 ﻿from tensorstack.utils import Stopwatch, notification_push
-from tensorstack.data_objects import GenerateTextOptions
+from tensorstack.data_objects import PipelineConfig, GenerateTextOptions
+from tensorstack.enums import  MemoryMode
 import threading
+from pathlib import Path
 from queue import Queue, Empty
 from dataclasses import dataclass
 from threading import Event
-from typing import Any
+from typing import Any, Optional
 from transformers.image_utils import ImageInput
 from transformers import (
     ProcessorMixin,
@@ -22,17 +24,27 @@ class TextPipeline:
     tokenizer: PreTrainedTokenizerBase
     processor: ProcessorMixin
     transformer: PreTrainedModel
-    streamer: TextIteratorStreamer
     kwargs: dict[str, Any]
+    streamer: Optional[TextIteratorStreamer] = None
 
     #------------------------------------------------
-    # Get the pipeline device_map
+    # Generate the model inputs
     #------------------------------------------------
-    def generate_inputs(self, options: GenerateTextOptions, conversation: dict[str, Any], cancel: Event, images: ImageInput) -> dict[str, Any]:
+    def generate_inputs(self, options: GenerateTextOptions, cancel: Event, images: ImageInput) -> dict[str, Any]:
         set_seed(options.seed)
         device = self.transformer.device
+        conversation = self._parse_conversation(options, images)
         prompt = self._apply_chat_template(conversation)
         inputs = self._get_inputs(prompt, images).to(device)
+
+        if options.num_beams == 1:
+            self.streamer = TextIteratorStreamer(
+                self.tokenizer,
+                skip_prompt=True,
+                skip_special_tokens=True,
+                timeout=1
+            )
+
         generation_kwargs = dict(
             **inputs,
             max_new_tokens=options.max_length,
@@ -49,7 +61,7 @@ class TextPipeline:
             num_beams=options.num_beams,
             num_return_sequences=options.num_beams,
             do_sample=options.do_sample if options.num_beams == 1 else False,
-            streamer=self.streamer if options.num_beams == 1 else None,
+            streamer=self.streamer,
             stopping_criteria=StoppingCriteriaList([
                 CancellationCriteria(cancel)
             ])
@@ -121,6 +133,38 @@ class TextPipeline:
 
 
     #------------------------------------------------
+    # Parse conversation messages
+    #------------------------------------------------
+    def _parse_conversation(self, options: GenerateTextOptions, images: Any | list[Any]) -> list[dict[str, Any]]:
+        messages = []
+        if options.conversation is None:
+            return messages
+
+        if not isinstance(images, list):
+            images = [images]
+
+        print(f"[DEBUG] Conversation Before: {options.conversation}")
+        for message in options.conversation:
+            image_indices = message.get("image_index", [])
+            role = message["role"]
+            text = message["content"]
+
+            if not image_indices:
+                messages.append({ "role": role, "content": text })
+                continue
+
+            content = []
+            for idx in image_indices:
+                content.append({ "type": "image", "image": images[idx] })
+
+            content.append({ "type": "text", "text": text })
+            messages.append({ "role": role, "content": content })
+
+        print(f"[DEBUG] Conversation After: {messages}")
+        return messages
+
+
+    #------------------------------------------------
     # Apply the chat template to the conversation
     #------------------------------------------------
     def _apply_chat_template(self, conversation: dict[str, Any]) -> str:
@@ -149,9 +193,55 @@ class TextPipeline:
         return self.tokenizer(prompt, return_tensors="pt")
 
 
+#------------------------------------------------
+# Event based StoppingCriteria
+#------------------------------------------------
 class CancellationCriteria(StoppingCriteria):
     def __init__(self, event):
         self.event = event
 
     def __call__(self, input_ids, scores, **kwargs):
         return self.event.is_set()
+
+
+#------------------------------------------------
+# Create model configuration
+#------------------------------------------------
+def get_model_config(file_path: str, config: PipelineConfig):
+    template_path= Path(file_path).resolve().parent / "Templates" / config.template
+
+    # Configs
+    transformer_config = template_path / "transformer" / "config.json"
+
+    # Paths
+    transformer_path = Path(config.checkpoint_config.transformer) if config.checkpoint_config.transformer else None
+    single_file = transformer_path if transformer_path and transformer_path.is_file() else None
+
+    _model_config = {
+        "template": template_path,
+        "single_file": single_file,
+        "transformer": transformer_path,
+        "transformer_config": transformer_config,
+    }
+
+    info_1 = f"\n\tTemplate: {config.template} \n\tModelType: {config.model_type} \n\tModelPath: {config.model_path} \n\tTemplatePath: {template_path}\n\tTransformer: {transformer_path}"
+    print(f"[Load] Initialize Model... \n[ {info_1} \n]")
+    return _model_config
+
+
+#------------------------------------------------
+# Get the model device_map
+#------------------------------------------------
+def get_device_map(config: PipelineConfig, execution_device: str):
+    if config.memory_mode == MemoryMode.OffloadGPU:
+        return execution_device
+    return "auto"
+
+
+#------------------------------------------------
+# Configure pipeline RAM/VRAM offloading
+#------------------------------------------------
+def configure_memory(pipeline: TextPipeline, execution_device: str, config: PipelineConfig) -> bool:
+    if config.memory_mode == MemoryMode.OffloadGPU:
+        pipeline.transformer.to(execution_device)
+    return config.memory_mode in (MemoryMode.OffloadCPU, MemoryMode.OffloadModel)

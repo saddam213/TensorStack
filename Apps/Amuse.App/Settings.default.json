@@ -10172,11 +10172,11 @@
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 4, 6, 8 ]
+          "MemoryModes": [ 4, 8, 8 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 4, 10, 12 ]
+          "MemoryModes": [ 4, 12, 12 ]
         }
       ],
       "DefaultOptions": {
@@ -10189,7 +10189,7 @@
         "LengthPenalty": 0,
         "RepetitionPenalty": 1,
         "Temperature": 0.6,
-        "IsSamplingEnabled": false,
+        "IsSamplingEnabled": true,
         "NoRepeatNgramSize": 0
       }
     },
@@ -10218,11 +10218,11 @@
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 4, 6, 8 ]
+          "MemoryModes": [ 4, 8, 8 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 4, 10, 12 ]
+          "MemoryModes": [ 4, 12, 12 ]
         }
       ],
       "DefaultOptions": {

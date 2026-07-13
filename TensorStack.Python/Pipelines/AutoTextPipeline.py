@@ -1,13 +1,27 @@
-﻿import tensorstack.utils as Utils
-import tensorstack.data_objects as DataObjects
-import tensorstack.quantization as Quantization
-from tensorstack.enums import ProcessType, QuantTarget
-from tensorstack.llm_utils import TextPipeline
-Utils.redirect_output()
-Utils.create_services()
-
+﻿from tensorstack.enums import ProcessType, QuantTarget
+from tensorstack.quantization import auto_pretrained_config
+from tensorstack.data_objects import PipelineConfig, GenerateTextOptions
+from tensorstack.utils import (
+    Stopwatch,
+    redirect_output,
+    create_services,
+    get_len,
+    get_output,
+    trim_memory,
+    get_execution_device,
+    notification_get,
+    notification_push,
+    prepare_images
+)
+redirect_output()
+create_services()
+from tensorstack.llm_utils import (
+    TextPipeline,
+    get_device_map,
+    get_model_config,
+    configure_memory
+)
 import torch
-from pathlib import Path
 from threading import Event
 from collections.abc import Buffer
 from typing import Dict, Sequence, List, Tuple, Optional, Any
@@ -15,8 +29,7 @@ from transformers import (
     AutoTokenizer,
     AutoProcessor,
     AutoModelForCausalLM,
-    AutoModelForImageTextToText,
-    TextIteratorStreamer
+    AutoModelForImageTextToText
 )
 
 # Globals
@@ -39,8 +52,8 @@ def load(config_args: Dict[str, Any]) -> bool:
     global _config, _pipeline, _generator, _processType, _execution_device, _isMemoryOffload
 
     # Config
-    _config = DataObjects.PipelineConfig(**config_args)
-    _execution_device = Utils.get_execution_device(_config)
+    _config = PipelineConfig(**config_args)
+    _execution_device = get_execution_device(_config)
     _generator = torch.Generator(device=_execution_device)
     _processType = _config.process_type
 
@@ -48,8 +61,8 @@ def load(config_args: Dict[str, Any]) -> bool:
     _pipeline = initialize(_config)
 
     # Memory
-    #_isMemoryOffload = Utils.configure_pipeline_memory(_pipeline, _execution_device, _config)
-    Utils.trim_memory(_isMemoryOffload)
+    _isMemoryOffload = configure_memory(_pipeline, _execution_device, _config)
+    trim_memory(_isMemoryOffload)
     return True
 
 
@@ -57,18 +70,18 @@ def load(config_args: Dict[str, Any]) -> bool:
 # Reload Pipeline - ProcessType, LoraAdapters and ControlNet are the only options that can be modified
 #------------------------------------------------
 def reload(config_args: Dict[str, Any]) -> bool:
-    global _config, _pipeline, _processType
+    global _config, _pipeline, _processType, _isMemoryOffload
 
     # Config
-    _config = DataObjects.PipelineConfig(**config_args)
+    _config = PipelineConfig(**config_args)
     _processType = _config.process_type
 
     # Rebuild Pipeline
     _pipeline = create_pipeline(_config)
 
     # Memory
-    #Utils.configure_pipeline_memory(_pipeline, _execution_device, _config)
-    Utils.trim_memory(_isMemoryOffload)
+    _isMemoryOffload = configure_memory(_pipeline, _execution_device, _config)
+    trim_memory(_isMemoryOffload)
     return True
 
 
@@ -100,7 +113,7 @@ def generateCancel() -> None:
 def unload() -> bool:
     global _pipeline
     _pipeline = None
-    Utils.trim_memory(_isMemoryOffload)
+    trim_memory(_isMemoryOffload)
     return True
 
 
@@ -108,31 +121,31 @@ def unload() -> bool:
 # Get the notifications
 #------------------------------------------------
 def getNotifications() -> list[(str, Buffer)]:
-    return Utils.notification_get()
+    return notification_get()
 
 
 #------------------------------------------------
 # Get the log entires
 #------------------------------------------------
 def getLogs() -> list[str]:
-    return Utils.get_output()
+    return get_output()
 
 
 #------------------------------------------------
 # Initialize Pipeline
 #------------------------------------------------
-def initialize(config: DataObjects.PipelineConfig):
+def initialize(config: PipelineConfig):
     global _model_config, _device_map
 
-    _device_map = Utils.get_device_map(config, _execution_device)
-    _model_config = Utils.get_model_config(__file__, config)
+    _device_map = get_device_map(config, _execution_device)
+    _model_config = get_model_config(__file__, config)
     return create_pipeline(config)
 
 
 #------------------------------------------------
 # Load AutoTokenizer
 #------------------------------------------------
-def load_tokenizer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
+def load_tokenizer(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
     if _pipeline and _pipeline.tokenizer:
         print(f"[Load] Loading Cached Tokenizer")
         return _pipeline.tokenizer
@@ -150,7 +163,7 @@ def load_tokenizer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str
 #------------------------------------------------
 # Load AutoProcessor
 #------------------------------------------------
-def load_processor(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
+def load_processor(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
     if _pipeline and _pipeline.processor:
         print(f"[Load] Loading Cached Processor")
         return _pipeline.processor
@@ -170,7 +183,7 @@ def load_processor(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str
 #------------------------------------------------
 # Load AutoModelForCausalLM/AutoModelForImageTextToText
 #------------------------------------------------
-def load_transformer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
+def load_transformer(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
     if _pipeline and _pipeline.transformer:
         print(f"[Load] Loading Cached Transformer")
         return _pipeline.transformer
@@ -182,7 +195,7 @@ def load_transformer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[s
             _model_config["transformer"],
             dtype=config.data_type,
             device_map=_device_map,
-            quantization_config=Quantization.auto_pretrained_config(config, QuantTarget.TEXT_ENCODER),
+            quantization_config=auto_pretrained_config(config, QuantTarget.TEXT_ENCODER),
             **pipeline_kwargs
         )
     else:
@@ -191,17 +204,17 @@ def load_transformer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[s
             _model_config["transformer"],
             dtype=config.data_type,
             device_map=_device_map,
-            quantization_config=Quantization.auto_pretrained_config(config, QuantTarget.TEXT_ENCODER),
+            quantization_config=auto_pretrained_config(config, QuantTarget.TEXT_ENCODER),
             **pipeline_kwargs
         )
-    Utils.trim_memory(True)
+    trim_memory(True)
     return transformer
 
 
 #------------------------------------------------
 # Create a new pipeline
 #------------------------------------------------
-def create_pipeline(config: DataObjects.PipelineConfig):
+def create_pipeline(config: PipelineConfig):
     pipeline_kwargs = {
         "variant": config.variant,
         "use_safetensors":True,
@@ -213,20 +226,13 @@ def create_pipeline(config: DataObjects.PipelineConfig):
     tokenizer = load_tokenizer(config, pipeline_kwargs)
     processor = load_processor(config, pipeline_kwargs)
     transformer = load_transformer(config, pipeline_kwargs)
-    streamer = TextIteratorStreamer(
-        tokenizer,
-        skip_prompt=True,
-        skip_special_tokens=True,
-        timeout=1
-    )
 
     # Build Pipeline
     pipeline = TextPipeline(
         tokenizer=tokenizer,
         processor=processor,
         transformer=transformer,
-        streamer=streamer,
-        kwargs = pipeline_kwargs
+        kwargs=pipeline_kwargs
     )
     return pipeline
 
@@ -240,31 +246,26 @@ def generate(
     ) -> Sequence[Buffer]:
     global _stopwatch
     _cancel_event.clear()
-    _stopwatch = Utils.Stopwatch()
+    _stopwatch = Stopwatch()
     _stopwatch.start()
-    Utils.notification_push(key="Generate", subkey="Initialize")
+    notification_push(key="Generate", subkey="Initialize")
 
-    images = Utils.prepare_images(input_tensors)
-    image_count = Utils.get_len(images)
-    print(f"[Generate] Input Received - Images: {image_count}")
+    images = prepare_images(input_tensors)
+    print(f"[Generate] Input Received - Images: {get_len(images)}")
 
     # Options
-    options = DataObjects.GenerateTextOptions(**inference_args)
-    print(f"[Conversation Before] {options.conversation}")
-    conversation = options.get_conversation(images)
-    print(f"[Conversation After] {conversation}")
+    options = GenerateTextOptions(**inference_args)
 
     # Generation Inputs
-    Utils.notification_push(key="Generate", subkey="Tokenizer", elapsedkey="Initialize", elapsed=_stopwatch.reset())
+    notification_push(key="Generate", subkey="Tokenizer", elapsedkey="Initialize", elapsed=_stopwatch.reset())
     inputs = _pipeline.generate_inputs(
         options= options,
-        conversation=conversation,
         cancel=_cancel_event,
         images=images
     )
 
     # Generation Result
-    Utils.notification_push(key="Generate", subkey="Transformer", elapsedkey="Tokenizer", elapsed=_stopwatch.reset())
+    notification_push(key="Generate", subkey="Transformer", elapsedkey="Tokenizer", elapsed=_stopwatch.reset())
     result = _pipeline.generate_result(
         options=options,
         stopwatch=_stopwatch,
@@ -272,8 +273,6 @@ def generate(
     )
 
     # Cleanup
-    Utils.notification_push(key="Generate", subkey="Complete", elapsedkey="Transformer", elapsed = _stopwatch.stop())
-    Utils.trim_memory(_isMemoryOffload)
-
-    # Text, Score, Beam, PenaltyScore
+    notification_push(key="Generate", subkey="Complete", elapsedkey="Transformer", elapsed = _stopwatch.stop())
+    trim_memory(_isMemoryOffload)
     return result

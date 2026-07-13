@@ -41,7 +41,7 @@ namespace Amuse.App
             for (int i = 0; i < profile.MemoryModes.Length; i++)
             {
                 int value = profile.MemoryModes[i];
-                if (value <= deviceMemory && value > bestValue)
+                if (value <= deviceMemory && value >= bestValue)
                 {
                     bestValue = value;
                     bestIndex = i;
