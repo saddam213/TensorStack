@@ -173,6 +173,18 @@
                             </UniformGrid>
                         </Grid>
 
+                        <!--ImageFiles-->
+                        <Grid Visibility="{Binding AutomationOptions.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=InputFiles}">
+                            <StackPanel Visibility="{Binding ProcessType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=ImageToText}">
+                                <UniformGrid Margin="0,0,0,0" >
+                                    <StackPanel>
+                                        <TextBlock Text="Image Folder" Style="{StaticResource FieldTextBlockStyle}"/>
+                                        <CommonControls:FilePickerTextBox FileName="{Binding AutomationOptions.InputDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsFolderPicker="True" IsRequired="True" />
+                                    </StackPanel>
+                                </UniformGrid>
+                            </StackPanel>
+                        </Grid>
+
 
                         <!--HistoryEnabled-->
                         <CheckBox Content="Output History" IsChecked="{Binding AutomationOptions.IsHistoryEnabled}" Margin="0,4,0,0"/>

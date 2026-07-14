@@ -184,6 +184,10 @@ namespace Amuse.App.Common
                 TopP = TopP,
                 Language = Language,
                 Languages = Languages?.ToArray(),
+                IsSamplingEnabled = IsSamplingEnabled,
+                RepetitionPenalty = RepetitionPenalty,
+                TopH = TopH,
+                TypicalP = TypicalP
             };
         }
 

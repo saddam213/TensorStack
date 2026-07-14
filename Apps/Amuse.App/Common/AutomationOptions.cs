@@ -138,6 +138,9 @@ namespace Amuse.App.Common
                     return [AutomationType.Seed];
                 case View.AudioToText:
                     return [AutomationType.Seed, AutomationType.InputFiles];
+
+                case View.ImageToText:
+                    return [AutomationType.InputFiles];
                 default:
                     break;
             }

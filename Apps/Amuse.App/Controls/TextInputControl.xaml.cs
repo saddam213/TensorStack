@@ -116,7 +116,8 @@ namespace Amuse.App.Controls
             // Automation
             AutomationOptions = new AutomationOptions
             {
-                ViewType = ViewType
+                ViewType = ViewType,
+                Type = AutomationType.InputFiles
             };
 
             return Task.CompletedTask;

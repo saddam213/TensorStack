@@ -73,7 +73,7 @@ namespace Amuse.App.Views
         protected override async Task ExecuteAsync()
         {
             var timestamp = Stopwatch.GetTimestamp();
-            Logger.LogInformation($"[AudioToText] [Execute] Executing pipeline...");
+            Logger.LogInformation($"[ImageToText] [Execute] Executing pipeline...");
 
             try
             {
@@ -101,18 +101,18 @@ namespace Amuse.App.Views
 
                 // History
                 //  await SaveHistoryAsync(options);
-                Logger.LogInformation("[AudioToText] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[ImageToText] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)
             {
                 Statistics.Clear();
-                Logger.LogInformation("[AudioToText] [Execute] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[ImageToText] [Execute] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (Exception ex)
             {
                 Statistics.Clear();
                 IsPipelineLoaded = DiffusionService.IsLoaded;
-                Logger.LogError(ex, "[AudioToText] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogError(ex, "[ImageToText] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Pipeline", ex.Message);
             }
             finally
@@ -130,7 +130,7 @@ namespace Amuse.App.Views
         {
             IsAutomating = true;
             var timestamp = Stopwatch.GetTimestamp();
-            Logger.LogInformation($"[AudioToText] [ExecuteAutomation] Executing pipeline...");
+            Logger.LogInformation($"[ImageToText] [ExecuteAutomation] Executing pipeline...");
 
             try
             {
@@ -144,14 +144,26 @@ namespace Amuse.App.Views
 
                 AutomationProgress.Indeterminate($"Automation Started");
                 var cancellationToken = CancellationTokenSource.Token;
-                await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Text, MediaType.Audio))
+                await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Text, MediaType.Image))
                 {
+                    PreviewResult = default;
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    PreviewResult = default;
+                    // Source
+                    if (!automationJob.InputImages.IsNullOrEmpty())
+                        SourceImage = automationJob.InputImages[0];
+
+                    // Options
+                    var message = new ConversationModel { Role = "user", ImageIndex = [0], Content = Options.Prompt };
+                    var options = automationJob.DiffusionOptions with
+                    {
+                        Prompt = null,
+                        InputImages = [_sourceImage],
+                        Conversation = [message]
+                    };
 
                     // Diffusion
-                    var textResult = await ExecuteTextDiffusionAsync(automationJob.DiffusionOptions);
+                    var textResult = await ExecuteTextDiffusionAsync(options);
 
                     // Result
                     ResultText = textResult;
@@ -159,26 +171,26 @@ namespace Amuse.App.Views
                     // History
                     if (AutomationOptions.IsHistoryEnabled)
                     {
-                        await SaveHistoryAsync(automationJob.DiffusionOptions);
+                        //await SaveHistoryAsync(options);
                     }
 
-                    await automationJob.SaveAsync(ResultAudio);
+                    await automationJob.SaveAsync(ResultText.Result);
                     AutomationProgress.Update(automationJob.Id, automationJob.Count, $"Automation: {automationJob.Id}/{automationJob.Count}");
                 }
 
                 Statistics.Stop();
-                Logger.LogInformation("[AudioToText] [ExecuteAutomation] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[ImageToText] [ExecuteAutomation] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)
             {
                 Statistics.Clear();
-                Logger.LogInformation("[AudioToText] [ExecuteAutomation] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[ImageToText] [ExecuteAutomation] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (Exception ex)
             {
                 Statistics.Clear();
                 IsPipelineLoaded = DiffusionService.IsLoaded;
-                Logger.LogError(ex, "[AudioToText] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogError(ex, "[ImageToText] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Automation", ex.Message);
             }
             finally
@@ -188,6 +200,7 @@ namespace Amuse.App.Views
                 IsAutomating = false;
                 CancellationTokenSource?.Dispose();
                 CancellationTokenSource = null;
+                PreviewResult = default;
             }
         }
 
@@ -199,6 +212,16 @@ namespace Amuse.App.Views
         {
             return base.CanExecute()
                 && _sourceImage != null
+                && !string.IsNullOrEmpty(Options?.Prompt);
+        }
+
+
+        /// <summary>
+        /// Determines whether this process can execute automations.
+        /// </summary>
+        protected override bool CanExecuteAutomation()
+        {
+            return base.CanExecute()
                 && !string.IsNullOrEmpty(Options?.Prompt);
         }
 
@@ -244,8 +267,8 @@ namespace Amuse.App.Views
                 }
                 else
                 {
-                    var message = progress.Subkey == "Transformer" && Options.Beams > 1 
-                        ? "Generating Beam Results..." 
+                    var message = progress.Subkey == "Transformer" && Options.Beams > 1
+                        ? "Generating Beam Results..."
                         : Globalization.GetProgressMessage(progress);
                     Progress.Indeterminate(message);
                 }

@@ -73,8 +73,8 @@
                             <!--InputControl-->
                             <Controls:TextInputControl 
                                 x:Name="InputControl"
-                                ViewType="TextInstruct"
-                                ProcessType="TextToText"
+                                ViewType="ImageToText"
+                                ProcessType="ImageToText"
                                 DefaultPrompt="Describe the Image."
                                 Options="{Binding Options, Mode=OneWayToSource}"
                                 AutomationOptions="{Binding AutomationOptions, Mode=OneWayToSource}"
