@@ -75,6 +75,7 @@ namespace Amuse.App.Controls
             set { SetProperty(ref _selectedOption, value); }
         }
 
+        public string DefaultPrompt { get; set; }
 
         private Task OnPipelineChanged(PipelineModel oldPipeline, PipelineModel newPipeline)
         {
@@ -93,18 +94,22 @@ namespace Amuse.App.Controls
             {
                 // Keep
                 Seed = previousOptions?.Seed ?? 0,
+                Prompt = previousOptions?.Prompt ?? DefaultPrompt,
+
                 MinLength = newOptions.MinLength,
                 MaxLength = newOptions.MaxLength,
                 IsSamplingEnabled = newOptions.IsSamplingEnabled,
                 Beams = newOptions.Beams,
+                Temperature = newOptions.Temperature,
                 TopK = newOptions.TopK,
                 TopP = newOptions.TopP,
-                Temperature = newOptions.Temperature,
-                LengthPenalty = newOptions.LengthPenalty,
                 TopH = newOptions.TopH,
                 TypicalP = newOptions.TypicalP,
                 RepetitionPenalty = newOptions.RepetitionPenalty,
+                LengthPenalty = newOptions.LengthPenalty,
                 NoRepeatNgramSize = newOptions.NoRepeatNgramSize,
+                EarlyStopping = newOptions.EarlyStopping,
+                ChunkSize = newOptions.ChunkSize
             };
 
 
@@ -124,5 +129,4 @@ namespace Amuse.App.Controls
         }
 
     }
-
 }

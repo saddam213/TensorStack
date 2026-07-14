@@ -493,6 +493,14 @@
                     <Grid Visibility="{Binding ViewCategory, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
                         <UniformGrid Columns="1" VerticalAlignment="Top" >
                             <CommonControls:IconButton 
+                                Text="Image &#10132; Text" 
+                                Icon="f03e"
+                                Style="{StaticResource SubmenuIconButton}"
+                                Command="{Binding NavigateCommand}" 
+                                CommandParameter="{x:Static Views:View.ImageToText}" 
+                                IsSelected="{Binding View, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=ImageToText}">
+                            </CommonControls:IconButton>
+                            <CommonControls:IconButton 
                                 Text="Instruct" 
                                 Icon="e1e3"
                                 Style="{StaticResource SubmenuIconButton}"
@@ -551,9 +559,6 @@
                             <Setter Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding ViewCategory, ElementName=UI}" Value="Other">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding ViewCategory, ElementName=UI}" Value="Text">
                             <Setter Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
                     </Style.Triggers>

@@ -11,9 +11,11 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding Statistics.IterationsPerSecond, StringFormat={}{0:N2}}" />
                 <TextBlock Text="{Binding PrefixPerSecond, Mode=OneWay}" Style="{StaticResource FieldTextBlockStyle}" Margin="3,1,0,0"/>
-                <TextBlock Text="  |  " Style="{StaticResource FieldTextBlockStyle}" Margin="0,0,0,0"/>
-                <TextBlock Text="{Binding Statistics.SecondsPerIteration, StringFormat={}{0:N2}}" />
-                <TextBlock Text="{Binding PrefixSecondsPer, Mode=OneWay}" Style="{StaticResource FieldTextBlockStyle}" Margin="3,1,0,0"/>
+                <StackPanel Orientation="Horizontal" Visibility="{Binding PrefixSecondsPer, Converter={StaticResource NullOrEmptyVisibilityConverter}}">
+                    <TextBlock Text="  |  " Style="{StaticResource FieldTextBlockStyle}" Margin="0,0,0,0"/>
+                    <TextBlock Text="{Binding Statistics.SecondsPerIteration, StringFormat={}{0:N2}}" />
+                    <TextBlock Text="{Binding PrefixSecondsPer, Mode=OneWay}" Style="{StaticResource FieldTextBlockStyle}" Margin="3,1,0,0"/>
+                </StackPanel>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <TextBlock Text="Elapsed: " Style="{StaticResource FieldTextBlockStyle}" Margin="0,1,0,0"/>

@@ -3,7 +3,6 @@ using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -17,37 +16,35 @@ using TensorStack.WPF.Services;
 namespace Amuse.App.Views
 {
     /// <summary>
-    /// Interaction logic for TextInstructView.xaml
+    /// Interaction logic for ImageToTextView.xaml
     /// </summary>
-    public partial class TextInstructView : ViewBaseDiffusion
+    public partial class ImageToTextView : ViewBaseDiffusion
     {
-        private TextInput _sourceText;
+        private ImageInput _sourceImage;
         private string _previewResult;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TextInstructView"/> class.
+        /// Initializes a new instance of the <see cref="ImageToTextView"/> class.
         /// </summary>
-        public TextInstructView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextInstructView> logger)
+        public ImageToTextView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<ImageToTextView> logger)
             : base(settings, navigationService, downloadService, diffusionService, extractService, upscaleService, historyService, logger)
         {
-            _sourceText = new TextInput(string.Empty);
             InitializeComponent();
         }
 
         /// <summary>
         /// Gets the view.
         /// </summary>
-        public override View View => View.TextInstruct;
+        public override View View => View.ImageToText;
 
         /// <summary>
-        /// Gets or sets the source text.
+        /// Gets or sets the source image.
         /// </summary>
-        public TextInput SourceText
+        public ImageInput SourceImage
         {
-            get { return _sourceText; }
-            set { SetProperty(ref _sourceText, value); }
+            get { return _sourceImage; }
+            set { SetProperty(ref _sourceImage, value); }
         }
-
 
         /// <summary>
         /// Gets or sets the preview result.
@@ -86,26 +83,21 @@ namespace Amuse.App.Views
                 PreviewResult = default;
                 Statistics.Start();
 
-                var message = new ConversationModel { Role = "user", Content = Options.Prompt };
-                var inputImage = await ImageInput.CreateAsync("C:\\Users\\Administrator\\Pictures\\2Untitled.png");
-
                 // Options
-                var options = Options with { };
-                if (CurrentPipeline.DiffusionModel.ModelType == "Vision")
+                var message = new ConversationModel { Role = "user", ImageIndex = [0], Content = Options.Prompt };
+                var options = Options with
                 {
-                    message.ImageIndex = [0];
-                    options.InputImages = [inputImage];
-                }
-
-                options.Conversation = [message];
+                    Prompt = null,
+                    InputImages = [_sourceImage],
+                    Conversation = [message]
+                };
 
                 // Execute
                 var textResult = await ExecuteTextDiffusionAsync(options);
 
                 // Result
+                ResultText = textResult;
                 Statistics.Stop();
-
-                PreviewResult = textResult.Result.Text;
 
                 // History
                 //  await SaveHistoryAsync(options);
@@ -126,6 +118,7 @@ namespace Amuse.App.Views
             finally
             {
                 Progress.Clear();
+                PreviewResult = default;
             }
         }
 
@@ -200,6 +193,17 @@ namespace Amuse.App.Views
 
 
         /// <summary>
+        /// Determines whether this process can execute.
+        /// </summary>
+        protected override bool CanExecute()
+        {
+            return base.CanExecute()
+                && _sourceImage != null
+                && !string.IsNullOrEmpty(Options?.Prompt);
+        }
+
+
+        /// <summary>
         /// Save history
         /// </summary>
         /// <param name="options">The options.</param>
@@ -218,6 +222,10 @@ namespace Amuse.App.Views
         }
 
 
+        /// <summary>
+        /// Called when progress is received from a Python pipeline
+        /// </summary>
+        /// <param name="progress">The progress.</param>
         protected override void OnProgress(PipelineProgress progress)
         {
             if (CurrentPipeline is null)
@@ -236,9 +244,16 @@ namespace Amuse.App.Views
                 }
                 else
                 {
-                    Progress.Indeterminate(Globalization.GetProgressMessage(progress));
-                    Logger.LogDebug("[{View}] [OnProgress] {Subkey}, it/s: {IterationsPerSecond:N2}, s/it: {SecondsPerIteration:N2}", ViewName, progress.Subkey, progress.IterationsPerSecond, progress.SecondsPerIteration);
+                    var message = progress.Subkey == "Transformer" && Options.Beams > 1 
+                        ? "Generating Beam Results..." 
+                        : Globalization.GetProgressMessage(progress);
+                    Progress.Indeterminate(message);
                 }
+            }
+
+            if (progress.Subkey != "Token")
+            {
+                Logger.LogDebug("[{View}] [OnProgress] {Subkey} - {Message}", ViewName, progress.Subkey, progress.Message);
             }
         }
 

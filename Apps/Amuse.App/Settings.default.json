@@ -10157,7 +10157,6 @@
       "BaseType": "bfloat16",
       "MediaType": "Text",
       "ProcessTypes": [ "TextToText" ],
-      "ViewFilter": [ "TextInstruct" ],
       "Checkpoint": {
         "Transformer": {
           "Name": "Transformer",
@@ -10202,8 +10201,7 @@
       "ModelType": "Vision",
       "BaseType": "bfloat16",
       "MediaType": "Text",
-      "ProcessTypes": [ "TextToText" ],
-      "ViewFilter": [ "TextInstruct" ],
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
       "Checkpoint": {
         "Transformer": {
           "Name": "Transformer",

@@ -40,6 +40,7 @@ namespace Amuse.App.Views
 
         TextInstruct = 400,
         TextConverse = 401,
+        ImageToText = 410,
 
         Recent = 1000,
         Gallery = 1001
@@ -113,6 +114,7 @@ namespace Amuse.App.Views
             // Text
             { View.TextInstruct, ViewCategory.Text  },
             { View.TextConverse, ViewCategory.Text  },
+            { View.ImageToText, ViewCategory.Text  },
         };
 
 

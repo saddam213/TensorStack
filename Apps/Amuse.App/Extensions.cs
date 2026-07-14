@@ -398,7 +398,7 @@ namespace Amuse.App
                 TempFileName = tempFileName,
                 Language = options.Language,
                 MinLength = options.MinLength,
-                MaxLength = defaultOptions.MaxLength,
+                MaxLength = options.MaxLength,
                 Beams = options.Beams,
                 NoRepeatNgramSize = options.NoRepeatNgramSize,
                 LengthPenalty = options.LengthPenalty,

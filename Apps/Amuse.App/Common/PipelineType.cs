@@ -112,6 +112,7 @@ namespace Amuse.App.Common
         SupertonicPipeline = 503,
 
 
+        // Text
         AutoTextPipeline = 600,
 
 

@@ -37,6 +37,7 @@ class TextPipeline:
         prompt = self._apply_chat_template(conversation)
         inputs = self._get_inputs(prompt, images).to(device)
 
+        self.streamer = None
         if options.num_beams == 1:
             self.streamer = TextIteratorStreamer(
                 self.tokenizer,

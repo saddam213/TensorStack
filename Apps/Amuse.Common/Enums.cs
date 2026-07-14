@@ -51,7 +51,10 @@ namespace Amuse.Common
 
         // Text
         [Display(Name = "TextToText", ShortName = "T2T", Description = "")]
-        TextToText = 800
+        TextToText = 800,
+
+        [Display(Name = "ImageToText", ShortName = "I2T", Description = "")]
+        ImageToText = 801
     }
 
     public enum EnvironmentMode
