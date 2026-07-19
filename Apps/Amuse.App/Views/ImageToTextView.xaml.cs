@@ -4,7 +4,6 @@ using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -21,7 +20,6 @@ namespace Amuse.App.Views
     public partial class ImageToTextView : ViewBaseDiffusion
     {
         private ImageInput _sourceImage;
-        private string _previewResult;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageToTextView"/> class.
@@ -47,16 +45,6 @@ namespace Amuse.App.Views
         }
 
         /// <summary>
-        /// Gets or sets the preview result.
-        /// </summary>
-        public string PreviewResult
-        {
-            get { return _previewResult; }
-            set { SetProperty(ref _previewResult, value); }
-        }
-
-
-        /// <summary>
         /// On View Open
         /// </summary>
         public override async Task OpenAsync(OpenViewArgs args = null)
@@ -80,7 +68,6 @@ namespace Amuse.App.Views
                 Progress.Clear();
                 Statistics.Clear();
                 ResultText = default;
-                PreviewResult = default;
                 Statistics.Start();
 
                 // Options
@@ -100,7 +87,7 @@ namespace Amuse.App.Views
                 Statistics.Stop();
 
                 // History
-                //  await SaveHistoryAsync(options);
+                await SaveHistoryAsync(options);
                 Logger.LogInformation("[ImageToText] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)
@@ -118,7 +105,6 @@ namespace Amuse.App.Views
             finally
             {
                 Progress.Clear();
-                PreviewResult = default;
             }
         }
 
@@ -138,7 +124,6 @@ namespace Amuse.App.Views
                 AutomationProgress.Clear();
                 Statistics.Clear();
                 ResultText = default;
-                PreviewResult = default;
                 Statistics.Start();
                 CancellationTokenSource = new CancellationTokenSource();
 
@@ -146,7 +131,6 @@ namespace Amuse.App.Views
                 var cancellationToken = CancellationTokenSource.Token;
                 await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Text, MediaType.Image))
                 {
-                    PreviewResult = default;
                     cancellationToken.ThrowIfCancellationRequested();
 
                     // Source
@@ -171,7 +155,7 @@ namespace Amuse.App.Views
                     // History
                     if (AutomationOptions.IsHistoryEnabled)
                     {
-                        //await SaveHistoryAsync(options);
+                        await SaveHistoryAsync(options);
                     }
 
                     await automationJob.SaveAsync(ResultText.Result);
@@ -200,7 +184,6 @@ namespace Amuse.App.Views
                 IsAutomating = false;
                 CancellationTokenSource?.Dispose();
                 CancellationTokenSource = null;
-                PreviewResult = default;
             }
         }
 
@@ -232,15 +215,15 @@ namespace Amuse.App.Views
         /// <param name="options">The options.</param>
         private async Task<TextInput> SaveHistoryAsync(DiffusionInputOptions options)
         {
-            Logger.LogInformation($"[TextToImage] [SaveHistory] Saving history...");
-            var result = await HistoryService.AddAsync(ResultText.Result, new DiffusionHistory
+            Logger.LogInformation($"[ImageToText] [SaveHistory] Saving history...");
+            var result = await HistoryService.AddAsync(ResultText.Result, new TextHistory
             {
                 Options = options,
                 Model = CurrentPipeline.DiffusionModel.Name,
-                LoraModels = CurrentPipeline.LoraAdapterModel?.Select(x => x.Name).ToArray(),
-                Source = View.AudioToText,
+                Source = View.ImageToText,
+                InputLength = ResultText.Result.Length,
             });
-            Logger.LogInformation($"[TextToImage] [SaveHistory] History saved.");
+            Logger.LogInformation($"[ImageToText] [SaveHistory] History saved.");
             return result;
         }
 
@@ -263,7 +246,9 @@ namespace Amuse.App.Views
                 else if (progress.Subkey == "Token")
                 {
                     Statistics.Update(progress);
-                    PreviewResult += progress.Message;
+                    ResultControl.UpdateProgress(progress);
+                    if (Options.Beams == 1 && Progress.Maximum < 0)
+                        Progress.Clear();
                 }
                 else
                 {

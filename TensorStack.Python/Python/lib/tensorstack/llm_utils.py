@@ -1,4 +1,4 @@
-﻿from tensorstack.utils import Stopwatch, notification_push
+﻿from tensorstack.utils import Stopwatch, notification_push, token_push
 from tensorstack.data_objects import PipelineConfig, GenerateTextOptions
 from tensorstack.enums import  MemoryMode
 import threading
@@ -99,7 +99,7 @@ class TextPipeline:
             try:
                 chunk = next(self.streamer)
                 chunks.append(chunk)
-                notification_push(key="Generate", subkey="Token", elapsedkey="Token", elapsed=stopwatch.reset(), message=chunk)
+                token_push(token=chunk, elapsed=stopwatch.reset())
             except StopIteration:
                 break
             except Empty:

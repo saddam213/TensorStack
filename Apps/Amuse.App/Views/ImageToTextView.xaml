@@ -99,7 +99,6 @@
         <!--***Right Panel***-->
         <Grid x:Name="RightPanelContainer" Grid.Column="2" >
 
-
             <!--Content-->
             <DockPanel >
 
@@ -160,8 +159,9 @@
                         <Grid Grid.Column="2">
                             <Grid Margin="10,10,10,2">
                                 <Controls:TextResultControl 
-                                    Result="{Binding ResultText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                    Preview="{Binding PreviewResult, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                                    x:Name="ResultControl" 
+                                    Settings="{Binding Settings}" 
+                                    Result="{Binding ResultText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
                                 </Controls:TextResultControl>
                             </Grid>
                         </Grid>

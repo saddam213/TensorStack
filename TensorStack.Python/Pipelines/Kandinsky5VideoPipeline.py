@@ -138,6 +138,13 @@ def getLogs() -> list[str]:
 
 
 #------------------------------------------------
+# Get the token entires
+#------------------------------------------------
+def getTokens() -> list[str]:
+    return []
+
+
+#------------------------------------------------
 # Initialize Pipeline
 #------------------------------------------------
 def initialize(config: DataObjects.PipelineConfig):
@@ -234,7 +241,7 @@ def load_text_encoder_2(config: DataObjects.PipelineConfig, pipeline_kwargs: Dic
     # 2. Load component from single file
     if single_path and single_path.is_file():
         print(f"[Load] Loading Component TextEncoder2")
-        text_encoder_2 = Utils.from_component(Kandinsky5T2IPipeline, "text_encoder_2", single_path, template_path, _device_map, config.data_type)
+        text_encoder_2 = Utils.from_component(Kandinsky5T2VPipeline, "text_encoder_2", single_path, template_path, _device_map, config.data_type)
         if text_encoder_2:
             Utils.trim_memory(True)
             return text_encoder_2

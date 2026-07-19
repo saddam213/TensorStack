@@ -46,7 +46,7 @@
                                 PrefixPerSecond="tok/s"
                                 PrefixSecondsPer="s/tok"
                                 Statistics="{Binding Statistics}"
-                                Progress="{Binding Progress}" />
+                                Progress="{Binding Progress}"/>
 
 
                         <!--Execute/Cancel-->
@@ -128,25 +128,11 @@
 
             <!--Content-->
             <DockPanel Grid.Row="0">
-
-
-
-
-
                 <Border Margin="4" IsEnabled="{Binding IsViewBusy, Converter={StaticResource InverseBoolConverter}}">
-                    <DockPanel Margin="10,0,10,2">
-                        <TextBlock DockPanel.Dock="Top" Text="Text Result" Style="{StaticResource FieldTextBlockStyle}" />
-                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" >
-                            <i:Interaction.Behaviors>
-                                <Behaviors:AutoScrollBehavior ScrollThreshold="100"/>
-                            </i:Interaction.Behaviors>
-                            <Grid >
-                                <TextBox Text="{Binding PreviewResult}" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Padding="2,2,2,10"/>
-                            </Grid>
-                        </ScrollViewer>
-                    </DockPanel>
+                    <Grid Margin="10,4,10,2">
+                        <Controls:TextResultControl x:Name="TextResult" Settings="{Binding Settings, Mode=OneWay}" Result="{Binding ResultText, Mode=TwoWay}"/>
+                    </Grid>
                 </Border>
-
             </DockPanel>
 
 
@@ -172,14 +158,6 @@
                 </DockPanel>
             </Grid>
 
-
-
-
         </Grid>
-
-
-
-
     </Grid>
-
 </Views:ViewBaseDiffusion>

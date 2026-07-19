@@ -10,20 +10,13 @@
              xmlns:Controls="clr-namespace:Amuse.App.Controls"
              Focusable="True">
     <CommonControls:BaseControl.InputBindings>
-        <KeyBinding Modifiers="Ctrl" Key="C"  Command="{Binding CopySourceCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
+        <KeyBinding Modifiers="Ctrl" Key="A"  Command="{Binding CopySourceCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
+        <KeyBinding Modifiers="Ctrl" Key="C"  Command="{Binding CopyResponseCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
+        <KeyBinding Modifiers="Ctrl" Key="T"  Command="{Binding CopyThinkingCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
         <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding SaveSourceCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
         <KeyBinding Modifiers="Ctrl" Key="Z"  Command="{Binding ClearCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
     </CommonControls:BaseControl.InputBindings>
     <Border DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}, Mode=OneTime}" BorderBrush="{StaticResource ButtonBorderBrush}" Background="{StaticResource ContainerBackground}" BorderThickness="1" >
-        <Border.Resources>
-            <Style x:Key="TextResultStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
-                <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="TextWrapping" Value="Wrap"/>
-                <Setter Property="IsReadOnly" Value="True"/>
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="Padding" Value="4"/>
-            </Style>
-        </Border.Resources>
         <DockPanel>
 
             <!--Controls-->
@@ -45,37 +38,106 @@
                         Visibility="{Binding IsSaveEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" >
                         <CommonControls:FontAwesome Icon="f0c7" />
                     </Button>
+                    <Button 
+                        ToolTip="Copy Response" 
+                        ToolTipService.Placement="Top"
+                        ToolTipService.InitialShowDelay="600" 
+                        Command="{Binding CopyResponseCommand}" 
+                        Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" 
+                        Visibility="{Binding IsSaveEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" >
+                        <CommonControls:FontAwesome Icon="f0c5" />
+                    </Button>
                 </StackPanel>
 
                 <!--Clear-->
-                <Grid DockPanel.Dock="Right" Visibility="{Binding IsRemoveEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Button 
+                <DockPanel DockPanel.Dock="Right" Visibility="{Binding IsRemoveEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button DockPanel.Dock="Right"
                         ToolTip="Clear Text" 
                         ToolTipService.Placement="Top"
                         ToolTipService.InitialShowDelay="600" 
                         Command="{Binding ClearCommand}" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
                         <CommonControls:FontAwesome Icon="f2ed" />
                     </Button>
-                </Grid>
 
-                <!--Text Info-->
-                <Grid>
-                    <StackPanel Margin="0,0,10,0" VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,-2" Visibility="{Binding Result.IsMultipleResult, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <TextBlock Text="Beam: " Opacity=".7" VerticalAlignment="Center" FontStyle="Italic" FontSize="11"/>
-                            <TextBlock Text="{Binding SelectedResult.Beam, FallbackValue=0}" />
+                    <!--Text Info-->
+                    <Grid>
+                        <StackPanel Margin="10,0,10,0" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,-2" Visibility="{Binding Result.IsMultipleResult, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="Beam: " Opacity=".7" VerticalAlignment="Center" FontStyle="Italic" FontSize="11"/>
+                                <TextBlock Text="{Binding SelectedResult.Beam, FallbackValue=0}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                                <TextBlock Text="Length: " Opacity=".7" VerticalAlignment="Center" FontStyle="Italic" FontSize="11"/>
+                                <TextBlock Text="{Binding SelectedResult.Length, FallbackValue=0}" Visibility="{Binding Result, Converter={StaticResource NullVisibilityConverter}}"/>
+                                <TextBlock Text="{Binding Length, ElementName=PreviewControl, FallbackValue=0}" Visibility="{Binding Result, Converter={StaticResource InverseNullVisibilityConverter}}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,-2,0,0" Visibility="{Binding Result.IsMultipleResult, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="Score: " Opacity=".7" VerticalAlignment="Center" FontStyle="Italic" FontSize="11"/>
+                                <TextBlock Text="{Binding SelectedResult.Score, FallbackValue=0, StringFormat={}{0:N4}}" />
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                            <TextBlock Text="Length: " Opacity=".7" VerticalAlignment="Center" FontStyle="Italic" FontSize="11"/>
-                            <TextBlock Text="{Binding SelectedResult.Length, FallbackValue=0}" Visibility="{Binding Result, Converter={StaticResource NullVisibilityConverter}}"/>
-                            <TextBlock Text="{Binding Preview.Length, FallbackValue=0}" Visibility="{Binding Result, Converter={StaticResource InverseNullVisibilityConverter}}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,-2,0,0" Visibility="{Binding Result.IsMultipleResult, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <TextBlock Text="Score: " Opacity=".7" VerticalAlignment="Center" FontStyle="Italic" FontSize="11"/>
-                            <TextBlock Text="{Binding SelectedResult.Score, FallbackValue=0, StringFormat={}{0:N4}}" />
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
+                    </Grid>
+
+                </DockPanel>
+
+                <DockPanel MaxWidth="400">
+                    <UniformGrid DockPanel.Dock="Left" Rows="1"   Height="26" VerticalAlignment="Center" Margin="10,0,0,0">
+                        <CommonControls:ToggleButton
+                            Width="30"
+                            IconTrue="f120"
+                            IconFalse="f120"
+                            SizeTrue="11"
+                            SizeFalse="11"
+                            ColorTrue="#80FFFFFF"
+                            ColorFalse="#25FFFFFF"
+                            ToolTipTrue="Disable Token Preview"
+                            ToolTipFalse="Enable Token Preview"
+                            ToolTipPlacement="Top"
+                            ToolTipInitialDelay="600"
+                            IsChecked="{Binding IsPreviewEnabled, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                        <CommonControls:ToggleButton
+                            IconTrue="e698"
+                            IconFalse="e698"
+                            SizeTrue="11"
+                            SizeFalse="11"
+                            ColorTrue="#80FFFFFF"
+                            ColorFalse="#25FFFFFF"
+                            ToolTipTrue="Disable Preview Formatting"
+                            ToolTipFalse="Enable Preview Formatting (experimental)"
+                            ToolTipPlacement="Top"
+                            ToolTipInitialDelay="600"
+                            IsChecked="{Binding IsPreviewMarkdownEnabled, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    </UniformGrid>
+                    <UniformGrid DockPanel.Dock="Right" Rows="1" Height="26" VerticalAlignment="Center" Margin="10,0,0,0">
+                        <CommonControls:ToggleButton
+                            Width="30"
+                            IconTrue="f56c"
+                            IconFalse="f56c"
+                            SizeTrue="11"
+                            SizeFalse="11"
+                            ColorTrue="#80FFFFFF"
+                            ColorFalse="#25FFFFFF"
+                            ToolTipTrue="Disable Result Formatting"
+                            ToolTipFalse="Enable Result Formatting (experimental)"
+                            ToolTipPlacement="Top"
+                            ToolTipInitialDelay="600"
+                            IsChecked="{Binding IsResultMarkdownEnabled, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                        <CommonControls:ToggleButton
+                            Width="30"
+                            IconTrue="f0eb"
+                            IconFalse="f0eb"
+                            SizeTrue="11"
+                            SizeFalse="11"
+                            ColorTrue="#80FFFFFF"
+                            ColorFalse="#25FFFFFF"
+                            ToolTipTrue="Hide Thinking Content"
+                            ToolTipFalse="Show Thinking Content"
+                            ToolTipPlacement="Top"
+                            ToolTipInitialDelay="600"
+                            IsChecked="{Binding IsThinkingVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    </UniformGrid>
+                    <CommonControls:SliderControl Text="Refresh Rate" Minimum="50" Maximum="1000" TickFrequency="50" ValuePostFix="ms" Value="{Binding PreviewRefreshInterval, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Margin="10,0,0,0"/>
+                </DockPanel>
 
             </DockPanel>
 
@@ -84,35 +146,25 @@
                 <Grid x:Name="MainContent" Background="Transparent">
 
                     <!--PlaceHolder-->
-                    <Image Source="{Binding Placeholder, TargetNullValue={StaticResource PlaceholderText}}" Stretch="Uniform" IsHitTestVisible="False">
-                        <Image.Style>
-                            <Style TargetType="{x:Type Image}">
-                                <Setter Property="Visibility" Value="Visible" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Result, Converter={StaticResource NullBooleanConverter}}" Value="false">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
+                    <Image Source="{Binding Placeholder, TargetNullValue={StaticResource PlaceholderText}}" Stretch="Uniform" IsHitTestVisible="False"/>
 
                     <!--Text Result-->
-                    <Grid Visibility="{Binding Result, Converter={StaticResource NullOrEmptyVisibilityConverter}}">
+                    <Grid Visibility="{Binding Result, Converter={StaticResource NullOrEmptyVisibilityConverter}}" Background="{StaticResource ControlDefaultBackground}">
 
                         <!--Single Result-->
                         <Grid Visibility="{Binding Result.IsMultipleResult, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" >
-                                <i:Interaction.Behaviors>
-                                    <Behaviors:AutoScrollBehavior ScrollThreshold="100"/>
-                                </i:Interaction.Behaviors>
-                                <TextBox Text="{Binding Result.Result.Text}" Style="{StaticResource TextResultStyle}"/>
-                            </ScrollViewer>
+                            <Controls:MarkdownElement 
+                                x:Name="ResultControl" 
+                                Settings="{Binding Settings, Mode=OneWay}"
+                                Markdown="{Binding Result.Result.Text}" 
+                                IsThinkingVisible="{Binding IsThinkingVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                IsMarkdownEnabled="{Binding IsResultMarkdownEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                IsScrollToBottomEnabled="{Binding IsPreviewEnabled, UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid>
 
                         <!--Multiple Result-->
                         <Grid Visibility="{Binding Result.IsMultipleResult, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <TabControl ItemsSource="{Binding Result.Results}" SelectedItem="{Binding SelectedResult}" Padding="0" BorderThickness="0">
+                            <TabControl x:Name="ResultTabControl" ItemsSource="{Binding Result.Results}" SelectedItem="{Binding SelectedResult}" Padding="0" BorderThickness="0">
                                 <TabControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel>
@@ -123,12 +175,12 @@
                                 </TabControl.ItemTemplate>
                                 <TabControl.ContentTemplate>
                                     <DataTemplate>
-                                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" >
-                                            <i:Interaction.Behaviors>
-                                                <Behaviors:AutoScrollBehavior ScrollThreshold="100"/>
-                                            </i:Interaction.Behaviors>
-                                            <TextBox Text="{Binding Text}" Style="{StaticResource TextResultStyle}"/>
-                                        </ScrollViewer>
+                                        <Controls:MarkdownElement 
+                                            Settings="{Binding Settings, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}, Mode=OneWay}"
+                                            IsThinkingVisible="{Binding IsThinkingVisible, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                            IsMarkdownEnabled="{Binding IsResultMarkdownEnabled, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}, UpdateSourceTrigger=PropertyChanged}"
+                                            IsScrollToBottomEnabled="False"
+                                            Markdown="{Binding Text, IsAsync=True, Delay=200}" />
                                     </DataTemplate>
                                 </TabControl.ContentTemplate>
                                 <TabControl.Template>
@@ -144,28 +196,41 @@
                     </Grid>
 
                     <!--Preview-->
-                    <Grid Visibility="{Binding Preview, Converter={StaticResource NullOrEmptyVisibilityConverter}}">
-                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" >
-                            <i:Interaction.Behaviors>
-                                <Behaviors:AutoScrollBehavior ScrollThreshold="100"/>
-                            </i:Interaction.Behaviors>
-                            <TextBox Text="{Binding Preview, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextResultStyle}" Background="{StaticResource ContainerBackground}"/>
-                        </ScrollViewer>
+                    <Grid Visibility="{Binding IsPreviewEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid Visibility="{Binding IsContentReady, ElementName=PreviewControl, Converter={StaticResource BooleanToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
+                            <Controls:MarkdownElement 
+                                x:Name="PreviewControl" 
+                                Settings="{Binding Settings, Mode=OneWay}"
+                                IsThinkingVisible="{Binding IsThinkingVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                IsMarkdownEnabled="{Binding IsPreviewMarkdownEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                IsScrollToBottomEnabled="{Binding IsPreviewEnabled, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
                     </Grid>
 
                     <!--ContextMenu-->
                     <Grid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Copy" InputGestureText="Ctrl+C" Command="{Binding CopySourceCommand}">
-                                <MenuItem.Icon>
-                                    <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="Save" InputGestureText="Ctrl+S" Command="{Binding SaveSourceCommand}">
+                            <MenuItem Header="Save As" InputGestureText="Ctrl+S" Command="{Binding SaveSourceCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0c7" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>
                             </MenuItem>
+                            <MenuItem Header="Copy All" InputGestureText="Ctrl+A" Command="{Binding CopySourceCommand}">
+                                <MenuItem.Icon>
+                                    <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Copy Response" InputGestureText="Ctrl+C" Command="{Binding CopyResponseCommand}">
+                                <MenuItem.Icon>
+                                    <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Copy Thinking" InputGestureText="Ctrl+T" Command="{Binding CopyThinkingCommand}">
+                                <MenuItem.Icon>
+                                    <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                         
                             <MenuItem Header="Clear" InputGestureText="Ctrl+Z" Command="{Binding ClearCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f2ed" IconStyle="Light" Size="15"/>
@@ -179,6 +244,7 @@
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding IsInputEnabled}" Value="True"/>
                                                 <Condition Binding="{Binding IsContextMenuEnabled}" Value="True"/>
+                                                <Condition Binding="{Binding IsResultMarkdownEnabled}" Value="false"/>
                                             </MultiDataTrigger.Conditions>
                                             <MultiDataTrigger.Setters>
                                                 <Setter Property="Visibility" Value="Visible" />

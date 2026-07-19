@@ -240,22 +240,22 @@ namespace TensorStack.WPF.Converters
             if (value is int iValue)
             {
                 if (parameter is int subtraction || int.TryParse(parameter.ToString(), out subtraction))
-                    return iValue - subtraction;
+                    return Math.Max(0, iValue - subtraction);
             }
             else if (value is long lValue)
             {
                 if (parameter is long subtraction || long.TryParse(parameter.ToString(), out subtraction))
-                    return lValue - subtraction;
+                    return Math.Max(0, lValue - subtraction);
             }
             else if (value is float fValue)
             {
                 if (parameter is float subtraction || float.TryParse(parameter.ToString(), out subtraction))
-                    return fValue - subtraction;
+                    return Math.Max(0, fValue - subtraction);
             }
             else if (value is double dValue)
             {
                 if (parameter is double subtraction || double.TryParse(parameter.ToString(), out subtraction))
-                    return dValue - subtraction;
+                    return Math.Max(0, dValue - subtraction);
             }
             return value;
         }

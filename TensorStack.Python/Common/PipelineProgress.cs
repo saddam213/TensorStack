@@ -54,5 +54,26 @@ namespace TensorStack.Python.Common
             };
         }
 
+
+        public static PipelineProgress Create(string inputData)
+        {
+            if (string.IsNullOrWhiteSpace(inputData))
+                return null;
+
+            // {Token}|{Elapsed}
+            var parameters = inputData.Split('|', 2);
+            if (parameters.Length != 2)
+                return null;
+
+            return new PipelineProgress
+            {
+                Key = "Generate",
+                Subkey = "Token",
+                ElapsedKey = "Token",
+                Message = parameters[0],
+                Elapsed = float.Parse(parameters[1], CultureInfo.InvariantCulture),
+                Timestamp = DateTime.UtcNow
+            };
+        }
     }
 }

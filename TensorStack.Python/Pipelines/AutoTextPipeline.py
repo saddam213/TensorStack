@@ -11,7 +11,9 @@ from tensorstack.utils import (
     get_execution_device,
     notification_get,
     notification_push,
-    prepare_images
+    prepare_images,
+    token_get,
+    token_push
 )
 redirect_output()
 create_services()
@@ -129,6 +131,13 @@ def getNotifications() -> list[(str, Buffer)]:
 #------------------------------------------------
 def getLogs() -> list[str]:
     return get_output()
+
+
+#------------------------------------------------
+# Get the token entires
+#------------------------------------------------
+def getTokens() -> list[str]:
+    return token_get()
 
 
 #------------------------------------------------

@@ -3,7 +3,6 @@ using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -22,7 +21,6 @@ namespace Amuse.App.Views
     public partial class TextInstructView : ViewBaseDiffusion
     {
         private TextInput _sourceText;
-        private string _previewResult;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextInstructView"/> class.
@@ -50,16 +48,6 @@ namespace Amuse.App.Views
 
 
         /// <summary>
-        /// Gets or sets the preview result.
-        /// </summary>
-        public string PreviewResult
-        {
-            get { return _previewResult; }
-            set { SetProperty(ref _previewResult, value); }
-        }
-
-
-        /// <summary>
         /// On View Open
         /// </summary>
         public override async Task OpenAsync(OpenViewArgs args = null)
@@ -83,7 +71,7 @@ namespace Amuse.App.Views
                 Progress.Clear();
                 Statistics.Clear();
                 ResultText = default;
-                PreviewResult = default;
+                await TextResult.ClearAsync();
                 Statistics.Start();
 
                 var message = new ConversationModel { Role = "user", Content = Options.Prompt };
@@ -105,7 +93,7 @@ namespace Amuse.App.Views
                 // Result
                 Statistics.Stop();
 
-                PreviewResult = textResult.Result.Text;
+                ResultText = textResult;
 
                 // History
                 //  await SaveHistoryAsync(options);
@@ -145,7 +133,6 @@ namespace Amuse.App.Views
                 AutomationProgress.Clear();
                 Statistics.Clear();
                 ResultText = default;
-                PreviewResult = default;
                 Statistics.Start();
                 CancellationTokenSource = new CancellationTokenSource();
 
@@ -154,8 +141,6 @@ namespace Amuse.App.Views
                 await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Text, MediaType.Audio))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-
-                    PreviewResult = default;
 
                     // Diffusion
                     var textResult = await ExecuteTextDiffusionAsync(automationJob.DiffusionOptions);
@@ -232,13 +217,20 @@ namespace Amuse.App.Views
                 else if (progress.Subkey == "Token")
                 {
                     Statistics.Update(progress);
-                    PreviewResult += progress.Message;
+                    TextResult.UpdateProgress(progress);
                 }
                 else
                 {
-                    Progress.Indeterminate(Globalization.GetProgressMessage(progress));
-                    Logger.LogDebug("[{View}] [OnProgress] {Subkey}, it/s: {IterationsPerSecond:N2}, s/it: {SecondsPerIteration:N2}", ViewName, progress.Subkey, progress.IterationsPerSecond, progress.SecondsPerIteration);
+                    var message = progress.Subkey == "Transformer" && Options.Beams > 1
+                         ? "Generating Beam Results..."
+                         : Globalization.GetProgressMessage(progress);
+                    Progress.Indeterminate(message);
                 }
+            }
+
+            if (progress.Subkey != "Token")
+            {
+                Logger.LogDebug("[{View}] [OnProgress] {Subkey} - {Message}", ViewName, progress.Subkey, progress.Message);
             }
         }
 

@@ -141,6 +141,13 @@ def getLogs() -> list[str]:
 
 
 #------------------------------------------------
+# Get the token entires
+#------------------------------------------------
+def getTokens() -> list[str]:
+    return []
+
+
+#------------------------------------------------
 # Initialize Pipeline
 #------------------------------------------------
 def initialize(config: DataObjects.PipelineConfig):

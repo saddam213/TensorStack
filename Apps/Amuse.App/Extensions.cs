@@ -476,11 +476,83 @@ namespace Amuse.App
             return Math.Max(nextId, collection.Max(selector) + 1);
         }
 
+
+        public static IEnumerable<T> FindVisualChildren<T>(this DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null)
+                yield break;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is T t)
+                    yield return t;
+
+                foreach (var descendant in FindVisualChildren<T>(child))
+                    yield return descendant;
+            }
+        }
     }
 
     public static partial class Utils
     {
         public const int FixedIdRange = 1000;
+
+
+        public static bool HasThinkingText(string content, string tagOpen = "<think>", string tagClose = "</think>")
+        {
+            if (string.IsNullOrWhiteSpace(content))
+                return false;
+
+            return content.StartsWith(tagOpen, StringComparison.OrdinalIgnoreCase)
+                && content.Contains(tagClose, StringComparison.OrdinalIgnoreCase);
+        }
+
+
+        /// <summary>
+        /// Gets the thinking text.
+        /// </summary>
+        /// <param name="content">The content.</param>
+        /// <param name="tagOpen">The tag open.</param>
+        /// <param name="tagClose">The tag close.</param>
+        public static string GetThinkingText(string content, string tagOpen = "<think>", string tagClose = "</think>")
+        {
+            if (string.IsNullOrEmpty(content))
+                return string.Empty;
+
+            if (content.StartsWith(tagOpen, StringComparison.OrdinalIgnoreCase))
+            {
+                var start = tagOpen.Length;
+                var end = content.IndexOf(tagClose, StringComparison.OrdinalIgnoreCase);
+                if (end > start)
+                    return content[start..end].Trim();
+            }
+            return string.Empty;
+        }
+
+
+        /// <summary>
+        /// Gets the response text.
+        /// </summary>
+        /// <param name="content">The content.</param>
+        /// <param name="tagOpen">The tag open.</param>
+        /// <param name="tagClose">The tag close.</param>
+        /// <returns>System.String.</returns>
+        public static string GetResponseText(string content, string tagOpen = "<think>", string tagClose = "</think>")
+        {
+            if (string.IsNullOrEmpty(content))
+                return string.Empty;
+
+            if (content.StartsWith(tagOpen, StringComparison.OrdinalIgnoreCase))
+            {
+                var start = content.IndexOf(tagClose, StringComparison.OrdinalIgnoreCase);
+                if (start > 0)
+                    return content[(start + tagClose.Length)..].Trim();
+            }
+            return content;
+        }
+
     }
 
 

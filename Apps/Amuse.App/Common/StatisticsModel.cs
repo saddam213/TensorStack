@@ -11,50 +11,17 @@ namespace Amuse.App.Common
     public sealed class StatisticsModel : BaseModel
     {
         private readonly DispatcherTimer _dispatcherTimer;
+        private readonly List<float> _perSecond = [];
+        private readonly List<float> _secondPer = [];
         private float _iterationsPerSecond;
         private float _secondsPerIteration;
         private long _timestamp;
         private TimeSpan _elapsed;
-        private List<float> _perSecond;
-        private List<float> _secondPer;
 
         public StatisticsModel(Dispatcher dispatcher)
         {
-            _perSecond = new List<float>();
-            _secondPer = new List<float>();
             _dispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(200), DispatcherPriority.Background, UpdateProgress, dispatcher);
             _dispatcherTimer.Stop();
-        }
-
-        public void Start()
-        {
-            _timestamp = Stopwatch.GetTimestamp();
-            _dispatcherTimer.Start();
-        }
-
-        public void Stop()
-        {
-            _dispatcherTimer.Stop();
-            Elapsed = Stopwatch.GetElapsedTime(_timestamp);
-        }
-
-        public void Clear()
-        {
-            Stop();
-            _perSecond.Clear();
-            _secondPer.Clear();
-            _timestamp = 0;
-            IterationsPerSecond = 0;
-            SecondsPerIteration = 0;
-            Elapsed = TimeSpan.Zero;
-        }
-
-        public void Update(PipelineProgress progress)
-        {
-            _perSecond.Add(progress.IterationsPerSecond);
-            _secondPer.Add(progress.SecondsPerIteration);
-            IterationsPerSecond = AverageExcludingMinMax(_perSecond);
-            SecondsPerIteration = AverageExcludingMinMax(_secondPer);
         }
 
         public TimeSpan Elapsed
@@ -75,18 +42,50 @@ namespace Amuse.App.Common
             set { SetProperty(ref _secondsPerIteration, value); }
         }
 
+        public void Start()
+        {
+            _timestamp = Stopwatch.GetTimestamp();
+            _dispatcherTimer.Start();
+        }
+
+        public void Stop()
+        {
+            _dispatcherTimer.Stop();
+            UpdateProgress(default, default);
+        }
+
+        public void Clear()
+        {
+            Stop();
+            _timestamp = 0;
+            _perSecond.Clear();
+            _secondPer.Clear();
+            IterationsPerSecond = 0;
+            SecondsPerIteration = 0;
+            Elapsed = TimeSpan.Zero;
+        }
+
+        public void Update(PipelineProgress progress)
+        {
+            _perSecond.Add(progress.IterationsPerSecond);
+            _secondPer.Add(progress.SecondsPerIteration);
+        }
 
         private void UpdateProgress(object sender, EventArgs e)
         {
             if (_timestamp == 0)
-                return; ;
+                return;
 
             Elapsed = Stopwatch.GetElapsedTime(_timestamp);
+            IterationsPerSecond = AverageExcludingMinMax(_perSecond);
+            SecondsPerIteration = AverageExcludingMinMax(_secondPer);
         }
 
 
         static float AverageExcludingMinMax(List<float> values)
         {
+            if (values.Count == 0)
+                return 0;
             if (values.Count <= 2)
                 return values.Average();
 
