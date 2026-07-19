@@ -60,9 +60,9 @@ namespace TensorStack.Python.Common
             if (string.IsNullOrWhiteSpace(inputData))
                 return null;
 
-            // {Token}|{Elapsed}
-            var parameters = inputData.Split('|', 2);
-            if (parameters.Length != 2)
+            // {Token}|{TokenCount}|{Elapsed}
+            var parameters = inputData.Split('|', 3);
+            if (parameters.Length != 3)
                 return null;
 
             return new PipelineProgress
@@ -71,7 +71,8 @@ namespace TensorStack.Python.Common
                 Subkey = "Token",
                 ElapsedKey = "Token",
                 Message = parameters[0],
-                Elapsed = float.Parse(parameters[1], CultureInfo.InvariantCulture),
+                Value = int.Parse(parameters[1], CultureInfo.InvariantCulture),
+                Elapsed = float.Parse(parameters[2], CultureInfo.InvariantCulture),
                 Timestamp = DateTime.UtcNow
             };
         }

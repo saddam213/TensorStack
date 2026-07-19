@@ -12,8 +12,7 @@ from tensorstack.utils import (
     notification_get,
     notification_push,
     prepare_images,
-    token_get,
-    token_push
+    token_get
 )
 redirect_output()
 create_services()

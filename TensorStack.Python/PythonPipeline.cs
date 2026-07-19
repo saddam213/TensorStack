@@ -302,13 +302,13 @@ namespace TensorStack.Python
                         using (var pythonResults = _functionGenerate.Call(inferenceOptions, inputTensorsData))
                         {
                             return pythonResults
-                                .AsEnumerable<Tuple<string, int, float, float>>()
+                                .AsEnumerable<Tuple<string, int, float, int>>()
                                 .Select(x => new TextInput
                                 {
                                     Text = x.Item1,
                                     Beam = x.Item2,
                                     Score = x.Item3,
-                                    PenaltyScore = x.Item4,
+                                    TokenCount = x.Item4,
                                 }).ToArray();
                         }
                     }

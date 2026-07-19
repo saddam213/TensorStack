@@ -728,8 +728,8 @@ def notification_push(key: str, subkey: str, elapsedkey: str = None, value: int 
 def token_get():
     return _token_service.get()
 
-def token_push(token: str, elapsed: float = 0):
-    return _token_service.push(token=token, elapsed=elapsed)
+def token_push(token: str, token_count: int, elapsed: float = 0):
+    return _token_service.push(token=token,token_count=token_count, elapsed=elapsed)
 
 #------------------------------------------------
 # Helper class handle notifications
@@ -758,9 +758,9 @@ class TokenService:
         self._items = []
         self._lock = threading.Lock()
 
-    def push(self, token: str, elapsed: float = 0):
+    def push(self, token: str, token_count: int, elapsed: float = 0):
         with self._lock:
-            self._items.append(f"{token}|{elapsed}")
+            self._items.append(f"{token}|{token_count}|{elapsed}")
 
     def get(self):
         with self._lock:

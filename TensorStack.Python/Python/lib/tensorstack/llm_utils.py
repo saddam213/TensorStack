@@ -1,4 +1,4 @@
-﻿from tensorstack.utils import Stopwatch, notification_push, token_push
+﻿from tensorstack.utils import Stopwatch, token_push
 from tensorstack.data_objects import PipelineConfig, GenerateTextOptions
 from tensorstack.enums import  MemoryMode
 import threading
@@ -18,6 +18,15 @@ from transformers import (
     set_seed,
 )
 
+class CountingStreamer(TextIteratorStreamer):
+    def __init__(self, tokenizer, **kwargs):
+        super().__init__(tokenizer, **kwargs)
+        self.token_count = 0
+
+    def put(self, value):
+        self.token_count += value.numel()
+        super().put(value)
+
 
 @dataclass(slots=True)
 class TextPipeline:
@@ -25,7 +34,7 @@ class TextPipeline:
     processor: ProcessorMixin
     transformer: PreTrainedModel
     kwargs: dict[str, Any]
-    streamer: Optional[TextIteratorStreamer] = None
+    streamer: Optional[CountingStreamer] = None
 
     #------------------------------------------------
     # Generate the model inputs
@@ -39,7 +48,7 @@ class TextPipeline:
 
         self.streamer = None
         if options.num_beams == 1:
-            self.streamer = TextIteratorStreamer(
+            self.streamer = CountingStreamer(
                 self.tokenizer,
                 skip_prompt=True,
                 skip_special_tokens=True,
@@ -84,10 +93,12 @@ class TextPipeline:
     # Generate the greedy results (supports streaming)
     #------------------------------------------------
     def _generate_text_result(self, stopwatch: Stopwatch, kwargs: dict[str, Any]):
+        results = Queue()
         exceptions = Queue()
         def worker():
             try:
-                self.transformer.generate(**kwargs)
+                result = self.transformer.generate(**kwargs)
+                results.put(result)
             except Exception as e:
                 exceptions.put(e)
 
@@ -99,7 +110,7 @@ class TextPipeline:
             try:
                 chunk = next(self.streamer)
                 chunks.append(chunk)
-                token_push(token=chunk, elapsed=stopwatch.reset())
+                token_push(token=chunk,token_count=self.streamer.token_count, elapsed=stopwatch.reset())
             except StopIteration:
                 break
             except Empty:
@@ -112,7 +123,9 @@ class TextPipeline:
         if not exceptions.empty():
             raise exceptions.get()
 
-        return [("".join(chunks), 0, 0.0, 0.0)]
+        result = results.get()
+        total_tokens = result.sequences.shape[-1]
+        return [("".join(chunks), 0, 0.0, total_tokens)]
 
 
     #------------------------------------------------
@@ -128,7 +141,7 @@ class TextPipeline:
             if output.sequences_scores is not None:
                 score = float(output.sequences_scores[beam_idx])
 
-            results.append((text, beam_idx, score, 0.0))
+            results.append((text, beam_idx, score, sequence.shape[-1]))
 
         return results
 

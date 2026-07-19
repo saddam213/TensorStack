@@ -29,6 +29,7 @@ namespace TensorStack.Common
         public int Beam { get; set; }
         public float Score { get; set; }
         public float PenaltyScore { get; set; }
+        public int TokenCount { get; set; }
 
  
 

@@ -26,6 +26,7 @@ namespace Amuse.App.Controls
         private bool _isContextMenuEnabled = true;
         private bool _isToolbarEnabled = true;
         private TextInput _selectedResult;
+        private int _previewTokenCount;
 
         ///// <summary>
         /// Initializes a new instance of the <see cref="TextResultControl"/> class.
@@ -144,6 +145,12 @@ namespace Amuse.App.Controls
             set { SetProperty(ref _selectedResult, value); }
         }
 
+        public int PreviewTokenCount
+        {
+            get { return _previewTokenCount; }
+            set { SetProperty(ref _previewTokenCount, value); }
+        }
+
         public float PreviewRefreshInterval
         {
             get { return _previewRefreshInterval; }
@@ -174,6 +181,7 @@ namespace Amuse.App.Controls
         {
             Result = null;
             SelectedResult = null;
+            PreviewTokenCount = 0;
             await ClearMarkdownAsync();
         }
 
@@ -273,6 +281,7 @@ namespace Amuse.App.Controls
         /// </summary>
         public Task UpdateProgress(PipelineProgress progress)
         {
+            _previewTokenCount = progress.Value;
             _previewBuffer.Append(progress.Message);
             return Task.CompletedTask;
         }
@@ -292,6 +301,7 @@ namespace Amuse.App.Controls
             if (!string.IsNullOrEmpty(text))
             {
                 await PreviewControl.AppendTextAsync(text);
+                NotifyPropertyChanged(nameof(PreviewTokenCount));
             }
         }
 
@@ -302,6 +312,7 @@ namespace Amuse.App.Controls
         /// <returns>A Task representing the asynchronous operation.</returns>
         private async Task ClearPreviewAsync()
         {
+            PreviewTokenCount = 0;
             _previewBuffer.Clear();
             await PreviewControl.ClearAsync();
         }

@@ -62,18 +62,15 @@
                     <!--Text Info-->
                     <Grid>
                         <StackPanel Margin="10,0,10,0" VerticalAlignment="Center">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,-2" Visibility="{Binding Result.IsMultipleResult, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <TextBlock Text="Beam: " Opacity=".7" VerticalAlignment="Center" FontStyle="Italic" FontSize="11"/>
-                                <TextBlock Text="{Binding SelectedResult.Beam, FallbackValue=0}" />
-                            </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                                <TextBlock Text="Tokens: " Opacity=".7" VerticalAlignment="Center" FontStyle="Italic" FontSize="11"/>
+                                <TextBlock Text="{Binding SelectedResult.TokenCount, FallbackValue=0}" Visibility="{Binding Result, Converter={StaticResource NullVisibilityConverter}}"/>
+                                <TextBlock Text="{Binding PreviewTokenCount, FallbackValue=0}" Visibility="{Binding Result, Converter={StaticResource InverseNullVisibilityConverter}}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,0" >
                                 <TextBlock Text="Length: " Opacity=".7" VerticalAlignment="Center" FontStyle="Italic" FontSize="11"/>
                                 <TextBlock Text="{Binding SelectedResult.Length, FallbackValue=0}" Visibility="{Binding Result, Converter={StaticResource NullVisibilityConverter}}"/>
                                 <TextBlock Text="{Binding Length, ElementName=PreviewControl, FallbackValue=0}" Visibility="{Binding Result, Converter={StaticResource InverseNullVisibilityConverter}}"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,-2,0,0" Visibility="{Binding Result.IsMultipleResult, FallbackValue=Collapsed, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <TextBlock Text="Score: " Opacity=".7" VerticalAlignment="Center" FontStyle="Italic" FontSize="11"/>
-                                <TextBlock Text="{Binding SelectedResult.Score, FallbackValue=0, StringFormat={}{0:N4}}" />
                             </StackPanel>
                         </StackPanel>
                     </Grid>
