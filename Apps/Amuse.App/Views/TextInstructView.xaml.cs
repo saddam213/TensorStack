@@ -3,12 +3,14 @@ using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TensorStack.Common;
+using TensorStack.Common.Tensor;
 using TensorStack.Image;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
@@ -64,7 +66,7 @@ namespace Amuse.App.Views
         protected override async Task ExecuteAsync()
         {
             var timestamp = Stopwatch.GetTimestamp();
-            Logger.LogInformation($"[AudioToText] [Execute] Executing pipeline...");
+            Logger.LogInformation($"[TextInstruct] [Execute] Executing pipeline...");
 
             try
             {
@@ -74,18 +76,29 @@ namespace Amuse.App.Views
                 await TextResult.ClearAsync();
                 Statistics.Start();
 
-                var message = new ConversationModel { Role = "user", Content = Options.Prompt };
-                var inputImage = await ImageInput.CreateAsync("C:\\Users\\Administrator\\Pictures\\2Untitled.png");
-
-                // Options
-                var options = Options with { };
+                // Images
+                var inputImages = new List<ImageTensor>();
+                var imageIndex = new List<int>();
                 if (CurrentPipeline.DiffusionModel.ModelType == "Vision")
                 {
-                    message.ImageIndex = [0];
-                    options.InputImages = [inputImage];
+                    imageIndex.Add(0);
+                    inputImages.Add(await ImageInput.CreateAsync("C:\\Users\\Administrator\\Pictures\\2Untitled.png"));
                 }
 
-                options.Conversation = [message];
+                // Conversation
+                var conversation = new List<ConversationModel>();
+                if (!string.IsNullOrEmpty(Options.Prompt2))
+                    conversation.Add(new ConversationModel { Role = "system", Content = Options.Prompt2 });
+                conversation.Add(new ConversationModel { Role = "user", ImageIndex = imageIndex, Content = Options.Prompt });
+
+                // Options
+                var options = Options with
+                {
+                    Prompt = null,
+                    Prompt2 = null,
+                    InputImages = inputImages,
+                    Conversation = conversation
+                };
 
                 // Execute
                 var textResult = await ExecuteTextDiffusionAsync(options);
@@ -96,19 +109,19 @@ namespace Amuse.App.Views
                 ResultText = textResult;
 
                 // History
-                //  await SaveHistoryAsync(options);
-                Logger.LogInformation("[AudioToText] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                await SaveHistoryAsync(options);
+                Logger.LogInformation("[TextInstruct] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)
             {
                 Statistics.Clear();
-                Logger.LogInformation("[AudioToText] [Execute] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[TextInstruct] [Execute] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (Exception ex)
             {
                 Statistics.Clear();
                 IsPipelineLoaded = DiffusionService.IsLoaded;
-                Logger.LogError(ex, "[AudioToText] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogError(ex, "[TextInstruct] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Pipeline", ex.Message);
             }
             finally
@@ -125,7 +138,7 @@ namespace Amuse.App.Views
         {
             IsAutomating = true;
             var timestamp = Stopwatch.GetTimestamp();
-            Logger.LogInformation($"[AudioToText] [ExecuteAutomation] Executing pipeline...");
+            Logger.LogInformation($"[TextInstruct] [ExecuteAutomation] Executing pipeline...");
 
             try
             {
@@ -159,18 +172,18 @@ namespace Amuse.App.Views
                 }
 
                 Statistics.Stop();
-                Logger.LogInformation("[AudioToText] [ExecuteAutomation] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[TextInstruct] [ExecuteAutomation] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)
             {
                 Statistics.Clear();
-                Logger.LogInformation("[AudioToText] [ExecuteAutomation] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[TextInstruct] [ExecuteAutomation] Executing pipeline cancelled, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (Exception ex)
             {
                 Statistics.Clear();
                 IsPipelineLoaded = DiffusionService.IsLoaded;
-                Logger.LogError(ex, "[AudioToText] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogError(ex, "[TextInstruct] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Automation", ex.Message);
             }
             finally
@@ -190,15 +203,15 @@ namespace Amuse.App.Views
         /// <param name="options">The options.</param>
         private async Task<TextInput> SaveHistoryAsync(DiffusionInputOptions options)
         {
-            Logger.LogInformation($"[TextToImage] [SaveHistory] Saving history...");
+            Logger.LogInformation($"[TextInstruct] [SaveHistory] Saving history...");
             var result = await HistoryService.AddAsync(ResultText.Result, new DiffusionHistory
             {
                 Options = options,
                 Model = CurrentPipeline.DiffusionModel.Name,
                 LoraModels = CurrentPipeline.LoraAdapterModel?.Select(x => x.Name).ToArray(),
-                Source = View.AudioToText,
+                Source = View.TextInstruct,
             });
-            Logger.LogInformation($"[TextToImage] [SaveHistory] History saved.");
+            Logger.LogInformation($"[TextInstruct] [SaveHistory] History saved.");
             return result;
         }
 
@@ -235,12 +248,13 @@ namespace Amuse.App.Views
         }
 
 
-        private void SourceText_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void SourceText_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
                 e.Handled = true;
-                ExecuteCommand.Execute(null);
+                if (CanExecute())
+                    ExecuteCommand.Execute(null);
             }
         }
     }

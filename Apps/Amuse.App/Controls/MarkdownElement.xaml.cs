@@ -126,7 +126,10 @@ namespace Amuse.App.Controls
         {
             await ClearAsync();
             TextViewer.AppendText(content);
-            await DisplayWebView();
+            var webviewUpdateTask = Length == 0
+                ? UpdateWebView()
+                : DisplayWebView();
+            await webviewUpdateTask;
             if (IsScrollToBottomEnabled)
                 ScrollViewerHost.ScrollToBottom();
         }
@@ -151,6 +154,7 @@ namespace Amuse.App.Controls
         public async Task ClearAsync()
         {
             TextViewer.Clear();
+            WebViewer.Height = 0;
             await RenderHtmlAsync(string.Empty);
         }
 
@@ -296,7 +300,7 @@ namespace Amuse.App.Controls
                     .WaitAsync(TimeSpan.FromMilliseconds(200));
                 if (double.TryParse(result.Trim('"'), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
                 {
-                    WebViewer.Height = (int)Math.Max(ScrollViewerHost.ActualHeight, height);
+                    WebViewer.Height = (int)(Math.Max(ScrollViewerHost.ActualHeight, height) - 0.5);
                 }
             }
             catch (Exception ex)

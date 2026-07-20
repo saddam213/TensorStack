@@ -13,7 +13,7 @@
              xmlns:Controls="clr-namespace:Amuse.App.Controls"
              xmlns:Common="clr-namespace:Amuse.App.Common"
              xmlns:Views="clr-namespace:Amuse.App.Views">
-    <Grid  DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:TextInputControl}}}">
+    <Grid  DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:TextInputControl}}}" >
         <Grid.Resources>
             <Style x:Key="DiffusionInputTab" TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
                 <Style.Triggers>
@@ -40,10 +40,10 @@
         </Grid.Resources>
 
 
-        <TabControl Margin="0,14,0,14" SelectedIndex="{Binding SelectedOption, Converter={StaticResource EnumToIntConverter}}">
+        <TabControl Margin="0,14,0,0" SelectedIndex="{Binding SelectedOption, Converter={StaticResource EnumToIntConverter}}">
 
             <!--Options-->
-            <TabItem Style="{StaticResource DiffusionInputTab}">
+            <TabItem Style="{StaticResource DiffusionInputTab}" >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" Margin="3">
                         <CommonControls:FontAwesome Icon="f1de" IconStyle="Solid" Color="{StaticResource AccentColour2}" Size="13"/>
@@ -69,23 +69,57 @@
                                 <Controls:SeedControl Seed="{Binding Options.Seed}"/>
                             </StackPanel>
                         </UniformGrid>
-                    </StackPanel>
-
-                    <StackPanel DockPanel.Dock="Bottom">
-                        <UniformGrid Columns="2" Margin="0,4,0,0">
+                        <UniformGrid Columns="2" Margin="0,2,0,0">
                             <CommonControls:SliderControl Text="Min Length" Value="{Binding Options.MinLength}" Maximum="{Binding Pipeline.DiffusionModel.DefaultOptions.MaxLength}" TickFrequency="1" />
-                            <CommonControls:SliderControl Text="Max Length" Value="{Binding Options.MaxLength}" Maximum="{Binding Pipeline.DiffusionModel.DefaultOptions.MaxLength}" TickFrequency="1" />
+                            <CommonControls:SliderControl Text="Max Length" Value="{Binding Options.MaxLength}" Maximum="{Binding Pipeline.DiffusionModel.DefaultOptions.MaxLength}" TickFrequency="1024" />
                         </UniformGrid>
                     </StackPanel>
 
-                    <DockPanel Margin="0,0,2,0">
-                        <TextBlock DockPanel.Dock="Top" Text="Prompt" Style="{StaticResource FieldTextBlockStyle}" />
-                        <TextBox Text="{Binding Options.Prompt, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" />
-                    </DockPanel>
+    
+                    <!--Image Select-->
+                    <StackPanel DockPanel.Dock="Top"  Visibility="{Binding IsInputImagesEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock Text="Inputs" Style="{StaticResource FieldTextBlockStyle}" />
+                        <Controls:SourceSelectControl 
+                            Height="22"
+                            FontSize="12"
+                            SourceCount="4"
+                            IsMultiSelect="True" 
+                            TextHorizontalAlignment="Center"
+                            SourceText1="Image 1"
+                            SourceText2="Image 2"
+                            SourceText3="Image 3"
+                            SourceText4="Image 4"
+                            IsSource1Selected="{Binding Options.IsSource1Enabled, Mode=TwoWay}"
+                            IsSource2Selected="{Binding Options.IsSource2Enabled, Mode=TwoWay}"
+                            IsSource3Selected="{Binding Options.IsSource3Enabled, Mode=TwoWay}"
+                            IsSource4Selected="{Binding Options.IsSource4Enabled, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                    <Grid Margin="0,2,0,0">
+
+                        <!--Prompt-->
+                        <DockPanel Visibility="{Binding IsPromptEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,8">
+                            <TextBlock DockPanel.Dock="Top" Text="Prompt" Style="{StaticResource FieldTextBlockStyle}" />
+                            <TextBox Text="{Binding Options.Prompt, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" />
+                        </DockPanel>
+
+                        <!--Context-->
+                        <DockPanel Visibility="{Binding IsPromptEnabled, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                            <UniformGrid Rows="1" Height="30" DockPanel.Dock="Bottom">
+                                <Button Content="Text" />
+                                <Button Content="Image" />
+                                <Button Content="Clear" />
+                            </UniformGrid>
+                            <DockPanel Margin="0,0,0,8">
+                                <TextBlock DockPanel.Dock="Top" Text="Additional Context" Style="{StaticResource FieldTextBlockStyle}" />
+                                <TextBox Text="{Binding Options.Prompt, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" />
+                            </DockPanel>
+                        </DockPanel>
+                      
+                    </Grid>
 
                 </DockPanel>
             </TabItem>
-
 
             <!--Advanced-->
             <TabItem>
@@ -95,33 +129,36 @@
                         <TextBlock Text="Advanced" FontSize="11" FontWeight="DemiBold" Opacity=".9" Margin="5,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
-                <StackPanel VerticalAlignment="Top" Margin="0,4,0,0">
+                <DockPanel Margin="0,4,0,8">
 
-                    <UniformGrid Columns="2" Margin="0,4,0,0">
+                    <UniformGrid DockPanel.Dock="Top" Columns="2" Margin="0,4,0,0">
                         <CommonControls:SliderControl Text="Beams" Value="{Binding Options.Beams}" Minimum="1" Maximum="20" TickFrequency="1" />
                         <CommonControls:SliderControl Text="Temperature" Value="{Binding Options.Temperature}" Minimum="0.1" Maximum="5" TickFrequency="0.01" ValueFormat="N2"/>
                         <CommonControls:SliderControl Text="TopK" Value="{Binding Options.TopK}" Minimum="1" Maximum="100" TickFrequency="1" />
                         <CommonControls:SliderControl Text="TopP" Value="{Binding Options.TopP}" Minimum="0.01" Maximum="1" TickFrequency="0.01" ValueFormat="N2"/>
                         <CommonControls:SliderControl Text="TopH" Value="{Binding Options.TopH}" Minimum="0.01" Maximum="1" TickFrequency="0.01" ValueFormat="N2"/>
                         <CommonControls:SliderControl Text="TypicalP" Value="{Binding Options.TypicalP}" Minimum="0.01" Maximum="1" TickFrequency="0.01" ValueFormat="N2"/>
-                        <CommonControls:SliderControl Text="Min Length" Value="{Binding Options.MinLength}" Maximum="{Binding Pipeline.DiffusionModel.DefaultOptions.MaxLength}" TickFrequency="1" />
-                        <CommonControls:SliderControl Text="Max Length" Value="{Binding Options.MaxLength}" Maximum="{Binding Pipeline.DiffusionModel.DefaultOptions.MaxLength}" TickFrequency="1" />
                         <CommonControls:SliderControl Text="Length Penalty" Value="{Binding Options.LengthPenalty}" Minimum="-5" Maximum="5" TickFrequency="0.05" ValueFormat="N2" />
                         <CommonControls:SliderControl Text="Repetition Penalty" Value="{Binding Options.RepetitionPenalty}" Minimum="0.05" Maximum="5" TickFrequency="0.05" ValueFormat="N2" />
                         <CommonControls:SliderControl Text="No Repeat Ngrams" Value="{Binding Options.NoRepeatNgramSize}" Minimum="0" Maximum="10" TickFrequency="1" ValueFormat="N0" />
                         <CheckBox Content="Sampling Enabled" IsChecked="{Binding Options.IsSamplingEnabled}" Margin="4,13,0,0" FontStyle="Italic" FontSize="11" Opacity=".9"/>
                     </UniformGrid>
 
-                    <Grid Visibility="{Binding Options.Beams, Converter={StaticResource GreaterThanToVisibilityConverter}, ConverterParameter=1}">
+                    <Grid DockPanel.Dock="Bottom" Visibility="{Binding Options.Beams, Converter={StaticResource GreaterThanToVisibilityConverter}, ConverterParameter=1}">
                         <TextBlock FontSize="11" Foreground="{StaticResource WarningColour}" TextAlignment="Center" Opacity=".8" Margin="0,10,0,0" >
-                           <Run Text="Note:" FontWeight="SemiBold" />
-                           <Run Text="Beam results won't be displayed until all beams have completed"/>
+                            <Run Text="Note:" FontWeight="SemiBold" />
+                            <Run Text="Beam results won't be displayed until all beams have completed"/>
                         </TextBlock>
                     </Grid>
 
-                </StackPanel>
-            </TabItem>
+                    <!--System Prompt-->
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Text="System Prompt" Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBox Text="{Binding Options.Prompt2, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" />
+                    </DockPanel>
 
+                </DockPanel>
+            </TabItem>
 
             <!--Automation-->
             <TabItem Style="{StaticResource DiffusionInputTab}">
@@ -131,64 +168,32 @@
                         <TextBlock Text="Automation" FontSize="11" FontWeight="DemiBold" Opacity=".9" Margin="5,0,0,0"/>
                     </StackPanel>
                 </TabItem.Header>
-                <DockPanel>
-
+                <DockPanel Margin="0,0,0,8">
                     <!--Progress-->
                     <CommonControls:ProgressElement DockPanel.Dock="Bottom" Progress="{Binding AutomationProgress}" />
-
                     <StackPanel VerticalAlignment="Top" Margin="0,4,0,0">
-
                         <StackPanel Margin="0,0,0,10">
                             <TextBlock Text="Automation" Style="{StaticResource FieldTextBlockStyle}" />
                             <ComboBox ItemsSource="{Binding AutomationOptions.Types}" SelectedItem="{Binding AutomationOptions.Type}" Style="{StaticResource EnumComboBox}" />
                         </StackPanel>
 
-                        <!--Seed-->
-                        <Grid Visibility="{Binding AutomationOptions.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Seed}">
-                            <UniformGrid Margin="0,0,0,0">
-                                <StackPanel>
-                                    <TextBlock Text="Image Count" Style="{StaticResource FieldTextBlockStyle}"/>
-                                    <TextBox Text="{Binding AutomationOptions.Count, UpdateSourceTrigger=PropertyChanged}" />
-                                </StackPanel>
-                            </UniformGrid>
-                        </Grid>
-
-                        <!--PromptFiles-->
-                        <Grid Visibility="{Binding AutomationOptions.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=PromptFiles}">
-                            <UniformGrid Margin="0,0,0,0" >
-                                <StackPanel>
-                                    <TextBlock Text="Prompt Folder" Style="{StaticResource FieldTextBlockStyle}"/>
-                                    <CommonControls:FilePickerTextBox FileName="{Binding AutomationOptions.InputDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsFolderPicker="True" IsRequired="True" />
-                                </StackPanel>
-                            </UniformGrid>
-                        </Grid>
-
-                        <!--PromptLines-->
-                        <Grid Visibility="{Binding AutomationOptions.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=PromptLines}">
-                            <UniformGrid Margin="0,0,0,0" >
-                                <StackPanel>
-                                    <TextBlock Text="Prompt File" Style="{StaticResource FieldTextBlockStyle}"/>
-                                    <CommonControls:FilePickerTextBox FileName="{Binding AutomationOptions.InputFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsRequired="True" Filter="Text Files|*.txt;" DefaultExt="txt"/>
-                                </StackPanel>
-                            </UniformGrid>
-                        </Grid>
-
                         <!--ImageFiles-->
                         <Grid Visibility="{Binding AutomationOptions.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=InputFiles}">
                             <StackPanel Visibility="{Binding ProcessType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=ImageToText}">
-                                <UniformGrid Margin="0,0,0,0" >
-                                    <StackPanel>
-                                        <TextBlock Text="Image Folder" Style="{StaticResource FieldTextBlockStyle}"/>
-                                        <CommonControls:FilePickerTextBox FileName="{Binding AutomationOptions.InputDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsFolderPicker="True" IsRequired="True" />
-                                    </StackPanel>
-                                </UniformGrid>
+                                <StackPanel>
+                                    <TextBlock Text="Image Folder" Style="{StaticResource FieldTextBlockStyle}"/>
+                                    <CommonControls:FilePickerTextBox FileName="{Binding AutomationOptions.InputDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsFolderPicker="True" IsRequired="True" />
+                                </StackPanel>
+                                <StackPanel  Margin="0,4,0,0">
+                                    <TextBlock Text="Output Prefix" Style="{StaticResource FieldTextBlockStyle}"/>
+                                    <TextBox Text="{Binding AutomationOptions.OutputPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <CheckBox Content="Output Seed" IsChecked="{Binding AutomationOptions.OutputPostFixSeed}"  Margin="0,4,0,0"/>
                             </StackPanel>
                         </Grid>
-
-
+                    
                         <!--HistoryEnabled-->
                         <CheckBox Content="Output History" IsChecked="{Binding AutomationOptions.IsHistoryEnabled}" Margin="0,4,0,0"/>
-
 
                         <!--OutputDirectory-->
                         <CheckBox  Content="Output Location" IsChecked="{Binding AutomationOptions.UseOutputDirectory}" Margin="0,4,0,0"/>

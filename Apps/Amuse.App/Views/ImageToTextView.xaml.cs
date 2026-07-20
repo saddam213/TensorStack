@@ -3,11 +3,14 @@ using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TensorStack.Common;
+using TensorStack.Common.Tensor;
 using TensorStack.Image;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
@@ -19,7 +22,10 @@ namespace Amuse.App.Views
     /// </summary>
     public partial class ImageToTextView : ViewBaseDiffusion
     {
-        private ImageInput _sourceImage;
+        private ImageInput _sourceImage1;
+        private ImageInput _sourceImage2;
+        private ImageInput _sourceImage3;
+        private ImageInput _sourceImage4;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageToTextView"/> class.
@@ -36,12 +42,39 @@ namespace Amuse.App.Views
         public override View View => View.ImageToText;
 
         /// <summary>
-        /// Gets or sets the source image.
+        /// Gets or sets the source image1.
         /// </summary>
-        public ImageInput SourceImage
+        public ImageInput SourceImage1
         {
-            get { return _sourceImage; }
-            set { SetProperty(ref _sourceImage, value); }
+            get { return _sourceImage1; }
+            set { SetProperty(ref _sourceImage1, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the source image2.
+        /// </summary>
+        public ImageInput SourceImage2
+        {
+            get { return _sourceImage2; }
+            set { SetProperty(ref _sourceImage2, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the source image3.
+        /// </summary>
+        public ImageInput SourceImage3
+        {
+            get { return _sourceImage3; }
+            set { SetProperty(ref _sourceImage3, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the source image4.
+        /// </summary>
+        public ImageInput SourceImage4
+        {
+            get { return _sourceImage4; }
+            set { SetProperty(ref _sourceImage4, value); }
         }
 
         /// <summary>
@@ -70,13 +103,23 @@ namespace Amuse.App.Views
                 ResultText = default;
                 Statistics.Start();
 
+                // Images
+                var inputImages = GetInputTensors();
+                var imageIndex = Enumerable.Range(0, inputImages.Count);
+
+                // Conversation
+                var conversation = new List<ConversationModel>();
+                if (!string.IsNullOrEmpty(Options.Prompt2))
+                    conversation.Add(new ConversationModel { Role = "system", Content = Options.Prompt2 });
+                conversation.Add(new ConversationModel { Role = "user", ImageIndex = [.. imageIndex], Content = Options.Prompt });
+
                 // Options
-                var message = new ConversationModel { Role = "user", ImageIndex = [0], Content = Options.Prompt };
                 var options = Options with
                 {
                     Prompt = null,
-                    InputImages = [_sourceImage],
-                    Conversation = [message]
+                    Prompt2 = null,
+                    InputImages = inputImages,
+                    Conversation = conversation
                 };
 
                 // Execute
@@ -133,17 +176,29 @@ namespace Amuse.App.Views
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
+                     ResultText = default;
+
                     // Source
                     if (!automationJob.InputImages.IsNullOrEmpty())
-                        SourceImage = automationJob.InputImages[0];
+                        SourceImage1 = automationJob.InputImages[0];
+
+                    // Images
+                    var inputImages = GetInputTensors();
+                    var imageIndex = Enumerable.Range(0, inputImages.Count);
+
+                    // Conversation
+                    var conversation = new List<ConversationModel>();
+                    if (!string.IsNullOrEmpty(Options.Prompt2))
+                        conversation.Add(new ConversationModel { Role = "system", Content = Options.Prompt2 });
+                    conversation.Add(new ConversationModel { Role = "user", ImageIndex = [.. imageIndex], Content = Options.Prompt });
 
                     // Options
-                    var message = new ConversationModel { Role = "user", ImageIndex = [0], Content = Options.Prompt };
-                    var options = automationJob.DiffusionOptions with
+                    var options = Options with
                     {
                         Prompt = null,
-                        InputImages = [_sourceImage],
-                        Conversation = [message]
+                        Prompt2 = null,
+                        InputImages = inputImages,
+                        Conversation = conversation
                     };
 
                     // Diffusion
@@ -194,7 +249,7 @@ namespace Amuse.App.Views
         protected override bool CanExecute()
         {
             return base.CanExecute()
-                && _sourceImage != null
+                && _sourceImage1 != null
                 && !string.IsNullOrEmpty(Options?.Prompt);
         }
 
@@ -210,18 +265,38 @@ namespace Amuse.App.Views
 
 
         /// <summary>
+        /// Gets the input tensors.
+        /// </summary>
+        /// <returns>List&lt;ImageTensor&gt;.</returns>
+        private List<ImageTensor> GetInputTensors()
+        {
+            var inputImages = new List<ImageTensor>();
+            if (Options.IsSource1Enabled)
+                inputImages.AddIfNotNull(_sourceImage1);
+            if (Options.IsSource2Enabled)
+                inputImages.AddIfNotNull(_sourceImage2);
+            if (Options.IsSource3Enabled)
+                inputImages.AddIfNotNull(_sourceImage3);
+            if (Options.IsSource4Enabled)
+                inputImages.AddIfNotNull(_sourceImage4);
+
+            return inputImages;
+        }
+
+
+        /// <summary>
         /// Save history
         /// </summary>
         /// <param name="options">The options.</param>
         private async Task<TextInput> SaveHistoryAsync(DiffusionInputOptions options)
         {
             Logger.LogInformation($"[ImageToText] [SaveHistory] Saving history...");
-            var result = await HistoryService.AddAsync(ResultText.Result, new TextHistory
+            var result = await HistoryService.AddAsync(ResultText.Result, new DiffusionHistory
             {
                 Options = options,
                 Model = CurrentPipeline.DiffusionModel.Name,
+                LoraModels = CurrentPipeline.LoraAdapterModel?.Select(x => x.Name).ToArray(),
                 Source = View.ImageToText,
-                InputLength = ResultText.Result.Length,
             });
             Logger.LogInformation($"[ImageToText] [SaveHistory] History saved.");
             return result;
@@ -271,7 +346,10 @@ namespace Amuse.App.Views
             if (e.Key == Key.Enter && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
                 e.Handled = true;
-                ExecuteCommand.Execute(null);
+                if (CanExecute())
+                {
+                    ExecuteCommand.Execute(null);
+                }
             }
         }
     }

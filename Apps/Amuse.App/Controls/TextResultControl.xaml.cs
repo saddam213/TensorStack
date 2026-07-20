@@ -39,6 +39,7 @@ namespace Amuse.App.Controls
             CopySourceCommand = new AsyncRelayCommand(CopySourceAsync, CanCopySource);
             CopyResponseCommand = new AsyncRelayCommand(CopyResponseAsync, CanCopyResponse);
             CopyThinkingCommand = new AsyncRelayCommand(CopyThinkingAsync, CanCopyThinking);
+            Progress = new ProgressInfo();
             InitializeComponent();
             IsPreviewMarkdownEnabled = true;
         }
@@ -54,6 +55,7 @@ namespace Amuse.App.Controls
         public static readonly DependencyProperty IsPreviewEnabledProperty = DependencyProperty.Register(nameof(IsPreviewEnabled), typeof(bool), typeof(TextResultControl), new PropertyMetadata(true));
         public static readonly DependencyProperty IsPreviewMarkdownEnabledProperty = DependencyProperty.Register(nameof(IsPreviewMarkdownEnabled), typeof(bool), typeof(TextResultControl), new PropertyMetadata<TextResultControl>((c) => c.OnPreviewMarkdownChanged()));
         public static readonly DependencyProperty IsThinkingVisibleProperty = DependencyProperty.Register(nameof(IsThinkingVisible), typeof(bool), typeof(TextResultControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty MaxTokenLengthProperty = DependencyProperty.Register(nameof(MaxTokenLength), typeof(int), typeof(TextResultControl), new PropertyMetadata(0));
         public AsyncRelayCommand ClearCommand { get; }
         public AsyncRelayCommand SaveSourceCommand { get; }
         public AsyncRelayCommand CopySourceCommand { get; }
@@ -127,6 +129,12 @@ namespace Amuse.App.Controls
             set { SetValue(IsThinkingVisibleProperty, value); }
         }
 
+        public int MaxTokenLength
+        {
+            get { return (int)GetValue(MaxTokenLengthProperty); }
+            set { SetValue(MaxTokenLengthProperty, value); }
+        }
+
         public bool IsToolbarEnabled
         {
             get { return _isToolbarEnabled; }
@@ -142,7 +150,14 @@ namespace Amuse.App.Controls
         public TextInput SelectedResult
         {
             get { return _selectedResult; }
-            set { SetProperty(ref _selectedResult, value); }
+            set
+            {
+                SetProperty(ref _selectedResult, value);
+                if (_selectedResult != null)
+                {
+                    Progress.Update(_selectedResult.TokenCount, MaxTokenLength);
+                }
+            }
         }
 
         public int PreviewTokenCount
@@ -182,6 +197,7 @@ namespace Amuse.App.Controls
             Result = null;
             SelectedResult = null;
             PreviewTokenCount = 0;
+            Progress.Clear();
             await ClearMarkdownAsync();
         }
 
@@ -302,6 +318,7 @@ namespace Amuse.App.Controls
             {
                 await PreviewControl.AppendTextAsync(text);
                 NotifyPropertyChanged(nameof(PreviewTokenCount));
+                Progress.Update(PreviewTokenCount, MaxTokenLength);
             }
         }
 
@@ -332,6 +349,10 @@ namespace Amuse.App.Controls
         }
 
 
+        /// <summary>
+        /// Called when IsPreviewMarkdownEnabled changed.
+        /// </summary>
+        /// <returns>Task.</returns>
         private Task OnPreviewMarkdownChanged()
         {
             if (IsPreviewMarkdownEnabled)
@@ -341,6 +362,10 @@ namespace Amuse.App.Controls
         }
 
 
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.Input.Mouse.MouseEnter" /> attached event is raised on this element. Implement this method to add class handling for this event.
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
         protected override void OnMouseEnter(MouseEventArgs e)
         {
             base.OnMouseEnter(e);

@@ -75,6 +75,22 @@ namespace Amuse.App.Controls
             set { SetProperty(ref _selectedOption, value); }
         }
 
+        private bool _isPromptEnabled;
+        private bool _isInputImagesEnabled;
+
+        public bool IsPromptEnabled
+        {
+            get { return _isPromptEnabled; }
+            set { SetProperty(ref _isPromptEnabled, value); }
+        }
+
+        public bool IsInputImagesEnabled
+        {
+            get { return _isInputImagesEnabled; }
+            set { SetProperty(ref _isInputImagesEnabled, value); }
+        }
+
+
         public string DefaultPrompt { get; set; }
 
         private Task OnPipelineChanged(PipelineModel oldPipeline, PipelineModel newPipeline)
@@ -117,7 +133,9 @@ namespace Amuse.App.Controls
             AutomationOptions = new AutomationOptions
             {
                 ViewType = ViewType,
-                Type = AutomationType.InputFiles
+                Type = AutomationType.InputFiles,
+                OutputPrefix = string.Empty,
+                OutputPostFixSeed = false
             };
 
             return Task.CompletedTask;
