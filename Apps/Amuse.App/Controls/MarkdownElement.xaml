@@ -15,7 +15,6 @@
         </i:Interaction.Behaviors>
         <Grid>
             <wv2:WebView2 x:Name="WebViewer" 
-                Height="0"
                 SnapsToDevicePixels="True" 
                 UseLayoutRounding="True" 
                 DefaultBackgroundColor="#FF2D2D2D">

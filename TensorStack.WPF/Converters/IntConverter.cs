@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
@@ -11,7 +10,6 @@ namespace TensorStack.WPF.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Debug.WriteLine(value);
             if (value is int)
                 return value;
 

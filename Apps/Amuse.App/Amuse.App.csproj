@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\MarkdownElement.css" />
+    <EmbeddedResource Include="Controls\MarkdownElement.js" />
   </ItemGroup>
 
   <!--Images-->

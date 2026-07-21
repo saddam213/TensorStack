@@ -3,7 +3,6 @@ using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -24,7 +23,6 @@ namespace Amuse.App.Controls
         private readonly SemaphoreSlim _switchLock = new(1, 1);
         private bool _isInitalized;
         private bool _isUpdatePending;
-        private bool _isUpdateHeight;
         private bool _isContentReady;
         private double _webViewerDpiX = 1;
         private double _webViewerDpiY = 1;
@@ -36,7 +34,6 @@ namespace Amuse.App.Controls
             35003, // Print
             35016  // SendTo
         ];
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MarkdownElement"/> class.
@@ -50,7 +47,6 @@ namespace Amuse.App.Controls
                 IsContentReady = Length > 0;
             };
         }
-
 
         public static readonly DependencyProperty SettingsProperty = DependencyProperty.Register(nameof(Settings), typeof(Settings), typeof(MarkdownElement));
         public static readonly DependencyProperty MarkdownProperty = DependencyProperty.Register(nameof(Markdown), typeof(string), typeof(MarkdownElement), new PropertyMetadata<MarkdownElement, string>((c, e) => c.SetTextAsync(e)));
@@ -126,10 +122,7 @@ namespace Amuse.App.Controls
         {
             await ClearAsync();
             TextViewer.AppendText(content);
-            var webviewUpdateTask = Length == 0
-                ? UpdateWebView()
-                : DisplayWebView();
-            await webviewUpdateTask;
+            await UpdateWebView();
             if (IsScrollToBottomEnabled)
                 ScrollViewerHost.ScrollToBottom();
         }
@@ -154,7 +147,6 @@ namespace Amuse.App.Controls
         public async Task ClearAsync()
         {
             TextViewer.Clear();
-            WebViewer.Height = 0;
             await RenderHtmlAsync(string.Empty);
         }
 
@@ -187,10 +179,7 @@ namespace Amuse.App.Controls
                 await _switchLock.WaitAsync();
                 if (IsMarkdownEnabled)
                 {
-                    if (Length > 0)
-                    {
-                        await DisplayWebView();
-                    }
+                    await UpdateWebView();
                     WebViewer.Visibility = Visibility.Visible;
                     TextViewer.Visibility = Visibility.Collapsed;
                 }
@@ -205,17 +194,6 @@ namespace Amuse.App.Controls
             {
                 _switchLock.Release();
             }
-        }
-
-
-        /// <summary>
-        /// Displays the web view.
-        /// </summary>
-        private async Task DisplayWebView()
-        {
-            await UpdateWebView();
-            await Task.Delay(50);
-            await UpdateHeight();
         }
 
 
@@ -241,7 +219,6 @@ namespace Amuse.App.Controls
                     _isUpdatePending = false;
                     var htmlContent = MarkdownConverter.BuildHtml(TextViewer.Text, FontSize, FontFamily, IsThinkingVisible);
                     await RenderHtmlAsync(htmlContent);
-                    _ = UpdateHeight();
                 }
             }
             catch (Exception ex)
@@ -285,36 +262,6 @@ namespace Amuse.App.Controls
 
 
         /// <summary>
-        /// Updates control height to HTML height.
-        /// </summary>
-        private async Task UpdateHeight()
-        {
-            if (!_isInitalized || _isUpdateHeight)
-                return;
-
-            try
-            {
-                _isUpdateHeight = true;
-                var result = await WebViewer.CoreWebView2
-                    .ExecuteScriptAsync("document.body.scrollHeight")
-                    .WaitAsync(TimeSpan.FromMilliseconds(200));
-                if (double.TryParse(result.Trim('"'), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
-                {
-                    WebViewer.Height = (int)(Math.Max(ScrollViewerHost.ActualHeight, height) - 0.5);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[WebView] [Exception] UpdateHeight: {ex.Message}");
-            }
-            finally
-            {
-                _isUpdateHeight = false;
-            }
-        }
-
-
-        /// <summary>
         /// Updates the thinking section visibility.
         /// </summary>
         private async Task UpdateThinking()
@@ -327,9 +274,7 @@ namespace Amuse.App.Controls
                 var executeScriptTask = IsThinkingVisible
                     ? WebViewer.CoreWebView2.ExecuteScriptAsync("document.getElementById('thinking-panel').setAttribute('open', '')")
                     : WebViewer.CoreWebView2.ExecuteScriptAsync("document.getElementById('thinking-panel').removeAttribute('open')");
-
                 await executeScriptTask;
-                await UpdateHeight();
             }
             catch (Exception ex)
             {
@@ -370,7 +315,8 @@ namespace Amuse.App.Controls
                 _webViewerDpiX = source.CompositionTarget.TransformToDevice.M11;
                 _webViewerDpiY = source.CompositionTarget.TransformToDevice.M22;
             }
-
+ 
+            WebViewer.Height = (int)ScrollViewerHost.ActualHeight;
             WebViewer.CoreWebView2.Settings.IsScriptEnabled = true;
             WebViewer.CoreWebView2.Settings.IsWebMessageEnabled = true;
             WebViewer.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
@@ -456,10 +402,19 @@ namespace Amuse.App.Controls
         /// <param name="e">The <see cref="CoreWebView2WebMessageReceivedEventArgs"/> instance containing the event data.</param>
         private void WebView_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
-            var webMessage = JsonSerializer.Deserialize<WebMessage>(e.WebMessageAsJson);
-            if (webMessage.ToggleThinking)
+            var webMessage = JsonSerializer.Deserialize<WebMessage>(e.WebMessageAsJson, Json.DefaultOptions);
+            if (webMessage.Type == WebMessageType.Click)
+            {
+                if (!string.IsNullOrEmpty(webMessage.Clipboard))
+                    Clipboard.SetText(webMessage.Clipboard.Trim());
+            }
+            else if (webMessage.Type == WebMessageType.Thinking)
             {
                 IsThinkingVisible = !IsThinkingVisible;
+            }
+            else if (webMessage.Type == WebMessageType.Resize)
+            {
+                WebViewer.Height = (int)Math.Max(ScrollViewerHost.ActualHeight - 0.5, webMessage.Y);
             }
         }
 
@@ -535,6 +490,13 @@ namespace Amuse.App.Controls
             }
         }
 
-        private record WebMessage(int X, int Y, string Element, bool ToggleThinking);
+        private record WebMessage(WebMessageType Type, int X, int Y, string Clipboard);
+
+        public enum WebMessageType
+        {
+            Click = 0,
+            Resize = 1,
+            Thinking = 2
+        }
     }
 }

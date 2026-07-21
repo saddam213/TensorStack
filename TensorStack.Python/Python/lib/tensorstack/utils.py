@@ -760,7 +760,7 @@ class TokenService:
 
     def push(self, token: str, token_count: int, elapsed: float = 0):
         with self._lock:
-            self._items.append(f"{token}|{token_count}|{elapsed}")
+            self._items.append(f"{token_count}|{elapsed}|{token}")
 
     def get(self):
         with self._lock:

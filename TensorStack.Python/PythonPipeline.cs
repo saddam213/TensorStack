@@ -485,23 +485,30 @@ namespace TensorStack.Python
         {
             while (_isRunning)
             {
-                var progressItems = await GetNotificationsAsync();
-                if (!progressItems.IsNullOrEmpty())
+                try
                 {
-                    foreach (var progress in progressItems)
+                    var progressItems = await GetNotificationsAsync();
+                    if (!progressItems.IsNullOrEmpty())
                     {
-                        _progressCallback?.Report(progress);
-                        _logger?.LogDebug("[PythonPipeline] [PythonRuntime] {Progress}", progress);
+                        foreach (var progress in progressItems)
+                        {
+                            _progressCallback?.Report(progress);
+                            _logger?.LogDebug("[PythonPipeline] [PythonRuntime] {Progress}", progress);
+                        }
+                    }
+
+                    var logEntries = await GetLogsAsync();
+                    foreach (var logEntry in LogParser.ParseLogs(logEntries).OrderBy(x => x.Timestamp))
+                    {
+                        if (string.IsNullOrWhiteSpace(logEntry?.Message))
+                            continue;
+
+                        _logger?.LogInformation("[PythonPipeline] [PythonRuntime] [{Timestamp}] {Message}", logEntry.Timestamp.ToString("hh:mm:ss:fff"), logEntry.Message);
                     }
                 }
-
-                var logEntries = await GetLogsAsync();
-                foreach (var logEntry in LogParser.ParseLogs(logEntries).OrderBy(x => x.Timestamp))
+                catch (Exception ex)
                 {
-                    if (string.IsNullOrWhiteSpace(logEntry?.Message))
-                        continue;
-
-                    _logger?.LogInformation("[PythonPipeline] [PythonRuntime] [{Timestamp}] {Message}", logEntry.Timestamp.ToString("hh:mm:ss:fff"), logEntry.Message);
+                    _logger?.LogError(ex, "[PythonPipeline] [NotificationLoop]");
                 }
                 await Task.Delay(refreshRate);
             }
@@ -517,20 +524,28 @@ namespace TensorStack.Python
         {
             while (_isRunning)
             {
-                var progressTokens = await GetTokensAsync();
-                if (!progressTokens.IsNullOrEmpty())
+                try
                 {
-                    foreach (var progressToken in progressTokens)
+                    var progressTokens = await GetTokensAsync();
+                    if (!progressTokens.IsNullOrEmpty())
                     {
-                        if (progressToken == null)
-                            continue;
+                        foreach (var progressToken in progressTokens)
+                        {
+                            if (progressToken == null)
+                                continue;
 
-                        _progressCallback?.Report(progressToken);
-                        await Task.Delay(refreshRate / progressTokens.Count);
+                            _progressCallback?.Report(progressToken);
+                            await Task.Delay(refreshRate / progressTokens.Count);
+                        }
+                    }
+                    else
+                    {
+                        await Task.Delay(refreshRate);
                     }
                 }
-                else
+                catch (Exception ex)
                 {
+                    _logger?.LogError(ex, "[PythonPipeline] [TokenProgressLoop]");
                     await Task.Delay(refreshRate);
                 }
             }

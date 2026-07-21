@@ -60,7 +60,7 @@ namespace TensorStack.Python.Common
             if (string.IsNullOrWhiteSpace(inputData))
                 return null;
 
-            // {Token}|{TokenCount}|{Elapsed}
+            // {TokenCount}|{Elapsed}|{Token}
             var parameters = inputData.Split('|', 3);
             if (parameters.Length != 3)
                 return null;
@@ -70,9 +70,9 @@ namespace TensorStack.Python.Common
                 Key = "Generate",
                 Subkey = "Token",
                 ElapsedKey = "Token",
-                Message = parameters[0],
-                Value = int.Parse(parameters[1], CultureInfo.InvariantCulture),
-                Elapsed = float.Parse(parameters[2], CultureInfo.InvariantCulture),
+                Message = parameters[2],
+                Value = int.Parse(parameters[0], CultureInfo.InvariantCulture),
+                Elapsed = float.Parse(parameters[1], CultureInfo.InvariantCulture),
                 Timestamp = DateTime.UtcNow
             };
         }

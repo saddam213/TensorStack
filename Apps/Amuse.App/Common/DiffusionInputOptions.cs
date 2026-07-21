@@ -63,12 +63,14 @@ namespace Amuse.App.Common
         private List<ConversationModel> _conversation;
         private bool _isSamplingEnabled;
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Width
         {
             get { return _width; }
             set { SetProperty(ref _width, value); }
         }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Height
         {
             get { return _height; }
@@ -95,6 +97,7 @@ namespace Amuse.App.Common
             set { SetProperty(ref _guidanceScale2, value); }
         }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string Prompt
         {
             get { return _prompt; }

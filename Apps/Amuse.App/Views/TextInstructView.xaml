@@ -167,16 +167,17 @@
                     </DockPanel>
 
                     <!--Input Text-->
-                    <CommonControls:PlaceholderTextBox 
-                        IsEnabled="{Binding IsPipelineLoaded, Mode=OneWay}"
-                        Margin="0,0,0,1"
-                        Text="{Binding Options.Prompt, Mode=TwoWay}" 
-                        TextPadding="2,2,2,10" 
-                        AcceptsReturn="True" 
-                        TextWrapping="Wrap" 
-                        PreviewKeyDown="SourceText_PreviewKeyDown"  
-                        Placeholder="Please ask a question..." 
-                        VerticalScrollBarVisibility="Auto"/>
+                    <Border Style="{StaticResource TextDropZoneStyle}" Margin="0,0,0,1" IsEnabled="{Binding IsPipelineLoaded, Mode=OneWay}">
+                        <CommonControls:PlaceholderTextBox 
+                          Text="{Binding Options.Prompt, Mode=TwoWay}" 
+                          TextPadding="2,2,2,10" 
+                          AcceptsReturn="True" 
+                          TextWrapping="Wrap" 
+                          PreviewKeyDown="SourceText_PreviewKeyDown"  
+                          Placeholder="Please ask a question..." 
+                          VerticalScrollBarVisibility="Auto"/>
+                    </Border>
+                  
                 </DockPanel>
 
                 <Grid.Style>

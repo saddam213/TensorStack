@@ -105,9 +105,8 @@ namespace Amuse.App.Views
 
                 // Result
                 Statistics.Stop();
-
                 ResultText = textResult;
-
+               
                 // History
                 await SaveHistoryAsync(options);
                 Logger.LogInformation("[TextInstruct] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
@@ -204,7 +203,9 @@ namespace Amuse.App.Views
         private async Task<TextInput> SaveHistoryAsync(DiffusionInputOptions options)
         {
             Logger.LogInformation($"[TextInstruct] [SaveHistory] Saving history...");
-            var result = await HistoryService.AddAsync(ResultText.Result, new DiffusionHistory
+            var history = new TextInput(Utils.GetResponseText(ResultText.Result.Text));
+            options.Conversation.Add(new ConversationModel { Role = "assistant", Content = history.Text });
+            var result = await HistoryService.AddAsync(history, new DiffusionHistory
             {
                 Options = options,
                 Model = CurrentPipeline.DiffusionModel.Name,
@@ -234,10 +235,13 @@ namespace Amuse.App.Views
                 }
                 else
                 {
-                    var message = progress.Subkey == "Transformer" && Options.Beams > 1
-                         ? "Generating Beam Results..."
-                         : Globalization.GetProgressMessage(progress);
-                    Progress.Indeterminate(message);
+                    if (DiffusionService.IsExecuting)
+                    {
+                        var message = progress.Subkey == "Transformer" && Options.Beams > 1
+                             ? "Generating Beam Results..."
+                             : Globalization.GetProgressMessage(progress);
+                        Progress.Indeterminate(message);
+                    }
                 }
             }
 

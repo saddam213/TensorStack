@@ -111,6 +111,7 @@ class TextPipeline:
                 chunk = next(self.streamer)
                 chunks.append(chunk)
                 token_push(token=chunk,token_count=self.streamer.token_count, elapsed=stopwatch.reset())
+                #print(f"[DEBUG] [TokenPush] Chunk: {chunk}")
             except StopIteration:
                 break
             except Empty:
@@ -157,7 +158,7 @@ class TextPipeline:
         if not isinstance(images, list):
             images = [images]
 
-        print(f"[DEBUG] Conversation Before: {options.conversation}")
+        #print(f"[DEBUG] Conversation Before: {options.conversation}")
         for message in options.conversation:
             image_indices = message.get("image_index", [])
             role = message["role"]
@@ -174,7 +175,7 @@ class TextPipeline:
             content.append({ "type": "text", "text": text })
             messages.append({ "role": role, "content": content })
 
-        print(f"[DEBUG] Conversation After: {messages}")
+        #print(f"[DEBUG] Conversation After: {messages}")
         return messages
 
 

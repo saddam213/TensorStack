@@ -6,6 +6,7 @@ using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -60,9 +61,11 @@ namespace Amuse.App.Services
         private static string BuildHeader()
         {
             var styleSheet = App.GetEmbeddedResource("Amuse.App.Controls.MarkdownElement.css");
+            var javascript = App.GetEmbeddedResource("Amuse.App.Controls.MarkdownElement.js");
             var htmlBuilder = new StringBuilder();
             htmlBuilder.Append($@"<meta charset=""UTF-8"">");
-            htmlBuilder.Append($@"<style>{styleSheet}</style>");
+            htmlBuilder.Append($"<style>{styleSheet}</style>");
+            htmlBuilder.Append($"<script>{javascript}</script>");
             return htmlBuilder.ToString();
         }
 
@@ -75,33 +78,24 @@ namespace Amuse.App.Services
         /// <param name="fontFamily">The font family.</param>
         private static string BuildHtmlPage(ReadOnlySpan<char> body, double fontSize, FontFamily fontFamily)
         {
-            var htmlBuilder = new StringBuilder(_header);
+            const string htmlTemplate =
+            @"<!DOCTYPE html>
+            <html>
+                <head>{0}</head>
+                <body>{1}</body>
+            </html>";
 
-            // Fonts
-            htmlBuilder.Append($@"<style>
+            const string fontTemplate =
+            @"<style>
                 body,p,span,pre,li,th,td {{
-                    font-size:{fontSize}px;
-                    font-family:""{fontFamily}"";
+                    font-size:{0}px;
+                    font-family:""{1}"";
                 }}
-            </style>");
+            </style>";
 
-            // Script
-            htmlBuilder.Append(@"
-            <script>
-            document.addEventListener('click', function(e) {
-                const thinking = e.target.id === 'thinking-summary'
-                if(thinking)
-                    e.preventDefault();
-                window.chrome.webview.postMessage({
-                    X: e.clientX,
-                    Y: e.clientY,
-                    Element: e.target.id,
-                    ToggleThinking: thinking
-                });
-            }, true);
-            </script>");
-
-            return $"<html><head>{htmlBuilder}</head><body>{body}</body></html>";
+            var headerBuilder = new StringBuilder(_header);
+            headerBuilder.Append(string.Format(fontTemplate, fontSize, fontFamily));
+            return string.Format(htmlTemplate, headerBuilder, body.ToString());
         }
 
 
@@ -162,17 +156,20 @@ namespace Amuse.App.Services
             {
                 var languageId = Languages.FindById(GetLanguageCode(language));
                 if (languageId == null)
-                    return FormatCode(content);
+                    return FormatCode(content, true);
 
                 var codeContent = content.Trim().ToString();
                 var formattedHtml = _formatter.GetHtmlString(codeContent, languageId).AsSpan();
                 var preStart = formattedHtml.IndexOf("<pre>");
                 var preEnd = formattedHtml.LastIndexOf("</pre>") + 6;
-                return FormatCode(formattedHtml[preStart..preEnd]);
+                if (preEnd > preStart)
+                    return FormatCode(formattedHtml[preStart..preEnd], false);
+
+                return FormatCode(formattedHtml, false);
             }
             catch (Exception)
             {
-                return FormatCode(content);
+                return FormatCode(content, true);
             }
         }
 
@@ -181,24 +178,47 @@ namespace Amuse.App.Services
         /// Formats the code.
         /// </summary>
         /// <param name="content">The content.</param>
-        private static HtmlNode FormatCode(ReadOnlySpan<char> content)
+        private static HtmlNode FormatCode(ReadOnlySpan<char> content, bool isSimpleLayout)
         {
-            return HtmlNode.CreateNode($"{content}");
+            if (isSimpleLayout)
+                return HtmlNode.CreateNode($"<pre>{content}</pre>");
+
+            const string codeTemplate =
+            @"<div class=""copy-block"">
+                <div class=""copy-content"">
+                    {0}
+                </div>
+                <button class=""copy-code"">📋</button>
+            </div>";
+            return HtmlNode.CreateNode(string.Format(codeTemplate, content.ToString()));
         }
 
 
         /// <summary>
         /// Gets the language code.
         /// </summary>
-        /// <param name="codeLang">The code language.</param>
-        private static string GetLanguageCode(string codeLang)
+        /// <param name="language">The language code.</param>
+        private static string GetLanguageCode(string language)
         {
-            if (codeLang == "md")
-                return "markdown";
-            else if (codeLang == "jsx" || codeLang == "tsx")
-                return "html";
-            return codeLang;
+            if (AlternateLanguages.TryGetValue(language, out var alternateLanguage))
+                return alternateLanguage;
+
+            return language;
         }
+
+
+        /// <summary>
+        /// The alternate language mapping
+        /// </summary>
+        private static readonly Dictionary<string, string> AlternateLanguages = new()
+        {
+            {"md", "markdown" },
+            {"jsx", "html" },
+            {"tsx", "html" },
+            {"bash", "powershell" },
+            {"kotlin", "csharp" },
+            {"rust", "cplusplus" }
+        };
     }
 
 

@@ -16,6 +16,8 @@
         UseLayoutRounding="True"
         Style="{StaticResource WindowHeadless}"
         Title="{x:Static local:App.AppDisplayName}"
+        MinWidth="1280"
+        MinHeight="720"
         mc:Ignorable="d"
         x:Name="UI">
     <DockPanel DataContext="{Binding ElementName=UI}">

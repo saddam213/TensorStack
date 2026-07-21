@@ -177,7 +177,7 @@
                                             IsThinkingVisible="{Binding IsThinkingVisible, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                             IsMarkdownEnabled="{Binding IsResultMarkdownEnabled, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}, UpdateSourceTrigger=PropertyChanged}"
                                             IsScrollToBottomEnabled="False"
-                                            Markdown="{Binding Text, IsAsync=True, Delay=200}" />
+                                            Markdown="{Binding Text}" />
                                     </DataTemplate>
                                 </TabControl.ContentTemplate>
                                 <TabControl.Template>

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using TensorStack.WPF;
 
 namespace Amuse.App.Common
@@ -8,7 +9,7 @@ namespace Amuse.App.Common
     {
         private string _role;
         private string _content;
-        private List<int> _imageIndex = [];
+        private List<int> _imageIndex;
 
         public string Role
         {
@@ -22,6 +23,7 @@ namespace Amuse.App.Common
             set { SetProperty(ref _content, value); }
         }
 
+        [JsonIgnore(Condition =JsonIgnoreCondition.WhenWritingDefault)]
         public List<int> ImageIndex
         {
             get { return _imageIndex; }
