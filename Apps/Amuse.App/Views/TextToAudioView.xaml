@@ -135,7 +135,9 @@
                             <Grid Margin="10,0,10,0" IsEnabled="{Binding IsPipelineLoaded}">
                                 <DockPanel IsEnabled="{Binding IsAutomating, Converter={StaticResource InverseBoolConverter}}">
                                     <TextBlock DockPanel.Dock="Top" Text="Input Text" Style="{StaticResource FieldTextBlockStyle}"/>
-                                    <CommonControls:TextElement TextSource="{Binding SourceText}" IsSaveEnabled="False" AcceptsReturn="True" TextWrapping="Wrap"/>
+                                    <Border Style="{StaticResource TextDropZoneStyle}">
+                                        <CommonControls:TextElement TextSource="{Binding SourceText}" IsSaveEnabled="False" AcceptsReturn="True" TextWrapping="Wrap"/>
+                                    </Border>
                                 </DockPanel>
                             </Grid>
                         </DockPanel>

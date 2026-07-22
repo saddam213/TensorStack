@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using TensorStack.Common;
+using TensorStack.Common.Common;
 using TensorStack.WPF;
 
 namespace Amuse.App
@@ -297,6 +298,19 @@ namespace Amuse.App
             Directory.CreateDirectory(DirectoryExtract);
             Directory.CreateDirectory(DirectoryControlNet);
             Directory.CreateDirectory(DirectoryLoraAdapter);
+        }
+
+
+        public bool DeleteTempDirectory()
+        {
+            try
+            {
+                return FileHelper.DeleteDirectory(DirectoryTemp);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
 

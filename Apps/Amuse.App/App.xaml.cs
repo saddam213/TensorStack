@@ -214,6 +214,11 @@ namespace Amuse.App
             Log.Logger.Information($"[AppShutdown] Shutting down application...");
             using (_appHost)
             {
+                Log.Logger.Information($"[AppShutdown] Deleting Temp Directory.");
+                if (!_settings.DeleteTempDirectory())
+                {
+                    Log.Logger.Information($"[AppShutdown] Failed to delete Temp Directory");
+                }
                 await _cancellationTokenSource.CancelAsync();
                 await SettingsManager.SaveAsync(_settings);
                 await _appHost.StopAsync();
