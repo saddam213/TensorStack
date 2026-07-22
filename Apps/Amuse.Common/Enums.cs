@@ -534,4 +534,11 @@ namespace Amuse.Common
         Yoruba = 99
     }
 
+
+    public enum ConversationRole
+    {
+        User = 0,
+        System = 1,
+        Assistant = 2
+    }
 }

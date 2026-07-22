@@ -8,7 +8,7 @@ namespace TensorStack.Common
     public class TextInput
     {
         private readonly string _sourceFile;
-        public TextInput(){ }
+        public TextInput() { }
         public TextInput(string textInput)
         {
             Text = textInput;
@@ -31,7 +31,7 @@ namespace TensorStack.Common
         public float PenaltyScore { get; set; }
         public int TokenCount { get; set; }
 
- 
+
 
         public void Save(string filename)
         {
@@ -43,8 +43,9 @@ namespace TensorStack.Common
             await File.WriteAllTextAsync(filename, Text);
         }
 
-        public static async Task<TextInput> CreateAsync(string filename, Encoding encoding, CancellationToken cancellationToken = default)
+        public static async Task<TextInput> CreateAsync(string filename, Encoding encoding = default, CancellationToken cancellationToken = default)
         {
+            encoding ??= Encoding.UTF8;
             return new TextInput(await File.ReadAllTextAsync(filename, encoding, cancellationToken));
         }
     }

@@ -56,12 +56,12 @@
             <Grid x:Name="Root" Background="Transparent" >
                 <DockPanel Height="134" Width="100" >
                     <Grid DockPanel.Dock="Top">
-                        <Grid Width="100" Height="100" Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Audio}">
+                        <Border Width="100" Height="100" Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Audio}" BorderBrush="{StaticResource DefaultBorderColor}" BorderThickness="0,0,0,1">
                             <CommonControls:FontAwesome Icon="f001" IconStyle="Solid" Size="70" Color="{StaticResource DefaultForeground}" Opacity=".2" />
-                        </Grid>
-                        <Grid Width="100" Height="100" Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
+                        </Border>
+                        <Border Width="100" Height="100" Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}" BorderBrush="{StaticResource DefaultBorderColor}" BorderThickness="0,0,0,1">
                             <CommonControls:FontAwesome Icon="f894" IconStyle="Solid" Size="70" Color="{StaticResource DefaultForeground}" Opacity=".2" />
-                        </Grid>
+                        </Border>
                         <CommonControls:TransparentImageElement 
                             Height="100" 
                             Stretch="Uniform" 
@@ -102,9 +102,9 @@
                         </StackPanel>
                         <StackPanel Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
                             <TextBlock TextAlignment="Center" LineHeight="14" LineStackingStrategy="BlockLineHeight">
-                                <Run Text="{Binding Options.Task}" />
-                                <LineBreak/>
-                                <Run Text="{Binding Source}" />
+                               <Run Text="{Binding Length}" />
+                               <LineBreak/>
+                               <Run Text="{Binding Source}" />
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -457,10 +457,6 @@
                             <StackPanel Margin="6,4,6,6">
                                 <TextBlock Text="{Binding Source}" />
                                 <TextBlock Text="{Binding Model, StringFormat={}Model: {0}}" />
-                                <TextBlock Text="{Binding Options.VoiceStyle, StringFormat={}Voice: {0}}" />
-                                <TextBlock Text="{Binding Options.Seed, StringFormat={}Seed: {0}}" />
-                                <TextBlock Text="{Binding Options.Speed, StringFormat={}Speed: {0}}" />
-                                <TextBlock Text="{Binding Options.Steps, StringFormat={}Steps: {0}}" />
                                 <TextBlock Text="{Binding SampleRate, StringFormat={}SampleRate: {0}}" />
                                 <TextBlock Text="{Binding Duration, FallbackValue=00:00:00, StringFormat={}mm\\:ss\\.ff}" />
                                 <TextBlock Text="{Binding MediaPath}" />

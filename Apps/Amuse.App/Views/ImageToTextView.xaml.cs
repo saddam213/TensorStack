@@ -110,8 +110,22 @@ namespace Amuse.App.Views
                 // Conversation
                 var conversation = new List<ConversationModel>();
                 if (!string.IsNullOrEmpty(Options.Prompt2))
-                    conversation.Add(new ConversationModel { Role = "system", Content = Options.Prompt2 });
-                conversation.Add(new ConversationModel { Role = "user", ImageIndex = [.. imageIndex], Content = Options.Prompt });
+                {
+                    // System Prompt
+                    conversation.Add(new ConversationModel
+                    {
+                        Role = ConversationRole.System,
+                        Content = Options.Prompt2
+                    });
+                }
+
+                // User Prompt
+                conversation.Add(new ConversationModel
+                {
+                    Role = ConversationRole.User,
+                    ImageIndex = [.. imageIndex],
+                    Content = Options.Prompt
+                });
 
                 // Options
                 var options = Options with
@@ -176,7 +190,7 @@ namespace Amuse.App.Views
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                     ResultText = default;
+                    ResultText = default;
 
                     // Source
                     if (!automationJob.InputImages.IsNullOrEmpty())
@@ -189,8 +203,22 @@ namespace Amuse.App.Views
                     // Conversation
                     var conversation = new List<ConversationModel>();
                     if (!string.IsNullOrEmpty(Options.Prompt2))
-                        conversation.Add(new ConversationModel { Role = "system", Content = Options.Prompt2 });
-                    conversation.Add(new ConversationModel { Role = "user", ImageIndex = [.. imageIndex], Content = Options.Prompt });
+                    {
+                        // System Prompt
+                        conversation.Add(new ConversationModel
+                        {
+                            Role = ConversationRole.System,
+                            Content = Options.Prompt2
+                        });
+                    }
+
+                    // User Prompt
+                    conversation.Add(new ConversationModel
+                    { 
+                        Role = ConversationRole.User, 
+                        ImageIndex = [.. imageIndex],
+                        Content = Options.Prompt
+                    });
 
                     // Options
                     var options = Options with
@@ -292,7 +320,7 @@ namespace Amuse.App.Views
         {
             Logger.LogInformation($"[ImageToText] [SaveHistory] Saving history...");
             var history = new TextInput(Utils.GetResponseText(ResultText.Result.Text));
-            options.Conversation.Add(new ConversationModel { Role = "assistant", Content = history.Text });
+            options.Conversation.Add(new ConversationModel { Role = ConversationRole.Assistant, Content = history.Text });
             var result = await HistoryService.AddAsync(history, new DiffusionHistory
             {
                 Options = options,

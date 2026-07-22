@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace TensorStack.WPF.Controls
@@ -75,6 +77,24 @@ namespace TensorStack.WPF.Controls
         {
             get { return (ScrollBarVisibility)GetValue(VerticalScrollBarVisibilityProperty); }
             set { SetValue(VerticalScrollBarVisibilityProperty, value); }
+        }
+
+
+        protected override async void OnDrop(DragEventArgs e)
+        {
+            base.OnDrop(e);
+            if(e.Data.GetDataPresent(DataFormats.Text))
+            {
+                Text = (string)e.Data.GetData(DataFormats.Text);
+            }
+            else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var fileName = ((string[])e.Data.GetData(DataFormats.FileDrop))?.FirstOrDefault();
+                if(File.Exists(fileName)) 
+                {
+                    Text = await File.ReadAllTextAsync(fileName);
+                }
+            }
         }
     }
 }

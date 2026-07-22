@@ -1449,10 +1449,6 @@
                         </ScrollViewer>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource ListBoxBackgroundDisabled}"/>
-                            <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ListBoxBorderDisabled}"/>
-                        </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsGrouping" Value="true"/>

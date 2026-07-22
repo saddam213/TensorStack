@@ -2,8 +2,14 @@
 using Amuse.App.Views;
 using Amuse.Common;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using TensorStack.Audio;
+using TensorStack.Common.Tensor;
+using TensorStack.Video;
 using TensorStack.WPF;
 using TensorStack.WPF.Controls;
 
@@ -128,16 +134,19 @@ namespace Amuse.App.Controls
                 ChunkSize = newOptions.ChunkSize
             };
 
-
             // Automation
+            var automationType = AutomationOptions.GetSupportedTypes(ViewType);
             AutomationOptions = new AutomationOptions
             {
                 ViewType = ViewType,
-                Type = AutomationType.InputFiles,
+                Type = automationType.FirstOrDefault(),
                 OutputPrefix = string.Empty,
                 OutputPostFixSeed = false
             };
 
+            // Context
+            ContextControlElement.IsTextEnabled = true;
+            ContextControlElement.IsImageEnabled = newModel.ModelType == "Vision";
             return Task.CompletedTask;
         }
 
@@ -147,5 +156,27 @@ namespace Amuse.App.Controls
             Options.Seed = random ? 0 : Random.Shared.Next();
         }
 
+
+        public StringBuilder GetTextContext(string query = default)
+        {
+            return ContextControlElement.GetTextContext(query);
+        }
+
+
+        public List<ImageTensor> GetImageContext(string query = default)
+        {
+            return ContextControlElement.GetImageContext(query);
+        }
+
+
+        public List<AudioInputStream> GetAudioContext(string query = default)
+        {
+            return ContextControlElement.GetAudioContext(query);
+        }
+
+        public List<VideoInputStream> GetVideoContext(string query = default)
+        {
+            return ContextControlElement.GetVideoContext(query);
+        }
     }
 }

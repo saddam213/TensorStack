@@ -100,22 +100,16 @@
                         <!--Prompt-->
                         <DockPanel Visibility="{Binding IsPromptEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,8">
                             <TextBlock DockPanel.Dock="Top" Text="Prompt" Style="{StaticResource FieldTextBlockStyle}" />
-                            <TextBox Text="{Binding Options.Prompt, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" />
+                            <Border Style="{StaticResource TextDropZoneStyle}" >
+                                <CommonControls:PlaceholderTextBox Text="{Binding Options.Prompt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" />
+                            </Border>
                         </DockPanel>
 
                         <!--Context-->
-                        <DockPanel Visibility="{Binding IsPromptEnabled, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                            <UniformGrid Rows="1" Height="30" DockPanel.Dock="Bottom">
-                                <Button Content="Text" />
-                                <Button Content="Image" />
-                                <Button Content="Clear" />
-                            </UniformGrid>
-                            <DockPanel Margin="0,0,0,8">
-                                <TextBlock DockPanel.Dock="Top" Text="Additional Context" Style="{StaticResource FieldTextBlockStyle}" />
-                                <TextBox Text="{Binding Options.Prompt, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" />
-                            </DockPanel>
-                        </DockPanel>
-                      
+                        <Border Visibility="{Binding IsPromptEnabled, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                            <Controls:ContextControl x:Name="ContextControlElement" />
+                        </Border>
+
                     </Grid>
 
                 </DockPanel>
@@ -154,7 +148,9 @@
                     <!--System Prompt-->
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" Text="System Prompt" Style="{StaticResource FieldTextBlockStyle}" />
-                        <TextBox Text="{Binding Options.Prompt2, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" />
+                        <Border Style="{StaticResource TextDropZoneStyle}" >
+                            <CommonControls:PlaceholderTextBox Text="{Binding Options.Prompt2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
+                        </Border>
                     </DockPanel>
 
                 </DockPanel>
@@ -176,6 +172,26 @@
                             <TextBlock Text="Automation" Style="{StaticResource FieldTextBlockStyle}" />
                             <ComboBox ItemsSource="{Binding AutomationOptions.Types}" SelectedItem="{Binding AutomationOptions.Type}" Style="{StaticResource EnumComboBox}" />
                         </StackPanel>
+
+                        <!--PromptFiles-->
+                        <Grid Visibility="{Binding AutomationOptions.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=PromptFiles}">
+                            <UniformGrid Margin="0,0,0,0" >
+                                <StackPanel>
+                                    <TextBlock Text="Prompt Folder" Style="{StaticResource FieldTextBlockStyle}"/>
+                                    <CommonControls:FilePickerTextBox FileName="{Binding AutomationOptions.InputDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsFolderPicker="True" IsRequired="True" />
+                                </StackPanel>
+                            </UniformGrid>
+                        </Grid>
+
+                        <!--PromptLines-->
+                        <Grid Visibility="{Binding AutomationOptions.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=PromptLines}">
+                            <UniformGrid Margin="0,0,0,0" >
+                                <StackPanel>
+                                    <TextBlock Text="Prompt File" Style="{StaticResource FieldTextBlockStyle}"/>
+                                    <CommonControls:FilePickerTextBox FileName="{Binding AutomationOptions.InputFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsRequired="True" Filter="Text Files|*.txt;" DefaultExt="txt"/>
+                                </StackPanel>
+                            </UniformGrid>
+                        </Grid>
 
                         <!--ImageFiles-->
                         <Grid Visibility="{Binding AutomationOptions.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=InputFiles}">

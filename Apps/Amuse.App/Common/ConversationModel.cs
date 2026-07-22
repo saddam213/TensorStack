@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Amuse.Common;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using TensorStack.WPF;
@@ -7,11 +8,11 @@ namespace Amuse.App.Common
 {
     public sealed record ConversationModel : BaseRecord
     {
-        private string _role;
+        private ConversationRole _role;
         private string _content;
         private List<int> _imageIndex;
 
-        public string Role
+        public ConversationRole Role
         {
             get { return _role; }
             set { SetProperty(ref _role, value); }
@@ -23,7 +24,7 @@ namespace Amuse.App.Common
             set { SetProperty(ref _content, value); }
         }
 
-        [JsonIgnore(Condition =JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<int> ImageIndex
         {
             get { return _imageIndex; }

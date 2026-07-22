@@ -112,7 +112,7 @@ namespace Amuse.App.Common
         }
 
 
-        private AutomationType[] GetSupportedTypes(View viewType)
+        public static AutomationType[] GetSupportedTypes(View viewType)
         {
             switch (viewType)
             {
@@ -155,6 +155,8 @@ namespace Amuse.App.Common
 
                 case View.ImageToText:
                     return [AutomationType.InputFiles];
+                case View.TextInstruct:
+                    return [AutomationType.PromptLines, AutomationType.PromptFiles];
                 default:
                     break;
             }

@@ -17,7 +17,8 @@
             <wv2:WebView2 x:Name="WebViewer" 
                 SnapsToDevicePixels="True" 
                 UseLayoutRounding="True" 
-                DefaultBackgroundColor="#FF2D2D2D">
+                DefaultBackgroundColor="#FF2D2D2D"
+                ZoomFactor="{Binding Settings.UIScale, Mode=OneWay}">
             </wv2:WebView2>
             <TextBox x:Name="TextViewer" 
                 Background="{StaticResource ControlDefaultBackground}" 

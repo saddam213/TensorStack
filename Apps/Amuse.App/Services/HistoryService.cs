@@ -510,6 +510,7 @@ namespace Amuse.App.Services
                 FilePath = Path.Combine(_settings.DirectoryHistory, $"GenerateText_{key}.json"),
                 MediaPath = Path.Combine(_settings.DirectoryHistory, $"GenerateText_{key}.txt"),
                 //ThumbPath = Path.Combine(_settings.DirectoryHistory, $"GenerateAudio_{key}.png"),
+                Length = text.Length
             };
 
             return await AddTextInternalAsync(text, history);

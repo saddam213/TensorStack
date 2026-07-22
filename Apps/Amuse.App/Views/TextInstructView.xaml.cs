@@ -10,8 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TensorStack.Common;
-using TensorStack.Common.Tensor;
-using TensorStack.Image;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
 
@@ -22,7 +20,7 @@ namespace Amuse.App.Views
     /// </summary>
     public partial class TextInstructView : ViewBaseDiffusion
     {
-        private TextInput _sourceText;
+        private string _automationPrompt;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextInstructView"/> class.
@@ -30,7 +28,6 @@ namespace Amuse.App.Views
         public TextInstructView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextInstructView> logger)
             : base(settings, navigationService, downloadService, diffusionService, extractService, upscaleService, historyService, logger)
         {
-            _sourceText = new TextInput(string.Empty);
             InitializeComponent();
         }
 
@@ -40,12 +37,12 @@ namespace Amuse.App.Views
         public override View View => View.TextInstruct;
 
         /// <summary>
-        /// Gets or sets the source text.
+        /// Gets or sets the automation prompt.
         /// </summary>
-        public TextInput SourceText
+        public string AutomationPrompt
         {
-            get { return _sourceText; }
-            set { SetProperty(ref _sourceText, value); }
+            get { return _automationPrompt; }
+            set { SetProperty(ref _automationPrompt, value); }
         }
 
 
@@ -76,27 +73,37 @@ namespace Amuse.App.Views
                 await TextResult.ClearAsync();
                 Statistics.Start();
 
-                // Images
-                var inputImages = new List<ImageTensor>();
-                var imageIndex = new List<int>();
-                if (CurrentPipeline.DiffusionModel.ModelType == "Vision")
-                {
-                    imageIndex.Add(0);
-                    inputImages.Add(await ImageInput.CreateAsync("C:\\Users\\Administrator\\Pictures\\2Untitled.png"));
-                }
+                // Context
+                var textContext = InputControl.GetTextContext(Options.Prompt);
+                var imageContext = InputControl.GetImageContext(Options.Prompt);
 
                 // Conversation
                 var conversation = new List<ConversationModel>();
                 if (!string.IsNullOrEmpty(Options.Prompt2))
-                    conversation.Add(new ConversationModel { Role = "system", Content = Options.Prompt2 });
-                conversation.Add(new ConversationModel { Role = "user", ImageIndex = imageIndex, Content = Options.Prompt });
+                {
+                    // System Prompt
+                    conversation.Add(new ConversationModel
+                    {
+                        Role = ConversationRole.System,
+                        Content = Options.Prompt2
+                    });
+                }
+
+                // User Prompt
+                textContext.Append(Options.Prompt);
+                conversation.Add(new ConversationModel
+                {
+                    Role = ConversationRole.User,
+                    Content = textContext.ToString(),
+                    ImageIndex = [.. Enumerable.Range(0, imageContext.Count)]
+                });
 
                 // Options
                 var options = Options with
                 {
                     Prompt = null,
                     Prompt2 = null,
-                    InputImages = inputImages,
+                    InputImages = imageContext,
                     Conversation = conversation
                 };
 
@@ -106,7 +113,7 @@ namespace Amuse.App.Views
                 // Result
                 Statistics.Stop();
                 ResultText = textResult;
-               
+
                 // History
                 await SaveHistoryAsync(options);
                 Logger.LogInformation("[TextInstruct] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
@@ -148,14 +155,54 @@ namespace Amuse.App.Views
                 Statistics.Start();
                 CancellationTokenSource = new CancellationTokenSource();
 
+                // Context
+                var textContext = InputControl.GetTextContext(Options.Prompt);
+                var imageContext = InputControl.GetImageContext(Options.Prompt);
+                var imageIndex = Enumerable.Range(0, imageContext.Count).ToList();
+
+                // Conversation
+                var conversation = new List<ConversationModel>();
+                if (!string.IsNullOrEmpty(Options.Prompt2))
+                {
+                    // System Prompt
+                    conversation.Add(new ConversationModel 
+                    { 
+                        Role =  ConversationRole.System, 
+                        Content = Options.Prompt2 
+                    });
+                }
+
                 AutomationProgress.Indeterminate($"Automation Started");
                 var cancellationToken = CancellationTokenSource.Token;
-                await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Text, MediaType.Audio))
+                await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Text, MediaType.Text))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
+                    // Reset
+                    ResultText = default;
+                    await TextResult.ClearAsync();
+                    conversation.RemoveAll(x => !x.Role.Equals("system"));
+                    AutomationPrompt = $"{Options.Prompt}{automationJob.DiffusionOptions.Prompt}";
+
+                    // User Prompt
+                    conversation.Add(new ConversationModel
+                    {
+                        Role =  ConversationRole.User,
+                        ImageIndex = imageIndex,
+                        Content = $"{textContext}{automationJob.DiffusionOptions.Prompt}",
+                    });
+
+                    // Options
+                    var options = automationJob.DiffusionOptions with
+                    {
+                        Prompt = null,
+                        Prompt2 = null,
+                        InputImages = imageContext,
+                        Conversation = conversation
+                    };
+
                     // Diffusion
-                    var textResult = await ExecuteTextDiffusionAsync(automationJob.DiffusionOptions);
+                    var textResult = await ExecuteTextDiffusionAsync(options);
 
                     // Result
                     ResultText = textResult;
@@ -163,10 +210,10 @@ namespace Amuse.App.Views
                     // History
                     if (AutomationOptions.IsHistoryEnabled)
                     {
-                        await SaveHistoryAsync(automationJob.DiffusionOptions);
+                        await SaveHistoryAsync(options);
                     }
 
-                    await automationJob.SaveAsync(ResultAudio);
+                    await automationJob.SaveAsync(Utils.GetResponseText(ResultText.Result.Text));
                     AutomationProgress.Update(automationJob.Id, automationJob.Count, $"Automation: {automationJob.Id}/{automationJob.Count}");
                 }
 
@@ -192,6 +239,7 @@ namespace Amuse.App.Views
                 IsAutomating = false;
                 CancellationTokenSource?.Dispose();
                 CancellationTokenSource = null;
+                AutomationPrompt = null;
             }
         }
 
@@ -204,7 +252,7 @@ namespace Amuse.App.Views
         {
             Logger.LogInformation($"[TextInstruct] [SaveHistory] Saving history...");
             var history = new TextInput(Utils.GetResponseText(ResultText.Result.Text));
-            options.Conversation.Add(new ConversationModel { Role = "assistant", Content = history.Text });
+            options.Conversation.Add(new ConversationModel { Role = ConversationRole.Assistant, Content = history.Text });
             var result = await HistoryService.AddAsync(history, new DiffusionHistory
             {
                 Options = options,
