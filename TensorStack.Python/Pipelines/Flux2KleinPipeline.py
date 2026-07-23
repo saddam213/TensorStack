@@ -466,7 +466,7 @@ def _progress_callback(pipe, step: int, total_steps: int, info: Dict, height: in
             return []
         latent_height = int(height) // (pipe.vae_scale_factor * 2)
         latent_width = int(width) // (pipe.vae_scale_factor * 2)
-        latents = pipe._unpack_latents_with_ids(latents, latent_ids, latent_height, latent_width)
+        latents = pipe._unpack_latents_with_ids(latents, latent_ids)
         latents = pipe._unpatchify_latents(latents)
         return latents.float().cpu()
 

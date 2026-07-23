@@ -170,7 +170,7 @@
                     <Border Style="{StaticResource TextDropZoneStyle}" Margin="0,0,0,1" IsEnabled="{Binding IsPipelineLoaded, Mode=OneWay}">
                         <Grid>
                             <CommonControls:PlaceholderTextBox 
-                                Text="{Binding Options.Prompt, Mode=TwoWay}" 
+                                Text="{Binding Options.Prompt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                 TextPadding="2,2,2,10" 
                                 AcceptsReturn="True" 
                                 TextWrapping="Wrap" 

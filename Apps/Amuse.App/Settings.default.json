@@ -10190,7 +10190,8 @@
         "Temperature": 0.6,
         "IsSamplingEnabled": true,
         "NoRepeatNgramSize": 0
-      }
+      },
+      "UserQualityMode": "Production"
     },
     {
       "Id": 801,
@@ -10235,7 +10236,100 @@
         "Temperature": 0.6,
         "IsSamplingEnabled": false,
         "NoRepeatNgramSize": 0
-      }
+      },
+      "UserQualityMode": "Production"
+    },
+    {
+      "Id": 802,
+      "Backend": "PyTorch",
+      "Name": "Qwen3 8B",
+      "Template": "Qwen3_8B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText" ],
+      "Checkpoint": {
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "Component",
+          "Path": "TE_Qwen3_8B"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 10, 10 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 12, 12 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 16, 16 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 40960,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.6,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      },
+      "UserQualityMode": "Production"
+    },
+    {
+      "Id": 803,
+      "Backend": "PyTorch",
+      "Name": "Qwen3 8B VL",
+      "Template": "Qwen3_8B_VL",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "Component",
+          "Path": "TE_Qwen3_8B-VL"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 10, 10 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 12, 12 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 16, 16 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.8,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.7,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      },
+      "UserQualityMode": "Production"
     }
   ],
   "LoraAdapterModels": [
