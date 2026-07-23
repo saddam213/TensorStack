@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using TensorStack.Audio;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
+using TensorStack.Image;
 using TensorStack.Video;
 
 namespace Amuse.App.Runtime
@@ -174,9 +175,17 @@ namespace Amuse.App.Runtime
                 var imageFileName = _mediaService.GetTempFile(MediaType.Image);
                 options.Seed = options.Seed > 0 ? options.Seed : Random.Shared.Next();
                 options.NegativePrompt = options.GuidanceScale > 1f && string.IsNullOrEmpty(options.NegativePrompt) ? " " : options.NegativePrompt;
-                var generateOptions = options.ToClientOptions(_defaultOptions, imageFileName);
+                var generateOptions = options.ToClientImageOptions(_defaultOptions, imageFileName);
 
-                var tensorResult = await _pipeline.RunAsync(generateOptions);
+                var tensorResult = await _pipeline.GenerateImageAsync(generateOptions);
+                if (tensorResult is null)
+                {
+                    if (!File.Exists(imageFileName))
+                        throw new Exception("Generated video result not found.");
+
+                    return await ImageInput.CreateAsync(imageFileName);
+                }
+
                 return tensorResult.AsImageTensor();
             }
             catch (IOException ex)
@@ -200,9 +209,9 @@ namespace Amuse.App.Runtime
                 var videoFileName = _mediaService.GetTempFile(MediaType.Video);
                 options.Seed = options.Seed > 0 ? options.Seed : Random.Shared.Next();
                 options.NegativePrompt = options.GuidanceScale > 1f && string.IsNullOrEmpty(options.NegativePrompt) ? " " : options.NegativePrompt;
-                var generateOptions = options.ToClientOptions(_defaultOptions, videoFileName);
+                var generateOptions = options.ToClientVideoOptions(_defaultOptions, videoFileName);
 
-                var tensorResult = await _pipeline.RunAsync(generateOptions);
+                var tensorResult = await _pipeline.GenerateVideoAsync(generateOptions);
                 if (tensorResult is null)
                 {
                     if (!File.Exists(videoFileName))
@@ -235,19 +244,23 @@ namespace Amuse.App.Runtime
             {
                 var audioFileName = _mediaService.GetTempFile(MediaType.Audio);
                 options.Seed = options.Seed > 0 ? options.Seed : Random.Shared.Next();
-                var generateOptions = options.ToClientOptions(_defaultOptions, audioFileName);
-
+                var generateOptions = options.ToClientAudioOptions(_defaultOptions, audioFileName);
                 foreach (var inputAudios in options.InputAudios)
                 {
                     generateOptions.InputAudios.Add(await inputAudios.GetAsync(_defaultOptions.SampleRate, _defaultOptions.Channels));
                 }
 
-                var audioTensor = await _pipeline.RunAsync(generateOptions);
-                var audioInput = new AudioInput(audioTensor.AsAudioTensor(_defaultOptions.SampleRate));
-                await audioInput.SaveAsync(audioFileName);
-                if (!File.Exists(audioFileName))
-                    throw new Exception("Generated audio result not found.");
+                var tensorResult = await _pipeline.GenerateAudioAsync(generateOptions);
+                if (tensorResult is null)
+                {
+                    if (!File.Exists(audioFileName))
+                        throw new Exception("Generated audio result not found.");
 
+                    return await AudioInputStream.CreateAsync(audioFileName);
+                }
+
+                var audioInput = new AudioInput(tensorResult.AsAudioTensor(_defaultOptions.SampleRate));
+                await audioInput.SaveAsync(audioFileName);
                 return await AudioInputStream.CreateAsync(audioFileName);
             }
             catch (IOException ex)
@@ -265,21 +278,16 @@ namespace Amuse.App.Runtime
                 var textResult = new TextResult();
                 var textFileName = _mediaService.GetTempFile(MediaType.Text);
                 options.Seed = options.Seed > 0 ? options.Seed : Random.Shared.Next();
-                var generateOptions = options.ToClientOptions(_defaultOptions, textFileName);
+                var generateOptions = options.ToClientTextOptions(_defaultOptions, textFileName);
                 foreach (var inputAudios in options.InputAudios)
                 {
                     generateOptions.InputAudios.Add(await inputAudios.GetAsync(_defaultOptions.SampleRate, _defaultOptions.Channels));
                 }
 
-                var pipelineResult = await _pipeline.GenerateText(generateOptions);
+                var pipelineResult = await _pipeline.GenerateTextAsync(generateOptions);
                 foreach (var beamResult in pipelineResult)
                 {
-                    textResult.Results.Add(new TextInput(beamResult.Text)
-                    {
-                        Beam = beamResult.Beam,
-                        Score = beamResult.Score,
-                        PenaltyScore = beamResult.PenaltyScore
-                    });
+                    textResult.Results.Add(beamResult);
                 }
                 return textResult;
             }
@@ -310,7 +318,7 @@ namespace Amuse.App.Runtime
                 IsDebugMode = _settings.IsServerDebugEnabled,
                 ServerType = ServerType.OnnxRuntime,
             };
-          
+
             var progressCallback = new Progress<PipelineProgress>(progress => _progressCallback?.Report(progress));
             var pipelineClient = new PipelineClient(clientConfig, progressCallback, _logger);
 

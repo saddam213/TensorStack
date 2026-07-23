@@ -16,6 +16,7 @@
         TextToAudio = 400,
         AudioToText = 500,
 
-        TextToText = 800
+        TextToText = 800,
+        ImageToText = 801
     }
 }

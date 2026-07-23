@@ -16,6 +16,7 @@ namespace Amuse.App.Common
         public List<TextInput> Results { get; set; } = [];
         public TextInput Result => Results.FirstOrDefault();
 
+        public bool IsMultipleResult => Results.Count > 1;
 
         public bool Equals(TextResult other) => ReferenceEquals(this, other);
         public override int GetHashCode() => RuntimeHelpers.GetHashCode(this);

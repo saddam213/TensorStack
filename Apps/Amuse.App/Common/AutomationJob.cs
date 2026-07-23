@@ -31,6 +31,14 @@ namespace Amuse.App.Common
             await imageInput.SaveAsync(OutputFile);
         }
 
+        public async Task SaveAsync(string textInput)
+        {
+            if (string.IsNullOrWhiteSpace(OutputFile))
+                return;
+
+            await File.WriteAllTextAsync(OutputFile, textInput);
+        }
+
         public async Task SaveAsync(TextInput textInput)
         {
             if (string.IsNullOrWhiteSpace(OutputFile))

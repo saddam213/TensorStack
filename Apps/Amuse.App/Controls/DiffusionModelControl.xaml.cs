@@ -593,7 +593,7 @@ namespace Amuse.App.Controls
             if (_selectedModel is null)
                 return;
 
-            IsLoraSupported = _selectedModel.Backend == BackendType.PyTorch;
+            IsLoraSupported = IsLoraEnabled && _selectedModel.Backend == BackendType.PyTorch;
             SelectedQualityMode = _selectedModel.UserQualityMode is null
                 ? _selectedDevice?.DefaultQualityMode ?? QualityMode.Standard
                 : _selectedModel.UserQualityMode.Value;

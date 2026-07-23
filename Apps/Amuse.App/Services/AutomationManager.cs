@@ -32,7 +32,7 @@ namespace Amuse.App.Services
                         Id = index + 1,
                         Count = seeds.Length,
                         DiffusionOptions = options,
-                        OutputFile = GetOutputFile(automationOptions, outputMediaType, $"Diffusion_{seed}")
+                        OutputFile = GetOutputFile(automationOptions, outputMediaType, "Image", seed)
                     };
                 }
             }
@@ -57,7 +57,7 @@ namespace Amuse.App.Services
                         Id = index + 1,
                         Count = seeds.Length,
                         DiffusionOptions = options,
-                        OutputFile = GetOutputFile(automationOptions, outputMediaType, $"Diffusion_{name}_{seed}")
+                        OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                     };
                 }
             }
@@ -83,7 +83,7 @@ namespace Amuse.App.Services
                         Id = index + 1,
                         Count = seeds.Length,
                         DiffusionOptions = options,
-                        OutputFile = GetOutputFile(automationOptions, outputMediaType, $"Diffusion_{name}_{seed}")
+                        OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                     };
                 }
             }
@@ -113,7 +113,7 @@ namespace Amuse.App.Services
                             Count = seeds.Length,
                             DiffusionOptions = options,
                             InputImages = [image],
-                            OutputFile = GetOutputFile(automationOptions, outputMediaType, $"Diffusion_{name}_{seed}")
+                            OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                         };
                     }
                 }
@@ -134,7 +134,7 @@ namespace Amuse.App.Services
                             Count = seeds.Length,
                             DiffusionOptions = diffusionOptions with { Seed = seed },
                             VideoStreams = [videoStream],
-                            OutputFile = GetOutputFile(automationOptions, outputMediaType, $"Diffusion_{name}_{seed}")
+                            OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                         };
                     }
                 }
@@ -155,7 +155,7 @@ namespace Amuse.App.Services
                             Count = seeds.Length,
                             DiffusionOptions = diffusionOptions with { Seed = seed },
                             AudioStreams = [audioStream],
-                            OutputFile = GetOutputFile(automationOptions, outputMediaType, $"Diffusion_{name}_{seed}")
+                            OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                         };
                     }
                 }
@@ -176,7 +176,7 @@ namespace Amuse.App.Services
                             Count = seeds.Length,
                             DiffusionOptions = diffusionOptions with { Seed = seed },
                             InputTexts = [textInput],
-                            OutputFile = GetOutputFile(automationOptions, outputMediaType, $"Diffusion_{name}_{seed}")
+                            OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                         };
                     }
                 }
@@ -321,13 +321,19 @@ namespace Amuse.App.Services
         /// <param name="options">The options.</param>
         /// <param name="mediaType">Type of the media.</param>
         /// <param name="fileId">The file identifier.</param>
-        private static string GetOutputFile(AutomationOptions options, MediaType mediaType, string fileId)
+        private static string GetOutputFile(AutomationOptions options, MediaType mediaType, string fileId, int seed = 0)
         {
             if (!options.UseOutputDirectory)
                 return null;
 
             if (string.IsNullOrWhiteSpace(options.OutputDirectory))
                 return null;
+
+            if (!string.IsNullOrEmpty(options.OutputPrefix))
+                fileId = $"{options.OutputPrefix}{fileId}";
+
+            if (options.OutputPostFixSeed && seed > 0)
+                fileId = $"{fileId}_{seed}";
 
             var ext = mediaType.GetExtension();
             var filename = $"{fileId}.{ext}";

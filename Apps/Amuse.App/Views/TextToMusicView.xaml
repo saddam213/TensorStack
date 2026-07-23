@@ -154,7 +154,9 @@
                                 <DockPanel Grid.Row="0" Margin="0,0,0,5">
                                     <DockPanel>
                                         <TextBlock DockPanel.Dock="Top" Text="Style" Style="{StaticResource FieldTextBlockStyle}"/>
-                                        <TextBox Text="{Binding Options.Prompt, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap"/>
+                                        <Border Style="{StaticResource TextDropZoneStyle}">
+                                            <CommonControls:PlaceholderTextBox Text="{Binding Options.Prompt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap"/>
+                                        </Border>
                                     </DockPanel>
                                 </DockPanel>
 
@@ -163,7 +165,9 @@
                                 <DockPanel Grid.Row="2" Margin="0,-2,0,0">
                                     <DockPanel >
                                         <TextBlock DockPanel.Dock="Top" Text="Lyrics" Style="{StaticResource FieldTextBlockStyle}"/>
-                                        <TextBox Text="{Binding Options.Prompt2, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"/>
+                                        <Border Style="{StaticResource TextDropZoneStyle}">
+                                            <CommonControls:PlaceholderTextBox Text="{Binding Options.Prompt2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                                        </Border>
                                     </DockPanel>
                                 </DockPanel>
                             </Grid>

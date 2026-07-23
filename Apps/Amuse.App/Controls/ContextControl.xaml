@@ -1,0 +1,92 @@
+﻿<CommonControls:BaseControl x:Class="Amuse.App.Controls.ContextControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Amuse.App.Controls"
+             xmlns:CommonControls="clr-namespace:TensorStack.WPF.Controls;assembly=TensorStack.WPF">
+    <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:ContextControl}}}">
+        <UniformGrid Rows="1" Height="35" DockPanel.Dock="Bottom">
+            <Button Command="{Binding AddTextCommand}">
+                <CommonControls:FontAwesome Icon="f893"/>
+            </Button>
+            <Button Command="{Binding AddImageCommand}">
+                <CommonControls:FontAwesome Icon="f03e"/>
+            </Button>
+            <Button Command="{Binding AddVideoCommand}">
+                <CommonControls:FontAwesome Icon="f008"/>
+            </Button>
+            <Button Command="{Binding AddAudioCommand}">
+                <CommonControls:FontAwesome Icon="f001"/>
+            </Button>
+            <Button Command="{Binding ClearCommand}">
+                <CommonControls:FontAwesome Icon="f00d" Color="{StaticResource DangerColour}"/>
+            </Button>
+        </UniformGrid>
+        <DockPanel Margin="0,0,0,6">
+            <TextBlock DockPanel.Dock="Top" Text="Additional Context" Style="{StaticResource FieldTextBlockStyle}" />
+            <Grid>
+                <ListBox ItemsSource="{Binding ContextCollection}" SelectedItem="{Binding SelectedContext}" ItemContainerStyle="{StaticResource SettingsListBoxItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent">
+                    <ListBox.Resources>
+                        <DataTemplate  DataType="{x:Type local:ContextModel}">
+                            <DockPanel>
+                                <Border DockPanel.Dock="Left" Width="30" Height="30" Margin="3">
+                                    <Grid>
+                                        <!--Text-->
+                                        <Border BorderThickness="1" BorderBrush="{StaticResource DefaultForeground}" Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
+                                            <CommonControls:FontAwesome Icon="f893"/>
+                                        </Border>
+
+                                        <!--Audio-->
+                                        <Border BorderThickness="1" BorderBrush="{StaticResource DefaultForeground}" Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Audio}">
+                                            <CommonControls:FontAwesome Icon="f001"/>
+                                        </Border>
+
+                                        <!--Image-->
+                                        <CommonControls:TransparentImageElement 
+                                            Height="30" 
+                                            Stretch="Uniform" 
+                                            DecodePixelHeight="30"
+                                            BitmapSource="{Binding Image, Converter={StaticResource ImageTensorToBitmapConverter}}" 
+                                            Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Image}" />
+
+                                        <!--Video-->
+                                        <CommonControls:TransparentImageElement 
+                                            Height="30" 
+                                            Stretch="Uniform" 
+                                            DecodePixelHeight="30"
+                                            BitmapSource="{Binding Video.Thumbnail, Converter={StaticResource ImageTensorToBitmapConverter}}" 
+                                            Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Video}" />
+                                    </Grid>
+                                </Border>
+                                <Button DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,4,0" Command="{Binding RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type local:ContextControl}}}" CommandParameter="{Binding}">
+                                    <CommonControls:FontAwesome Icon="f00d" Size="13" Color="{StaticResource DangerColour}" Opacity="1" Margin="2"/>
+                                </Button>
+                                <StackPanel Margin="3">
+                                    <TextBlock Text="{Binding MediaType}" />
+                                    <TextBlock Text="{Binding Filename, Converter={StaticResource FullPathToFileNameConverter}}" />
+                                </StackPanel>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.Resources>
+                </ListBox>
+
+                <Border BorderThickness="1">
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding AllowDrop, RelativeSource={RelativeSource AncestorType={x:Type local:ContextControl}}}" Value="True">
+                                    <Setter Property="BorderBrush" Value="{StaticResource SuccessColour}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"  Visibility="{Binding ContextCollection.Count, Converter={StaticResource LessThanToVisibilityConverter}, ConverterParameter=1}" Opacity=".6" Margin="0,-40,0,0">
+                        <TextBlock Text="Attach Documents / Media" TextAlignment="Center"/>
+                        <TextBlock Text="Provides additional context for your conversation" TextAlignment="Center" FontStyle="Italic"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DockPanel>
+    </DockPanel>
+</CommonControls:BaseControl>

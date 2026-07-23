@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
@@ -11,7 +10,6 @@ namespace TensorStack.WPF.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Debug.WriteLine(value);
             if (value is int)
                 return value;
 
@@ -240,22 +238,22 @@ namespace TensorStack.WPF.Converters
             if (value is int iValue)
             {
                 if (parameter is int subtraction || int.TryParse(parameter.ToString(), out subtraction))
-                    return iValue - subtraction;
+                    return Math.Max(0, iValue - subtraction);
             }
             else if (value is long lValue)
             {
                 if (parameter is long subtraction || long.TryParse(parameter.ToString(), out subtraction))
-                    return lValue - subtraction;
+                    return Math.Max(0, lValue - subtraction);
             }
             else if (value is float fValue)
             {
                 if (parameter is float subtraction || float.TryParse(parameter.ToString(), out subtraction))
-                    return fValue - subtraction;
+                    return Math.Max(0, fValue - subtraction);
             }
             else if (value is double dValue)
             {
                 if (parameter is double subtraction || double.TryParse(parameter.ToString(), out subtraction))
-                    return dValue - subtraction;
+                    return Math.Max(0, dValue - subtraction);
             }
             return value;
         }
@@ -290,6 +288,76 @@ namespace TensorStack.WPF.Converters
                 return intArray;
             }
             return Array.Empty<int>();
+        }
+    }
+
+
+    [ValueConversion(typeof(int), typeof(bool))]
+    public class DivideByConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int iValue)
+            {
+                if (parameter is int divisor || int.TryParse(parameter.ToString(), out divisor))
+                    return iValue / divisor;
+            }
+            else if (value is long lValue)
+            {
+                if (parameter is long divisor || long.TryParse(parameter.ToString(), out divisor))
+                    return lValue / divisor;
+            }
+            else if (value is float fValue)
+            {
+                if (parameter is float divisor || float.TryParse(parameter.ToString(), out divisor))
+                    return fValue / divisor;
+            }
+            else if (value is double dValue)
+            {
+                if (parameter is double divisor || double.TryParse(parameter.ToString(), out divisor))
+                    return dValue / divisor;
+            }
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    [ValueConversion(typeof(int), typeof(bool))]
+    public class MultiplyByConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int iValue)
+            {
+                if (parameter is int multiplier || int.TryParse(parameter.ToString(), out multiplier))
+                    return iValue * multiplier;
+            }
+            else if (value is long lValue)
+            {
+                if (parameter is long multiplier || long.TryParse(parameter.ToString(), out multiplier))
+                    return lValue * multiplier;
+            }
+            else if (value is float fValue)
+            {
+                if (parameter is float multiplier || float.TryParse(parameter.ToString(), out multiplier))
+                    return fValue * multiplier;
+            }
+            else if (value is double dValue)
+            {
+                if (parameter is double multiplier || double.TryParse(parameter.ToString(), out multiplier))
+                    return dValue * multiplier;
+            }
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

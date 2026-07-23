@@ -10,6 +10,7 @@
              xmlns:Whisper="clr-namespace:TensorStack.TextGeneration.Pipelines.Whisper;assembly=TensorStack.TextGeneration"
              xmlns:TextGeneration="clr-namespace:TensorStack.TextGeneration.Common;assembly=TensorStack.TextGeneration"
              xmlns:Common="clr-namespace:Amuse.App.Common"
+             xmlns:Controls="clr-namespace:Amuse.App.Controls"
              ShutdownMode="OnMainWindowClose">
     <Application.Resources>
         <ResourceDictionary>
@@ -290,6 +291,58 @@
                         <MultiDataTrigger.Setters>
                             <Setter Property="AllowDrop" Value="True"/>
                             <Setter Property="BorderBrush" Value="{StaticResource AccentColour2}"/>
+                        </MultiDataTrigger.Setters>
+                    </MultiDataTrigger>
+                </Style.Triggers>
+            </Style>
+
+
+
+            <Style TargetType="{x:Type Controls:ContextControl}">
+                <Setter Property="AllowDrop" Value="False"/>
+                <Style.Triggers>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding IsTextEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding IsDragDrop, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="True" />
+                            <Condition Binding="{Binding DragDropType, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="Text" />
+                        </MultiDataTrigger.Conditions>
+                        <MultiDataTrigger.Setters>
+                            <Setter Property="AllowDrop" Value="True"/>
+                        </MultiDataTrigger.Setters>
+                    </MultiDataTrigger>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding IsImageEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding IsDragDrop, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="True" />
+                            <Condition Binding="{Binding DragDropType, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="Image" />
+                        </MultiDataTrigger.Conditions>
+                        <MultiDataTrigger.Setters>
+                            <Setter Property="AllowDrop" Value="True"/>
+                        </MultiDataTrigger.Setters>
+                    </MultiDataTrigger>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding IsAudioEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding IsDragDrop, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="True" />
+                            <Condition Binding="{Binding DragDropType, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="Audio" />
+                        </MultiDataTrigger.Conditions>
+                        <MultiDataTrigger.Setters>
+                            <Setter Property="AllowDrop" Value="True"/>
+                        </MultiDataTrigger.Setters>
+                    </MultiDataTrigger>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding IsVideoEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding IsDragDrop, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="True" />
+                            <Condition Binding="{Binding DragDropType, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="Video" />
+                        </MultiDataTrigger.Conditions>
+                        <MultiDataTrigger.Setters>
+                            <Setter Property="AllowDrop" Value="True"/>
                         </MultiDataTrigger.Setters>
                     </MultiDataTrigger>
                 </Style.Triggers>
@@ -1060,35 +1113,10 @@
                         </UniformGrid>
                         <UniformGrid Columns="3" Margin="0,4,0,0">
                             <StackPanel>
-                                <TextBlock Text="Voice Style" Style="{StaticResource FieldTextBlockStyle}" />
-                                <TextBlock>
-                                    <Run Text="{Binding Options.VoiceStyle}" />
-                                </TextBlock>
-                            </StackPanel>
-                            <StackPanel>
-                                <TextBlock Text="Speed" Style="{StaticResource FieldTextBlockStyle}" />
-                                <TextBlock>
-                                    <Run Text="{Binding  Options.Speed}" />
-                                    <Run Text="x" />
-                                </TextBlock>
-                            </StackPanel>
-                            <StackPanel>
                                 <TextBlock Text="Duration" Style="{StaticResource FieldTextBlockStyle}" />
                                 <TextBlock>
                                     <Run Text="{Binding Duration, FallbackValue=00:00:00, StringFormat={}mm\\:ss\\.ff}" />
                                     <Run Text="ms" />
-                                </TextBlock>
-                            </StackPanel>
-                            <StackPanel>
-                                <TextBlock Text="Seed" Style="{StaticResource FieldTextBlockStyle}" />
-                                <TextBlock>
-                                    <Run Text="{Binding Options.Seed}" />
-                                </TextBlock>
-                            </StackPanel>
-                            <StackPanel>
-                                <TextBlock Text="Steps" Style="{StaticResource FieldTextBlockStyle}" />
-                                <TextBlock>
-                                    <Run Text="{Binding Options.Steps}" />
                                 </TextBlock>
                             </StackPanel>
                             <StackPanel>

@@ -376,6 +376,66 @@
                                     </StackPanel>
                                 </Grid>
 
+
+                                <!--Audio-->
+                                <Grid Visibility="{Binding DiffusionModel.MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
+                                    <StackPanel>
+                                         <UniformGrid Columns="5">
+                                            <StackPanel>
+                                                <TextBlock Text="MinLength" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <TextBox Text="{Binding DiffusionModel.DefaultOptions.MinLength, UpdateSourceTrigger=PropertyChanged}" />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="MaxLength" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <TextBox Text="{Binding DiffusionModel.DefaultOptions.MaxLength, UpdateSourceTrigger=PropertyChanged}" />
+                                            </StackPanel>
+                                           <StackPanel>
+                                                <TextBlock Text="ChunkSize" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <TextBox Text="{Binding DiffusionModel.DefaultOptions.ChunkSize, UpdateSourceTrigger=PropertyChanged}"  />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="Beams" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <TextBox Text="{Binding DiffusionModel.DefaultOptions.Beams, UpdateSourceTrigger=PropertyChanged}"  />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="TopK" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <TextBox Text="{Binding DiffusionModel.DefaultOptions.TopK, UpdateSourceTrigger=PropertyChanged}"  />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="TopP" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <CommonControls:FloatBox FloatValue="{Binding DiffusionModel.DefaultOptions.TopP, UpdateSourceTrigger=PropertyChanged}"  />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="TopH" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <CommonControls:FloatBox FloatValue="{Binding DiffusionModel.DefaultOptions.TopH, UpdateSourceTrigger=PropertyChanged}"  />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="TypicalP" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <CommonControls:FloatBox FloatValue="{Binding DiffusionModel.DefaultOptions.TypicalP, UpdateSourceTrigger=PropertyChanged}"  />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="Temperature" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <CommonControls:FloatBox FloatValue="{Binding DiffusionModel.DefaultOptions.Temperature, UpdateSourceTrigger=PropertyChanged}"  />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="LengthPenalty" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <CommonControls:FloatBox FloatValue="{Binding DiffusionModel.DefaultOptions.LengthPenalty, UpdateSourceTrigger=PropertyChanged}"  />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="RepetitionPenalty" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <CommonControls:FloatBox FloatValue="{Binding DiffusionModel.DefaultOptions.RepetitionPenalty, UpdateSourceTrigger=PropertyChanged}"  />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <TextBlock Text="NoRepeatNgramSize" Style="{StaticResource FieldTextBlockStyle}"/>
+                                                <TextBox Text="{Binding DiffusionModel.DefaultOptions.NoRepeatNgramSize, UpdateSourceTrigger=PropertyChanged}"  />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <CheckBox Content="Sampling Enabled" IsChecked="{Binding IsSamplingEnabled}" Margin="4,20,0,0"/>
+                                            </StackPanel>
+                                        </UniformGrid>
+
+                                    </StackPanel>
+                                </Grid>
                             </Grid>
                         </DockPanel>
                     </GroupBox>
@@ -384,7 +444,7 @@
             </Grid>
 
             <!--Resolution Settings-->
-            <GroupBox Header="Resolutions" Visibility="{Binding DiffusionModel.MediaType, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=Audio}" Margin="0,6,0,0">
+            <GroupBox Header="Resolutions" Visibility="{Binding DiffusionModel.MediaType, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=Audio|Text}" Margin="0,6,0,0">
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top">
                         <Button DockPanel.Dock="Right" Command="{Binding AddSizeCommand}" Height="23" Width="40" VerticalAlignment="Bottom" HorizontalAlignment="Right">
@@ -458,6 +518,12 @@
                                 <CheckBox x:Name="CheckBoxAudioToText" Content="AudioToText" />
                             </UniformGrid>
                         </StackPanel>
+                        <StackPanel VerticalAlignment="Top"  Visibility="{Binding DiffusionModel.MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
+                            <UniformGrid Columns="3" >
+                                <CheckBox x:Name="CheckBoxTextToText" Content="TextToText" />
+                                <CheckBox x:Name="CheckBoxImageToText" Content="ImageToText" />
+                            </UniformGrid>
+                        </StackPanel>
                     </Grid>
                 </GroupBox>
 
@@ -485,6 +551,13 @@
                             <UniformGrid Columns="3" >
                                 <CheckBox x:Name="CheckBoxViewTextToMusic" Content="TextToMusic" />
                                 <CheckBox x:Name="CheckBoxViewTextToAudio" Content="TextToAudio" />
+                            </UniformGrid>
+                        </StackPanel>
+                        <StackPanel VerticalAlignment="Top"  Visibility="{Binding DiffusionModel.MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
+                            <UniformGrid Columns="3" >
+                                <CheckBox x:Name="CheckBoxViewImageToText" Content="ImageToText" />
+                                <CheckBox x:Name="CheckBoxViewTextInstruct" Content="TextInstruct" />
+                                <CheckBox x:Name="CheckBoxViewTextConverse" Content="TextConverse" />
                             </UniformGrid>
                         </StackPanel>
                     </Grid>

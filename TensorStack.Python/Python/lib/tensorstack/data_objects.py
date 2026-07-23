@@ -71,8 +71,6 @@ class LoraOption:
         self.strength = float(self.strength)
 
 
-
-
 @dataclass(slots=True)
 class PipelineConfig:
     # Required / core
@@ -216,7 +214,6 @@ class SchedulerOptions:
                 setattr(self, field.name, [float(x) for x in value])
 
 
-
 @dataclass(slots=True)
 class GenerateImageOptions:
     seed: int
@@ -343,11 +340,18 @@ class GenerateAudioOptions:
 
 
 @dataclass(slots=True)
+class ConversationMessage:
+    role: str
+    content: str
+    image_index: Sequence[int]
+
+
+@dataclass(slots=True)
 class GenerateTextOptions:
     seed: int
     prompt: Optional[str] = None
-    conversation: Optional[list[dict[str, str]]] = None
-    temp_filename: str = None
+    conversation: Optional[list[ConversationMessage]] = None
+    temp_filename: Optional[str] = None
     language: Optional[str] = None
     instruction: Optional[str] = None
     task: Optional[str] = None
@@ -371,4 +375,3 @@ class GenerateTextOptions:
         self.typical_p = float(self.typical_p)
         self.repetition_penalty = float(self.repetition_penalty)
         self.length_penalty = float(self.length_penalty)
-

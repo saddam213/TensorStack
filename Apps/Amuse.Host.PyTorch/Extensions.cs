@@ -1,8 +1,8 @@
 ﻿using Amuse.Common;
 using System;
+using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using TensorStack.Python.Common;
 using TensorStack.Python.Config;
 using TensorStack.Python.Scheduler;
 
@@ -64,45 +64,138 @@ namespace Amuse.Host.PyTorch
         }
 
 
-        public static PipelineOptions ToPythonOptions(this PipelineRunOptions options)
+        public static TensorStack.Python.Common.GenerateImageOptions ToPythonOptions(this Common.GenerateImageOptions options)
         {
-            return new PipelineOptions
+            return new TensorStack.Python.Common.GenerateImageOptions
             {
-                Bpm = options.Bpm,
-                ControlNetScale = options.ControlNetScale,
-                Duration = options.Duration,
-                EnableVaeSlicing = options.EnableVaeSlicing,
-                EnableVaeTiling = options.EnableVaeTiling,
-                FrameChunk = options.FrameChunk,
-                FrameChunkOverlap = options.FrameChunkOverlap,
-                FrameRate = options.FrameRate,
-                Frames = options.Frames,
-                GuidanceScale = options.GuidanceScale,
-                GuidanceScale2 = options.GuidanceScale2,
-                Height = options.Height,
-                InputAudios = options.InputAudios,
-                InputControlImages = options.InputControlImages,
-                InputImages = options.InputImages,
-                Instruction = options.Instruction,
-                Keyscale = options.Keyscale,
-                MaxLength = options.MaxLength,
-                MaxLength2 = options.MaxLength2,
-                NegativePrompt = options.NegativePrompt,
-                NoiseCondition = options.NoiseCondition,
+                Seed = options.Seed,
                 Prompt = options.Prompt,
                 Prompt2 = options.Prompt2,
+                NegativePrompt = options.NegativePrompt,
+                GuidanceScale = options.GuidanceScale,
+                GuidanceScale2 = options.GuidanceScale2,
+                Steps = options.Steps,
+                Steps2 = options.Steps2,
+                Width = options.Width,
+                Height = options.Height,
+                Strength = options.Strength,
+                ControlNetScale = options.ControlNetScale,
+                TempFileName = options.TempFileName,
+                EnableVaeSlicing = options.EnableVaeSlicing,
+                EnableVaeTiling = options.EnableVaeTiling,
+                Language = options.Language.GetShortName(),
+                Instruction = options.Instruction,
+                Task = options.Task,
+                MaxLength = options.MaxLength,
+                MaxLength2 = options.MaxLength2,
+                LoraOptions = options.LoraOptions?.Select(x => x.ToPythonOptions()).ToList(),
+                SchedulerOptions = options.SchedulerOptions?.ToPythonOptions(),
+                InputImages = options.InputImages,
+                InputControlImages = options.InputControlImages
+            };
+        }
+
+
+        public static TensorStack.Python.Common.GenerateVideoOptions ToPythonOptions(this Common.GenerateVideoOptions options)
+        {
+            return new TensorStack.Python.Common.GenerateVideoOptions
+            {
                 Seed = options.Seed,
+                Prompt = options.Prompt,
+                Prompt2 = options.Prompt2,
+                NegativePrompt = options.NegativePrompt,
+                GuidanceScale = options.GuidanceScale,
+                GuidanceScale2 = options.GuidanceScale2,
+                Steps = options.Steps,
+                Steps2 = options.Steps2,
+                Width = options.Width,
+                Height = options.Height,
+                Frames = options.Frames,
+                FrameRate = options.FrameRate,
+                Strength = options.Strength,
+                ControlNetScale = options.ControlNetScale,
+                TempFileName = options.TempFileName,
+                FrameChunk = options.FrameChunk,
+                FrameChunkOverlap = options.FrameChunkOverlap,
+                NoiseCondition = options.NoiseCondition,
+                EnableVaeSlicing = options.EnableVaeSlicing,
+                EnableVaeTiling = options.EnableVaeTiling,
+                Duration = options.Duration,
+                Language = options.Language.GetShortName(),
+                Instruction = options.Instruction,
+                Task = options.Task,
+                MaxLength = options.MaxLength,
+                MaxLength2 = options.MaxLength2,
+                LoraOptions = options.LoraOptions?.Select(x => x.ToPythonOptions()).ToList(),
+                SchedulerOptions = options.SchedulerOptions?.ToPythonOptions(),
+                InputImages = options.InputImages,
+                InputAudios = options.InputAudios,
+                InputControlImages = options.InputControlImages
+            };
+        }
+
+
+        public static TensorStack.Python.Common.GenerateAudioOptions ToPythonOptions(this Common.GenerateAudioOptions options)
+        {
+            return new TensorStack.Python.Common.GenerateAudioOptions
+            {
+                Seed = options.Seed,
+                Prompt = options.Prompt,
+                Prompt2 = options.Prompt2,
+                NegativePrompt = options.NegativePrompt,
+                GuidanceScale = options.GuidanceScale,
+                GuidanceScale2 = options.GuidanceScale2,
                 Steps = options.Steps,
                 Steps2 = options.Steps2,
                 Strength = options.Strength,
-                Task = options.Task,
                 TempFileName = options.TempFileName,
-                TimeSignature = options.TimeSignature,
-                TrackName = options.TrackName,
+                EnableVaeSlicing = options.EnableVaeSlicing,
+                EnableVaeTiling = options.EnableVaeTiling,
+                Duration = options.Duration,
                 Language = options.Language.GetShortName(),
-                Width = options.Width,
+                Instruction = options.Instruction,
+                MaxLength = options.MaxLength,
+                MaxLength2 = options.MaxLength2,
+                Bpm = options.Bpm,
+                Keyscale = options.Keyscale,
+                Task = options.Task,
+                TrackName = options.TrackName,
+                TimeSignature = options.TimeSignature,
+                Speed = options.Speed,
+                SilenceDuration = options.SilenceDuration,
+                SampleRate = options.SampleRate,
+                SchedulerOptions = options.SchedulerOptions?.ToPythonOptions(),
                 LoraOptions = options.LoraOptions?.Select(x => x.ToPythonOptions()).ToList(),
-                SchedulerOptions = options.SchedulerOptions?.ToPythonOptions()
+                InputAudios = options.InputAudios
+            };
+        }
+
+
+        public static TensorStack.Python.Common.GenerateTextOptions ToPythonOptions(this Common.GenerateTextOptions options)
+        {
+            return new TensorStack.Python.Common.GenerateTextOptions
+            {
+                Seed = options.Seed,
+                Prompt = options.Prompt,
+                Conversation = options.Conversation?.ToPythonOptions(),
+                TempFileName = options.TempFileName,
+                Language = options.Language.GetShortName(),
+                Instruction = options.Instruction,
+                Task = options.Task,
+                MinLength = options.MinLength,
+                MaxLength = options.MaxLength,
+                IsSamplingEnabled = options.IsSamplingEnabled,
+                Beams = options.Beams,
+                Temperature = options.Temperature,
+                TopK = options.TopK,
+                TopP = options.TopP,
+                TopH = options.TopH,
+                TypicalP = options.TypicalP,
+                LengthPenalty = options.LengthPenalty,
+                RepetitionPenalty = options.RepetitionPenalty,
+                NoRepeatNgramSize = options.NoRepeatNgramSize,
+                InputImages = options.InputImages,
+                InputAudios = options.InputAudios,
             };
         }
 
@@ -1240,6 +1333,13 @@ namespace Amuse.Host.PyTorch
 
             throw new NotImplementedException();
         }
+
+
+        public static TensorStack.Python.Common.ConversationMessage[] ToPythonOptions(this Common.ConversationMessage[] messages)
+        {
+            return messages.Select(x => new TensorStack.Python.Common.ConversationMessage(x.Role.Cast<Common.ConversationRole, TensorStack.Python.Common.ConversationRole>(), x.Content, x.ImageIndex)).ToArray();
+        }
+
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

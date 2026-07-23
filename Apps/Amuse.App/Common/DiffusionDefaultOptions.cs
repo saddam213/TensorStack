@@ -93,6 +93,9 @@ namespace Amuse.App.Common
         public int NoRepeatNgramSize { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public bool IsSamplingEnabled { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Beams { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -112,6 +115,15 @@ namespace Amuse.App.Common
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int DiversityLength { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public float TopH { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public float TypicalP { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public float RepetitionPenalty { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int ChunkSize { get; set; }
@@ -172,6 +184,10 @@ namespace Amuse.App.Common
                 TopP = TopP,
                 Language = Language,
                 Languages = Languages?.ToArray(),
+                IsSamplingEnabled = IsSamplingEnabled,
+                RepetitionPenalty = RepetitionPenalty,
+                TopH = TopH,
+                TypicalP = TypicalP
             };
         }
 

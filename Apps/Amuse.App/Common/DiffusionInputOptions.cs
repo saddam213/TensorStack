@@ -56,14 +56,21 @@ namespace Amuse.App.Common
         private float _lengthPenalty;
         private EarlyStopping _earlyStopping;
         private int _diversityLength;
+        private float _topH;
+        private float _typicalP;
+        private float _repetitionPenalty;
         private int _chunkSize;
+        private List<ConversationModel> _conversation;
+        private bool _isSamplingEnabled;
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Width
         {
             get { return _width; }
             set { SetProperty(ref _width, value); }
         }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Height
         {
             get { return _height; }
@@ -90,6 +97,7 @@ namespace Amuse.App.Common
             set { SetProperty(ref _guidanceScale2, value); }
         }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string Prompt
         {
             get { return _prompt; }
@@ -321,6 +329,13 @@ namespace Amuse.App.Common
         }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public bool IsSamplingEnabled
+        {
+            get { return  _isSamplingEnabled; }
+            set { SetProperty(ref _isSamplingEnabled, value); }
+        }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Beams
         {
             get { return _beams; }
@@ -370,11 +385,41 @@ namespace Amuse.App.Common
         }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public float TopH
+        {
+            get { return _topH; }
+            set { SetProperty(ref _topH, value); }
+        }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public float TypicalP
+        {
+            get { return _typicalP; }
+            set { SetProperty(ref _typicalP, value); }
+        }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public float RepetitionPenalty
+        {
+            get { return _repetitionPenalty; }
+            set { SetProperty(ref _repetitionPenalty, value); }
+        }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int ChunkSize
         {
             get { return _chunkSize; }
             set { SetProperty(ref _chunkSize, value); }
         }
+
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<ConversationModel> Conversation
+        {
+            get { return _conversation; }
+            set { SetProperty(ref _conversation, value); }
+        }
+
 
 
         [JsonIgnore]
@@ -385,6 +430,7 @@ namespace Amuse.App.Common
 
         [JsonIgnore]
         public List<AudioInputStream> InputAudios { get; set; } = [];
+
 
         public bool Equals(DiffusionInputOptions other) => ReferenceEquals(this, other);
         public override int GetHashCode() => RuntimeHelpers.GetHashCode(this);

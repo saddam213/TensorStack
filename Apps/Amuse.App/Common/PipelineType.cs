@@ -35,8 +35,7 @@ namespace Amuse.App.Common
         [Display(Name = "Qwen Image Pipeline", ShortName = "Qwen")]
         QwenImagePipeline = 50,
 
-        [Display(Name = "Kandinsky5 Pipeline", ShortName = "Kandinsky5")]
-        Kandinsky5Pipeline = 60,
+      
 
         [Display(Name = "Ideogram4 Pipeline", ShortName = "Ideogram4")]
         IdeogramPipeline = 61,
@@ -59,6 +58,10 @@ namespace Amuse.App.Common
         [Display(Name = "PRX-Pixel Pipeline", ShortName = "PRX-Pixel")]
         PrxPixelPipeline = 67,
 
+        [Display(Name = "Kandinsky5 Pipeline", ShortName = "Kandinsky5")]
+        Kandinsky5ImagePipeline = 68,
+
+
         // Video
         [Display(Name = "Wan Pipeline", ShortName = "Wan")]
         WanPipeline = 70,
@@ -71,6 +74,9 @@ namespace Amuse.App.Common
 
         [Display(Name = "CogVideoX Pipeline", ShortName = "CogVideoX")]
         CogVideoXPipeline = 90,
+
+        [Display(Name = "Kandinsky5 Pipeline", ShortName = "Kandinsky5")]
+        Kandinsky5VideoPipeline = 91,
 
         [Display(Name = "SkyReels v2 Pipeline", ShortName = "SkyReels")]
         SkyReelsV2Pipeline = 100,
@@ -104,5 +110,14 @@ namespace Amuse.App.Common
 
         [Display(Name = "Supertonic Pipeline", ShortName = "Supertonic")]
         SupertonicPipeline = 503,
+
+
+        // Text
+        AutoTextPipeline = 600,
+
+
+
+        // Deprecated
+        Kandinsky5Pipeline = 60,
     }
 }

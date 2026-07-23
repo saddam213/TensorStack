@@ -13,8 +13,11 @@
         TextOptions.TextRenderingMode="ClearType"
         TextOptions.TextHintingMode="Fixed"
         SnapsToDevicePixels="True"
+        UseLayoutRounding="True"
         Style="{StaticResource WindowHeadless}"
         Title="{x:Static local:App.AppDisplayName}"
+        MinWidth="1280"
+        MinHeight="720"
         mc:Ignorable="d"
         x:Name="UI">
     <DockPanel DataContext="{Binding ElementName=UI}">
@@ -47,8 +50,8 @@
                 <Grid DockPanel.Dock="Right" Width="290" >
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                         <CommonControls:IconButton 
-                            Width="90"
-                            Text="Settings"
+                            Width="40"
+                            
                             Icon="f013" 
                             IconStyle="Solid"
                             FontWeight="Bold"
@@ -105,6 +108,16 @@
                         Command="{Binding NavigateCategoryCommand}" 
                         CommandParameter="{x:Static Views:ViewCategory.Audio}" 
                         IsSelected="{Binding ViewCategory, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Audio}">
+                    </CommonControls:IconButton>
+                    <CommonControls:IconButton 
+                        Text="Text" 
+                        Icon="f893" 
+                        IconMargin="0,-2,0,0"
+                        IconStyle="Regular"
+                        Style="{StaticResource MenuIconButton}"
+                        Command="{Binding NavigateCategoryCommand}" 
+                        CommandParameter="{x:Static Views:ViewCategory.Text}" 
+                        IsSelected="{Binding ViewCategory, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Text}">
                     </CommonControls:IconButton>
                     <CommonControls:IconButton 
                         Text="Gallery" 
@@ -478,6 +491,36 @@
                         </UniformGrid>
                     </Grid>
 
+
+                    <!--Text-->
+                    <Grid Visibility="{Binding ViewCategory, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
+                        <UniformGrid Columns="1" VerticalAlignment="Top" >
+                            <CommonControls:IconButton 
+                                Text="Image &#10132; Text" 
+                                Icon="f03e"
+                                Style="{StaticResource SubmenuIconButton}"
+                                Command="{Binding NavigateCommand}" 
+                                CommandParameter="{x:Static Views:View.ImageToText}" 
+                                IsSelected="{Binding View, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=ImageToText}">
+                            </CommonControls:IconButton>
+                            <CommonControls:IconButton 
+                                Text="Instruct" 
+                                Icon="e1e3"
+                                Style="{StaticResource SubmenuIconButton}"
+                                Command="{Binding NavigateCommand}" 
+                                CommandParameter="{x:Static Views:View.TextInstruct}" 
+                                IsSelected="{Binding View, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=TextInstruct}">
+                            </CommonControls:IconButton>
+                            <!--<CommonControls:IconButton 
+                                Text="Converse" 
+                                Icon="e1e7"
+                                Style="{StaticResource SubmenuIconButton}"
+                                Command="{Binding NavigateCommand}" 
+                                CommandParameter="{x:Static Views:View.TextConverse}" 
+                                IsSelected="{Binding View, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=TextConverse}">
+                            </CommonControls:IconButton>-->
+                        </UniformGrid>
+                    </Grid>
                 </Grid>
             </DockPanel>
 
@@ -497,11 +540,21 @@
         <!--History-->
         <Border Panel.ZIndex="0" BorderBrush="{StaticResource DefaultBorderColor}" Opacity=".8" >
             <Controls:HistoryControl 
-            
-                Orientation="{Binding Settings.HistoryOrientation}"
+                x:Name="MainHistoryControl"
                 ItemSource="{Binding HistoryService.HistoryCollection}"
                 RemoveItemCommand="{Binding RemoveHistoryItemCommand}" 
-                PreviewItemCommand="{Binding PreviewHistoryItemCommand}"/>
+                PreviewItemCommand="{Binding PreviewHistoryItemCommand}">
+                <Controls:HistoryControl.Style>
+                    <Style TargetType="{x:Type Controls:HistoryControl}">
+                        <Setter Property="Orientation" Value="{Binding Settings.HistoryOrientation}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding View, ElementName=UI}" Value="TextInstruct">
+                                <Setter Property="Orientation" Value="Vertical"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Controls:HistoryControl.Style>
+            </Controls:HistoryControl>
             <Border.Style>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="Margin" Value="7,0,0,0"/>
@@ -509,9 +562,9 @@
                     <Setter Property="DockPanel.Dock" Value="Bottom"/>
                     <Setter Property="Visibility" Value="Visible"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Settings.HistoryOrientation, ElementName=UI}" Value="Vertical">
+                        <DataTrigger Binding="{Binding Orientation, ElementName=MainHistoryControl}" Value="Vertical">
                             <Setter Property="Width" Value="122"/>
-                            <Setter Property="Margin" Value="0,12,0,0"/>
+                            <Setter Property="Margin" Value="0,8,0,0"/>
                             <Setter Property="DockPanel.Dock" Value="Right"/>
                             <Setter Property="BorderThickness" Value="0,0,0,0"/>
                         </DataTrigger>

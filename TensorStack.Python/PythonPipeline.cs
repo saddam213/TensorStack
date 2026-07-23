@@ -30,6 +30,7 @@ namespace TensorStack.Python
         private PyObject _functionGenerate;
         private PyObject _functionGetLogs;
         private PyObject _functionGetNotifications;
+        private PyObject _functionGetTokens;
         private bool _isRunning;
 
         /// <summary>
@@ -51,6 +52,7 @@ namespace TensorStack.Python
                 BindFunctions();
             }
             _ = NotificationLoop(50);
+            _ = TokenProgressLoop(50);
         }
 
 
@@ -300,13 +302,13 @@ namespace TensorStack.Python
                         using (var pythonResults = _functionGenerate.Call(inferenceOptions, inputTensorsData))
                         {
                             return pythonResults
-                                .AsEnumerable<Tuple<string, int, float, float>>()
+                                .AsEnumerable<Tuple<string, int, float, int>>()
                                 .Select(x => new TextInput
                                 {
                                     Text = x.Item1,
                                     Beam = x.Item2,
                                     Score = x.Item3,
-                                    PenaltyScore = x.Item4,
+                                    TokenCount = x.Item4,
                                 }).ToArray();
                         }
                     }
@@ -352,6 +354,31 @@ namespace TensorStack.Python
         }
 
 
+        public Task<IReadOnlyList<PipelineProgress>> GetTokensAsync()
+        {
+            return Task.Run<IReadOnlyList<PipelineProgress>>(() =>
+            {
+                using (GIL.Acquire())
+                {
+                    try
+                    {
+                        using (var pythonResults = _functionGetTokens.Call())
+                        {
+                            return pythonResults
+                                 .AsEnumerable<string>()
+                                 .Select(x => PipelineProgress.Create(x))
+                                 .ToList();
+                        }
+                    }
+                    catch (PythonInvocationException ex)
+                    {
+                        throw HandlePythonException(ex);
+                    }
+                }
+            });
+        }
+
+
         /// <summary>
         /// Gets the logs.
         /// </summary>
@@ -375,7 +402,6 @@ namespace TensorStack.Python
                 }
             });
         }
-
 
 
         /// <summary>
@@ -431,6 +457,7 @@ namespace TensorStack.Python
             _functionGenerate = _module.GetAttr("generate");
             _functionGetLogs = _module.GetAttr("getLogs");
             _functionGetNotifications = _module.GetAttr("getNotifications");
+            _functionGetTokens = _module.GetAttr("getTokens");
         }
 
 
@@ -446,6 +473,7 @@ namespace TensorStack.Python
             _functionGenerate.Dispose();
             _functionGetLogs.Dispose();
             _functionGetNotifications.Dispose();
+            _functionGetTokens.Dispose();
         }
 
 
@@ -457,25 +485,69 @@ namespace TensorStack.Python
         {
             while (_isRunning)
             {
-                var progressItems = await GetNotificationsAsync();
-                if (!progressItems.IsNullOrEmpty())
+                try
                 {
-                    foreach (var progress in progressItems)
+                    var progressItems = await GetNotificationsAsync();
+                    if (!progressItems.IsNullOrEmpty())
                     {
-                        _progressCallback?.Report(progress);
-                        _logger?.LogDebug("[PythonPipeline] [PythonRuntime] {Progress}", progress);
+                        foreach (var progress in progressItems)
+                        {
+                            _progressCallback?.Report(progress);
+                            _logger?.LogDebug("[PythonPipeline] [PythonRuntime] {Progress}", progress);
+                        }
+                    }
+
+                    var logEntries = await GetLogsAsync();
+                    foreach (var logEntry in LogParser.ParseLogs(logEntries).OrderBy(x => x.Timestamp))
+                    {
+                        if (string.IsNullOrWhiteSpace(logEntry?.Message))
+                            continue;
+
+                        _logger?.LogInformation("[PythonPipeline] [PythonRuntime] [{Timestamp}] {Message}", logEntry.Timestamp.ToString("hh:mm:ss:fff"), logEntry.Message);
                     }
                 }
-
-                var logEntries = await GetLogsAsync();
-                foreach (var logEntry in LogParser.ParseLogs(logEntries).OrderBy(x => x.Timestamp))
+                catch (Exception ex)
                 {
-                    if (string.IsNullOrWhiteSpace(logEntry?.Message))
-                        continue;
-
-                    _logger?.LogInformation("[PythonPipeline] [PythonRuntime] [{Timestamp}] {Message}", logEntry.Timestamp.ToString("hh:mm:ss:fff"), logEntry.Message);
+                    _logger?.LogError(ex, "[PythonPipeline] [NotificationLoop]");
                 }
                 await Task.Delay(refreshRate);
+            }
+        }
+
+
+        /// <summary>
+        /// Tokens the update loop.
+        /// </summary>
+        /// <param name="refreshRate">The refresh rate.</param>
+        /// <returns>System.Threading.Tasks.Task.</returns>
+        private async Task TokenProgressLoop(int refreshRate)
+        {
+            while (_isRunning)
+            {
+                try
+                {
+                    var progressTokens = await GetTokensAsync();
+                    if (!progressTokens.IsNullOrEmpty())
+                    {
+                        foreach (var progressToken in progressTokens)
+                        {
+                            if (progressToken == null)
+                                continue;
+
+                            _progressCallback?.Report(progressToken);
+                            await Task.Delay(refreshRate / progressTokens.Count);
+                        }
+                    }
+                    else
+                    {
+                        await Task.Delay(refreshRate);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError(ex, "[PythonPipeline] [TokenProgressLoop]");
+                    await Task.Delay(refreshRate);
+                }
             }
         }
 

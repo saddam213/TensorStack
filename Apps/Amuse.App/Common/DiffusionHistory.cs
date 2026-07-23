@@ -36,6 +36,8 @@ namespace Amuse.App.Common
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public TimeSpan Duration { get; init; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int Length { get; init; }
 
         public string Model { get; init; }
 

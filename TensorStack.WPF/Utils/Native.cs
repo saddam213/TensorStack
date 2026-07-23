@@ -23,6 +23,11 @@ namespace TensorStack.WPF
         [DllImport("USER32.DLL")]
         public static extern int GetDpiForWindow(IntPtr hwnd);
 
+        [DllImport("USER32.dll")]
+        public static extern int SetWindowRgn(nint hWnd, nint hRgn, bool bRedraw);
+
+        [DllImport("GDI32.dll")]
+        public static extern nint CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
 
         [Serializable]
         [StructLayout(LayoutKind.Sequential)]

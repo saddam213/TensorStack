@@ -1,6 +1,5 @@
 ﻿using Amuse.App.Common;
 using System.Windows;
-using System.Windows.Controls;
 using TensorStack.WPF.Controls;
 
 namespace Amuse.App.Controls
@@ -8,8 +7,12 @@ namespace Amuse.App.Controls
     /// <summary>
     /// Interaction logic for StatisticsControl.xaml
     /// </summary>
-    public partial class StatisticsControl : UserControl
+    public partial class StatisticsControl : BaseControl
     {
+        private string _prefixPerSecond = "it/s";
+        private string _prefixSecondsPer = "s/it";
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="StatisticsControl"/> class.
         /// </summary>
@@ -33,5 +36,18 @@ namespace Amuse.App.Controls
             get { return (StatisticsModel)GetValue(StatisticsProperty); }
             set { SetValue(StatisticsProperty, value); }
         }
+
+        public string PrefixPerSecond
+        {
+            get { return _prefixPerSecond; }
+            set { SetProperty(ref _prefixPerSecond, value); }
+        }
+
+        public string PrefixSecondsPer
+        {
+            get { return _prefixSecondsPer; }
+            set { SetProperty(ref _prefixSecondsPer, value); }
+        }
+
     }
 }

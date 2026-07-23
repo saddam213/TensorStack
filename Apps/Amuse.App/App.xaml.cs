@@ -10,6 +10,7 @@ using System.IO;
 using System.Net.Http.Json;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -115,6 +116,26 @@ namespace Amuse.App
 
 
         /// <summary>
+        /// Gets an embedded resource.
+        /// </summary>
+        /// <param name="resourceName">Name of the resource.</param>
+        public static string GetEmbeddedResource(string resourceName)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var resourceStream = assembly.GetManifestResourceStream(resourceName))
+            {
+                if (resourceStream == null)
+                    return string.Empty;
+
+                using (var streamReader = new StreamReader(resourceStream, Encoding.UTF8))
+                {
+                    return streamReader.ReadToEnd();
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Determines whether the application is installed.
         /// </summary>
         private static bool IsApplicationInstalled()
@@ -193,6 +214,11 @@ namespace Amuse.App
             Log.Logger.Information($"[AppShutdown] Shutting down application...");
             using (_appHost)
             {
+                Log.Logger.Information($"[AppShutdown] Deleting Temp Directory.");
+                if (!_settings.DeleteTempDirectory())
+                {
+                    Log.Logger.Information($"[AppShutdown] Failed to delete Temp Directory");
+                }
                 await _cancellationTokenSource.CancelAsync();
                 await SettingsManager.SaveAsync(_settings);
                 await _appHost.StopAsync();
@@ -309,7 +335,7 @@ namespace Amuse.App
         private static async Task ShowExceptionMessage(Exception ex)
         {
             Log.Logger.Error(ex, "[Application] [Exception] An unexpected exception occurred.");
-            await DialogService.ShowErrorAsync("Unexpected Error", $"An unexpected error occurred:\n{ex.Message}");
+            await App.Current.Dispatcher.InvokeAsync(() => DialogService.ShowErrorAsync("Unexpected Error", $"An unexpected error occurred:\n{ex.Message}"));
         }
 
 

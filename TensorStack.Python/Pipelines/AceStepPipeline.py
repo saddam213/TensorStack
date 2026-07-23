@@ -140,6 +140,13 @@ def getLogs() -> list[str]:
 
 
 #------------------------------------------------
+# Get the token entires
+#------------------------------------------------
+def getTokens() -> list[str]:
+    return []
+
+
+#------------------------------------------------
 # Initialize Pipeline
 #------------------------------------------------
 def initialize(config: DataObjects.PipelineConfig):
@@ -149,7 +156,6 @@ def initialize(config: DataObjects.PipelineConfig):
     _pipeline_device_map = Utils.get_pipeline_device_map(config, _execution_device)
     _model_config = Utils.get_model_config(__file__, config)
     return create_pipeline(config)
-
 
 
 #------------------------------------------------

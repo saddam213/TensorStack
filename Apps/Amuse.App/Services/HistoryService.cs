@@ -55,6 +55,8 @@ namespace Amuse.App.Services
                     historyItem = await Json.LoadAsync<DiffusionHistory>(historyFile.FullName);
                 else if (historyFile.Name.StartsWith("GenerateAudio_"))
                     historyItem = await Json.LoadAsync<DiffusionHistory>(historyFile.FullName);
+                else if (historyFile.Name.StartsWith("GenerateText_"))
+                    historyItem = await Json.LoadAsync<DiffusionHistory>(historyFile.FullName);
                 else if (historyFile.Name.StartsWith("ExtractImage_"))
                     historyItem = await Json.LoadAsync<ExtractHistory>(historyFile.FullName);
                 else if (historyFile.Name.StartsWith("ExtractVideo_"))
@@ -480,8 +482,8 @@ namespace Amuse.App.Services
                 MediaType = MediaType.Text,
                 Timestamp = DateTime.Now,
                 LastAccess = DateTime.Now,
-                FilePath = Path.Combine(_settings.DirectoryHistory, $"GenerateText_{key}.json"),
-                MediaPath = Path.Combine(_settings.DirectoryHistory, $"GenerateText_{key}.txt"),
+                FilePath = Path.Combine(_settings.DirectoryHistory, $"Text_{key}.json"),
+                MediaPath = Path.Combine(_settings.DirectoryHistory, $"Text_{key}.txt"),
                 //ThumbPath = Path.Combine(_settings.DirectoryHistory, $"GenerateText_{key}.png"),
                 InputLength = text.Length,
                 InputText = text.Text
@@ -505,11 +507,10 @@ namespace Amuse.App.Services
                 MediaType = MediaType.Text,
                 Timestamp = DateTime.Now,
                 LastAccess = DateTime.Now,
-                FilePath = Path.Combine(_settings.DirectoryHistory, $"GenerateAudio_{key}.json"),
-                MediaPath = Path.Combine(_settings.DirectoryHistory, $"GenerateAudio_{key}.txt"),
+                FilePath = Path.Combine(_settings.DirectoryHistory, $"GenerateText_{key}.json"),
+                MediaPath = Path.Combine(_settings.DirectoryHistory, $"GenerateText_{key}.txt"),
                 //ThumbPath = Path.Combine(_settings.DirectoryHistory, $"GenerateAudio_{key}.png"),
-                //   InputLength = text.Length,
-                //  InputText = text.Text
+                Length = text.Length
             };
 
             return await AddTextInternalAsync(text, history);

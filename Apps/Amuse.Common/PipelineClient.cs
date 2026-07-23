@@ -325,22 +325,62 @@ namespace Amuse.Common
 
 
         /// <summary>
-        /// Run the pipeline
+        /// Generates Image.
         /// </summary>
         /// <param name="options">The options.</param>
-        public async Task<Tensor<float>> RunAsync(PipelineRunOptions options)
+        public async Task<Tensor<float>> GenerateImageAsync(GenerateImageOptions options)
         {
             _isCanceled = false;
-            var response = await SendPipelineRequestAsync(new PipelineRequest(options));
+            var response = await SendPipelineRequestAsync(new PipelineRequest(new PipelineRunOptions
+            {
+                ImageOptions = options
+            }));
             return response.Tensors.FirstOrDefault();
         }
 
 
-        public async Task<PipelineTextResult[]> GenerateText(PipelineRunOptions options)
+        /// <summary>
+        /// Generates Video.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        public async Task<Tensor<float>> GenerateVideoAsync(GenerateVideoOptions options)
         {
             _isCanceled = false;
-            var response = await SendPipelineRequestAsync(new PipelineRequest(options));
-            return response.TextResponse.Results;
+            var response = await SendPipelineRequestAsync(new PipelineRequest(new PipelineRunOptions
+            {
+                VideoOptions = options
+            }));
+            return response.Tensors.FirstOrDefault();
+        }
+
+
+        /// <summary>
+        /// Generates Audio.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        public async Task<Tensor<float>> GenerateAudioAsync(GenerateAudioOptions options)
+        {
+            _isCanceled = false;
+            var response = await SendPipelineRequestAsync(new PipelineRequest(new PipelineRunOptions
+            {
+                AudioOptions = options
+            }));
+            return response.Tensors.FirstOrDefault();
+        }
+
+
+        /// <summary>
+        /// Generates Text.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        public async Task<TextInput[]> GenerateTextAsync(GenerateTextOptions options)
+        {
+            _isCanceled = false;
+            var response = await SendPipelineRequestAsync(new PipelineRequest(new PipelineRunOptions
+            {
+                TextOptions = options
+            }));
+            return response.TextResponse;
         }
     }
 }

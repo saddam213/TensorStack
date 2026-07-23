@@ -355,11 +355,15 @@
                         <UniformGrid Columns="1" >
                             <DockPanel>
                                 <TextBlock  DockPanel.Dock="Top" Text="Prompt" Style="{StaticResource FieldTextBlockStyle}" />
-                                <TextBox  Text="{Binding Options.Prompt}" TextWrapping="Wrap" AcceptsReturn="True" />
+                                <Border Style="{StaticResource TextDropZoneStyle}">
+                                    <CommonControls:PlaceholderTextBox Text="{Binding Options.Prompt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" />
+                                </Border>
                             </DockPanel>
                             <DockPanel x:Name="PanelNegativePrompt" Visibility="{Binding Options.GuidanceScale, Converter={StaticResource GreaterThanToVisibilityConverter}, ConverterParameter=1, FallbackValue=Collapsed}">
                                 <TextBlock DockPanel.Dock="Top" Text="Negative Prompt" Style="{StaticResource FieldTextBlockStyle}" />
-                                <TextBox Text="{Binding Options.NegativePrompt, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" />
+                                <Border Style="{StaticResource TextDropZoneStyle}">
+                                    <CommonControls:PlaceholderTextBox Text="{Binding Options.NegativePrompt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" />
+                                </Border>
                             </DockPanel>
                             <UniformGrid.Style>
                                 <Style TargetType="{x:Type UniformGrid}">

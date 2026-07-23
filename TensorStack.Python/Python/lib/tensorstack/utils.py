@@ -16,7 +16,6 @@ import threading
 import numpy as np
 from pathlib import Path
 from datetime import datetime
-from tqdm import tqdm
 import tensorstack.data_objects as DataObjects
 from tensorstack.enums import ProcessType, MemoryMode, VendorType
 from PIL import Image
@@ -713,16 +712,24 @@ class Stopwatch:
             current_segment = time.perf_counter() - self._start_time
         return (self._total_accumulated + current_segment) * 1000
 
+_token_service = None
 _notification_service = None
 def create_services():
-    global _notification_service
+    global _notification_service, _token_service
     _notification_service = NotificationService()
+    _token_service = TokenService()
 
 def notification_get():
     return _notification_service.get()
 
 def notification_push(key: str, subkey: str, elapsedkey: str = None, value: int = 0, maximum: int = 0, batchValue: int = 0, batchMaximum: int = 0, message: str = None, elapsed: float = 0, timestamp: datetime = datetime.now(), tensor: Buffer = []):
     return _notification_service.push(key= key, subkey= subkey,elapsedkey= elapsedkey, value= value, maximum= maximum, batchValue= batchValue, batchMaximum= batchMaximum, message=message, elapsed= elapsed, timestamp= timestamp, tensor= tensor)
+
+def token_get():
+    return _token_service.get()
+
+def token_push(token: str, token_count: int, elapsed: float = 0):
+    return _token_service.push(token=token,token_count=token_count, elapsed=elapsed)
 
 #------------------------------------------------
 # Helper class handle notifications
@@ -735,6 +742,25 @@ class NotificationService:
     def push(self, key: str, subkey: str, elapsedkey: str = None, value: int = 0, maximum: int = 0, batchValue: int = 0, batchMaximum: int = 0, message: str = None, elapsed: float = 0, timestamp: datetime = datetime.now(), tensor: Buffer = []):
         with self._lock:
             self._items.append((f"{key}|{subkey}|{elapsedkey}|{timestamp.isoformat()}|{elapsed}|{value}|{maximum}|{batchValue}|{batchMaximum}|{message}", np.ascontiguousarray(tensor)))
+
+    def get(self):
+        with self._lock:
+            items_copy = self._items[:]
+            self._items.clear()
+        return items_copy
+
+
+#------------------------------------------------
+# Helper class handle tokens
+#------------------------------------------------
+class TokenService:
+    def __init__(self):
+        self._items = []
+        self._lock = threading.Lock()
+
+    def push(self, token: str, token_count: int, elapsed: float = 0):
+        with self._lock:
+            self._items.append(f"{token_count}|{elapsed}|{token}")
 
     def get(self):
         with self._lock:

@@ -123,11 +123,33 @@ namespace Amuse.Host.PyTorch
         {
             try
             {
-                request.UnpackTensors();
+               
                 PipelineCancellation = new CancellationTokenSource();
-                var pythonOptions = request.RunOptions.ToPythonOptions();
-                var response = await _pipeline.GenerateAsync(pythonOptions, PipelineCancellation.Token);
-                await SendMessage(new PipelineResponse(response), cancellationToken);
+                request.RunOptions.UnpackTensors(request);
+                if (request.RunOptions.ImageOptions != null)
+                {
+                    var pythonOptions = request.RunOptions.ImageOptions.ToPythonOptions();
+                    var response = await _pipeline.GenerateImageAsync(pythonOptions, PipelineCancellation.Token);
+                    await SendMessage(new PipelineResponse(response), cancellationToken);
+                }
+                else if (request.RunOptions.VideoOptions != null)
+                {
+                    var pythonOptions = request.RunOptions.VideoOptions.ToPythonOptions();
+                    var response = await _pipeline.GenerateVideoAsync(pythonOptions, PipelineCancellation.Token);
+                    await SendMessage(new PipelineResponse(response), cancellationToken);
+                }
+                else if (request.RunOptions.AudioOptions != null)
+                {
+                    var pythonOptions = request.RunOptions.AudioOptions.ToPythonOptions();
+                    var response = await _pipeline.GenerateAudioAsync(pythonOptions, PipelineCancellation.Token);
+                    await SendMessage(new PipelineResponse(response), cancellationToken);
+                }
+                else if (request.RunOptions.TextOptions != null)
+                {
+                    var pythonOptions = request.RunOptions.TextOptions.ToPythonOptions();
+                    var response = await _pipeline.GenerateTextAsync(pythonOptions, PipelineCancellation.Token);
+                    await SendMessage(new PipelineResponse(response), cancellationToken);
+                }
             }
             catch (OperationCanceledException ex)
             {

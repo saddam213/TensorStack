@@ -16,6 +16,8 @@ namespace Amuse.App.Common
         private bool _isHistoryEnabled = true;
         private int _count = 4;
         private View _viewType;
+        private string _outputPrefix = "Diffusion_";
+        private bool _outputPostFixSeed = true;
 
         public View ViewType
         {
@@ -78,6 +80,18 @@ namespace Amuse.App.Common
             set { SetProperty(ref _useOutputDirectory, value); }
         }
 
+        public string OutputPrefix
+        {
+            get { return _outputPrefix; }
+            set { SetProperty(ref _outputPrefix, value); }
+        }
+
+        public bool OutputPostFixSeed
+        {
+            get { return _outputPostFixSeed; }
+            set { SetProperty(ref _outputPostFixSeed, value); }
+        }
+
 
         public bool IsValid()
         {
@@ -98,7 +112,7 @@ namespace Amuse.App.Common
         }
 
 
-        private AutomationType[] GetSupportedTypes(View viewType)
+        public static AutomationType[] GetSupportedTypes(View viewType)
         {
             switch (viewType)
             {
@@ -138,6 +152,11 @@ namespace Amuse.App.Common
                     return [AutomationType.Seed];
                 case View.AudioToText:
                     return [AutomationType.Seed, AutomationType.InputFiles];
+
+                case View.ImageToText:
+                    return [AutomationType.InputFiles];
+                case View.TextInstruct:
+                    return [AutomationType.PromptLines, AutomationType.PromptFiles];
                 default:
                     break;
             }

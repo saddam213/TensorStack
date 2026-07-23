@@ -46,7 +46,15 @@ namespace Amuse.Common
         TextToAudio = 400,
 
         [Display(Name = "AudioToText", ShortName = "A2T", Description = "Transcribes incoming spoken speech or environmental audio signals into formatted, written text.")]
-        AudioToText = 500
+        AudioToText = 500,
+
+
+        // Text
+        [Display(Name = "TextToText", ShortName = "T2T", Description = "")]
+        TextToText = 800,
+
+        [Display(Name = "ImageToText", ShortName = "I2T", Description = "")]
+        ImageToText = 801
     }
 
     public enum EnvironmentMode
@@ -526,4 +534,11 @@ namespace Amuse.Common
         Yoruba = 99
     }
 
+
+    public enum ConversationRole
+    {
+        User = 0,
+        System = 1,
+        Assistant = 2
+    }
 }

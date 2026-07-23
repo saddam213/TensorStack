@@ -164,20 +164,20 @@ namespace Amuse.Host.Onnx
         {
             try
             {
-                request.UnpackTensors();
+                request.RunOptions.UnpackTensors(request);
                 if (_pipelineOptions.ProcessType == Common.ProcessType.AudioToText)
                 {
-                    var resultTensor = await GenerateTextAsync(request.RunOptions, cancellationToken);
+                    var resultTensor = await GenerateTextAsync(request.RunOptions.TextOptions, cancellationToken);
                     await SendMessage(new PipelineResponse(resultTensor), cancellationToken);
                 }
                 else if (_pipelineOptions.ProcessType == Common.ProcessType.TextToAudio)
                 {
-                    var resultTensor = await GenerateAudioAsync(request.RunOptions, cancellationToken);
+                    var resultTensor = await GenerateAudioAsync(request.RunOptions.AudioOptions, cancellationToken);
                     await SendMessage(new PipelineResponse(resultTensor), cancellationToken);
                 }
                 else
                 {
-                    var resultTensor = await GenerateImageAsync(request.RunOptions, cancellationToken);
+                    var resultTensor = await GenerateImageAsync(request.RunOptions.ImageOptions, cancellationToken);
                     await SendMessage(new PipelineResponse(resultTensor), cancellationToken);
                 }
             }
@@ -194,7 +194,7 @@ namespace Amuse.Host.Onnx
         }
 
 
-        private async Task<ImageTensor> GenerateImageAsync(PipelineRunOptions options, CancellationToken cancellationToken)
+        private async Task<ImageTensor> GenerateImageAsync(Common.GenerateImageOptions options, CancellationToken cancellationToken)
         {
             var onnxOptions = options.ToOnnxOptions(_pipelineOptions, _executionProvider);
             var diffusionPipeline = _pipeline as IPipeline<ImageTensor, GenerateOptions, GenerateProgress>;
@@ -202,7 +202,7 @@ namespace Amuse.Host.Onnx
         }
 
 
-        private async Task<AudioTensor> GenerateAudioAsync(PipelineRunOptions options, CancellationToken cancellationToken)
+        private async Task<AudioTensor> GenerateAudioAsync(Common.GenerateAudioOptions options, CancellationToken cancellationToken)
         {
             var supertonicPipeline = _pipeline as IPipeline<AudioTensor, SupertonicOptions, RunProgress>;
             var pipelineOptions = new SupertonicOptions
@@ -219,7 +219,7 @@ namespace Amuse.Host.Onnx
         }
 
 
-        public async Task<PipelineTextResult[]> GenerateTextAsync(PipelineRunOptions options, CancellationToken cancellationToken)
+        public async Task<TextInput[]> GenerateTextAsync(Common.GenerateTextOptions options, CancellationToken cancellationToken)
         {
             var pipelineOptions = new WhisperOptions
             {
@@ -232,7 +232,6 @@ namespace Amuse.Host.Onnx
                 MinLength = options.MinLength,
                 NoRepeatNgramSize = options.NoRepeatNgramSize,
                 LengthPenalty = options.LengthPenalty,
-                DiversityLength = options.DiversityLength,
                 EarlyStopping = Enum.Parse<EarlyStopping>(options.EarlyStopping, true),
                 Language = options.GetLanguageType(),
                 Task = Enum.Parse<TaskType>(options.Task),
@@ -254,11 +253,11 @@ namespace Amuse.Host.Onnx
                 return await beamSearchPipeline.RunAsync(new WhisperSearchOptions(pipelineOptions), _progressRelayGenerateTextCallback, cancellationToken);
             });
 
-            var results = new PipelineTextResult[pipelineResult.Length];
+            var results = new TextInput[pipelineResult.Length];
             for (int i = 0; i < pipelineResult.Length; i++)
             {
                 var beamResult = pipelineResult[i];
-                results[i] = new PipelineTextResult
+                results[i] = new TextInput
                 {
                     Beam = beamResult.Beam,
                     PenaltyScore = beamResult.PenaltyScore,

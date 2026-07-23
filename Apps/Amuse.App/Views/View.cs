@@ -38,6 +38,10 @@ namespace Amuse.App.Views
         AudioToText = 301,
         TextToMusic = 302,
 
+        TextInstruct = 400,
+        TextConverse = 401,
+        ImageToText = 410,
+
         Recent = 1000,
         Gallery = 1001
     }
@@ -48,7 +52,8 @@ namespace Amuse.App.Views
         Settings = 1,
         Image = 10,
         Video = 20,
-        Audio = 30
+        Audio = 30,
+        Text = 40
     }
 
     public static class ViewManager
@@ -58,10 +63,10 @@ namespace Amuse.App.Views
         {
             {ViewCategory.Other, View.Gallery },
             {ViewCategory.Settings, View.General },
-          //  {ViewCategory.Text, View.TextSummary },
             {ViewCategory.Image, View.TextToImage },
             {ViewCategory.Video, View.TextToVideo },
-            {ViewCategory.Audio, View.TextToMusic }
+            {ViewCategory.Audio, View.TextToMusic },
+            {ViewCategory.Text, View.TextInstruct }
         };
 
 
@@ -104,7 +109,12 @@ namespace Amuse.App.Views
              // Audio
             { View.TextToMusic, ViewCategory.Audio  },
             { View.TextToAudio, ViewCategory.Audio  },
-            { View.AudioToText, ViewCategory.Audio  }
+            { View.AudioToText, ViewCategory.Audio  },
+
+            // Text
+            { View.TextInstruct, ViewCategory.Text  },
+            { View.TextConverse, ViewCategory.Text  },
+            { View.ImageToText, ViewCategory.Text  },
         };
 
 

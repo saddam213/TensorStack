@@ -32,7 +32,7 @@ Built for performance and flexibility, TensorStack powers all applications devel
 
 | Package | Description | Docs | Package |
 |---------|-------------|------|---------|
-| TensorStack.Common | Shared runtime and utilities | [README](TensorStack.Common/README.md) | [![Common Badge](https://img.shields.io/nuget/v/TensorStack.Common?color=4bc51e&label=TensorStack.Common)](https://www.nuget.org/packages/TensorStack.Common) | 
+| TensorStack.Common | Shared runtime and utilities | [README](TensorStack.Common/README.md) | [![Common Badge](https://img.shields.io/nuget/v/TensorStack.Common?color=4bc51e&label=TensorStack.Common)](https://www.nuget.org/packages/TensorStack.Common) |
 | TensorStack.TextGeneration | Text generation and LLM integrations | [README](TensorStack.TextGeneration/README.md) | [![TextGeneration Badge](https://img.shields.io/nuget/v/TensorStack.TextGeneration?color=4bc51e&label=TensorStack.TextGeneration)](https://www.nuget.org/packages/TensorStack.TextGeneration) |
 | TensorStack.StableDiffusion | Stable Diffusion image generation | [README](TensorStack.StableDiffusion/README.md) | [![StableDiffusion Badge](https://img.shields.io/nuget/v/TensorStack.StableDiffusion?color=4bc51e&label=TensorStack.StableDiffusion)](https://www.nuget.org/packages/TensorStack.StableDiffusion) |
 | TensorStack.Upscaler | AI image upscaling | [README](TensorStack.Common/Upscaler.md) | [![Upscaler Badge](https://img.shields.io/nuget/v/TensorStack.Upscaler?color=4bc51e&label=TensorStack.Upscaler)](https://www.nuget.org/packages/TensorStack.Upscaler) |
@@ -75,3 +75,15 @@ Built for performance and flexibility, TensorStack powers all applications devel
 | TensorStack.Audio.Windows | Windows implementation using FFMPEG | [README](TensorStack.Audio.Windows/README.md) | [![Audio.Windows Badge](https://img.shields.io/nuget/v/TensorStack.Audio.Windows?color=4bc51e&label=TensorStack.Audio.Windows)](https://www.nuget.org/packages/TensorStack.Audio.Windows) |
 
 ---
+
+
+### External Dependencies
+- `FFMPEG` https://github.com/FFmpeg/FFmpeg
+- `PdfPig` https://github.com/UglyToad/PdfPig
+- `Markdig` https://github.com/xoofx/markdig
+- `Serilog` https://github.com/serilog/serilog
+- `CSnakes` https://github.com/tonybaloney/CSnakes
+- `SkiaSharp` https://github.com/mono/SkiaSharp
+- `ZstdSharp` https://github.com/oleg-st/ZstdSharp
+- `OpenCvSharp4` https://github.com/shimat/opencvsharp
+- `HtmlAgilityPack` https://github.com/zzzprojects/html-agility-pack

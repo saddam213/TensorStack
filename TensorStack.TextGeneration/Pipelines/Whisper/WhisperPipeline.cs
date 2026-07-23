@@ -350,8 +350,6 @@ namespace TensorStack.TextGeneration.Pipelines.Whisper
                     Value = progressValue,
                     Maximum = progressTotal
                 });
-
-                //Debug.WriteLine(_totalProgressText + _progressText);
             });
         }
 

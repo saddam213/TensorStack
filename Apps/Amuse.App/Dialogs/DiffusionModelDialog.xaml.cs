@@ -367,6 +367,10 @@ namespace Amuse.App.Dialogs
                     CheckBoxTextToAudio.IsChecked = true;
                 if (processType == ProcessType.AudioToText)
                     CheckBoxAudioToText.IsChecked = true;
+                if (processType == ProcessType.TextToText)
+                    CheckBoxTextToText.IsChecked = true;
+                if (processType == ProcessType.ImageToText)
+                    CheckBoxImageToText.IsChecked = true;
             }
         }
 
@@ -397,6 +401,10 @@ namespace Amuse.App.Dialogs
                     yield return ProcessType.TextToAudio;
                 if (CheckBoxAudioToText.IsChecked == true)
                     yield return ProcessType.AudioToText;
+                if (CheckBoxTextToText.IsChecked == true)
+                    yield return ProcessType.TextToText;
+                if (CheckBoxImageToText.IsChecked == true)
+                    yield return ProcessType.ImageToText;
             }
             return [.. ProcessTypes()];
         }
@@ -430,6 +438,13 @@ namespace Amuse.App.Dialogs
                     yield return View.TextToMusic;
                 if (CheckBoxViewTextToAudio.IsChecked == true)
                     yield return View.TextToAudio;
+
+                if (CheckBoxViewImageToText.IsChecked == true)
+                    yield return View.ImageToText;
+                if (CheckBoxViewTextInstruct.IsChecked == true)
+                    yield return View.TextInstruct;
+                if (CheckBoxViewTextConverse.IsChecked == true)
+                    yield return View.TextConverse;
             }
 
             var viewFilters = ViewFilters().ToArray();
@@ -471,6 +486,13 @@ namespace Amuse.App.Dialogs
                     CheckBoxViewTextToMusic.IsChecked = true;
                 if (viewType == View.TextToAudio)
                     CheckBoxViewTextToAudio.IsChecked = true;
+
+                if (viewType == View.ImageToText)
+                    CheckBoxViewImageToText.IsChecked = true;
+                if (viewType == View.TextInstruct)
+                    CheckBoxViewTextInstruct.IsChecked = true;
+                if (viewType == View.TextConverse)
+                    CheckBoxViewTextConverse.IsChecked = true;
             }
         }
 
