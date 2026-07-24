@@ -33,6 +33,7 @@
                                         x:Name="ModelControl"
                                         ViewType="TextToMusic"
                                         ProcessType="TextToAudio"
+                                        IsLoraAvailable="False"
                                         IsLoraSupported="False"
                                         IsUpscalerSupported="False"
                                         IsExtractorSupported="False"

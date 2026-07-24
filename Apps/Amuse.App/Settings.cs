@@ -305,7 +305,7 @@ namespace Amuse.App
         {
             try
             {
-                return FileHelper.DeleteDirectory(DirectoryTemp);
+                return FileHelper.DeleteDirectory(Path.Combine(DirectoryTemp, "EBWebView"));
             }
             catch (Exception)
             {

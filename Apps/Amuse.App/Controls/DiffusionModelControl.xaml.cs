@@ -46,6 +46,7 @@ namespace Amuse.App.Controls
         private bool _isLoraEnabled;
         private bool _isExtractorSupported;
         private bool _isExtractorEnabled;
+        private bool _isLoraAvailable = true;
 
         private DeviceModel _currentDevice;
         private DiffusionModel _currentModel;
@@ -255,6 +256,12 @@ namespace Amuse.App.Controls
         {
             get { return _isLoraEnabled; }
             set { SetProperty(ref _isLoraEnabled, value); SetDefaultLora(); ValidateSelection(); }
+        }
+
+        public bool IsLoraAvailable
+        {
+            get { return _isLoraAvailable; }
+            set { SetProperty(ref _isLoraAvailable, value); }
         }
 
 
@@ -593,7 +600,7 @@ namespace Amuse.App.Controls
             if (_selectedModel is null)
                 return;
 
-            IsLoraSupported = IsLoraEnabled && _selectedModel.Backend == BackendType.PyTorch;
+            IsLoraSupported = IsLoraAvailable && _selectedModel.Backend == BackendType.PyTorch;
             SelectedQualityMode = _selectedModel.UserQualityMode is null
                 ? _selectedDevice?.DefaultQualityMode ?? QualityMode.Standard
                 : _selectedModel.UserQualityMode.Value;
