@@ -32,7 +32,7 @@ class CountingStreamer(TextIteratorStreamer):
 class TextPipeline:
     tokenizer: PreTrainedTokenizerBase
     processor: ProcessorMixin
-    transformer: PreTrainedModel
+    base_model: PreTrainedModel
     kwargs: dict[str, Any]
     streamer: Optional[CountingStreamer] = None
 
@@ -41,7 +41,7 @@ class TextPipeline:
     #------------------------------------------------
     def generate_inputs(self, options: GenerateTextOptions, cancel: Event, images: ImageInput) -> dict[str, Any]:
         set_seed(options.seed)
-        device = self.transformer.device
+        device = self.base_model.device
         conversation = self._parse_conversation(options, images)
         prompt = self._apply_chat_template(conversation)
         inputs = self._get_inputs(prompt, images).to(device)
@@ -97,7 +97,7 @@ class TextPipeline:
         exceptions = Queue()
         def worker():
             try:
-                result = self.transformer.generate(**kwargs)
+                result = self.base_model.generate(**kwargs)
                 results.put(result)
             except Exception as e:
                 exceptions.put(e)
@@ -135,7 +135,7 @@ class TextPipeline:
     def _generate_beam_result(self, kwargs: dict[str, Any]):
         results = []
         input_length = kwargs["input_ids"].shape[-1]
-        output = self.transformer.generate(**kwargs)
+        output = self.base_model.generate(**kwargs)
         for beam_idx, sequence in enumerate(output.sequences):
             score = 0.0
             text = self.tokenizer.decode(sequence[input_length:], skip_special_tokens=True)
@@ -226,20 +226,20 @@ def get_model_config(file_path: str, config: PipelineConfig):
     template_path= Path(file_path).resolve().parent / "Templates" / config.template
 
     # Configs
-    transformer_config = template_path / "transformer" / "config.json"
+    base_model_config = template_path / "config.json"
 
     # Paths
-    transformer_path = Path(config.checkpoint_config.transformer) if config.checkpoint_config.transformer else None
-    single_file = transformer_path if transformer_path and transformer_path.is_file() else None
+    base_model_path = Path(config.checkpoint_config.text_encoder) if config.checkpoint_config.text_encoder else None
+    single_file = base_model_path if base_model_path and base_model_path.is_file() else None
 
     _model_config = {
         "template": template_path,
         "single_file": single_file,
-        "transformer": transformer_path,
-        "transformer_config": transformer_config,
+        "base_model": base_model_path,
+        "base_model_config": base_model_config,
     }
 
-    info_1 = f"\n\tTemplate: {config.template} \n\tModelType: {config.model_type} \n\tModelPath: {config.model_path} \n\tTemplatePath: {template_path}\n\tTransformer: {transformer_path}"
+    info_1 = f"\n\tTemplate: {config.template} \n\tModelType: {config.model_type} \n\tModelPath: {config.model_path} \n\tTemplatePath: {template_path}\n\tBaseModel: {base_model_path}"
     print(f"[Load] Initialize Model... \n[ {info_1} \n]")
     return _model_config
 
@@ -258,5 +258,5 @@ def get_device_map(config: PipelineConfig, execution_device: str):
 #------------------------------------------------
 def configure_memory(pipeline: TextPipeline, execution_device: str, config: PipelineConfig) -> bool:
     if config.memory_mode == MemoryMode.OffloadGPU:
-        pipeline.transformer.to(execution_device)
+        pipeline.base_model.to(execution_device)
     return config.memory_mode in (MemoryMode.OffloadCPU, MemoryMode.OffloadModel)

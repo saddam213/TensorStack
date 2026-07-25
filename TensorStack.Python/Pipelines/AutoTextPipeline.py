@@ -161,7 +161,7 @@ def load_tokenizer(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
     # 1. Load from pretrained folder
     print(f"[Load] Loading Pretrained Tokenizer")
     tokenizer = AutoTokenizer.from_pretrained(
-        _model_config["transformer"],
+        _model_config["base_model"],
         dtype=config.data_type,
         **pipeline_kwargs
     )
@@ -180,7 +180,7 @@ def load_processor(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
         # 1. Load from pretrained folder
         print(f"[Load] Loading Processor")
         return AutoProcessor.from_pretrained(
-            _model_config["transformer"],
+            _model_config["base_model"],
             dtype=config.data_type,
             **pipeline_kwargs
         )
@@ -191,32 +191,32 @@ def load_processor(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
 #------------------------------------------------
 # Load AutoModelForCausalLM/AutoModelForImageTextToText
 #------------------------------------------------
-def load_transformer(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
-    if _pipeline and _pipeline.transformer:
-        print(f"[Load] Loading Cached Transformer")
-        return _pipeline.transformer
+def load_base_model(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
+    if _pipeline and _pipeline.base_model:
+        print(f"[Load] Loading Cached BaseModel")
+        return _pipeline.base_model
 
     # 1. Load from pretrained folder
     if config.model_type == "Vision":
-        print(f"[Load] Loading AutoModelForImageTextToText Transformer")
-        transformer = AutoModelForImageTextToText.from_pretrained(
-            _model_config["transformer"],
+        print(f"[Load] Loading AutoModelForImageTextToText BaseModel")
+        base_model = AutoModelForImageTextToText.from_pretrained(
+            _model_config["base_model"],
             dtype=config.data_type,
             device_map=_device_map,
             quantization_config=auto_pretrained_config(config, QuantTarget.TEXT_ENCODER),
             **pipeline_kwargs
         )
     else:
-        print(f"[Load] Loading AutoModelForCausalLM Transformer")
-        transformer = AutoModelForCausalLM.from_pretrained(
-            _model_config["transformer"],
+        print(f"[Load] Loading AutoModelForCausalLM BaseModel")
+        base_model = AutoModelForCausalLM.from_pretrained(
+            _model_config["base_model"],
             dtype=config.data_type,
             device_map=_device_map,
             quantization_config=auto_pretrained_config(config, QuantTarget.TEXT_ENCODER),
             **pipeline_kwargs
         )
     trim_memory(True)
-    return transformer
+    return base_model
 
 
 #------------------------------------------------
@@ -233,13 +233,13 @@ def create_pipeline(config: PipelineConfig):
     # Load Models
     tokenizer = load_tokenizer(config, pipeline_kwargs)
     processor = load_processor(config, pipeline_kwargs)
-    transformer = load_transformer(config, pipeline_kwargs)
+    base_model = load_base_model(config, pipeline_kwargs)
 
     # Build Pipeline
     pipeline = TextPipeline(
         tokenizer=tokenizer,
         processor=processor,
-        transformer=transformer,
+        base_model=base_model,
         kwargs=pipeline_kwargs
     )
     return pipeline

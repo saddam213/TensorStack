@@ -117,7 +117,7 @@
                     <DockPanel DockPanel.Dock="Bottom" >
 
                         <!--Execute/Cancel-->
-                        <UniformGrid DockPanel.Dock="Right" Columns="2" Width="260" IsEnabled="{Binding IsPipelineLoaded, Mode=OneWay}" Margin="0,4,0,0">
+                        <UniformGrid DockPanel.Dock="Right" Columns="2" Width="260" Margin="0,4,0,0">
                             <DockPanel >
                                 <Button DockPanel.Dock="Left" Width="30" Command="{Binding StopCommand, Mode=OneWay}" Visibility="{Binding DiffusionService.IsCanceling, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" ToolTip="Immediately stops generation by closing the backend process." ToolTipService.InitialShowDelay="200">
                                     <CommonControls:FontAwesome Icon="f00d" Color="{StaticResource DangerColour}" />

@@ -10150,7 +10150,7 @@
     {
       "Id": 800,
       "Backend": "PyTorch",
-      "Name": "Qwen3 4B",
+      "Name": "Qwen 3.0 4B",
       "Template": "Qwen3_4B",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Base",
@@ -10158,8 +10158,8 @@
       "MediaType": "Text",
       "ProcessTypes": [ "TextToText" ],
       "Checkpoint": {
-        "Transformer": {
-          "Name": "Transformer",
+        "TextEncoder": {
+          "Name": "TextEncoder",
           "Type": "Component",
           "Path": "TE_Qwen3_4B"
         }
@@ -10190,13 +10190,12 @@
         "Temperature": 0.6,
         "IsSamplingEnabled": true,
         "NoRepeatNgramSize": 0
-      },
-      "UserQualityMode": "Production"
+      }
     },
     {
       "Id": 801,
       "Backend": "PyTorch",
-      "Name": "Qwen3 4B VL",
+      "Name": "Qwen 3.0 4B VL",
       "Template": "Qwen3_4B_VL",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Vision",
@@ -10204,8 +10203,8 @@
       "MediaType": "Text",
       "ProcessTypes": [ "TextToText", "ImageToText" ],
       "Checkpoint": {
-        "Transformer": {
-          "Name": "Transformer",
+        "TextEncoder": {
+          "Name": "TextEncoder",
           "Type": "Component",
           "Path": "TE_Qwen3_4B-VL"
         }
@@ -10236,13 +10235,12 @@
         "Temperature": 0.6,
         "IsSamplingEnabled": false,
         "NoRepeatNgramSize": 0
-      },
-      "UserQualityMode": "Production"
+      }
     },
     {
       "Id": 802,
       "Backend": "PyTorch",
-      "Name": "Qwen3 8B",
+      "Name": "Qwen 3.0 8B",
       "Template": "Qwen3_8B",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Base",
@@ -10250,8 +10248,8 @@
       "MediaType": "Text",
       "ProcessTypes": [ "TextToText" ],
       "Checkpoint": {
-        "Transformer": {
-          "Name": "Transformer",
+        "TextEncoder": {
+          "Name": "TextEncoder",
           "Type": "Component",
           "Path": "TE_Qwen3_8B"
         }
@@ -10282,13 +10280,12 @@
         "Temperature": 0.6,
         "IsSamplingEnabled": false,
         "NoRepeatNgramSize": 0
-      },
-      "UserQualityMode": "Production"
+      }
     },
     {
       "Id": 803,
       "Backend": "PyTorch",
-      "Name": "Qwen3 8B VL",
+      "Name": "Qwen 3.0 8B VL",
       "Template": "Qwen3_8B_VL",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Vision",
@@ -10296,8 +10293,8 @@
       "MediaType": "Text",
       "ProcessTypes": [ "TextToText", "ImageToText" ],
       "Checkpoint": {
-        "Transformer": {
-          "Name": "Transformer",
+        "TextEncoder": {
+          "Name": "TextEncoder",
           "Type": "Component",
           "Path": "TE_Qwen3_8B-VL"
         }
@@ -10328,8 +10325,399 @@
         "Temperature": 0.7,
         "IsSamplingEnabled": false,
         "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Id": 804,
+      "Backend": "PyTorch",
+      "Name": "Qwen 3.0 14B",
+      "Template": "Qwen3_14B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "OnlineFolder",
+          "Folder": "Qwen3-14B",
+          "DownloadFiles": [
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/config.json",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/generation_config.json",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/merges.txt",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/model.safetensors.index.json",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/model-00001-of-00008.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/model-00002-of-00008.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/model-00003-of-00008.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/model-00004-of-00008.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/model-00005-of-00008.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/model-00006-of-00008.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/model-00007-of-00008.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/model-00008-of-00008.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/tokenizer.json",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/tokenizer_config.json",
+            "https://huggingface.co/Qwen/Qwen3-14B/resolve/main/vocab.json"
+          ]
+        }
       },
-      "UserQualityMode": "Production"
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 12, 12 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 17, 17 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 26, 26 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 40960,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.6,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Id": 805,
+      "Backend": "PyTorch",
+      "Name": "Qwen 3.0 32B",
+      "Template": "Qwen3_32B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "OnlineFolder",
+          "Folder": "Qwen3-32B",
+          "DownloadFiles": [
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/config.json",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/generation_config.json",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/merges.txt",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model.safetensors.index.json",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00001-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00002-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00003-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00004-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00005-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00006-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00007-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00008-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00009-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00010-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00011-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00012-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00013-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00014-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00015-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00016-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/model-00017-of-00017.safetensors",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/tokenizer.json",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/tokenizer_config.json",
+            "https://huggingface.co/Qwen/Qwen3-32B/resolve/main/vocab.json"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 20, 20 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 34, 34 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 60, 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 40960,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.6,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Id": 806,
+      "Backend": "PyTorch",
+      "Name": "Qwen 3.5 4B",
+      "Template": "Qwen35_4B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "OnlineFolder",
+          "Folder": "Qwen3.5-4B",
+          "DownloadFiles": [
+            "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/main/chat_template.jinja",
+            "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/main/config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/main/merges.txt",
+            "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/main/model-00001-of-00002.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/main/model-00002-of-00002.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/main/model.safetensors.index.json",
+            "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/main/preprocessor_config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/main/tokenizer.json",
+            "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/main/tokenizer_config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/main/video_preprocessor_config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/main/vocab.json"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 20, 20 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 34, 34 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 60, 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Id": 807,
+      "Backend": "PyTorch",
+      "Name": "Qwen 3.5 9B",
+      "Template": "Qwen35_9B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "OnlineFolder",
+          "Folder": "Qwen3.5-9B",
+          "DownloadFiles": [
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/chat_template.jinja",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/merges.txt",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/model-00001-of-00004.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/model-00002-of-00004.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/model-00003-of-00004.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/model-00004-of-00004.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/model.safetensors.index.json",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/preprocessor_config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/tokenizer.json",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/tokenizer_config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/video_preprocessor_config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/main/vocab.json"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 20, 20 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 34, 34 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 60, 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Id": 808,
+      "Backend": "PyTorch",
+      "Name": "Qwen 3.5 27B",
+      "Template": "Qwen35_27B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "OnlineFolder",
+          "Folder": "Qwen3.5-27B",
+          "DownloadFiles": [
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/chat_template.jinja",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/generation_config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/merges.txt",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model-00001-of-00011.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model-00002-of-00011.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model-00003-of-00011.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model-00004-of-00011.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model-00005-of-00011.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model-00006-of-00011.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model-00007-of-00011.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model-00008-of-00011.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model-00009-of-00011.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model-00010-of-00011.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model-00011-of-00011.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/model.safetensors.index.json",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/preprocessor_config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/tokenizer.json",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/tokenizer_config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/video_preprocessor_config.json",
+            "https://huggingface.co/Qwen/Qwen3.5-27B/resolve/main/vocab.json"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 20, 20 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 34, 34 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 60, 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Id": 809,
+      "Backend": "PyTorch",
+      "Name": "Qwen 3.6 27B",
+      "Template": "Qwen36_27B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "OnlineFolder",
+          "Folder": "Qwen3.6-27B",
+          "DownloadFiles": [
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/chat_template.jinja",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/config.json",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/configuration.json",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/generation_config.json",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/merges.txt",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00001-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00002-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00003-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00004-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00005-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00006-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00007-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00008-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00009-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00010-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00011-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00012-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00013-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00014-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model-00015-of-00015.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/model.safetensors.index.json",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/preprocessor_config.json",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/tokenizer.json",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/tokenizer_config.json",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/video_preprocessor_config.json",
+            "https://huggingface.co/Qwen/Qwen3.6-27B/resolve/main/vocab.json"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 20, 20 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 34, 34 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 60, 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
     }
   ],
   "LoraAdapterModels": [
