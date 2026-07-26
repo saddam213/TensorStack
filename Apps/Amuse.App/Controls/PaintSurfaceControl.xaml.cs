@@ -59,7 +59,7 @@ namespace Amuse.App.Controls
         }
 
         public static readonly DependencyProperty SettingsProperty = DependencyProperty.Register(nameof(Settings), typeof(Settings), typeof(PaintSurfaceControl));
-        public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(nameof(Options), typeof(DiffusionInputOptions), typeof(PaintSurfaceControl));
+        public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(nameof(Options), typeof(GenerateInputOptions), typeof(PaintSurfaceControl));
         public static readonly DependencyProperty ProgressProperty = DependencyProperty.Register(nameof(Progress), typeof(ProgressInfo), typeof(PaintSurfaceControl));
         public static readonly DependencyProperty OverlayImageProperty = DependencyProperty.Register(nameof(OverlayImage), typeof(ImageInput), typeof(PaintSurfaceControl));
         public static readonly DependencyProperty OverlayOpacityProperty = DependencyProperty.Register(nameof(OverlayOpacity), typeof(double), typeof(PaintSurfaceControl), new PropertyMetadata(0.3));
@@ -83,9 +83,9 @@ namespace Amuse.App.Controls
             set { SetValue(SettingsProperty, value); }
         }
 
-        public DiffusionInputOptions Options
+        public GenerateInputOptions Options
         {
-            get { return (DiffusionInputOptions)GetValue(OptionsProperty); }
+            get { return (GenerateInputOptions)GetValue(OptionsProperty); }
             set { SetValue(OptionsProperty, value); }
         }
 

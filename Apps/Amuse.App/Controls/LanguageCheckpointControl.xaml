@@ -1,0 +1,46 @@
+﻿<CommonControls:BaseControl x:Class="Amuse.App.Controls.LanguageCheckpointControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Amuse.App.Controls"
+             xmlns:CommonControls="clr-namespace:TensorStack.WPF.Controls;assembly=TensorStack.WPF" >
+    <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:LanguageCheckpointControl}}}">
+        <TabControl SelectedIndex="{Binding SelectedIndex}">
+
+            <!--TextModel-->
+            <TabItem Visibility="{Binding Checkpoint.TextModel, Converter={StaticResource NullVisibilityConverter}}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Margin="3">
+                        <TextBlock Text="TextModel" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextModel}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="False" SupportedTypes="{Binding CheckpointTypes}"/>
+                </Border>
+            </TabItem>
+
+            <!--TextModel2-->
+            <TabItem Visibility="{Binding Checkpoint.TextModel2, Converter={StaticResource NullVisibilityConverter}}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" Margin="3">
+                        <TextBlock Text="TextModel2" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextModel2}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="False" SupportedTypes="{Binding CheckpointTypes}"/>
+                </Border>
+            </TabItem>
+
+
+            <TabControl.Template>
+                <ControlTemplate TargetType="TabControl">
+                    <DockPanel>
+                        <UniformGrid IsItemsHost="True" Rows="1" DockPanel.Dock="Top"></UniformGrid>
+                        <ContentPresenter ContentSource="SelectedContent"></ContentPresenter>
+                    </DockPanel>
+                </ControlTemplate>
+            </TabControl.Template>
+        </TabControl>
+    </Grid>
+</CommonControls:BaseControl>

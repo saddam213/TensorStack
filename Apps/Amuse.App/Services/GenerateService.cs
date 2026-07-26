@@ -12,8 +12,7 @@ using TensorStack.Video;
 
 namespace Amuse.App.Services
 {
-
-    public sealed class DiffusionService : ServiceBase, IDiffusionService
+    public sealed class GenerateService : ServiceBase, IGenerateService
     {
         private readonly ILogger _logger;
         private readonly Settings _settings;
@@ -24,13 +23,13 @@ namespace Amuse.App.Services
         private bool _isLoading;
         private bool _isExecuting;
         private bool _isCanceling;
-        private IDiffusionRuntime _diffusionRuntime;
+        private BackendClient _backenClient;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DiffusionService"/> class.
+        /// Initializes a new instance of the <see cref="GenerateService"/> class.
         /// </summary>
         /// <param name="settings">The settings.</param>
-        public DiffusionService(Settings settings, IEnvironmentService environmentService, IMediaService mediaService, IPreviewService previewService, ILogger<DiffusionService> logger)
+        public GenerateService(Settings settings, IEnvironmentService environmentService, IMediaService mediaService, IPreviewService previewService, ILogger<GenerateService> logger)
         {
             _logger = logger;
             _settings = settings;
@@ -42,12 +41,12 @@ namespace Amuse.App.Services
         /// <summary>
         /// Gets the pipeline.
         /// </summary>
-        public PipelineModel Pipeline => _diffusionRuntime?.Pipeline;
+        public PipelineModel Pipeline => _backenClient?.Pipeline;
 
         /// <summary>
         /// Gets the default options.
         /// </summary>
-        public DiffusionDefaultOptions DefaultOptions => _diffusionRuntime?.DefaultOptions;
+        public GenerateDefaultOptions DefaultOptions => _backenClient?.DefaultOptions;
 
         /// <summary>
         /// Gets a value indicating whether this instance is loaded.
@@ -102,21 +101,21 @@ namespace Amuse.App.Services
             IsCanceling = false;
             try
             {
-                if (_diffusionRuntime != null)
+                if (_backenClient != null)
                 {
                     await _previewService.UnloadAsync();
-                    await _diffusionRuntime.UnloadAsync();
+                    await _backenClient.UnloadAsync();
                     DisposeRuntime();
                 }
 
-                _diffusionRuntime = pipeline.DiffusionModel.Backend switch
+                _backenClient = pipeline.GenerateModel.Backend switch
                 {
-                    BackendType.PyTorch => new PyTorchDiffusion(_settings, _environmentService, _mediaService, _logger),
-                    BackendType.OnnxRuntime => new OnnxDiffusion(_settings, _mediaService, _logger),
+                    BackendType.PyTorch => new PyTorchBackendClient(_settings, _mediaService, _environmentService, _logger),
+                    BackendType.OnnxRuntime => new OnnxBackendClient(_settings, _mediaService, _logger),
                     _ => throw new NotImplementedException()
                 };
 
-                await _diffusionRuntime.LoadAsync(pipeline, progressCallback);
+                await _backenClient.LoadAsync(pipeline, progressCallback);
                 await _previewService.LoadAsync(pipeline);
                 IsLoaded = true;
             }
@@ -144,7 +143,7 @@ namespace Amuse.App.Services
             IsCanceling = false;
             try
             {
-                await _diffusionRuntime.ReloadAsync(pipeline, progressCallback);
+                await _backenClient.ReloadAsync(pipeline, progressCallback);
                 IsLoaded = true;
             }
             catch (OperationCanceledException)
@@ -163,7 +162,7 @@ namespace Amuse.App.Services
 
         public async Task UpdateAsync(PipelineModel pipeline)
         {
-            await _diffusionRuntime.UpdateAsync(pipeline);
+            await _backenClient.UpdateAsync(pipeline);
         }
 
 
@@ -171,13 +170,13 @@ namespace Amuse.App.Services
         /// Execute the upscaler
         /// </summary>
         /// <param name="request">The request.</param>
-        public async Task<ImageTensor> GenerateImageAsync(DiffusionInputOptions options)
+        public async Task<ImageTensor> GenerateImageAsync(GenerateInputOptions options)
         {
             IsExecuting = true;
             IsCanceling = false;
             try
             {
-                return await _diffusionRuntime.GenerateImageAsync(options);
+                return await _backenClient.GenerateImageAsync(options);
             }
             finally
             {
@@ -187,13 +186,13 @@ namespace Amuse.App.Services
         }
 
 
-        public async Task<VideoInputStream> GenerateVideoAsync(DiffusionInputOptions options)
+        public async Task<VideoInputStream> GenerateVideoAsync(GenerateInputOptions options)
         {
             IsExecuting = true;
             IsCanceling = false;
             try
             {
-                return await _diffusionRuntime.GenerateVideoAsync(options);
+                return await _backenClient.GenerateVideoAsync(options);
             }
             finally
             {
@@ -203,13 +202,13 @@ namespace Amuse.App.Services
         }
 
 
-        public async Task<AudioInputStream> GenerateAudioAsync(DiffusionInputOptions options)
+        public async Task<AudioInputStream> GenerateAudioAsync(GenerateInputOptions options)
         {
             IsExecuting = true;
             IsCanceling = false;
             try
             {
-                return await _diffusionRuntime.GenerateAudioAsync(options);
+                return await _backenClient.GenerateAudioAsync(options);
             }
 
             finally
@@ -220,13 +219,13 @@ namespace Amuse.App.Services
         }
 
 
-        public async Task<TextResult> GenerateTextAsync(DiffusionInputOptions options)
+        public async Task<TextResult> GenerateTextAsync(GenerateInputOptions options)
         {
             IsExecuting = true;
             IsCanceling = false;
             try
             {
-                return await _diffusionRuntime.GenerateTextAsync(options);
+                return await _backenClient.GenerateTextAsync(options);
             }
 
             finally
@@ -254,7 +253,7 @@ namespace Amuse.App.Services
             try
             {
                 IsCanceling = true;
-                await _diffusionRuntime.CancelAsync();
+                await _backenClient.CancelAsync();
             }
             catch (Exception) { }
         }
@@ -268,7 +267,7 @@ namespace Amuse.App.Services
             try
             {
                 await _previewService.UnloadAsync();
-                await _diffusionRuntime.StopAsync();
+                await _backenClient.StopAsync();
             }
             catch (Exception) { }
             finally
@@ -288,7 +287,7 @@ namespace Amuse.App.Services
         public async Task UnloadAsync()
         {
             await _previewService.UnloadAsync();
-            await _diffusionRuntime.UnloadAsync();
+            await _backenClient.UnloadAsync();
             IsLoaded = false;
             IsLoading = false;
             IsExecuting = false;
@@ -298,8 +297,8 @@ namespace Amuse.App.Services
 
         private void DisposeRuntime()
         {
-            _diffusionRuntime?.Dispose();
-            _diffusionRuntime = null;
+            _backenClient?.Dispose();
+            _backenClient = null;
         }
 
 
@@ -311,14 +310,25 @@ namespace Amuse.App.Services
     }
 
 
-    public interface IDiffusionService : IDiffusionRuntime
+    public interface IGenerateService
     {
         bool IsLoaded { get; }
         bool IsLoading { get; }
         bool IsExecuting { get; }
         bool IsCanceling { get; }
         bool CanCancel { get; }
-
+        PipelineModel Pipeline { get; }
+        GenerateDefaultOptions DefaultOptions { get; }
+        Task LoadAsync(PipelineModel pipeline, IProgress<PipelineProgress> progressCallback);
+        Task ReloadAsync(PipelineModel pipeline, IProgress<PipelineProgress> progressCallback);
+        Task UpdateAsync(PipelineModel pipeline);
+        Task UnloadAsync();
+        Task CancelAsync();
+        Task StopAsync();
+        Task<ImageTensor> GenerateImageAsync(GenerateInputOptions options);
+        Task<VideoInputStream> GenerateVideoAsync(GenerateInputOptions options);
+        Task<AudioInputStream> GenerateAudioAsync(GenerateInputOptions options);
+        Task<TextResult> GenerateTextAsync(GenerateInputOptions options);
         Task<ImageInput> GeneratePreviewAsync(PipelineProgress progress);
     }
 }

@@ -19,7 +19,7 @@ namespace Amuse.App.Controls
     {
         private bool _isAudioInputEnabled;
         private SchedulerInputOptions[] _schedulers;
-        private DiffusionInputOption _selectedOption;
+        private InputTabOption _selectedOption;
         private bool _isSupertonicPipeline;
         private bool _isWhisperPipeline;
 
@@ -34,7 +34,7 @@ namespace Amuse.App.Controls
         }
 
         public static readonly DependencyProperty PipelineProperty = DependencyProperty.Register(nameof(Pipeline), typeof(PipelineModel), typeof(AudioDiffusionInputControl), new PropertyMetadata<AudioDiffusionInputControl, PipelineModel>((c, o, n) => c.OnPipelineChanged(o, n)));
-        public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(nameof(Options), typeof(DiffusionInputOptions), typeof(AudioDiffusionInputControl));
+        public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(nameof(Options), typeof(GenerateInputOptions), typeof(AudioDiffusionInputControl));
         public static readonly DependencyProperty AutomationOptionsProperty = DependencyProperty.Register(nameof(AutomationOptions), typeof(AutomationOptions), typeof(AudioDiffusionInputControl));
         public static readonly DependencyProperty IsExecutingProperty = DependencyProperty.Register(nameof(IsExecuting), typeof(bool), typeof(AudioDiffusionInputControl));
         public static readonly DependencyProperty IsAutomatingProperty = DependencyProperty.Register(nameof(IsAutomating), typeof(bool), typeof(AudioDiffusionInputControl));
@@ -52,9 +52,9 @@ namespace Amuse.App.Controls
             set { SetValue(PipelineProperty, value); }
         }
 
-        public DiffusionInputOptions Options
+        public GenerateInputOptions Options
         {
-            get { return (DiffusionInputOptions)GetValue(OptionsProperty); }
+            get { return (GenerateInputOptions)GetValue(OptionsProperty); }
             set { SetValue(OptionsProperty, value); }
         }
 
@@ -100,7 +100,7 @@ namespace Amuse.App.Controls
             set { SetProperty(ref _schedulers, value); }
         }
 
-        public DiffusionInputOption SelectedOption
+        public InputTabOption SelectedOption
         {
             get { return _selectedOption; }
             set { SetProperty(ref _selectedOption, value); }
@@ -139,7 +139,7 @@ namespace Amuse.App.Controls
             }
 
             var previousOptions = Options;
-            Options = new DiffusionInputOptions
+            Options = new GenerateInputOptions
             {
                 // Keep
                 Prompt = previousOptions?.Prompt,
@@ -298,10 +298,4 @@ namespace Amuse.App.Controls
         public float FloatValue { get; set; }
     }
 
-    public enum AudioDiffusionInputOption
-    {
-        Options = 0,
-        Advanced = 1,
-        Automation = 2,
-    }
 }

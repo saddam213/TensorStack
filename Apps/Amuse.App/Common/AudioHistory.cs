@@ -39,8 +39,6 @@ namespace Amuse.App.Common
 
         public string Model { get; init; }
 
-        public DiffusionInputOption Options { get; init; }
-
 
         [JsonIgnore]
         public string FilePath { get; set; }

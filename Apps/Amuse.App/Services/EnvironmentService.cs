@@ -3,6 +3,7 @@ using Amuse.Common;
 using Amuse.Common.Config;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -88,14 +89,14 @@ namespace Amuse.App.Services
 
         public EnvironmentModel GetEnvironment(PipelineModel pipeline)
         {
-            return GetEnvironment(pipeline.Device, pipeline.DiffusionModel);
+            return GetEnvironment(pipeline.Device, pipeline.GenerateModel.Pipeline);
         }
 
 
-        public EnvironmentModel GetEnvironment(Device device, DiffusionModel diffusionModel)
+        public EnvironmentModel GetEnvironment(Device device, PipelineType pipelineType)
         {
             var pipelineEnvironment = _settings.Environments
-                .Where(x => x.Vendor == device.Vendor && x.Type == EnvironmentType.Pipeline && x.Pipeline == diffusionModel.Pipeline)
+                .Where(x => x.Vendor == device.Vendor && x.Type == EnvironmentType.Pipeline && x.Pipeline == pipelineType)
                 .OrderByDescending(x => x.IsDefault)
                 .FirstOrDefault();
             if (pipelineEnvironment != null)
@@ -119,9 +120,28 @@ namespace Amuse.App.Services
         }
 
 
+        public PipelineCreateOptions CreatePipelineOptions(EnvironmentModel environment, EnvironmentMode environmentMode = EnvironmentMode.Create)
+        {
+            var environmentConfig = new PipelineCreateOptions
+            {
+                IsDebug = _settings.IsServerDebugEnabled,
+                Directory = App.DirectoryPython,
+                Environment = environment.Environment,
+                PythonVersion = environment.PythonVersion,
+                Requirements = environment.Requirements.ToArray(),
+                Variables = environment.Variables?.ToDictionary() ?? new Dictionary<string, string>(),
+                Mode = environmentMode
+            };
+
+            environmentConfig.Variables.Add("HF_HUB_OFFLINE", "1");
+            environmentConfig.Variables.Add("HF_HUB_CACHE", _settings.DirectoryDiffusion);
+            return environmentConfig;
+        }
+
+
         private async Task CreateInternalAsync(EnvironmentModel environment, EnvironmentMode mode, IProgress<PipelineProgress> progressCallback, CancellationToken cancellationToken = default)
         {
-            var createOptions = environment.ToClientOptions(_settings, mode);
+            var createOptions = CreatePipelineOptions(environment, mode);
             var clientConfig = new ClientConfig
             {
                 IsDebugMode = createOptions.IsDebug,
@@ -136,6 +156,9 @@ namespace Amuse.App.Services
                 await SaveEnvironmentStatusAsync(environment);
             }
         }
+
+
+
 
 
         private static string GetPath(EnvironmentModel environment)
@@ -168,6 +191,9 @@ namespace Amuse.App.Services
         EnvironmentMode GetStatus(EnvironmentModel environment);
 
         EnvironmentModel GetEnvironment(PipelineModel pipeline);
-        EnvironmentModel GetEnvironment(Device device, DiffusionModel diffusionModel);
+        EnvironmentModel GetEnvironment(Device device, PipelineType pipelineType);
+
+
+        PipelineCreateOptions CreatePipelineOptions(EnvironmentModel environment, EnvironmentMode environmentMode = EnvironmentMode.Create);
     }
 }

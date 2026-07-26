@@ -22,7 +22,6 @@ namespace TensorStack.StableDiffusion.Schedulers
         /// <summary>
         /// Initializes a new instance of the <see cref="SchedulerBase"/> class.
         /// </summary>
-        /// <param name="stableDiffusionOptions">The stable diffusion options.</param>
         /// <param name="schedulerOptions">The scheduler options.</param>
         public SchedulerBase(ISchedulerOptions schedulerOptions)
         {

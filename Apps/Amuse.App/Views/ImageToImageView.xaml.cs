@@ -25,8 +25,8 @@ namespace Amuse.App.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageToImageView"/> class.
         /// </summary>
-        public ImageToImageView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<ImageToImageView> logger)
-            : base(settings, navigationService, downloadService, diffusionService, extractService, upscaleService, historyService, logger)
+        public ImageToImageView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IGenerateService generateService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<ImageToImageView> logger)
+            : base(settings, navigationService, downloadService, generateService, extractService, upscaleService, historyService, logger)
         {
             InitializeComponent();
         }
@@ -53,7 +53,7 @@ namespace Amuse.App.Views
         {
             await base.OpenAsync(args);
             if (!IsPipelineLoaded)
-                ModelControl.SetPipeline(DiffusionService.Pipeline);
+                ModelControl.SetPipeline(GenerateService.Pipeline);
         }
 
 
@@ -103,7 +103,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[ImageToImage] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Pipeline", ex.Message);
             }
@@ -147,12 +147,12 @@ namespace Amuse.App.Views
 
                     // Images
                     if (CurrentPipeline.ProcessType == ProcessType.ImageToImage)
-                        automationJob.DiffusionOptions.InputImages = [_sourceImage];
+                        automationJob.GenerateOptions.InputImages = [_sourceImage];
                     else if (CurrentPipeline.ProcessType == ProcessType.ImageControlNet)
-                        automationJob.DiffusionOptions.InputControlImages = [_sourceImage];
+                        automationJob.GenerateOptions.InputControlImages = [_sourceImage];
 
                     // Diffusion
-                    var resultTensor = await ExecuteImageDiffusionAsync(automationJob.DiffusionOptions);
+                    var resultTensor = await ExecuteImageDiffusionAsync(automationJob.GenerateOptions);
 
                     // Upscale
                     resultTensor = await ExecuteImageUpscaleAsync(resultTensor);
@@ -164,7 +164,7 @@ namespace Amuse.App.Views
                     // History
                     if (AutomationOptions.IsHistoryEnabled)
                     {
-                        await SaveHistoryAsync(automationJob.DiffusionOptions);
+                        await SaveHistoryAsync(automationJob.GenerateOptions);
                     }
 
                     await automationJob.SaveAsync(ResultImage);
@@ -182,7 +182,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[ImageToImage] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Automation", ex.Message);
             }
@@ -239,7 +239,7 @@ namespace Amuse.App.Views
         /// Save history
         /// </summary>
         /// <param name="options">The options.</param>
-        private async Task<ImageInput> SaveHistoryAsync(DiffusionInputOptions options)
+        private async Task<ImageInput> SaveHistoryAsync(GenerateInputOptions options)
         {
             Logger.LogInformation($"[ImageToImage] [SaveHistory] Saving history...");
             var result = await HistoryService.AddAsync(ResultImage, new DiffusionHistory

@@ -12,7 +12,7 @@ namespace Amuse.App.Controls
     /// </summary>
     public partial class ExtractInputControl : BaseControl
     {
-        private ExtractInputOption _selectedOption;
+        private InputTabOption _selectedOption;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExtractInputControl"/> class.
@@ -73,7 +73,7 @@ namespace Amuse.App.Controls
             set { SetValue(IsAutomatingProperty, value); }
         }
 
-        public ExtractInputOption SelectedOption
+        public InputTabOption SelectedOption
         {
             get { return _selectedOption; }
             set { SetProperty(ref _selectedOption, value); }
@@ -140,11 +140,4 @@ namespace Amuse.App.Controls
 
     }
 
-
-    public enum ExtractInputOption
-    {
-        Options = 0,
-        Advanced = 1,
-        Automation = 2,
-    }
 }

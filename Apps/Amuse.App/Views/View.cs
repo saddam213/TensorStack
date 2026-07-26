@@ -14,6 +14,7 @@ namespace Amuse.App.Views
         Upscale = 56,
         Downloads = 57,
         Component = 58,
+        Language = 59,
 
         TextToImage = 100,
         ImageToImage = 101,
@@ -85,6 +86,7 @@ namespace Amuse.App.Views
             { View.Upscale , ViewCategory.Settings  },
             { View.Downloads , ViewCategory.Settings  },
             { View.Component , ViewCategory.Settings  },
+            { View.Language , ViewCategory.Settings  },
 
             // Image
             { View.TextToImage, ViewCategory.Image  },

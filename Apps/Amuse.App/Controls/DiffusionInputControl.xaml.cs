@@ -26,7 +26,7 @@ namespace Amuse.App.Controls
         private SchedulerInputOptions[] _schedulers;
         private bool _isImageControlNetSupported;
         private bool _isImageToImageControlNetSupported;
-        private DiffusionInputOption _selectedOption;
+        private InputTabOption _selectedOption;
 
         public DiffusionInputControl()
         {
@@ -37,7 +37,7 @@ namespace Amuse.App.Controls
         }
 
         public static readonly DependencyProperty PipelineProperty = DependencyProperty.Register(nameof(Pipeline), typeof(PipelineModel), typeof(DiffusionInputControl), new PropertyMetadata<DiffusionInputControl, PipelineModel>((c, o, n) => c.OnPipelineChanged(o, n)));
-        public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(nameof(Options), typeof(DiffusionInputOptions), typeof(DiffusionInputControl));
+        public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(nameof(Options), typeof(GenerateInputOptions), typeof(DiffusionInputControl));
         public static readonly DependencyProperty UpscaleOptionsProperty = DependencyProperty.Register(nameof(UpscaleOptions), typeof(UpscaleInputOptions), typeof(DiffusionInputControl));
         public static readonly DependencyProperty ExtractOptionsProperty = DependencyProperty.Register(nameof(ExtractOptions), typeof(ExtractInputOptions), typeof(DiffusionInputControl));
         public static readonly DependencyProperty AutomationOptionsProperty = DependencyProperty.Register(nameof(AutomationOptions), typeof(AutomationOptions), typeof(DiffusionInputControl));
@@ -57,9 +57,9 @@ namespace Amuse.App.Controls
             set { SetValue(PipelineProperty, value); }
         }
 
-        public DiffusionInputOptions Options
+        public GenerateInputOptions Options
         {
-            get { return (DiffusionInputOptions)GetValue(OptionsProperty); }
+            get { return (GenerateInputOptions)GetValue(OptionsProperty); }
             set { SetValue(OptionsProperty, value); }
         }
 
@@ -166,7 +166,7 @@ namespace Amuse.App.Controls
             set { SetProperty(ref _isImageToImageControlNetSupported, value); }
         }
 
-        public DiffusionInputOption SelectedOption
+        public InputTabOption SelectedOption
         {
             get { return _selectedOption; }
             set { SetProperty(ref _selectedOption, value); }
@@ -201,7 +201,7 @@ namespace Amuse.App.Controls
             IsImageToImageControlNetSupported = newPipeline.DiffusionModel.ProcessTypes.Contains(ProcessType.ImageToImageControlNet);
 
             var previousOptions = Options;
-            Options = new DiffusionInputOptions
+            Options = new GenerateInputOptions
             {
                 // Keep
                 Prompt = previousOptions?.Prompt,
@@ -273,13 +273,5 @@ namespace Amuse.App.Controls
             Options.Height = _selectedResolution.Height;
         }
 
-    }
-
-
-    public enum DiffusionInputOption
-    {
-        Options = 0,
-        Advanced = 1,
-        Automation = 2,
     }
 }

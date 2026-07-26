@@ -55,7 +55,7 @@ namespace Amuse.App.Services
 
         public Task CancelAsync<T>(T model) where T : IDownloadModel
         {
-            var queueItem = _downloadItems.FirstOrDefault(x => x.DownloadModel is DiffusionModel && x.DownloadModel.Id == model.Id);
+            var queueItem = _downloadItems.FirstOrDefault(x => x.DownloadModel is IGenerateModel && x.DownloadModel.Id == model.Id);
             if (queueItem == null)
                 return Task.CompletedTask;
 
@@ -109,10 +109,10 @@ namespace Amuse.App.Services
             }
 
 
-            if (model is DiffusionModel diffusionModel)
+            if (model is IGenerateModel generateModel)
             {
                 var componentsQueued = false;
-                foreach (var checkpointComponent in diffusionModel.Checkpoint.GetComponents())
+                foreach (var checkpointComponent in generateModel.GetComponents())
                 {
                     if (checkpointComponent.Type != CheckpointType.Component)
                         continue;
@@ -134,7 +134,7 @@ namespace Amuse.App.Services
                 }
 
                 // If diffusion model is already installed exit here
-                if (diffusionModel.Status == ModelStatusType.Installed)
+                if (generateModel.Status == ModelStatusType.Installed)
                     return componentsQueued;
             }
 
@@ -199,7 +199,11 @@ namespace Amuse.App.Services
                 }
                 else if (queueItem.DownloadModel is DiffusionModel diffusionModel)
                 {
-                    await DownloadDiffusionCheckpointAsync(queueItem, _settings.DirectoryDiffusion, diffusionModel, components);
+                    await DownloadCheckpointAsync(queueItem, _settings.DirectoryDiffusion, diffusionModel, components);
+                }
+                else if (queueItem.DownloadModel is LanguageModel languageModel)
+                {
+                    await DownloadCheckpointAsync(queueItem, _settings.DirectoryLangaugeModel, languageModel, components);
                 }
 
                 RemoveQueueItem(queueItem);
@@ -248,23 +252,25 @@ namespace Amuse.App.Services
         }
 
 
-        private async Task DownloadDiffusionCheckpointAsync(DownloadQueueItem queueItem, string directory, DiffusionModel diffusionModel, IReadOnlyCollection<ComponentModel> components)
+        private async Task DownloadCheckpointAsync(DownloadQueueItem queueItem, string directory, IGenerateModel checkpointModel, IReadOnlyCollection<ComponentModel> components)
         {
-            var diffusionCheckpointFiles = new Dictionary<string, string[]>();
-            foreach (var checkpoint in diffusionModel.Checkpoint.GetComponents())
+            var checkpointFiles = new Dictionary<string, string[]>();
+            foreach (var checkpoint in checkpointModel.GetComponents())
             {
                 if (checkpoint.Type == CheckpointType.OnlineFolder || checkpoint.Type == CheckpointType.OnlineFile)
                 {
                     if (!checkpoint.IsInstalled(directory, components))
                     {
                         var output = CheckpointComponent.GetSafePath(directory, checkpoint.Folder, checkpoint.Path);
-                        diffusionCheckpointFiles.Add(output, checkpoint.DownloadFiles);
+                        checkpointFiles.Add(output, checkpoint.DownloadFiles);
                     }
                 }
             }
 
-            await _downloadService.DownloadAsync(diffusionCheckpointFiles, queueItem.ProgressCallback, queueItem.CancellationToken);
+            await _downloadService.DownloadAsync(checkpointFiles, queueItem.ProgressCallback, queueItem.CancellationToken);
         }
+
+
 
 
         private async Task UpdateStatus(DownloadQueueItem queueItem, ModelStatusType status)

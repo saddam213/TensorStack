@@ -25,8 +25,8 @@ namespace Amuse.App.Views
         private ImageInput _sourceImage3;
         private ImageInput _sourceImage4;
 
-        public ImageEditView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<ImageEditView> logger)
-            : base(settings, navigationService, downloadService, diffusionService, extractService, upscaleService, historyService, logger)
+        public ImageEditView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IGenerateService generateService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<ImageEditView> logger)
+            : base(settings, navigationService, downloadService, generateService, extractService, upscaleService, historyService, logger)
         {
             InitializeComponent();
         }
@@ -77,7 +77,7 @@ namespace Amuse.App.Views
         {
             await base.OpenAsync(args);
             if (!IsPipelineLoaded)
-                ModelControl.SetPipeline(DiffusionService.Pipeline);
+                ModelControl.SetPipeline(GenerateService.Pipeline);
         }
 
 
@@ -124,7 +124,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[ImageEdit] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Pipeline", ex.Message);
             }
@@ -168,7 +168,7 @@ namespace Amuse.App.Views
                         SourceImage1 = automationJob.InputImages[0];
 
                     // Options
-                    var options = automationJob.DiffusionOptions with { InputImages = GetInputTensors() };
+                    var options = automationJob.GenerateOptions with { InputImages = GetInputTensors() };
 
                     // Execute
                     var resultTensor = await ExecuteImageDiffusionAsync(options);
@@ -183,7 +183,7 @@ namespace Amuse.App.Views
                     // History
                     if (AutomationOptions.IsHistoryEnabled)
                     {
-                        await SaveHistoryAsync(automationJob.DiffusionOptions);
+                        await SaveHistoryAsync(automationJob.GenerateOptions);
                     }
 
                     await automationJob.SaveAsync(ResultImage);
@@ -201,7 +201,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[ImageEdit] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Automation", ex.Message);
             }
@@ -241,7 +241,7 @@ namespace Amuse.App.Views
         /// Save history
         /// </summary>
         /// <param name="options">The options.</param>
-        private async Task<ImageInput> SaveHistoryAsync(DiffusionInputOptions options)
+        private async Task<ImageInput> SaveHistoryAsync(GenerateInputOptions options)
         {
             Logger.LogInformation($"[ImageEdit] [SaveHistory] Saving history...");
             var result = await HistoryService.AddAsync(ResultImage, new DiffusionHistory

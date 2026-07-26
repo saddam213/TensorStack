@@ -1,4 +1,5 @@
 ﻿using Amuse.App.Common;
+using Amuse.App.Controls;
 using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
@@ -8,7 +9,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using TensorStack.Common;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
@@ -18,15 +18,15 @@ namespace Amuse.App.Views
     /// <summary>
     /// Interaction logic for TextInstructView.xaml
     /// </summary>
-    public partial class TextInstructView : ViewBaseDiffusion
+    public partial class TextInstructView : ViewBaseLanguage
     {
         private string _automationPrompt;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextInstructView"/> class.
         /// </summary>
-        public TextInstructView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextInstructView> logger)
-            : base(settings, navigationService, downloadService, diffusionService, extractService, upscaleService, historyService, logger)
+        public TextInstructView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IGenerateService generateService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextInstructView> logger)
+            : base(settings, navigationService, downloadService, generateService, extractService, upscaleService, historyService, logger)
         {
             InitializeComponent();
         }
@@ -35,7 +35,7 @@ namespace Amuse.App.Views
         /// Gets the view.
         /// </summary>
         public override View View => View.TextInstruct;
-
+       
         /// <summary>
         /// Gets or sets the automation prompt.
         /// </summary>
@@ -45,6 +45,11 @@ namespace Amuse.App.Views
             set { SetProperty(ref _automationPrompt, value); }
         }
 
+        /// <summary>
+        /// Gets the text result control.
+        /// </summary>
+        protected override TextResultControl TextResultControl => TextResultElement;
+
 
         /// <summary>
         /// On View Open
@@ -53,7 +58,7 @@ namespace Amuse.App.Views
         {
             await base.OpenAsync(args);
             if (!IsPipelineLoaded)
-                ModelControl.SetPipeline(DiffusionService.Pipeline);
+                ModelControl.SetPipeline(GenerateService.Pipeline);
         }
 
 
@@ -70,7 +75,7 @@ namespace Amuse.App.Views
                 Progress.Clear();
                 Statistics.Clear();
                 ResultText = default;
-                await TextResult.ClearAsync();
+                await TextResultControl.ClearAsync();
                 Statistics.Start();
 
                 // Context
@@ -108,7 +113,7 @@ namespace Amuse.App.Views
                 };
 
                 // Execute
-                var textResult = await ExecuteTextDiffusionAsync(options);
+                var textResult = await ExecuteLanguageModelAsync(options);
 
                 // Result
                 Statistics.Stop();
@@ -126,7 +131,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[TextInstruct] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Pipeline", ex.Message);
             }
@@ -180,20 +185,20 @@ namespace Amuse.App.Views
 
                     // Reset
                     ResultText = default;
-                    await TextResult.ClearAsync();
+                    await TextResultControl.ClearAsync();
                     conversation.RemoveAll(x => !x.Role.Equals("system"));
-                    AutomationPrompt = $"{Options.Prompt}{automationJob.DiffusionOptions.Prompt}";
+                    AutomationPrompt = $"{Options.Prompt}{automationJob.GenerateOptions.Prompt}";
 
                     // User Prompt
                     conversation.Add(new ConversationModel
                     {
                         Role =  ConversationRole.User,
                         ImageIndex = imageIndex,
-                        Content = $"{textContext}{automationJob.DiffusionOptions.Prompt}",
+                        Content = $"{textContext}{automationJob.GenerateOptions.Prompt}",
                     });
 
                     // Options
-                    var options = automationJob.DiffusionOptions with
+                    var options = automationJob.GenerateOptions with
                     {
                         Prompt = null,
                         Prompt2 = null,
@@ -202,7 +207,7 @@ namespace Amuse.App.Views
                     };
 
                     // Diffusion
-                    var textResult = await ExecuteTextDiffusionAsync(options);
+                    var textResult = await ExecuteLanguageModelAsync(options);
 
                     // Result
                     ResultText = textResult;
@@ -228,7 +233,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[TextInstruct] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Automation", ex.Message);
             }
@@ -248,7 +253,7 @@ namespace Amuse.App.Views
         /// Save history
         /// </summary>
         /// <param name="options">The options.</param>
-        private async Task<TextInput> SaveHistoryAsync(DiffusionInputOptions options)
+        private async Task<TextInput> SaveHistoryAsync(GenerateInputOptions options)
         {
             Logger.LogInformation($"[TextInstruct] [SaveHistory] Saving history...");
             var history = new TextInput(Utils.GetResponseText(ResultText.Result.Text));
@@ -256,58 +261,12 @@ namespace Amuse.App.Views
             var result = await HistoryService.AddAsync(history, new DiffusionHistory
             {
                 Options = options,
-                Model = CurrentPipeline.DiffusionModel.Name,
+                Model = CurrentPipeline.LanguageModel.Name,
                 LoraModels = CurrentPipeline.LoraAdapterModel?.Select(x => x.Name).ToArray(),
                 Source = View.TextInstruct,
             });
             Logger.LogInformation($"[TextInstruct] [SaveHistory] History saved.");
             return result;
-        }
-
-
-        protected override void OnProgress(PipelineProgress progress)
-        {
-            if (CurrentPipeline is null)
-                return;
-
-            if (progress.Key == "Generate")
-            {
-                if (progress.Subkey == "Initialize")
-                {
-                    CommandManager.InvalidateRequerySuggested();
-                }
-                else if (progress.Subkey == "Token")
-                {
-                    Statistics.Update(progress);
-                    TextResult.UpdateProgress(progress);
-                }
-                else
-                {
-                    if (DiffusionService.IsExecuting)
-                    {
-                        var message = progress.Subkey == "Transformer" && Options.Beams > 1
-                             ? "Generating Beam Results..."
-                             : Globalization.GetProgressMessage(progress);
-                        Progress.Indeterminate(message);
-                    }
-                }
-            }
-
-            if (progress.Subkey != "Token")
-            {
-                Logger.LogDebug("[{View}] [OnProgress] {Subkey} - {Message}", ViewName, progress.Subkey, progress.Message);
-            }
-        }
-
-
-        private void SourceText_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
-            {
-                e.Handled = true;
-                if (CanExecute())
-                    ExecuteCommand.Execute(null);
-            }
         }
     }
 }

@@ -308,7 +308,7 @@ namespace TensorStack.Extractors.Pipelines
             direction = new SKPoint(direction.X / length, direction.Y / length);
             var perp = new SKPoint(-direction.Y, direction.X);
             using (var paint = new SKPaint { Color = color, IsAntialias = true, Style = SKPaintStyle.Fill })
-            using (var path = new SKPath())
+            using (var path = new SKPathBuilder())
             {
                 // left side
                 var p0 = new SKPoint(jointA.X + perp.X * thickness, jointA.Y + perp.Y * thickness);
@@ -326,7 +326,7 @@ namespace TensorStack.Extractors.Pipelines
                 path.CubicTo(p1, p2, p3);
                 path.CubicTo(q1, q2, q3);
                 path.Close();
-                canvas.DrawPath(path, paint);
+                canvas.DrawPath(path.Detach(), paint);
             }
         }
 

@@ -25,8 +25,8 @@ namespace Amuse.App.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="TextToMusicView"/> class.
         /// </summary>
-        public TextToMusicView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextToMusicView> logger)
-            : base(settings, navigationService, downloadService, diffusionService, extractService, upscaleService, historyService, logger)
+        public TextToMusicView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IGenerateService generateService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextToMusicView> logger)
+            : base(settings, navigationService, downloadService, generateService, extractService, upscaleService, historyService, logger)
         {
             AppendLyricCommand = new RelayCommand<string>(AppendLyric, CanAppendLyric);
             AppendLyricExampleCommand = new RelayCommand<string>(AppendLyricExample, CanAppendLyric);
@@ -57,7 +57,7 @@ namespace Amuse.App.Views
         {
             await base.OpenAsync(args);
             if (!IsPipelineLoaded)
-                ModelControl.SetPipeline(DiffusionService.Pipeline);
+                ModelControl.SetPipeline(GenerateService.Pipeline);
         }
 
 
@@ -112,7 +112,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[TextToMusic] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Pipeline", ex.Message);
             }
@@ -152,7 +152,7 @@ namespace Amuse.App.Views
                     //    Options.Prompt2 = automationJob.InputTexts[0].Text;
 
                     // Diffusion
-                    var resultTensor = await ExecuteAudioDiffusionAsync(automationJob.DiffusionOptions);
+                    var resultTensor = await ExecuteAudioDiffusionAsync(automationJob.GenerateOptions);
 
                     // Result
                     ResultAudio = resultTensor;
@@ -160,7 +160,7 @@ namespace Amuse.App.Views
                     // History
                     if (AutomationOptions.IsHistoryEnabled)
                     {
-                        await SaveHistoryAsync(resultTensor, automationJob.DiffusionOptions);
+                        await SaveHistoryAsync(resultTensor, automationJob.GenerateOptions);
                     }
 
                     //await automationJob.SaveAsync(ResultAudio);
@@ -178,7 +178,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[TextToMusic] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Automation", ex.Message);
             }
@@ -229,7 +229,7 @@ namespace Amuse.App.Views
         /// Save history
         /// </summary>
         /// <param name="options">The options.</param>
-        private async Task<AudioInputStream> SaveHistoryAsync(AudioInputStream audioStream, DiffusionInputOptions options)
+        private async Task<AudioInputStream> SaveHistoryAsync(AudioInputStream audioStream, GenerateInputOptions options)
         {
             Logger.LogInformation($"[TextToMusic] [SaveHistory] Saving history...");
             var result = await HistoryService.AddAsync(audioStream, new DiffusionHistory

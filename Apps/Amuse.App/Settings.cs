@@ -30,6 +30,7 @@ namespace Amuse.App
         {
             Pipelines = Enum.GetValues<PipelineType>();
             DiffusionPipelines = Pipelines.Where(x => (int)x < 500).ToArray();
+            LanguagePipelines = [PipelineType.AutoTextPipeline];
         }
 
         [AppDefault]
@@ -62,6 +63,9 @@ namespace Amuse.App
 
         [JsonIgnore]
         public string DirectoryExtract { get; private set; }
+
+        [JsonIgnore]
+        public string DirectoryLangaugeModel { get; private set; }
 
         public int ReadBuffer { get; set; } = 32;
         public int WriteBuffer { get; set; } = 32;
@@ -143,6 +147,9 @@ namespace Amuse.App
         public ObservableCollection<DiffusionModel> DiffusionModels { get; set; }
 
         [AppDefault]
+        public ObservableCollection<LanguageModel> LanguageModels { get; set; }
+
+        [AppDefault]
         public ObservableCollection<LoraAdapterModel> LoraAdapterModels { get; set; }
 
         [AppDefault]
@@ -211,6 +218,16 @@ namespace Amuse.App
                 pipeline.DiffusionModel.UserMemoryMode = pipeline.MemoryMode;
                 pipeline.DiffusionModel.IsDefault = true;
             }
+            if (pipeline.LanguageModel != null)
+            {
+                var defaultModel = LanguageModels.FirstOrDefault(x => x.IsDefault);
+                if (defaultModel is not null)
+                    defaultModel.IsDefault = false;
+
+                pipeline.LanguageModel.UserQualityMode = pipeline.QualityMode;
+                //pipeline.LanguageModel.UserMemoryMode = pipeline.MemoryMode;
+                pipeline.LanguageModel.IsDefault = true;
+            }
             if (pipeline.UpscaleModel != null)
             {
                 var defaultModel = UpscaleModels.FirstOrDefault(x => x.IsDefault);
@@ -240,6 +257,9 @@ namespace Amuse.App
 
             foreach (var diffusionModel in DiffusionModels)
                 diffusionModel.Initialize(this);
+
+            foreach (var languageModel in LanguageModels)
+                languageModel.Initialize(this);
 
             foreach (var loraAdapterModel in LoraAdapterModels)
                 loraAdapterModel.Initialize(this);
@@ -273,6 +293,7 @@ namespace Amuse.App
         {
             DirectoryModel = directory;
             DirectoryDiffusion = Path.Combine(directory, "Diffusion");
+            DirectoryLangaugeModel = Path.Combine(directory, "TextEncoder");
             DirectoryUpscale = Path.Combine(directory, "Upscale");
             DirectoryExtract = Path.Combine(directory, "Extract");
             DirectoryControlNet = Path.Combine(directory, "ControlNet");
@@ -298,6 +319,7 @@ namespace Amuse.App
             Directory.CreateDirectory(DirectoryExtract);
             Directory.CreateDirectory(DirectoryControlNet);
             Directory.CreateDirectory(DirectoryLoraAdapter);
+            Directory.CreateDirectory(DirectoryLangaugeModel);
         }
 
 
@@ -319,5 +341,8 @@ namespace Amuse.App
 
         [JsonIgnore]
         public PipelineType[] DiffusionPipelines { get; }
+
+        [JsonIgnore]
+        public PipelineType[] LanguagePipelines { get; }
     }
 }

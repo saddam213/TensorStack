@@ -82,7 +82,7 @@ namespace Amuse.App
             builder.Services.AddSingleton<IHistoryService, HistoryService>();
             builder.Services.AddSingleton<IUpscaleService, UpscaleService>();
             builder.Services.AddSingleton<IExtractService, ExtractService>();
-            builder.Services.AddSingleton<IDiffusionService, DiffusionService>();
+            builder.Services.AddSingleton<IGenerateService, GenerateService>();
             builder.Services.AddSingleton<IEnvironmentService, EnvironmentService>();
             builder.Services.AddSingleton<IInterpolationService, InterpolationService>();
             builder.Services.AddSingleton<IModelDownloadService, ModelDownloadService>();

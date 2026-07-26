@@ -21,8 +21,8 @@ namespace Amuse.App.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="TextToVideoView"/> class.
         /// </summary>
-        public TextToVideoView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextToVideoView> logger)
-            : base(settings, navigationService, downloadService, diffusionService, extractService, upscaleService, historyService, logger)
+        public TextToVideoView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IGenerateService generateService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextToVideoView> logger)
+            : base(settings, navigationService, downloadService, generateService, extractService, upscaleService, historyService, logger)
         {
             InitializeComponent();
         }
@@ -40,7 +40,7 @@ namespace Amuse.App.Views
         {
             await base.OpenAsync(args);
             if (!IsPipelineLoaded)
-                ModelControl.SetPipeline(DiffusionService.Pipeline);
+                ModelControl.SetPipeline(GenerateService.Pipeline);
         }
 
 
@@ -94,7 +94,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[TextToVideo] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Pipeline", ex.Message);
             }
@@ -132,7 +132,7 @@ namespace Amuse.App.Views
                     cancellationToken.ThrowIfCancellationRequested();
 
                     // Diffusion
-                    var resultTensor = await ExecuteVideoDiffusionAsync(automationJob.DiffusionOptions);
+                    var resultTensor = await ExecuteVideoDiffusionAsync(automationJob.GenerateOptions);
 
                     // Upscale
                     resultTensor = await ExecuteVideoUpscaleAsync(resultTensor);
@@ -140,7 +140,7 @@ namespace Amuse.App.Views
                     // Result
                     ResultVideo = !AutomationOptions.IsHistoryEnabled
                         ? resultTensor
-                        : await SaveHistoryAsync(automationJob.DiffusionOptions, resultTensor);
+                        : await SaveHistoryAsync(automationJob.GenerateOptions, resultTensor);
 
                     await automationJob.SaveAsync(ResultVideo);
                     AutomationProgress.Update(automationJob.Id, automationJob.Count, $"Automation: {automationJob.Id}/{automationJob.Count}");
@@ -157,7 +157,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[TextToVideo] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Automation", ex.Message);
             }
@@ -177,7 +177,7 @@ namespace Amuse.App.Views
         /// </summary>
         /// <param name="options">The options.</param>
         /// <param name="videoInput">The video input.</param>
-        private async Task<VideoInputStream> SaveHistoryAsync(DiffusionInputOptions options, VideoInputStream videoInput)
+        private async Task<VideoInputStream> SaveHistoryAsync(GenerateInputOptions options, VideoInputStream videoInput)
         {
             Logger.LogInformation("[TextToVideo] [SaveHistory] Saving history...");
             var result = await HistoryService.AddAsync(videoInput, new DiffusionHistory

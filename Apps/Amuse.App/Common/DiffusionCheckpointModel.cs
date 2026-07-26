@@ -4,7 +4,7 @@ using TensorStack.WPF;
 
 namespace Amuse.App.Common
 {
-    public sealed class CheckpointModel : BaseModel
+    public sealed class DiffusionCheckpointModel : BaseModel
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public CheckpointComponent Compute { get; set; }
@@ -98,9 +98,9 @@ namespace Amuse.App.Common
         }
 
 
-        public CheckpointModel DeepClone()
+        public DiffusionCheckpointModel DeepClone()
         {
-            return new CheckpointModel
+            return new DiffusionCheckpointModel
             {
                 Compute = Compute?.DeepClone(),
                 TextEncoder = TextEncoder?.DeepClone(),

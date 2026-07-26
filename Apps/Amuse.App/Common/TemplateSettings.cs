@@ -8,5 +8,9 @@ namespace Amuse.App.Common
     {
         public List<DiffusionModel> DiffusionTemplates { get; set; }
         public List<WizardItemModel> DiffusionTemplateMap { get; set; }
+
+
+        public List<LanguageModel> LanguageTemplates { get; set; }
+        public List<WizardItemModel> LanguageTemplateMap { get; set; }
     }
 }

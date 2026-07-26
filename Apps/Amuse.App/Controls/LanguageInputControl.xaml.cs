@@ -16,24 +16,24 @@ using TensorStack.WPF.Controls;
 namespace Amuse.App.Controls
 {
     /// <summary>
-    /// Interaction logic for TextInputControl.xaml
+    /// Interaction logic for LanguageInputControl.xaml
     /// </summary>
-    public partial class TextInputControl : BaseControl
+    public partial class LanguageInputControl : BaseControl
     {
-        private DiffusionInputOption _selectedOption;
+        private InputTabOption _selectedOption;
 
-        public TextInputControl()
+        public LanguageInputControl()
         {
             SeedCommand = new RelayCommand<bool>(GenerateSeed);
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty PipelineProperty = DependencyProperty.Register(nameof(Pipeline), typeof(PipelineModel), typeof(TextInputControl), new PropertyMetadata<TextInputControl, PipelineModel>((c, o, n) => c.OnPipelineChanged(o, n)));
-        public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(nameof(Options), typeof(DiffusionInputOptions), typeof(TextInputControl));
-        public static readonly DependencyProperty AutomationOptionsProperty = DependencyProperty.Register(nameof(AutomationOptions), typeof(AutomationOptions), typeof(TextInputControl));
-        public static readonly DependencyProperty IsExecutingProperty = DependencyProperty.Register(nameof(IsExecuting), typeof(bool), typeof(TextInputControl));
-        public static readonly DependencyProperty IsAutomatingProperty = DependencyProperty.Register(nameof(IsAutomating), typeof(bool), typeof(TextInputControl));
-        public static readonly DependencyProperty AutomationProgressProperty = DependencyProperty.Register(nameof(AutomationProgress), typeof(ProgressInfo), typeof(TextInputControl));
+        public static readonly DependencyProperty PipelineProperty = DependencyProperty.Register(nameof(Pipeline), typeof(PipelineModel), typeof(LanguageInputControl), new PropertyMetadata<LanguageInputControl, PipelineModel>((c, o, n) => c.OnPipelineChanged(o, n)));
+        public static readonly DependencyProperty OptionsProperty = DependencyProperty.Register(nameof(Options), typeof(GenerateInputOptions), typeof(LanguageInputControl));
+        public static readonly DependencyProperty AutomationOptionsProperty = DependencyProperty.Register(nameof(AutomationOptions), typeof(AutomationOptions), typeof(LanguageInputControl));
+        public static readonly DependencyProperty IsExecutingProperty = DependencyProperty.Register(nameof(IsExecuting), typeof(bool), typeof(LanguageInputControl));
+        public static readonly DependencyProperty IsAutomatingProperty = DependencyProperty.Register(nameof(IsAutomating), typeof(bool), typeof(LanguageInputControl));
+        public static readonly DependencyProperty AutomationProgressProperty = DependencyProperty.Register(nameof(AutomationProgress), typeof(ProgressInfo), typeof(LanguageInputControl));
 
         public View ViewType { get; set; }
         public ProcessType ProcessType { get; set; }
@@ -45,9 +45,9 @@ namespace Amuse.App.Controls
             set { SetValue(PipelineProperty, value); }
         }
 
-        public DiffusionInputOptions Options
+        public GenerateInputOptions Options
         {
-            get { return (DiffusionInputOptions)GetValue(OptionsProperty); }
+            get { return (GenerateInputOptions)GetValue(OptionsProperty); }
             set { SetValue(OptionsProperty, value); }
         }
 
@@ -75,7 +75,7 @@ namespace Amuse.App.Controls
             set { SetValue(IsAutomatingProperty, value); }
         }
 
-        public DiffusionInputOption SelectedOption
+        public InputTabOption SelectedOption
         {
             get { return _selectedOption; }
             set { SetProperty(ref _selectedOption, value); }
@@ -101,18 +101,18 @@ namespace Amuse.App.Controls
 
         private Task OnPipelineChanged(PipelineModel oldPipeline, PipelineModel newPipeline)
         {
-            if (newPipeline is null || newPipeline.DiffusionModel is null)
+            if (newPipeline is null || newPipeline.LanguageModel is null)
             {
                 return Task.CompletedTask;
             }
 
-            var oldModel = oldPipeline?.DiffusionModel;
+            var oldModel = oldPipeline?.LanguageModel;
             var oldOptions = oldModel?.DefaultOptions;
-            var newModel = newPipeline?.DiffusionModel;
+            var newModel = newPipeline?.LanguageModel;
             var newOptions = newModel?.DefaultOptions;
 
             var previousOptions = Options;
-            Options = new DiffusionInputOptions
+            Options = new GenerateInputOptions
             {
                 // Keep
                 Seed = previousOptions?.Seed ?? 0,

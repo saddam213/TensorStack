@@ -8,6 +8,7 @@ namespace Amuse.App.Common
     {
         private DeviceModel _device;
         private DiffusionModel _diffusionModel;
+        private LanguageModel _languageModel;
         private ControlNetModel _controlNetModel;
         private ExtractModel _extractModel;
         private LoraAdapterModel[] _loraAdapterModel;
@@ -26,6 +27,23 @@ namespace Amuse.App.Common
         {
             get { return _diffusionModel; }
             set { SetProperty(ref _diffusionModel, value); }
+        }
+
+        public LanguageModel LanguageModel
+        {
+            get { return _languageModel; }
+            set { SetProperty(ref _languageModel, value); }
+        }
+
+        public IGenerateModel GenerateModel
+        {
+            get
+            {
+                if (DiffusionModel is not null)
+                    return DiffusionModel;
+
+                return LanguageModel;
+            }
         }
 
         public ControlNetModel ControlNetModel
@@ -76,6 +94,7 @@ namespace Amuse.App.Common
             return pipeline is null
                 || pipeline.Device != _device
                 || pipeline.DiffusionModel != _diffusionModel
+                || pipeline.LanguageModel != _languageModel
                 || pipeline.MemoryMode != _memoryMode
                 || pipeline.QualityMode != _qualityMode;
         }
@@ -83,7 +102,7 @@ namespace Amuse.App.Common
 
         public bool IsReloadRequired(PipelineModel pipeline)
         {
-            if (pipeline is null || pipeline.DiffusionModel != _diffusionModel)
+            if (pipeline is null || pipeline.DiffusionModel != _diffusionModel || pipeline.LanguageModel != _languageModel)
                 return false;
 
             // ProcessType, LoraAdapters and ControlNet are the only options that can be modified

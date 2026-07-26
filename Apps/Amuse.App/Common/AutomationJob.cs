@@ -12,7 +12,7 @@ namespace Amuse.App.Common
     {
         public int Id { get; init; }
         public int Count { get; init; }
-        public DiffusionInputOptions DiffusionOptions { get; init; }
+        public GenerateInputOptions GenerateOptions { get; init; }
         public UpscaleInputOptions UpscaleOptions { get; init; }
         public ExtractInputOptions ExtractOptions { get; init; }
         public InterpolateInputOptions InterpolateOptions { get; init; }

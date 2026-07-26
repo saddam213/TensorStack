@@ -4,6 +4,7 @@ using Amuse.App.Views;
 using Amuse.Common;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,52 +20,40 @@ namespace Amuse.App.Controls
     /// <summary>
     /// Interaction logic for TextModelControl.xaml
     /// </summary>
-    public partial class TextModelControl : BaseControl
+    public partial class LanguageModelControl : BaseControl
     {
         private ListCollectionView _deviceCollectionView;
         private ListCollectionView _modelCollectionView;
-
         private ProcessType _processType;
         private DeviceModel _selectedDevice;
-        private DiffusionModel _selectedModel;
-        private MemoryProfileModel _selectedMemoryMode;
-        private QualityMode _selectedQualityMode;
-
+        private LanguageModel _selectedModel;
+        private QualityProfileModel _selectedQualityMode;
         private DeviceModel _currentDevice;
-        private DiffusionModel _currentModel;
-        private MemoryMode _currentMemoryMode;
+        private LanguageModel _currentModel;
         private QualityMode _currentQualityMode;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TextModelControl"/> class.
+        /// Initializes a new instance of the <see cref="LanguageModelControl"/> class.
         /// </summary>
-        public TextModelControl()
+        public LanguageModelControl()
         {
-            MemoryModes =
-            [
-                new MemoryProfileModel{ MemoryMode = MemoryMode.Auto },
-                new MemoryProfileModel{ MemoryMode = MemoryMode.Balanced },
-                new MemoryProfileModel{ MemoryMode = MemoryMode.Low },
-                new MemoryProfileModel{ MemoryMode = MemoryMode.Medium },
-                new MemoryProfileModel{ MemoryMode = MemoryMode.High }
-            ];
+            QualityModes = [];
             LoadCommand = new AsyncRelayCommand(LoadAsync, CanLoad);
             UnloadCommand = new AsyncRelayCommand(UnloadAsync, CanUnload);
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty SettingsProperty = DependencyProperty.Register(nameof(Settings), typeof(Settings), typeof(TextModelControl), new PropertyMetadata<TextModelControl>((c) => c.OnSettingsChanged()));
-        public static readonly DependencyProperty IsPipelineLoadedProperty = DependencyProperty.Register(nameof(IsPipelineLoaded), typeof(bool), typeof(TextModelControl), new PropertyMetadata<TextModelControl>((c) => c.OnIsPipelineLoadedChanged()));
-        public static readonly DependencyProperty IsSelectionValidProperty = DependencyProperty.Register(nameof(IsSelectionValid), typeof(bool), typeof(TextModelControl));
-        public static readonly DependencyProperty DownloadServiceProperty = DependencyProperty.Register(nameof(DownloadService), typeof(IModelDownloadService), typeof(TextModelControl));
-        public static readonly DependencyProperty NavigationServiceProperty = DependencyProperty.Register(nameof(NavigationService), typeof(NavigationService), typeof(TextModelControl));
-
+        public static readonly DependencyProperty SettingsProperty = DependencyProperty.Register(nameof(Settings), typeof(Settings), typeof(LanguageModelControl), new PropertyMetadata<LanguageModelControl>((c) => c.OnSettingsChanged()));
+        public static readonly DependencyProperty IsPipelineLoadedProperty = DependencyProperty.Register(nameof(IsPipelineLoaded), typeof(bool), typeof(LanguageModelControl), new PropertyMetadata<LanguageModelControl>((c) => c.OnIsPipelineLoadedChanged()));
+        public static readonly DependencyProperty IsSelectionValidProperty = DependencyProperty.Register(nameof(IsSelectionValid), typeof(bool), typeof(LanguageModelControl));
+        public static readonly DependencyProperty DownloadServiceProperty = DependencyProperty.Register(nameof(DownloadService), typeof(IModelDownloadService), typeof(LanguageModelControl));
+        public static readonly DependencyProperty NavigationServiceProperty = DependencyProperty.Register(nameof(NavigationService), typeof(NavigationService), typeof(LanguageModelControl));
         public event EventHandler<PipelineModel> SelectionChanged;
         public View ViewType { get; set; }
         public AsyncRelayCommand LoadCommand { get; }
         public AsyncRelayCommand UnloadCommand { get; }
-        public MemoryProfileModel[] MemoryModes { get; }
+        public ObservableCollection<QualityProfileModel> QualityModes { get; }
 
         public Settings Settings
         {
@@ -108,19 +97,13 @@ namespace Amuse.App.Controls
             set { SetProperty(ref _selectedDevice, value); ValidateSelection(); }
         }
 
-        public DiffusionModel SelectedModel
+        public LanguageModel SelectedModel
         {
             get { return _selectedModel; }
             set { SetProperty(ref _selectedModel, value); ValidateSelection(); }
         }
 
-        public MemoryProfileModel SelectedMemoryMode
-        {
-            get { return _selectedMemoryMode; }
-            set { SetProperty(ref _selectedMemoryMode, value); ValidateSelection(); }
-        }
-
-        public QualityMode SelectedQualityMode
+        public QualityProfileModel SelectedQualityMode
         {
             get { return _selectedQualityMode; }
             set { SetProperty(ref _selectedQualityMode, value); ValidateSelection(); }
@@ -145,16 +128,15 @@ namespace Amuse.App.Controls
 
             _currentDevice = SelectedDevice;
             _currentModel = SelectedModel;
-            _currentMemoryMode = SelectedMemoryMode.MemoryMode;
-            _currentQualityMode = SelectedQualityMode;
+            _currentQualityMode = _selectedQualityMode.DetectedMode;
 
             var pipeline = new PipelineModel
             {
                 Device = _currentDevice,
-                DiffusionModel = _currentModel,
-                MemoryMode = _currentMemoryMode,
-                QualityMode = _currentQualityMode,
-                ProcessType = GetProcessType()
+                LanguageModel = _currentModel,
+                MemoryMode = _selectedQualityMode.MemoryMode,
+                QualityMode = _selectedQualityMode.DetectedMode,
+                ProcessType = _processType
             };
 
             SelectionChanged?.Invoke(this, pipeline);
@@ -176,8 +158,8 @@ namespace Amuse.App.Controls
             var pipeline = new PipelineModel
             {
                 Device = _selectedDevice,
-                MemoryMode = _selectedMemoryMode.MemoryMode,
-                QualityMode = _selectedQualityMode,
+                MemoryMode = _selectedQualityMode.MemoryMode,
+                QualityMode = _selectedQualityMode.DetectedMode,
                 ProcessType = _processType
             };
 
@@ -215,8 +197,7 @@ namespace Amuse.App.Controls
         {
             return _currentDevice != SelectedDevice
                 || _currentModel != SelectedModel
-                || _currentMemoryMode != SelectedMemoryMode?.MemoryMode
-                || _currentQualityMode != SelectedQualityMode;
+                || _currentQualityMode != _selectedQualityMode?.DetectedMode;
         }
 
 
@@ -236,14 +217,14 @@ namespace Amuse.App.Controls
             };
 
             // Base Models
-            ModelCollectionView = new ListCollectionView(Settings.DiffusionModels);
+            ModelCollectionView = new ListCollectionView(Settings.LanguageModels);
             ModelCollectionView.IsLiveSorting = true;
             ModelCollectionView.IsLiveFiltering = true;
-            ModelCollectionView.SortDescriptions.Add(new SortDescription(nameof(DiffusionModel.Status), ListSortDirection.Descending));
-            ModelCollectionView.SortDescriptions.Add(new SortDescription(nameof(DiffusionModel.Name), ListSortDirection.Ascending));
+            ModelCollectionView.SortDescriptions.Add(new SortDescription(nameof(LanguageModel.Status), ListSortDirection.Descending));
+            ModelCollectionView.SortDescriptions.Add(new SortDescription(nameof(LanguageModel.Name), ListSortDirection.Ascending));
             ModelCollectionView.Filter = (obj) =>
             {
-                if (obj is not DiffusionModel viewModel)
+                if (obj is not LanguageModel viewModel)
                     return false;
 
                 if (_selectedDevice is null)
@@ -286,8 +267,8 @@ namespace Amuse.App.Controls
             if (ModelCollectionView is not null)
             {
                 ModelCollectionView.Refresh();
-                SelectedModel = ModelCollectionView.Cast<DiffusionModel>().FirstOrDefault(x => x == _currentModel)
-                             ?? ModelCollectionView.Cast<DiffusionModel>().FirstOrDefault();
+                SelectedModel = ModelCollectionView.Cast<LanguageModel>().FirstOrDefault(x => x == _currentModel)
+                             ?? ModelCollectionView.Cast<LanguageModel>().FirstOrDefault();
             }
 
             RefreshMemoryProfile();
@@ -296,22 +277,11 @@ namespace Amuse.App.Controls
 
         private void Model_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            RefreshMemoryProfile();
             if (_selectedModel is null)
                 return;
 
-            SelectedQualityMode = _selectedModel.UserQualityMode is null
-                ? _selectedDevice?.DefaultQualityMode ?? QualityMode.Standard
-                : _selectedModel.UserQualityMode.Value;
-            SelectedMemoryMode = _selectedModel.UserMemoryMode is null
-                ? MemoryModes.FirstOrDefault(x => x.MemoryMode == MemoryMode.Auto)
-                : MemoryModes.FirstOrDefault(x => x.MemoryMode == _selectedModel.UserMemoryMode.Value);
-        }
-
-
-        private void Memory_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
             RefreshMemoryProfile();
+            SelectedQualityMode = QualityModes.FirstOrDefault(x => x.QualityMode == _selectedModel.UserQualityMode);
         }
 
 
@@ -320,28 +290,39 @@ namespace Amuse.App.Controls
             if (_selectedDevice is null)
                 return;
 
-            SelectedQualityMode = _selectedDevice.QualityModes.Contains(_selectedQualityMode)
-                ? _selectedQualityMode
-                : _selectedDevice.DefaultQualityMode;
+            QualityModes.Clear();
+            foreach (var qualityProfile in CreateQualityProfiles(_selectedDevice.QualityModes))
+            {
+                QualityModes.Add(qualityProfile);
+            }
+
+            if (_selectedQualityMode == null || !_selectedDevice.QualityModes.Contains(_selectedQualityMode.DetectedMode))
+                SelectedQualityMode = QualityModes.FirstOrDefault();
         }
 
 
         private void RefreshMemoryProfile()
         {
-            if (_selectedDevice is null || _selectedModel is null || _selectedMemoryMode is null)
+            if (_selectedDevice is null || _selectedModel is null)
                 return;
 
             var deviceMemory = _selectedDevice.MemoryGB;
-            var profile = _selectedModel.MemoryProfile?.FirstOrDefault(x => x.QualityMode == _selectedQualityMode);
-            if (profile is null)
+            var autoIndex = GetQualityProfileIndex(_selectedModel.MemoryProfile, _selectedDevice.QualityModes, deviceMemory);
+            var autoProfile = _selectedModel.MemoryProfile.ElementAtOrDefault(autoIndex);
+            if (autoProfile is null)
                 return;
 
-            var modeIndex = profile.GetIndex(deviceMemory);
-            MemoryModes[0].MemoryGB = profile.MemoryModes.ElementAtOrDefault(modeIndex);
-            MemoryModes[0].DetectedMode = Enum.GetValues<MemoryMode>()[modeIndex + 2];
-            MemoryModes[2].MemoryGB = profile.MemoryModes.ElementAtOrDefault(0);
-            MemoryModes[3].MemoryGB = profile.MemoryModes.ElementAtOrDefault(1);
-            MemoryModes[4].MemoryGB = profile.MemoryModes.ElementAtOrDefault(2);
+            // Auto
+            QualityModes[0].MemoryGB = autoProfile.MemoryModes.ElementAtOrDefault(0);
+            QualityModes[0].DetectedMode = Enum.GetValues<QualityMode>()[autoIndex];
+            foreach (var profile in _selectedModel.MemoryProfile)
+            {
+                var memoryMode = QualityModes.FirstOrDefault(x => x.QualityMode == profile.QualityMode);
+                if (memoryMode == null)
+                    continue;
+
+                memoryMode.MemoryGB = profile.MemoryModes.ElementAtOrDefault(0);
+            }
         }
 
 
@@ -350,15 +331,14 @@ namespace Amuse.App.Controls
             if (pipeline == null)
                 return;
 
-            if (!ModelCollectionView.Contains(pipeline.DiffusionModel))
+            if (!ModelCollectionView.Contains(pipeline.LanguageModel))
                 return;
 
             SelectedDevice = pipeline.Device;
-            SelectedModel = pipeline.DiffusionModel;
-
-            SelectedQualityMode = pipeline.QualityMode;
-            SelectedMemoryMode = MemoryModes.FirstOrDefault(x => x.MemoryMode == pipeline.MemoryMode);
-
+            SelectedModel = pipeline.LanguageModel;
+            SelectedQualityMode = pipeline.MemoryMode == MemoryMode.Auto
+                ? QualityModes.FirstOrDefault(x => x.MemoryMode == MemoryMode.Auto)
+                : QualityModes.FirstOrDefault(x => x.QualityMode == pipeline.QualityMode);
             ValidateSelection();
         }
 
@@ -396,10 +376,65 @@ namespace Amuse.App.Controls
         }
 
 
-        private ProcessType GetProcessType()
+        private static IEnumerable<QualityProfileModel> CreateQualityProfiles(QualityMode[] qualityModes)
         {
-            return _processType;
+            yield return new QualityProfileModel
+            {
+                QualityMode = default,
+                MemoryMode = MemoryMode.Auto
+            };
+            if (qualityModes.Contains(QualityMode.Draft))
+                yield return new QualityProfileModel
+                {
+                    QualityMode = QualityMode.Draft,
+                    DetectedMode = QualityMode.Draft,
+                    MemoryMode = MemoryMode.High
+                };
+            if (qualityModes.Contains(QualityMode.Standard))
+                yield return new QualityProfileModel
+                {
+                    QualityMode = QualityMode.Standard,
+                    DetectedMode = QualityMode.Standard,
+                    MemoryMode = MemoryMode.High
+                };
+            if (qualityModes.Contains(QualityMode.Production))
+                yield return new QualityProfileModel
+                {
+                    QualityMode = QualityMode.Production,
+                    DetectedMode = QualityMode.Production,
+                    MemoryMode = MemoryMode.High
+                };
         }
 
+
+        private static int GetQualityProfileIndex(MemoryProfile[] memoryProfile, QualityMode[] qualityModes, int deviceMemory)
+        {
+            int bestIndex = -1;
+            int bestValue = int.MinValue;
+            for (int i = 0; i < memoryProfile.Length; i++)
+            {
+                var profile = memoryProfile[i];
+                if (!qualityModes.Contains(profile.QualityMode))
+                    continue;
+
+                int value = profile.MemoryModes[0];
+                if (value <= deviceMemory && value >= bestValue)
+                {
+                    bestValue = value;
+                    bestIndex = i;
+                }
+            }
+
+            if (bestIndex < 0)
+            {
+                var defaultProfile = memoryProfile.FirstOrDefault(x => x.QualityMode == qualityModes.FirstOrDefault());
+                if (defaultProfile != null)
+                {
+                    bestIndex = Array.IndexOf(memoryProfile, defaultProfile);
+                }
+            }
+
+            return bestIndex;
+        }
     }
 }

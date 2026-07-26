@@ -25,6 +25,32 @@ namespace Amuse.App.Common
             get { return _detectedMode; }
             set { SetProperty(ref _detectedMode, value); }
         }
+    }
 
+
+    public sealed class QualityProfileModel : BaseModel
+    {
+        private int _memoryGB;
+        private QualityMode? _qualityMode;
+        private QualityMode _detectedMode;
+        public MemoryMode MemoryMode { get; set; }
+
+        public QualityMode? QualityMode
+        {
+            get { return _qualityMode; }
+            set { SetProperty(ref _qualityMode, value); }
+        }
+
+        public int MemoryGB
+        {
+            get { return _memoryGB; }
+            set { SetProperty(ref _memoryGB, value); }
+        }
+
+        public QualityMode DetectedMode
+        {
+            get { return _detectedMode; }
+            set { SetProperty(ref _detectedMode, value); }
+        }
     }
 }

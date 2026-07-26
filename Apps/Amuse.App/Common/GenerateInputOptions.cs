@@ -9,7 +9,7 @@ using TensorStack.WPF;
 
 namespace Amuse.App.Common
 {
-    public sealed record DiffusionInputOptions : BaseRecord
+    public sealed record GenerateInputOptions : BaseRecord
     {
         private int _width;
         private int _height;
@@ -432,7 +432,7 @@ namespace Amuse.App.Common
         public List<AudioInputStream> InputAudios { get; set; } = [];
 
 
-        public bool Equals(DiffusionInputOptions other) => ReferenceEquals(this, other);
+        public bool Equals(GenerateInputOptions other) => ReferenceEquals(this, other);
         public override int GetHashCode() => RuntimeHelpers.GetHashCode(this);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Amuse.App.Common;
+using Amuse.App.Controls;
 using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
@@ -8,7 +9,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
 using TensorStack.Image;
@@ -20,7 +20,7 @@ namespace Amuse.App.Views
     /// <summary>
     /// Interaction logic for ImageToTextView.xaml
     /// </summary>
-    public partial class ImageToTextView : ViewBaseDiffusion
+    public partial class ImageToTextView : ViewBaseLanguage
     {
         private ImageInput _sourceImage1;
         private ImageInput _sourceImage2;
@@ -30,8 +30,8 @@ namespace Amuse.App.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageToTextView"/> class.
         /// </summary>
-        public ImageToTextView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<ImageToTextView> logger)
-            : base(settings, navigationService, downloadService, diffusionService, extractService, upscaleService, historyService, logger)
+        public ImageToTextView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IGenerateService generateService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<ImageToTextView> logger)
+            : base(settings, navigationService, downloadService, generateService, extractService, upscaleService, historyService, logger)
         {
             InitializeComponent();
         }
@@ -78,13 +78,19 @@ namespace Amuse.App.Views
         }
 
         /// <summary>
+        /// Gets the text result control.
+        /// </summary>
+        protected override TextResultControl TextResultControl => TextResultElement;
+
+
+        /// <summary>
         /// On View Open
         /// </summary>
         public override async Task OpenAsync(OpenViewArgs args = null)
         {
             await base.OpenAsync(args);
             if (!IsPipelineLoaded)
-                ModelControl.SetPipeline(DiffusionService.Pipeline);
+                ModelControl.SetPipeline(GenerateService.Pipeline);
         }
 
 
@@ -101,6 +107,7 @@ namespace Amuse.App.Views
                 Progress.Clear();
                 Statistics.Clear();
                 ResultText = default;
+                await TextResultControl.ClearAsync();
                 Statistics.Start();
 
                 // Images
@@ -137,7 +144,7 @@ namespace Amuse.App.Views
                 };
 
                 // Execute
-                var textResult = await ExecuteTextDiffusionAsync(options);
+                var textResult = await ExecuteLanguageModelAsync(options);
 
                 // Result
                 ResultText = textResult;
@@ -155,7 +162,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[ImageToText] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Pipeline", ex.Message);
             }
@@ -189,8 +196,8 @@ namespace Amuse.App.Views
                 await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Text, MediaType.Image))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-
                     ResultText = default;
+                    await TextResultControl.ClearAsync();
 
                     // Source
                     if (!automationJob.InputImages.IsNullOrEmpty())
@@ -230,7 +237,7 @@ namespace Amuse.App.Views
                     };
 
                     // Diffusion
-                    var textResult = await ExecuteTextDiffusionAsync(options);
+                    var textResult = await ExecuteLanguageModelAsync(options);
 
                     // Result
                     ResultText = textResult;
@@ -256,7 +263,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[ImageToText] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Automation", ex.Message);
             }
@@ -316,7 +323,7 @@ namespace Amuse.App.Views
         /// Save history
         /// </summary>
         /// <param name="options">The options.</param>
-        private async Task<TextInput> SaveHistoryAsync(DiffusionInputOptions options)
+        private async Task<TextInput> SaveHistoryAsync(GenerateInputOptions options)
         {
             Logger.LogInformation($"[ImageToText] [SaveHistory] Saving history...");
             var history = new TextInput(Utils.GetResponseText(ResultText.Result.Text));
@@ -324,64 +331,12 @@ namespace Amuse.App.Views
             var result = await HistoryService.AddAsync(history, new DiffusionHistory
             {
                 Options = options,
-                Model = CurrentPipeline.DiffusionModel.Name,
+                Model = CurrentPipeline.LanguageModel.Name,
                 LoraModels = CurrentPipeline.LoraAdapterModel?.Select(x => x.Name).ToArray(),
                 Source = View.ImageToText,
             });
             Logger.LogInformation($"[ImageToText] [SaveHistory] History saved.");
             return result;
-        }
-
-
-        /// <summary>
-        /// Called when progress is received from a Python pipeline
-        /// </summary>
-        /// <param name="progress">The progress.</param>
-        protected override void OnProgress(PipelineProgress progress)
-        {
-            if (CurrentPipeline is null)
-                return;
-
-            if (progress.Key == "Generate")
-            {
-                if (progress.Subkey == "Initialize")
-                {
-                    CommandManager.InvalidateRequerySuggested();
-                }
-                else if (progress.Subkey == "Token")
-                {
-                    Statistics.Update(progress);
-                    ResultControl.UpdateProgress(progress);
-                }
-                else
-                {
-                    if (DiffusionService.IsExecuting)
-                    {
-                        var message = progress.Subkey == "Transformer" && Options.Beams > 1
-                            ? "Generating Beam Results..."
-                            : Globalization.GetProgressMessage(progress);
-                        Progress.Indeterminate(message);
-                    }
-                }
-            }
-
-            if (progress.Subkey != "Token")
-            {
-                Logger.LogDebug("[{View}] [OnProgress] {Subkey} - {Message}", ViewName, progress.Subkey, progress.Message);
-            }
-        }
-
-
-        private void SourceText_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
-            {
-                e.Handled = true;
-                if (CanExecute())
-                {
-                    ExecuteCommand.Execute(null);
-                }
-            }
         }
     }
 }

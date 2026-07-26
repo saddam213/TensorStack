@@ -12,7 +12,7 @@ namespace Amuse.App.Controls
     /// </summary>
     public partial class UpscaleInputControl : BaseControl
     {
-        private UpscaleInputOption _selectedOption;
+        private InputTabOption _selectedOption;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UpscaleInputControl"/> class.
@@ -67,7 +67,7 @@ namespace Amuse.App.Controls
             set { SetValue(IsAutomatingProperty, value); }
         }
 
-        public UpscaleInputOption SelectedOption
+        public InputTabOption SelectedOption
         {
             get { return _selectedOption; }
             set { SetProperty(ref _selectedOption, value); }
@@ -109,11 +109,4 @@ namespace Amuse.App.Controls
 
     }
 
-
-    public enum UpscaleInputOption
-    {
-        Options = 0,
-        Advanced = 1,
-        Automation = 2,
-    }
 }

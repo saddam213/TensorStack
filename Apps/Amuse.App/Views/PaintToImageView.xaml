@@ -27,8 +27,8 @@
                     <DockPanel x:Name="LeftPanelContainer" Margin="4" IsEnabled="{Binding IsViewBusy, Converter={StaticResource InverseBoolConverter}}">
 
                         <!--ModelControl-->
-                        <Grid DockPanel.Dock="Top" IsEnabled="{Binding DiffusionService.IsLoading, Converter={StaticResource InverseBoolConverter}}">
-                            <Grid IsEnabled="{Binding DiffusionService.IsExecuting, Converter={StaticResource InverseBoolConverter}}">
+                        <Grid DockPanel.Dock="Top" IsEnabled="{Binding GenerateService.IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                            <Grid IsEnabled="{Binding GenerateService.IsExecuting, Converter={StaticResource InverseBoolConverter}}">
                                 <Grid IsEnabled="{Binding IsAutomating, Converter={StaticResource InverseBoolConverter}}">
                                     <Controls:DiffusionModelControl
                                         x:Name="ModelControl"
@@ -52,16 +52,16 @@
                             <!--Execute/Cancel-->
                             <UniformGrid DockPanel.Dock="Bottom" Columns="2" Height="30" >
                                 <DockPanel>
-                                    <Button DockPanel.Dock="Left" Width="30" Command="{Binding StopCommand}" Visibility="{Binding DiffusionService.IsCanceling, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="Immediately stops generation by closing the backend process." ToolTipService.InitialShowDelay="200">
+                                    <Button DockPanel.Dock="Left" Width="30" Command="{Binding StopCommand}" Visibility="{Binding GenerateService.IsCanceling, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="Immediately stops generation by closing the backend process." ToolTipService.InitialShowDelay="200">
                                         <CommonControls:FontAwesome Icon="f00d" Color="{StaticResource DangerColour}" />
                                     </Button>
-                                    <Grid IsEnabled="{Binding DiffusionService.IsCanceling, Converter={StaticResource InverseBoolConverter}}">
+                                    <Grid IsEnabled="{Binding GenerateService.IsCanceling, Converter={StaticResource InverseBoolConverter}}">
                                         <Button Command="{Binding CancelCommand}" >
                                             <Button.Style>
                                                 <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
                                                     <Setter Property="Content" Value="Cancel" />
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding DiffusionService.IsCanceling}" Value="True">
+                                                        <DataTrigger Binding="{Binding GenerateService.IsCanceling}" Value="True">
                                                             <Setter Property="Content" Value="Canceling" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -77,7 +77,7 @@
                             </UniformGrid>
 
                             <!--InputControl-->
-                            <Grid  IsEnabled="{Binding DiffusionService.IsLoaded}" >
+                            <Grid  IsEnabled="{Binding GenerateService.IsLoaded}" >
                                 <Controls:DiffusionInputControl
                                     x:Name="InputControl"
                                     ViewType="PaintToImage"
@@ -87,7 +87,7 @@
                                     AutomationOptions="{Binding AutomationOptions, Mode=OneWayToSource}"
                                     AutomationProgress="{Binding AutomationProgress, Mode=OneWay}"
                                     Pipeline="{Binding CurrentPipeline, Mode=OneWay}" 
-                                    IsExecuting="{Binding DiffusionService.IsExecuting, Mode=OneWay}"
+                                    IsExecuting="{Binding GenerateService.IsExecuting, Mode=OneWay}"
                                     IsAutomating="{Binding IsAutomating, Mode=OneWay}"
                                     IsImageInputEnabled="False"
                                     IsControlNetEnabled="False"
@@ -127,7 +127,7 @@
                                 Options="{Binding Options}"
                                 ExecuteCommand="{Binding ExecuteCommand}"
                                 CancelCommand="{Binding CancelCommand}"
-                                IsGenerating="{Binding DiffusionService.IsExecuting}"
+                                IsGenerating="{Binding GenerateService.IsExecuting}"
                                 IsControlNetEnabled="{Binding CurrentPipeline.ControlNetModel, Converter={StaticResource InverseNullBooleanConverter}}"
                                 OverlayImage="{Binding ResultImage}">
                             </Controls:PaintSurfaceControl>

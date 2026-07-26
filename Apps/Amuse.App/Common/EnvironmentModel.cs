@@ -92,5 +92,25 @@ namespace Amuse.App.Common
                 Type = Type
             };
         }
+
+
+
+        public PipelineCreateOptions GetPipelineCreateOptions(Settings settings, EnvironmentMode environmentMode)
+        {
+            var environmentConfig = new PipelineCreateOptions
+            {
+                IsDebug = settings.IsServerDebugEnabled,
+                Directory = App.DirectoryPython,
+                Environment = Environment,
+                PythonVersion = PythonVersion,
+                Requirements = Requirements.ToArray(),
+                Variables = Variables?.ToDictionary() ?? new Dictionary<string, string>(),
+                Mode = environmentMode
+            };
+
+            environmentConfig.Variables.Add("HF_HUB_OFFLINE", "1");
+            environmentConfig.Variables.Add("HF_HUB_CACHE", settings.DirectoryDiffusion);
+            return environmentConfig;
+        }
     }
 }

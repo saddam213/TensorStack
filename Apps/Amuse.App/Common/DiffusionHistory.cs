@@ -47,7 +47,7 @@ namespace Amuse.App.Common
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string ControlNetModel { get; init; }
 
-        public DiffusionInputOptions Options { get; init; }
+        public GenerateInputOptions Options { get; init; }
 
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

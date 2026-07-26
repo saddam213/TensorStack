@@ -23,7 +23,7 @@ namespace Amuse.App.Dialogs
         private SizeOption _selectedSize;
         private DiffusionModel _diffusionModel;
         private DiffusionModel _originalDiffusionModel;
-        private CheckpointModel _checkpointModel;
+        private DiffusionCheckpointModel _checkpointModel;
         private SchedulerInputOptions[] _schedulers;
 
         public DiffusionModelDialog(Settings settings)
@@ -57,7 +57,7 @@ namespace Amuse.App.Dialogs
             set { SetProperty(ref _diffusionModel, value); }
         }
 
-        public CheckpointModel CheckpointModel
+        public DiffusionCheckpointModel CheckpointModel
         {
             get { return _checkpointModel; }
             set { SetProperty(ref _checkpointModel, value); }

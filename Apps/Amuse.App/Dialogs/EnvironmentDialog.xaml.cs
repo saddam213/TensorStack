@@ -17,18 +17,18 @@ namespace Amuse.App.Dialogs
     public partial class EnvironmentDialog : DialogControl
     {
         private readonly IEnvironmentService _environmentService;
-        private readonly IDiffusionService _diffusionService;
+        private readonly IGenerateService _generateService;
         private readonly IProgress<PipelineProgress> _progressCallback;
         private bool _isExecuting;
         private PipelineModel _pipeline;
         private EnvironmentModel _environment;
         private readonly CancellationTokenSource _cancellation;
 
-        public EnvironmentDialog(IEnvironmentService environmentService, IDiffusionService diffusionService)
+        public EnvironmentDialog(IEnvironmentService environmentService, IGenerateService generateService)
         {
             _cancellation = new CancellationTokenSource();
             _environmentService = environmentService;
-            _diffusionService = diffusionService;
+            _generateService = generateService;
             _progressCallback = new Progress<PipelineProgress>(OnProgressUpdate);
             CancelCommand = new AsyncRelayCommand(CloseAsync);
             CreateCommand = new AsyncRelayCommand(CreateEnvironment);
@@ -98,8 +98,8 @@ namespace Amuse.App.Dialogs
             IsExecuting = true;
             try
             {
-                if (_diffusionService.IsLoaded)
-                    await _diffusionService.UnloadAsync();
+                if (_generateService.IsLoaded)
+                    await _generateService.UnloadAsync();
 
                 if (_pipeline != null)
                     await _environmentService.CreateAsync(_pipeline, _progressCallback, _cancellation.Token);
@@ -122,8 +122,8 @@ namespace Amuse.App.Dialogs
             IsExecuting = true;
             try
             {
-                if (_diffusionService.IsLoaded)
-                    await _diffusionService.UnloadAsync();
+                if (_generateService.IsLoaded)
+                    await _generateService.UnloadAsync();
 
                 await _environmentService.UpdateAsync(_environment, _progressCallback, _cancellation.Token);
                 await base.SaveAsync();
@@ -143,8 +143,8 @@ namespace Amuse.App.Dialogs
             IsExecuting = true;
             try
             {
-                if (_diffusionService.IsLoaded)
-                    await _diffusionService.UnloadAsync();
+                if (_generateService.IsLoaded)
+                    await _generateService.UnloadAsync();
 
                 await _environmentService.RebuildAsync(_environment, _progressCallback, _cancellation.Token);
                 await base.SaveAsync();

@@ -9,7 +9,7 @@ using TensorStack.WPF;
 
 namespace Amuse.App.Common
 {
-    public sealed class DiffusionModel : BaseModel, IGenerateModel
+    public sealed class LanguageModel : BaseModel, IGenerateModel
     {
         private BackendType _backend;
         private string _name;
@@ -22,15 +22,13 @@ namespace Amuse.App.Common
         private MediaType _mediaType;
         private ProcessType[] _processTypes;
         private View[] _viewFilter;
-        private DiffusionCheckpointModel _checkpoint;
+        private LanguageCheckpointModel _checkpoint;
         private MemoryProfile[] _memoryProfile;
         private GenerateDefaultOptions _defaultOptions;
-        private SizeOption[] _resolutions = [];
         private string _accessToken;
         private bool _isDefault;
         private string _link;
         private ModelStatusType _status;
-        private MemoryMode? _userMemoryMode;
         private QualityMode? _userQualityMode;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -105,7 +103,7 @@ namespace Amuse.App.Common
             set { SetProperty(ref _viewFilter, value); }
         }
 
-        public DiffusionCheckpointModel Checkpoint
+        public LanguageCheckpointModel Checkpoint
         {
             get { return _checkpoint; }
             set { SetProperty(ref _checkpoint, value); }
@@ -121,12 +119,6 @@ namespace Amuse.App.Common
         {
             get { return _defaultOptions; }
             set { SetProperty(ref _defaultOptions, value); }
-        }
-
-        public SizeOption[] Resolutions
-        {
-            get { return _resolutions; }
-            set { SetProperty(ref _resolutions, value); }
         }
 
         public ModelStatusType Status
@@ -156,12 +148,6 @@ namespace Amuse.App.Common
             set { SetProperty(ref _link, value); }
         }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public MemoryMode? UserMemoryMode
-        {
-            get { return _userMemoryMode; }
-            set { SetProperty(ref _userMemoryMode, value); }
-        }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public QualityMode? UserQualityMode
@@ -184,7 +170,7 @@ namespace Amuse.App.Common
                 if (component.Type == CheckpointType.Component)
                     continue;
 
-                var resolvedPath = component.Resolve(settings, settings.DirectoryDiffusion);
+                var resolvedPath = component.Resolve(settings, settings.DirectoryLangaugeModel);
                 if (component.Type == CheckpointType.LocalFile || component.Type == CheckpointType.OnlineFile)
                     FileHelper.DeleteFile(resolvedPath);
                 else if (component.Type == CheckpointType.LocalFolder || component.Type == CheckpointType.LocalFolder)
@@ -195,7 +181,7 @@ namespace Amuse.App.Common
 
         public string GetDirectory(Settings settings)
         {
-            return System.IO.Path.Combine(settings.DirectoryDiffusion);
+            return System.IO.Path.Combine(settings.DirectoryLangaugeModel);
         }
 
 
@@ -204,7 +190,7 @@ namespace Amuse.App.Common
             if (Checkpoint == null)
                 return ModelStatusType.Available;
 
-            var isValid = Checkpoint.IsInstalled(settings.DirectoryDiffusion, settings.Components);
+            var isValid = Checkpoint.IsInstalled(settings.DirectoryLangaugeModel, settings.Components);
             if (Status == ModelStatusType.Available && isValid)
                 return ModelStatusType.Installed;
             else if (Status == ModelStatusType.Installed && !isValid)
@@ -216,9 +202,9 @@ namespace Amuse.App.Common
         }
 
 
-        public DiffusionModel DeepClone(int id)
+        public LanguageModel DeepClone(int id)
         {
-            return new DiffusionModel
+            return new LanguageModel
             {
                 Id = id,
                 Backend = Backend,
@@ -232,7 +218,6 @@ namespace Amuse.App.Common
                 AccessToken = AccessToken,
                 Link = Link,
                 Vendor = Vendor?.ToArray(),
-                Resolutions = Resolutions.Copy(),
                 ViewFilter = ViewFilter?.ToArray(),
                 Checkpoint = Checkpoint.DeepClone(),
                 MemoryProfile = MemoryProfile.Copy(),

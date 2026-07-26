@@ -1,42 +1,32 @@
 ﻿using Amuse.App.Common;
+using Amuse.App.Controls;
 using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using TensorStack.Audio;
+using System.Windows.Input;
 using TensorStack.Common.Pipeline;
-using TensorStack.Common.Tensor;
-using TensorStack.Image;
-using TensorStack.Video;
 using TensorStack.WPF;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
 
 namespace Amuse.App.Views
 {
-    public abstract class ViewBaseDiffusion : ViewBase
+    public abstract class ViewBaseLanguage : ViewBase
     {
         private bool _isPipelineLoaded;
         private PipelineModel _currentPipeline;
-        private ImageInput _resultImage;
-        private ImageInput _compareImage;
-        private ImageInput _previewImage;
-        private VideoInputStream _resultVideo;
-        private VideoInputStream _compareVideo;
-        private AudioInputStream _resultAudio;
         private TextResult _resultText;
         private GenerateInputOptions _options;
-        private ExtractInputOptions _extractOptions;
-        private UpscaleInputOptions _upscaleOptions;
         private AutomationOptions _automationOptions;
         private bool _isAutomating;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ViewBaseDiffusion"/> class.
+        /// Initializes a new instance of the <see cref="ViewBaseLanguage"/> class.
         /// </summary>
-        public ViewBaseDiffusion(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IGenerateService generateService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger logger)
+        public ViewBaseLanguage(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IGenerateService generateService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger logger)
             : base(settings, navigationService, downloadService, historyService, logger)
         {
             GenerateService = generateService;
@@ -101,6 +91,12 @@ namespace Amuse.App.Views
         public ProgressInfo AutomationProgress { get; }
 
         /// <summary>
+        /// Gets the text result control.
+        /// </summary>
+        protected abstract TextResultControl TextResultControl { get; }
+
+
+        /// <summary>
         /// Gets or sets a value indicating whether this instance is pipeline loaded.
         /// </summary>
         public bool IsPipelineLoaded
@@ -119,60 +115,6 @@ namespace Amuse.App.Views
         }
 
         /// <summary>
-        /// Gets or sets the result image.
-        /// </summary>
-        public ImageInput ResultImage
-        {
-            get { return _resultImage; }
-            set { SetProperty(ref _resultImage, value); }
-        }
-
-        /// <summary>
-        /// Gets or sets the compare image.
-        /// </summary>
-        public ImageInput CompareImage
-        {
-            get { return _compareImage; }
-            set { SetProperty(ref _compareImage, value); }
-        }
-
-        /// <summary>
-        /// Gets or sets the preview image.
-        /// </summary>
-        public ImageInput PreviewImage
-        {
-            get { return _previewImage; }
-            set { SetProperty(ref _previewImage, value); }
-        }
-
-        /// <summary>
-        /// Gets or sets the result video.
-        /// </summary>
-        public VideoInputStream ResultVideo
-        {
-            get { return _resultVideo; }
-            set { SetProperty(ref _resultVideo, value); }
-        }
-
-        /// <summary>
-        /// Gets or sets the compare video.
-        /// </summary>
-        public VideoInputStream CompareVideo
-        {
-            get { return _compareVideo; }
-            set { SetProperty(ref _compareVideo, value); }
-        }
-
-        /// <summary>
-        /// Gets or sets the result audio.
-        /// </summary>
-        public AudioInputStream ResultAudio
-        {
-            get { return _resultAudio; }
-            set { SetProperty(ref _resultAudio, value); }
-        }
-
-        /// <summary>
         /// Gets or sets the result text.
         /// </summary>
         public TextResult ResultText
@@ -180,7 +122,6 @@ namespace Amuse.App.Views
             get { return _resultText; }
             set { SetProperty(ref _resultText, value); }
         }
-
 
         /// <summary>
         /// Gets or sets the options.
@@ -192,24 +133,6 @@ namespace Amuse.App.Views
         }
 
         /// <summary>
-        /// Gets or sets the extract options.
-        /// </summary>
-        public ExtractInputOptions ExtractOptions
-        {
-            get { return _extractOptions; }
-            set { SetProperty(ref _extractOptions, value); }
-        }
-
-        /// <summary>
-        /// Gets or sets the upscale options.
-        /// </summary>
-        public UpscaleInputOptions UpscaleOptions
-        {
-            get { return _upscaleOptions; }
-            set { SetProperty(ref _upscaleOptions, value); }
-        }
-
-        /// <summary>
         /// Gets or sets the automation options.
         /// </summary>
         public AutomationOptions AutomationOptions
@@ -217,7 +140,6 @@ namespace Amuse.App.Views
             get { return _automationOptions; }
             set { SetProperty(ref _automationOptions, value); }
         }
-
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is automating.
@@ -264,9 +186,7 @@ namespace Amuse.App.Views
 
             try
             {
-                await LoadExtractModelAsync();
-                await LoadDiffusionModelAsync();
-                await LoadUpscaleModelAsync();
+                await LoadLanguageModelAsync();
                 await Settings.SetDefaultsAsync(CurrentPipeline);
 
                 Logger.LogInformation("[{View}] [LoadPipeline] Pipeline successfully loaded, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
@@ -305,7 +225,7 @@ namespace Amuse.App.Views
                 if (GenerateService.IsLoaded)
                 {
                     await GenerateService.UnloadAsync();
-                    Logger.LogInformation("[{View}] [UnloadPipeline] Unloaded diffusion model.", ViewName);
+                    Logger.LogInformation("[{View}] [UnloadPipeline] Unloaded language model.", ViewName);
                 }
 
                 if (UpscaleService.IsLoaded)
@@ -370,9 +290,9 @@ namespace Amuse.App.Views
 
             if (GenerateService.CanCancel)
             {
-                Logger.LogInformation("[{View}] [Cancel] Canceling diffusion process...", ViewName);
+                Logger.LogInformation("[{View}] [Cancel] Canceling generation process...", ViewName);
                 await GenerateService.CancelAsync();
-                Logger.LogInformation("[{View}] [Cancel] Diffusion process canceled, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[{View}] [Cancel] Generation process canceled, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
             }
         }
 
@@ -390,23 +310,23 @@ namespace Amuse.App.Views
 
 
         /// <summary>
-        /// Load the Diffusion model
+        /// Load the Language model
         /// </summary>
-        private async Task<bool> LoadDiffusionModelAsync()
+        private async Task<bool> LoadLanguageModelAsync()
         {
             var timestamp = Stopwatch.GetTimestamp();
-            if (CurrentPipeline.DiffusionModel is not null)
+            if (CurrentPipeline.LanguageModel is not null)
             {
                 if (GenerateService.IsLoaded)
                 {
                     if (GenerateService.Pipeline.IsLoadRequired(CurrentPipeline))
                     {
-                        Logger.LogInformation("[{View}] [LoadDiffusionModel] Loading diffusion model {Name}...", ViewName, CurrentPipeline.DiffusionModel.Name);
+                        Logger.LogInformation("[{View}] [LoadLanguageModel] Loading language model {Name}...", ViewName, CurrentPipeline.LanguageModel.Name);
                         await GenerateService.LoadAsync(CurrentPipeline, PythonProgressCallback);
                     }
                     else if (GenerateService.Pipeline.IsReloadRequired(CurrentPipeline))
                     {
-                        Logger.LogInformation("[{View}] [LoadDiffusionModel] Reloading diffusion model {Name}...", ViewName, CurrentPipeline.DiffusionModel.Name);
+                        Logger.LogInformation("[{View}] [LoadLanguageModel] Reloading language model {Name}...", ViewName, CurrentPipeline.LanguageModel.Name);
                         await GenerateService.ReloadAsync(CurrentPipeline, PythonProgressCallback);
                     }
                     else
@@ -416,223 +336,31 @@ namespace Amuse.App.Views
                     return true;
                 }
 
-                Logger.LogInformation("[{View}] [LoadDiffusionModel] Loading diffusion model {Name}...", ViewName, CurrentPipeline.DiffusionModel.Name);
+                Logger.LogInformation("[{View}] [LoadLanguageModel] Loading language model {Name}...", ViewName, CurrentPipeline.LanguageModel.Name);
                 await GenerateService.LoadAsync(CurrentPipeline, PythonProgressCallback);
-                Logger.LogInformation("[{View}] [LoadDiffusionModel] Successfully loaded diffusion model, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
+                Logger.LogInformation("[{View}] [LoadLanguageModel] Successfully loaded language model, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
                 return true;
             }
 
             await GenerateService.UnloadAsync();
-            Logger.LogInformation("[{View}] [LoadDiffusionModel] Unloaded diffusion model.", ViewName);
+            Logger.LogInformation("[{View}] [LoadLanguageModel] Unloaded language model.", ViewName);
             return false;
         }
 
 
         /// <summary>
-        /// Execute image diffusion
+        /// Execute text inference
         /// </summary>
         /// <param name="options">The options.</param>
-        protected async Task<ImageTensor> ExecuteImageDiffusionAsync(GenerateInputOptions options)
+        protected async Task<TextResult> ExecuteLanguageModelAsync(GenerateInputOptions options)
         {
             var timestamp = Stopwatch.GetTimestamp();
-            Logger.LogInformation("[{View}] [ExecuteImageDiffusion] Executing diffusion...", ViewName);
-
-            var resultTensor = await GenerateService.GenerateImageAsync(options);
-
-            Logger.LogInformation("[{View}] [ExecuteImageDiffusion] Diffusion complete, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
-            return resultTensor;
-        }
-
-
-        /// <summary>
-        /// Execute Audio diffusion
-        /// </summary>
-        /// <param name="options">The options.</param>
-        protected async Task<AudioInputStream> ExecuteAudioDiffusionAsync(GenerateInputOptions options)
-        {
-            var timestamp = Stopwatch.GetTimestamp();
-            Logger.LogInformation("[{View}] [ExecuteAudioDiffusion] Executing diffusion...", ViewName);
-
-            var resultTensor = await GenerateService.GenerateAudioAsync(options);
-
-            Logger.LogInformation("[{View}] [ExecuteAudioDiffusion] Diffusion complete, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
-            return resultTensor;
-        }
-
-
-        /// <summary>
-        /// Execute video diffusion
-        /// </summary>
-        /// <param name="options">The options.</param>
-        protected async Task<VideoInputStream> ExecuteVideoDiffusionAsync(GenerateInputOptions options)
-        {
-            var timestamp = Stopwatch.GetTimestamp();
-            Logger.LogInformation("[{View}] [ExecuteVideoDiffusion] Executing diffusion...", ViewName);
-
-            var resultTensor = await GenerateService.GenerateVideoAsync(options);
-
-            Logger.LogInformation("[{View}] [ExecuteVideoDiffusion] Diffusion complete, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
-            return resultTensor;
-        }
-
-
-        /// <summary>
-        /// Execute text diffusion
-        /// </summary>
-        /// <param name="options">The options.</param>
-        protected async Task<TextResult> ExecuteTextDiffusionAsync(GenerateInputOptions options)
-        {
-            var timestamp = Stopwatch.GetTimestamp();
-            Logger.LogInformation("[{View}] [ExecuteTextDiffusion] Executing diffusion...", ViewName);
+            Logger.LogInformation("[{View}] [ExecuteLanguageModel] Executing language model...", ViewName);
 
             var textResult = await GenerateService.GenerateTextAsync(options);
 
-            Logger.LogInformation("[{View}] [ExecuteTextDiffusion] Diffusion complete, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
+            Logger.LogInformation("[{View}] [ExecuteLanguageModel] Execution complete, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
             return textResult;
-        }
-
-
-        /// <summary>
-        /// Load extract model
-        /// </summary>
-        private async Task<bool> LoadExtractModelAsync()
-        {
-            var timestamp = Stopwatch.GetTimestamp();
-            if (CurrentPipeline.ExtractModel is not null)
-            {
-                if (!ExtractService.IsLoaded || ExtractService.Pipeline.ExtractModel != CurrentPipeline.ExtractModel)
-                {
-                    Logger.LogInformation("[{View}] [LoadExtractModel] Loading extract model {Name}...", ViewName, CurrentPipeline.ExtractModel.Name);
-                    await ExtractService.LoadAsync(CurrentPipeline);
-                }
-
-                Logger.LogInformation("[{View}] [LoadExtractModel] Successfully loaded extract model, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
-                return true;
-            }
-
-            await ExtractService.UnloadAsync();
-            Logger.LogInformation("[{View}] [LoadExtractModel] Unloaded extract model.", ViewName);
-            return false;
-        }
-
-
-        /// <summary>
-        /// Execute image extract
-        /// </summary>
-        /// <param name="imageInput">The image input.</param>
-        protected async Task<ImageInput> ExecuteImageExtractAsync(ImageInput imageInput)
-        {
-            if (!ExtractService.IsLoaded)
-                return imageInput;
-
-            var timestamp = Stopwatch.GetTimestamp();
-            Progress.Indeterminate("Extracting Image...");
-            Logger.LogInformation("[{View}] [ExecuteImageExtract] Executing extract...", ViewName);
-
-            var extractedImage = await ExtractService.ExecuteAsync(new ExtractImageRequest
-            {
-                Image = imageInput,
-                Options = ExtractOptions
-            }, ProgressCallback);
-
-            Logger.LogInformation("[{View}] [ExecuteImageExtract] Extract complete, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
-            return await extractedImage.ToImageInputAsync();
-        }
-
-
-        /// <summary>
-        /// Execute video extract
-        /// </summary>
-        /// <param name="videoInput">The video input.</param>
-        protected async Task<VideoInputStream> ExecuteVideoExtractAsync(VideoInputStream videoInput)
-        {
-            if (!ExtractService.IsLoaded)
-                return videoInput;
-
-            var timestamp = Stopwatch.GetTimestamp();
-            Progress.Indeterminate("Extracting Video...");
-            Logger.LogInformation("[{View}] [ExecuteVideoExtract] Executing extract...", ViewName);
-
-            videoInput = await ExtractService.ExecuteAsync(new ExtractVideoRequest
-            {
-                VideoStream = videoInput,
-                Options = ExtractOptions
-            }, ProgressCallback);
-
-            Logger.LogInformation("[{View}] [ExecuteVideoExtract] Extract complete, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
-            return videoInput;
-        }
-
-
-        /// <summary>
-        /// Load upscale model
-        /// </summary>
-        private async Task<bool> LoadUpscaleModelAsync()
-        {
-            var timestamp = Stopwatch.GetTimestamp();
-            if (CurrentPipeline.UpscaleModel is not null)
-            {
-                if (!UpscaleService.IsLoaded || UpscaleService.Pipeline.UpscaleModel != CurrentPipeline.UpscaleModel)
-                {
-                    Logger.LogInformation("[{View}] [LoadUpscaleModel] Loading upscale model {Name}...", ViewName, CurrentPipeline.UpscaleModel.Name);
-                    await UpscaleService.LoadAsync(CurrentPipeline);
-                }
-
-                Logger.LogInformation("[{View}] [LoadUpscaleModel] Successfully loaded upscale model, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
-                return true;
-            }
-
-            await UpscaleService.UnloadAsync();
-            Logger.LogInformation("[{View}] [LoadUpscaleModel] Unloaded upscale model.", ViewName);
-            return false;
-        }
-
-
-        /// <summary>
-        /// Execute image upscale
-        /// </summary>
-        /// <param name="imageInput">The image input.</param>
-        protected async Task<ImageTensor> ExecuteImageUpscaleAsync(ImageTensor imageInput)
-        {
-            if (!UpscaleService.IsLoaded)
-                return imageInput;
-
-            var timestamp = Stopwatch.GetTimestamp();
-            Logger.LogInformation("[{View}] [ExecuteImageUpscale] Executing upscale...", ViewName);
-
-            Progress.Indeterminate("Upscaling Image...");
-            imageInput = await UpscaleService.ExecuteAsync(new UpscaleImageRequest
-            {
-                Image = imageInput,
-                Options = UpscaleOptions
-            }, ProgressCallback);
-
-            Logger.LogInformation("[{View}] [ExecuteImageUpscale] Upscale complete, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
-            return imageInput;
-        }
-
-
-        /// <summary>
-        /// Execute video upscale
-        /// </summary>
-        /// <param name="videoInput">The video input.</param>
-        protected async Task<VideoInputStream> ExecuteVideoUpscaleAsync(VideoInputStream videoInput)
-        {
-            if (!UpscaleService.IsLoaded)
-                return videoInput;
-
-            var timestamp = Stopwatch.GetTimestamp();
-            Progress.Indeterminate("Upscaling Video...");
-            Logger.LogInformation("[{View}] [ExecuteVideoUpscale] Executing upscale...", ViewName);
-
-            videoInput = await UpscaleService.ExecuteAsync(new UpscaleVideoRequest
-            {
-                VideoStream = videoInput,
-                Options = UpscaleOptions
-            }, ProgressCallback);
-
-            Logger.LogInformation("[{View}] [ExecuteVideoUpscale] Upscale complete, Elapsed: {Elapsed:c}", ViewName, Stopwatch.GetElapsedTime(timestamp));
-            return videoInput;
         }
 
 
@@ -648,13 +376,13 @@ namespace Amuse.App.Views
                 IsPipelineLoaded = false;
                 CurrentPipeline = pipeline;
                 Logger.LogInformation("[{View}] [SelectedPipelineChanged] A new pipeline has been created.", ViewName);
-                if (pipeline?.DiffusionModel == null)
+                if (pipeline?.LanguageModel == null)
                 {
                     await UnloadPipelineAsync();
                 }
                 else
                 {
-                    Progress.Indeterminate($"Loading {CurrentPipeline.DiffusionModel.Name}...");
+                    Progress.Indeterminate($"Loading {CurrentPipeline.LanguageModel.Name}...");
                     if (!await LoadPipelineAsync())
                         return;// Canceled/Failed to load pipeline
 
@@ -688,29 +416,37 @@ namespace Amuse.App.Views
         /// Called when progress is received from a Python pipeline
         /// </summary>
         /// <param name="progress">The progress.</param>
-        protected virtual async void OnProgress(PipelineProgress progress)
+        protected virtual void OnProgress(PipelineProgress progress)
         {
             if (CurrentPipeline is null)
                 return;
 
             if (progress.Key == "Generate")
             {
-                var message = Globalization.GetProgressMessage(progress);
-                if (progress.Subkey == "Step")
+                if (progress.Subkey == "Initialize")
+                {
+                    CommandManager.InvalidateRequerySuggested();
+                }
+                else if (progress.Subkey == "Token")
                 {
                     Statistics.Update(progress);
-                    Progress.Update(progress.Value, progress.Maximum, message);
-                    var previewImage = await GenerateService.GeneratePreviewAsync(progress);
-                    if (previewImage != null && GenerateService.IsExecuting)
-                        PreviewImage = previewImage;
-
-                    Logger.LogDebug("[{View}] [OnProgress] Step: {Value}/{Maximum}, it/s: {IterationsPerSecond:N2}, s/it: {SecondsPerIteration:N2}", ViewName, progress.Value, progress.Maximum, progress.IterationsPerSecond, progress.SecondsPerIteration);
+                    TextResultControl?.UpdateProgress(progress);
                 }
                 else
                 {
-                    Progress.Indeterminate(message);
-                    Logger.LogDebug("[{View}] [OnProgress] Step: {Subkey}, it/s: {IterationsPerSecond:N2}, s/it: {SecondsPerIteration:N2}", ViewName, progress.Subkey, progress.IterationsPerSecond, progress.SecondsPerIteration);
+                    if (GenerateService.IsExecuting)
+                    {
+                        var message = progress.Subkey == "Transformer" && Options.Beams > 1
+                            ? "Generating Beam Results..."
+                            : Globalization.GetProgressMessage(progress);
+                        Progress.Indeterminate(message);
+                    }
                 }
+            }
+
+            if (progress.Subkey != "Token")
+            {
+                Logger.LogDebug("[{View}] [OnProgress] {Subkey} - {Message}", ViewName, progress.Subkey, progress.Message);
             }
         }
 
@@ -726,6 +462,22 @@ namespace Amuse.App.Views
                 return;
 
             await HistoryService.AddAsync(args);
+        }
+
+
+        /// <summary>
+        /// Handles the <see cref="E:SourceTextKeyDown" /> event.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
+        protected void OnSourceTextKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                e.Handled = true;
+                if (CanExecute())
+                    ExecuteCommand.Execute(null);
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿<Views:ViewBaseDiffusion x:Class="Amuse.App.Views.TextInstructView"
+﻿<Views:ViewBaseLanguage x:Class="Amuse.App.Views.TextInstructView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -22,10 +22,10 @@
                 <DockPanel x:Name="LeftPanelContainer" Margin="4" IsEnabled="{Binding IsViewBusy, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}">
 
                     <!--ModelControl-->
-                    <Grid DockPanel.Dock="Top" IsEnabled="{Binding DiffusionService.IsLoading, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}">
-                        <Grid IsEnabled="{Binding DiffusionService.IsExecuting, Converter={StaticResource InverseBoolConverter}}">
+                    <Grid DockPanel.Dock="Top" IsEnabled="{Binding GenerateService.IsLoading, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}">
+                        <Grid IsEnabled="{Binding GenerateService.IsExecuting, Converter={StaticResource InverseBoolConverter}}">
                             <Grid IsEnabled="{Binding IsAutomating, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}">
-                                <Controls:TextModelControl
+                                <Controls:LanguageModelControl
                                     x:Name="ModelControl"
                                     ViewType="TextInstruct"
                                     ProcessType="TextToText"
@@ -41,8 +41,8 @@
                     <DockPanel DockPanel.Dock="Bottom">
 
                         <!--InputControl-->
-                        <Grid IsEnabled="{Binding DiffusionService.IsLoaded, Mode=OneWay}" >
-                            <Controls:TextInputControl
+                        <Grid IsEnabled="{Binding GenerateService.IsLoaded, Mode=OneWay}" >
+                            <Controls:LanguageInputControl
                                 x:Name="InputControl"
                                 ViewType="TextInstruct"
                                 ProcessType="TextToText"
@@ -50,7 +50,7 @@
                                 AutomationOptions="{Binding AutomationOptions, Mode=OneWayToSource}"
                                 AutomationProgress="{Binding AutomationProgress, Mode=OneWay}"
                                 Pipeline="{Binding CurrentPipeline, Mode=OneWay}" 
-                                IsExecuting="{Binding DiffusionService.IsExecuting, Mode=OneWay}"
+                                IsExecuting="{Binding GenerateService.IsExecuting, Mode=OneWay}"
                                 IsAutomating="{Binding IsAutomating, Mode=OneWay}"
                                 IsEnabled="{Binding CurrentPipeline, Converter={StaticResource InverseNullBooleanConverter}, Mode=OneWay}"/>
                         </Grid>
@@ -81,7 +81,7 @@
                 <Border IsEnabled="{Binding IsViewBusy, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}">
                     <Grid >
                         <Controls:TextResultControl 
-                            x:Name="TextResult" 
+                            x:Name="TextResultElement" 
                             Settings="{Binding Settings, Mode=OneWay}"
                             Result="{Binding ResultText, Mode=TwoWay}" 
                             MaxTokenLength="{Binding Options.MaxLength, Mode=OneWay}"/>
@@ -119,16 +119,16 @@
                         <!--Execute/Cancel-->
                         <UniformGrid DockPanel.Dock="Right" Columns="2" Width="260" Margin="0,4,0,0">
                             <DockPanel >
-                                <Button DockPanel.Dock="Left" Width="30" Command="{Binding StopCommand, Mode=OneWay}" Visibility="{Binding DiffusionService.IsCanceling, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" ToolTip="Immediately stops generation by closing the backend process." ToolTipService.InitialShowDelay="200">
+                                <Button DockPanel.Dock="Left" Width="30" Command="{Binding StopCommand, Mode=OneWay}" Visibility="{Binding GenerateService.IsCanceling, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" ToolTip="Immediately stops generation by closing the backend process." ToolTipService.InitialShowDelay="200">
                                     <CommonControls:FontAwesome Icon="f00d" Color="{StaticResource DangerColour}" />
                                 </Button>
-                                <Grid IsEnabled="{Binding DiffusionService.IsCanceling, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}">
+                                <Grid IsEnabled="{Binding GenerateService.IsCanceling, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}">
                                     <Button Command="{Binding CancelCommand, Mode=OneWay}" >
                                         <Button.Style>
                                             <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
                                                 <Setter Property="Content" Value="Cancel" />
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding DiffusionService.IsCanceling, Mode=OneWay}" Value="True">
+                                                    <DataTrigger Binding="{Binding GenerateService.IsCanceling, Mode=OneWay}" Value="True">
                                                         <Setter Property="Content" Value="Canceling" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -174,7 +174,7 @@
                                 TextPadding="2,2,2,10" 
                                 AcceptsReturn="True" 
                                 TextWrapping="Wrap" 
-                                PreviewKeyDown="SourceText_PreviewKeyDown"  
+                                PreviewKeyDown="OnSourceTextKeyDown"
                                 Placeholder="Please ask a question..." 
                                 VerticalScrollBarVisibility="Auto"
                                 Visibility="{Binding IsAutomating, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
@@ -213,4 +213,4 @@
 
         </Grid>
     </Grid>
-</Views:ViewBaseDiffusion>
+</Views:ViewBaseLanguage>

@@ -28,8 +28,8 @@ namespace Amuse.App.Views
         private ImageInput _sourceImage4;
         private VideoInputStream _sourceVideo;
 
-        public FrameToFrameView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IDiffusionService diffusionService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, IMediaService mediaService, ILogger<FrameToFrameView> logger)
-        : base(settings, navigationService, downloadService, diffusionService, extractService, upscaleService, historyService, logger)
+        public FrameToFrameView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IGenerateService generateService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, IMediaService mediaService, ILogger<FrameToFrameView> logger)
+        : base(settings, navigationService, downloadService, generateService, extractService, upscaleService, historyService, logger)
         {
             MediaService = mediaService;
             VideoFrameProgress = new ProgressInfo();
@@ -93,7 +93,7 @@ namespace Amuse.App.Views
         {
             await base.OpenAsync(args);
             if (!IsPipelineLoaded)
-                ModelControl.SetPipeline(DiffusionService.Pipeline);
+                ModelControl.SetPipeline(GenerateService.Pipeline);
         }
 
 
@@ -145,7 +145,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[FrameToFrame] [Execute] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Pipeline", ex.Message);
             }
@@ -194,7 +194,7 @@ namespace Amuse.App.Views
 
 
                     var tempVideoStreamFile = MediaService.GetTempFile(MediaType.Video);
-                    var resultVideoStream = await MediaService.SaveWithAudioAsync(ExecuteVideoFramesAsync(automationJob.DiffusionOptions), _sourceVideo.SourceFile, tempVideoStreamFile);
+                    var resultVideoStream = await MediaService.SaveWithAudioAsync(ExecuteVideoFramesAsync(automationJob.GenerateOptions), _sourceVideo.SourceFile, tempVideoStreamFile);
 
                     Statistics.Stop();
                     ResultVideo = !AutomationOptions.IsHistoryEnabled
@@ -217,7 +217,7 @@ namespace Amuse.App.Views
             catch (Exception ex)
             {
                 Statistics.Clear();
-                IsPipelineLoaded = DiffusionService.IsLoaded;
+                IsPipelineLoaded = GenerateService.IsLoaded;
                 Logger.LogError(ex, "[FrameToFrame] [ExecuteAutomation] An exception occurred executing pipeline, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
                 await DialogService.ShowErrorAsync("Execute Automation", ex.Message);
             }
@@ -238,7 +238,7 @@ namespace Amuse.App.Views
         /// <summary>
         /// Execute diffusion for each video frame
         /// </summary>
-        private async IAsyncEnumerable<VideoFrame> ExecuteVideoFramesAsync(DiffusionInputOptions inputOptions)
+        private async IAsyncEnumerable<VideoFrame> ExecuteVideoFramesAsync(GenerateInputOptions inputOptions)
         {
             await foreach (var videoFrame in _sourceVideo.GetAsync())
             {
@@ -284,7 +284,7 @@ namespace Amuse.App.Views
         /// Save history
         /// </summary>
         /// <param name="options">The options.</param>
-        private async Task<VideoInputStream> SaveHistoryAsync(DiffusionInputOptions options, VideoInputStream videoResult)
+        private async Task<VideoInputStream> SaveHistoryAsync(GenerateInputOptions options, VideoInputStream videoResult)
         {
             Logger.LogInformation($"[FrameToFrame] [SaveHistory] Saving history...");
             var result = await HistoryService.AddAsync(videoResult, new DiffusionHistory

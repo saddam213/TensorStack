@@ -233,9 +233,6 @@ namespace Amuse.Common
         }
 
 
-
-
-
         /// <summary>
         /// Create the pipeline
         /// </summary>

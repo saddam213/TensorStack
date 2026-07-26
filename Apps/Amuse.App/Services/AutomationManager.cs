@@ -16,22 +16,22 @@ namespace Amuse.App.Services
         /// Create diffusion automation jobs
         /// </summary>
         /// <param name="automationOptions">The automation options.</param>
-        /// <param name="diffusionOptions">The diffusion options.</param>
+        /// <param name="generateOptions">The diffusion options.</param>
         /// <param name="outputMediaType">Type of the output media.</param>
         /// <param name="inputMediaType">Type of the input media.</param>
-        public static async IAsyncEnumerable<AutomationJob> CreateJobsAsync(AutomationOptions automationOptions, DiffusionInputOptions diffusionOptions, MediaType outputMediaType, MediaType inputMediaType)
+        public static async IAsyncEnumerable<AutomationJob> CreateJobsAsync(AutomationOptions automationOptions, GenerateInputOptions generateOptions, MediaType outputMediaType, MediaType inputMediaType)
         {
             if (automationOptions.Type == AutomationType.Seed)
             {
-                var seeds = GetSeeds(0, automationOptions.Count, diffusionOptions.Seed);
+                var seeds = GetSeeds(0, automationOptions.Count, generateOptions.Seed);
                 foreach (var (index, seed) in seeds.Index())
                 {
-                    var options = diffusionOptions with { Seed = seed };
+                    var options = generateOptions with { Seed = seed };
                     yield return new AutomationJob
                     {
                         Id = index + 1,
                         Count = seeds.Length,
-                        DiffusionOptions = options,
+                        GenerateOptions = options,
                         OutputFile = GetOutputFile(automationOptions, outputMediaType, "Image", seed)
                     };
                 }
@@ -39,7 +39,7 @@ namespace Amuse.App.Services
             else if (automationOptions.Type == AutomationType.PromptLines)
             {
                 var promptLines = await File.ReadAllLinesAsync(automationOptions.InputFile);
-                var seeds = GetSeeds(diffusionOptions.Seed, promptLines.Length);
+                var seeds = GetSeeds(generateOptions.Seed, promptLines.Length);
                 foreach (var (index, prompt) in promptLines.Index())
                 {
                     if (string.IsNullOrWhiteSpace(prompt))
@@ -47,16 +47,16 @@ namespace Amuse.App.Services
 
                     var seed = seeds[index];
                     var name = $"Line{index + 1}";
-                    var options = diffusionOptions with
+                    var options = generateOptions with
                     {
                         Seed = seed,
-                        Prompt = $"{prompt} {diffusionOptions.Prompt}"
+                        Prompt = $"{prompt} {generateOptions.Prompt}"
                     };
                     yield return new AutomationJob
                     {
                         Id = index + 1,
                         Count = seeds.Length,
-                        DiffusionOptions = options,
+                        GenerateOptions = options,
                         OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                     };
                 }
@@ -64,7 +64,7 @@ namespace Amuse.App.Services
             else if (automationOptions.Type == AutomationType.PromptFiles)
             {
                 var promptFiles = Directory.EnumerateFiles(automationOptions.InputDirectory, "*.txt").ToArray();
-                var seeds = GetSeeds(diffusionOptions.Seed, promptFiles.Length);
+                var seeds = GetSeeds(generateOptions.Seed, promptFiles.Length);
                 foreach (var (index, promptFile) in promptFiles.Index())
                 {
                     var seed = seeds[index];
@@ -73,16 +73,16 @@ namespace Amuse.App.Services
                     if (string.IsNullOrWhiteSpace(prompt))
                         continue;
 
-                    var options = diffusionOptions with
+                    var options = generateOptions with
                     {
                         Seed = seed,
-                        Prompt = $"{prompt} {diffusionOptions.Prompt}"
+                        Prompt = $"{prompt} {generateOptions.Prompt}"
                     };
                     yield return new AutomationJob
                     {
                         Id = index + 1,
                         Count = seeds.Length,
-                        DiffusionOptions = options,
+                        GenerateOptions = options,
                         OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                     };
                 }
@@ -94,13 +94,13 @@ namespace Amuse.App.Services
                     var imageFiles = Directory.EnumerateFiles(automationOptions.InputDirectory, "*.*")
                        .Where(x => TensorStack.WPF.Common.ImageFileExtensions.Contains(Path.GetExtension(x)))
                        .ToArray();
-                    var seeds = GetSeeds(diffusionOptions.Seed, imageFiles.Length);
+                    var seeds = GetSeeds(generateOptions.Seed, imageFiles.Length);
                     foreach (var (index, filename) in imageFiles.Index())
                     {
                         var seed = seeds[index];
                         var name = Path.GetFileNameWithoutExtension(filename);
                         var image = await ImageInput.CreateAsync(filename);
-                        var options = diffusionOptions with { Seed = seed };
+                        var options = generateOptions with { Seed = seed };
                         if (automationOptions.UseInputSize)
                         {
                             options.Width = image.Width;
@@ -111,7 +111,7 @@ namespace Amuse.App.Services
                         {
                             Id = index + 1,
                             Count = seeds.Length,
-                            DiffusionOptions = options,
+                            GenerateOptions = options,
                             InputImages = [image],
                             OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                         };
@@ -122,7 +122,7 @@ namespace Amuse.App.Services
                     var videoFiles = Directory.EnumerateFiles(automationOptions.InputDirectory, "*.*")
                        .Where(x => TensorStack.WPF.Common.VideoFileExtensions.Contains(Path.GetExtension(x)))
                        .ToArray();
-                    var seeds = GetSeeds(diffusionOptions.Seed, videoFiles.Length);
+                    var seeds = GetSeeds(generateOptions.Seed, videoFiles.Length);
                     foreach (var (index, filename) in videoFiles.Index())
                     {
                         var seed = seeds[index];
@@ -132,7 +132,7 @@ namespace Amuse.App.Services
                         {
                             Id = index + 1,
                             Count = seeds.Length,
-                            DiffusionOptions = diffusionOptions with { Seed = seed },
+                            GenerateOptions = generateOptions with { Seed = seed },
                             VideoStreams = [videoStream],
                             OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                         };
@@ -143,7 +143,7 @@ namespace Amuse.App.Services
                     var audioFiles = Directory.EnumerateFiles(automationOptions.InputDirectory, "*.*")
                         .Where(x => TensorStack.WPF.Common.AudioFileExtensions.Contains(Path.GetExtension(x)))
                         .ToArray();
-                    var seeds = GetSeeds(diffusionOptions.Seed, audioFiles.Length);
+                    var seeds = GetSeeds(generateOptions.Seed, audioFiles.Length);
                     foreach (var (index, filename) in audioFiles.Index())
                     {
                         var seed = seeds[index];
@@ -153,7 +153,7 @@ namespace Amuse.App.Services
                         {
                             Id = index + 1,
                             Count = seeds.Length,
-                            DiffusionOptions = diffusionOptions with { Seed = seed },
+                            GenerateOptions = generateOptions with { Seed = seed },
                             AudioStreams = [audioStream],
                             OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                         };
@@ -164,7 +164,7 @@ namespace Amuse.App.Services
                     var textFiles = Directory.EnumerateFiles(automationOptions.InputDirectory, "*.*")
                         .Where(x => TensorStack.WPF.Common.TextFileExtensions.Contains(Path.GetExtension(x)))
                         .ToArray();
-                    var seeds = GetSeeds(diffusionOptions.Seed, textFiles.Length);
+                    var seeds = GetSeeds(generateOptions.Seed, textFiles.Length);
                     foreach (var (index, filename) in textFiles.Index())
                     {
                         var seed = seeds[index];
@@ -174,7 +174,7 @@ namespace Amuse.App.Services
                         {
                             Id = index + 1,
                             Count = seeds.Length,
-                            DiffusionOptions = diffusionOptions with { Seed = seed },
+                            GenerateOptions = generateOptions with { Seed = seed },
                             InputTexts = [textInput],
                             OutputFile = GetOutputFile(automationOptions, outputMediaType, name, seed)
                         };
