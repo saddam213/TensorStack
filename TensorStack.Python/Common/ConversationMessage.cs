@@ -2,7 +2,7 @@
 
 namespace TensorStack.Python.Common
 {
-    public record ConversationMessage(ConversationRole Role, string Content, int[] ImageIndex);
+    public record ConversationMessage(ConversationRole Role, string Content, int[] ImageIndex, int[] AudioIndex);
 
     public enum ConversationRole
     {

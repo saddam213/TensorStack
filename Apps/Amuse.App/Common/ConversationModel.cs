@@ -11,6 +11,7 @@ namespace Amuse.App.Common
         private ConversationRole _role;
         private string _content;
         private List<int> _imageIndex;
+        private List<int> _audioIndex;
 
         public ConversationRole Role
         {
@@ -31,6 +32,12 @@ namespace Amuse.App.Common
             set { SetProperty(ref _imageIndex, value); }
         }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public List<int> AudioIndex
+        {
+            get { return _audioIndex; }
+            set { SetProperty(ref _audioIndex, value); }
+        }
 
         public bool Equals(ConversationModel other) => ReferenceEquals(this, other);
         public override int GetHashCode() => RuntimeHelpers.GetHashCode(this);

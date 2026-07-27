@@ -73,6 +73,7 @@
                             <CommonControls:SliderControl Text="Min Length" Value="{Binding Options.MinLength}" Maximum="{Binding Pipeline.LanguageModel.DefaultOptions.MaxLength}" TickFrequency="1" />
                             <CommonControls:SliderControl Text="Max Length" Value="{Binding Options.MaxLength}" Maximum="{Binding Pipeline.LanguageModel.DefaultOptions.MaxLength}" TickFrequency="1024" />
                         </UniformGrid>
+                        <CheckBox Content="Thinking Enabled" IsChecked="{Binding Options.IsThinkingEnabled}" Margin="-1,8,0,4" FontStyle="Italic" FontSize="11" Opacity=".9"/>
                     </StackPanel>
 
     

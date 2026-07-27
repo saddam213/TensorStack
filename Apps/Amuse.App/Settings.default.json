@@ -34,7 +34,7 @@
         "torchvision==0.26.0+cu130",
         "typing==3.7.4.3",
         "wheel==0.47.0",
-        "transformers==5.5.4",
+        "transformers==5.14.1",
         "accelerate==1.14.0",
         "diffusers==0.39.0",
         "protobuf==7.35.1",
@@ -30940,7 +30940,7 @@
       "Name": "Qwen 3.5 4B",
       "Template": "Qwen35_4B",
       "Pipeline": "AutoTextPipeline",
-      "ModelType": "Base",
+      "ModelType": "Vision",
       "BaseType": "bfloat16",
       "MediaType": "Text",
       "ProcessTypes": [ "TextToText", "ImageToText" ],
@@ -30998,7 +30998,7 @@
       "Name": "Qwen 3.5 9B",
       "Template": "Qwen35_9B",
       "Pipeline": "AutoTextPipeline",
-      "ModelType": "Base",
+      "ModelType": "Vision",
       "BaseType": "bfloat16",
       "MediaType": "Text",
       "ProcessTypes": [ "TextToText", "ImageToText" ],
@@ -31058,7 +31058,7 @@
       "Name": "Qwen 3.5 27B",
       "Template": "Qwen35_27B",
       "Pipeline": "AutoTextPipeline",
-      "ModelType": "Base",
+      "ModelType": "Vision",
       "BaseType": "bfloat16",
       "MediaType": "Text",
       "ProcessTypes": [ "TextToText", "ImageToText" ],
@@ -31126,7 +31126,7 @@
       "Name": "Qwen 3.6 27B",
       "Template": "Qwen36_27B",
       "Pipeline": "AutoTextPipeline",
-      "ModelType": "Base",
+      "ModelType": "Vision",
       "BaseType": "bfloat16",
       "MediaType": "Text",
       "ProcessTypes": [ "TextToText", "ImageToText" ],
@@ -31191,6 +31191,62 @@
         "Temperature": 1,
         "IsSamplingEnabled": false,
         "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Id": 820,
+      "Backend": "PyTorch",
+      "Name": "Gemma4 2B",
+      "Template": "Gemma4_2B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Multi",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextEncoder",
+          "Type": "OnlineFolder",
+          "Folder": "Gemma-4-E2B-IT",
+          "DownloadFiles": [
+            "https://huggingface.co/google/gemma-4-E2B-it/resolve/main/chat_template.jinja",
+            "https://huggingface.co/google/gemma-4-E2B-it/resolve/main/config.json",
+            "https://huggingface.co/google/gemma-4-E2B-it/resolve/main/generation_config.json",
+            "https://huggingface.co/google/gemma-4-E2B-it/resolve/main/model.safetensors",
+            "https://huggingface.co/google/gemma-4-E2B-it/resolve/main/processor_config.json",
+            "https://huggingface.co/google/gemma-4-E2B-it/resolve/main/tokenizer.json",
+            "https://huggingface.co/google/gemma-4-E2B-it/resolve/main/tokenizer_config.json"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 131072,
+        "Beams": 1,
+        "TopK": 64,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0,
+        "SampleRate": 16000,
+        "Channels": 1
       }
     }
   ]

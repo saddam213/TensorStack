@@ -8,6 +8,8 @@ from dataclasses import dataclass
 from threading import Event
 from typing import Any, Optional
 from transformers.image_utils import ImageInput
+from transformers.audio_utils import AudioInput
+from transformers.video_utils import VideoInput
 from transformers import (
     ProcessorMixin,
     TextIteratorStreamer,
@@ -35,23 +37,27 @@ class TextPipeline:
     base_model: PreTrainedModel
     kwargs: dict[str, Any]
     streamer: Optional[CountingStreamer] = None
+    special_replacements: tuple[tuple[str, str], ...] = ()
+
+    def __post_init__(self):
+        self._build_token_replacements()
 
     #------------------------------------------------
     # Generate the model inputs
     #------------------------------------------------
-    def generate_inputs(self, options: GenerateTextOptions, cancel: Event, images: ImageInput) -> dict[str, Any]:
+    def generate_inputs(self, options: GenerateTextOptions, cancel: Event, images: ImageInput = None, audios: AudioInput = None, videos: VideoInput = None) -> dict[str, Any]:
         set_seed(options.seed)
         device = self.base_model.device
-        conversation = self._parse_conversation(options, images)
-        prompt = self._apply_chat_template(conversation)
-        inputs = self._get_inputs(prompt, images).to(device)
+        conversation = self._parse_conversation(options)
+        prompt = self._apply_chat_template(options, conversation)
+        inputs = self._get_inputs(prompt, images, audios, videos).to(device)
 
         self.streamer = None
         if options.num_beams == 1:
             self.streamer = CountingStreamer(
                 self.tokenizer,
                 skip_prompt=True,
-                skip_special_tokens=True,
+                skip_special_tokens=False,
                 timeout=1
             )
 
@@ -109,6 +115,7 @@ class TextPipeline:
         while True:
             try:
                 chunk = next(self.streamer)
+                chunk = self._replace_tokens(chunk)
                 chunks.append(chunk)
                 token_push(token=chunk,token_count=self.streamer.token_count, elapsed=stopwatch.reset())
                 #print(f"[DEBUG] [TokenPush] Chunk: {chunk}")
@@ -138,7 +145,8 @@ class TextPipeline:
         output = self.base_model.generate(**kwargs)
         for beam_idx, sequence in enumerate(output.sequences):
             score = 0.0
-            text = self.tokenizer.decode(sequence[input_length:], skip_special_tokens=True)
+            text = self.tokenizer.decode(sequence[input_length:], skip_special_tokens=False)
+            text = self._replace_tokens(text)
             if output.sequences_scores is not None:
                 score = float(output.sequences_scores[beam_idx])
 
@@ -150,50 +158,56 @@ class TextPipeline:
     #------------------------------------------------
     # Parse conversation messages
     #------------------------------------------------
-    def _parse_conversation(self, options: GenerateTextOptions, images: Any | list[Any]) -> list[dict[str, Any]]:
+    def _parse_conversation(self, options: GenerateTextOptions) -> list[dict[str, Any]]:
         messages = []
         if options.conversation is None:
             return messages
 
-        if not isinstance(images, list):
-            images = [images]
-
-        #print(f"[DEBUG] Conversation Before: {options.conversation}")
+        print(f"[DEBUG] Conversation Before: {options.conversation}")
         for message in options.conversation:
             image_indices = message.get("image_index", [])
+            audio_indices = message.get("audio_index", [])
             role = message["role"]
             text = message["content"]
-
-            if not image_indices:
+            if not image_indices and not audio_indices:
                 messages.append({ "role": role, "content": text })
                 continue
 
+            # Image Placeholders
             content = []
             for idx in image_indices:
-                content.append({ "type": "image", "image": images[idx] })
+                content.append({ "type": "image"})
 
+            # Text Content
             content.append({ "type": "text", "text": text })
+
+             # Audio Placeholders
+            for idx in audio_indices:
+                content.append({ "type": "audio"})
+
             messages.append({ "role": role, "content": content })
 
-        #print(f"[DEBUG] Conversation After: {messages}")
+        print(f"[DEBUG] Conversation After: {messages}")
         return messages
 
 
     #------------------------------------------------
     # Apply the chat template to the conversation
     #------------------------------------------------
-    def _apply_chat_template(self, conversation: dict[str, Any]) -> str:
+    def _apply_chat_template(self, options: GenerateTextOptions, conversation: dict[str, Any]) -> str:
         if self.processor:
             return self.processor.apply_chat_template(
                 conversation,
                 tokenize=False,
                 add_generation_prompt=True,
+                enable_thinking=options.enable_thinking
             )
         elif self.tokenizer is not None:
             return self.tokenizer.apply_chat_template(
                 conversation,
                 tokenize=False,
                 add_generation_prompt=True,
+                enable_thinking=options.enable_thinking
             )
         return None
 
@@ -201,11 +215,46 @@ class TextPipeline:
     #------------------------------------------------
     # Get the pipeline device_map
     #------------------------------------------------
-    def _get_inputs(self, prompt: str, images):
+    def _get_inputs(self, prompt: str, images: ImageInput, audios: AudioInput, videos: VideoInput):
         if self.processor:
-            return self.processor(text=prompt, images=images, return_tensors="pt")
+            return self.processor(
+                text=prompt,
+                images=images,
+                audio=audios,
+                videos=videos,
+                return_tensors="pt"
+            )
 
         return self.tokenizer(prompt, return_tensors="pt")
+
+
+    #------------------------------------------------
+    # Build token replacement map
+    #------------------------------------------------
+    def _build_token_replacements(self):
+        thinking_start = { "<|channel>" }
+        thinking_end = { "<channel|>" }
+        replacements = []
+        for token in self.tokenizer.all_special_tokens:
+            if token in thinking_start:
+                replacements.append((token, "<think>\n"))
+            elif token in thinking_end:
+                replacements.append((token, "\n</think>\n"))
+            else:
+                replacements.append((token, ""))
+        self.special_replacements = tuple(replacements)
+
+
+    #------------------------------------------------
+    # Replace tokens/segments
+    #------------------------------------------------
+    def _replace_tokens(self, text: str) -> str:
+        if "<" not in text:
+            return text
+        for src, dst in self.special_replacements:
+            text = text.replace(src, dst)
+        return text
+
 
 
 #------------------------------------------------

@@ -63,6 +63,12 @@ namespace TensorStack.Python.Common
         [JsonPropertyName("no_repeat_ngram_size")]
         public int NoRepeatNgramSize { get; set; }
 
+        [JsonPropertyName("enable_thinking")]
+        public bool IsThinkingEnabled { get; set; }
+
+        [JsonPropertyName("sample_rate")]
+        public int SampleRate { get; set; }
+
 
         [JsonIgnore]
         public List<ImageTensor> InputImages { get; set; } = [];

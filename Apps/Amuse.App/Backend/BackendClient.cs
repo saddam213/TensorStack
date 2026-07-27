@@ -526,7 +526,9 @@ namespace Amuse.App.Runtime
                 EarlyStopping = options.EarlyStopping.ToString(),
                 Instruction = options.Instruction,
                 Task = options.Task,
+                IsThinkingEnabled = options.IsThinkingEnabled,
                 InputImages = options.InputImages,
+                SampleRate = DefaultOptions.SampleRate
             };
         }
 
@@ -715,7 +717,7 @@ namespace Amuse.App.Runtime
             if (conversation.IsNullOrEmpty())
                 return default;
 
-            return [.. conversation.Select(x => new ConversationMessage(x.Role, x.Content, [.. x.ImageIndex ?? []]))];
+            return [.. conversation.Select(x => new ConversationMessage(x.Role, x.Content, [.. x.ImageIndex ?? []], [.. x.AudioIndex ?? []]))];
         }
 
 

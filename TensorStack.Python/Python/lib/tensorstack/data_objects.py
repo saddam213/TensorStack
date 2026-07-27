@@ -344,6 +344,7 @@ class ConversationMessage:
     role: str
     content: str
     image_index: Sequence[int]
+    audio_index: Sequence[int]
 
 
 @dataclass(slots=True)
@@ -367,6 +368,8 @@ class GenerateTextOptions:
     repetition_penalty: float = 0
     length_penalty: float = 0
     no_repeat_ngram_size: int = 0
+    enable_thinking: bool = True
+    sample_rate: int = 0
 
     def __post_init__(self):
         self.temperature = float(self.temperature)

@@ -37,8 +37,8 @@ namespace Amuse.App.Dialogs
             Errors = new ObservableCollection<string>();
             CancelCommand = new AsyncRelayCommand(CancelAsync);
             SaveCommand = new AsyncRelayCommand(SaveAsync, CanExecuteSave);
-            SelectedSource = ModelSourceType.LocalFile;
-            ModelSources = [ModelSourceType.LocalFile, ModelSourceType.LocalFolder, ModelSourceType.Checkpoint];
+            SelectedSource = ModelSourceType.LocalFolder;
+            ModelSources = [ ModelSourceType.LocalFolder, ModelSourceType.Checkpoint];
             InitializeComponent();
         }
 
@@ -167,7 +167,7 @@ namespace Amuse.App.Dialogs
 
         private void Reset()
         {
-            SelectedSource = ModelSourceType.LocalFile;
+            SelectedSource = ModelSourceType.LocalFolder;
         }
 
 
@@ -190,12 +190,7 @@ namespace Amuse.App.Dialogs
             if (!string.IsNullOrEmpty(_selectedName))
                 return;
 
-            if (_selectedSource == ModelSourceType.LocalFile)
-            {
-                if (!string.IsNullOrEmpty(_selectedFile))
-                    SelectedName = Path.GetFileNameWithoutExtension(_selectedFile);
-            }
-            else if (_selectedSource == ModelSourceType.LocalFolder)
+            if (_selectedSource == ModelSourceType.LocalFolder)
             {
                 if (!string.IsNullOrEmpty(_selectedPath))
                     SelectedName = Path.GetFileNameWithoutExtension(_selectedPath);
@@ -234,12 +229,7 @@ namespace Amuse.App.Dialogs
             if (Settings.LanguageModels.Any(x => x.Name.Equals(_selectedName, StringComparison.OrdinalIgnoreCase)))
                 yield return $"Model with name '{_selectedName}' already exists";
 
-            if (_selectedSource == ModelSourceType.LocalFile)
-            {
-                if (string.IsNullOrEmpty(_selectedFile))
-                    yield return "Model file name cannot be empty";
-            }
-            else if (_selectedSource == ModelSourceType.LocalFolder)
+            if (_selectedSource == ModelSourceType.LocalFolder)
             {
                 if (string.IsNullOrEmpty(_selectedPath))
                     yield return "Model folder name cannot be empty";

@@ -52,12 +52,6 @@
             </UniformGrid>
 
             <Grid>
-                <!--File-->
-                <StackPanel Visibility="{Binding SelectedSource, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=LocalFile}">
-                    <TextBlock Text="Model File" Style="{StaticResource FieldTextBlockStyle}"/>
-                    <CommonControls:FilePickerTextBox FileName="{Binding SelectedFile, Mode=TwoWay}" IsFolderPicker="False" IsRequired="True" Filter="{Binding FileFilter}"/>
-                </StackPanel>
-
                 <!--Folder-->
                 <StackPanel Visibility="{Binding SelectedSource, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=LocalFolder}">
                     <TextBlock Text="Model Folder" Style="{StaticResource FieldTextBlockStyle}"/>

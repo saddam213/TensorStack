@@ -96,6 +96,9 @@ namespace Amuse.App.Common
         public bool IsSamplingEnabled { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public bool IsThinkingEnabled { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Beams { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -185,6 +188,7 @@ namespace Amuse.App.Common
                 Language = Language,
                 Languages = Languages?.ToArray(),
                 IsSamplingEnabled = IsSamplingEnabled,
+                IsThinkingEnabled = IsThinkingEnabled,
                 RepetitionPenalty = RepetitionPenalty,
                 TopH = TopH,
                 TypicalP = TypicalP

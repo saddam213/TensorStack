@@ -81,6 +81,7 @@ namespace Amuse.App.Views
                 // Context
                 var textContext = InputControl.GetTextContext(Options.Prompt);
                 var imageContext = InputControl.GetImageContext(Options.Prompt);
+                var audioContext = InputControl.GetAudioContext(Options.Prompt);
 
                 // Conversation
                 var conversation = new List<ConversationModel>();
@@ -100,7 +101,8 @@ namespace Amuse.App.Views
                 {
                     Role = ConversationRole.User,
                     Content = textContext.ToString(),
-                    ImageIndex = [.. Enumerable.Range(0, imageContext.Count)]
+                    ImageIndex = [.. Enumerable.Range(0, imageContext.Count)],
+                    AudioIndex = [.. Enumerable.Range(0, audioContext.Count)]
                 });
 
                 // Options
@@ -109,6 +111,7 @@ namespace Amuse.App.Views
                     Prompt = null,
                     Prompt2 = null,
                     InputImages = imageContext,
+                    InputAudios = audioContext,
                     Conversation = conversation
                 };
 

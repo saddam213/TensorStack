@@ -12109,5 +12109,741 @@
         }
       ]
     }
+  ],
+  "LanguageTemplates": [
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen3_Base",
+      "Template": "Qwen3_4B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 40960,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.6,
+        "IsSamplingEnabled": true,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen3_Vision",
+      "Template": "Qwen3_4B_VL",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.6,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen3_8B",
+      "Template": "Qwen3_8B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 10 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 12 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 16 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 40960,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.6,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen3_8B_VL",
+      "Template": "Qwen3_8B_VL",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 10 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 12 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 16 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.8,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.7,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen3_14B",
+      "Template": "Qwen3_14B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 12 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 17 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 26 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 40960,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.6,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen3_32B",
+      "Template": "Qwen3_32B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 20 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 34 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 40960,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.6,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen35_4B",
+      "Template": "Qwen35_4B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 20 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 34 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen35_9B",
+      "Template": "Qwen35_9B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 20 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 34 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen35_27B",
+      "Template": "Qwen35_27B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 20 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 34 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen36_27B",
+      "Template": "Qwen36_27B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 20 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 34 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Gemma4_2B",
+      "Template": "Gemma4_2B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Multi",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 131072,
+        "Beams": 1,
+        "TopK": 64,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Gemma4_4B",
+      "Template": "Gemma4_4B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Multi",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 131072,
+        "Beams": 1,
+        "TopK": 64,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Gemma4_12B",
+      "Template": "Gemma4_12B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Multi",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 64,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Gemma4_26B",
+      "Template": "Gemma4_26B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Multi",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 64,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Gemma4_31B",
+      "Template": "Gemma4_31B",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Multi",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 12 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 64,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    }
+  ],
+  "LanguageTemplateMap": [
+    {
+      "Name": "Qwen",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Qwen 3.0 4B",
+          "Template": "Qwen3_4B"
+        },
+        {
+          "Name": "Qwen 3.0 4B VL",
+          "Template": "Qwen3_4B_VL"
+        },
+        {
+          "Name": "Qwen 3.0 8B",
+          "Template": "Qwen3_8B"
+        },
+        {
+          "Name": "Qwen 3.0 8B VL",
+          "Template": "Qwen3_8B_VL"
+        },
+        {
+          "Name": "Qwen 3.0 14B",
+          "Template": "Qwen3_14B"
+        },
+        {
+          "Name": "Qwen 3.0 32B",
+          "Template": "Qwen3_32B"
+        },
+        {
+          "Name": "Qwen 3.5 4B",
+          "Template": "Qwen35_4B"
+        },
+        {
+          "Name": "Qwen 3.5 9B",
+          "Template": "Qwen35_9B"
+        },
+        {
+          "Name": "Qwen 3.5 27B",
+          "Template": "Qwen35_27B"
+        },
+        {
+          "Name": "Qwen 3.6 27B",
+          "Template": "Qwen36_27B"
+        }
+      ]
+    },
+    {
+      "Name": "Gemma",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Gemma 4 2B",
+          "Template": "Gemma4_2B"
+        },
+        {
+          "Name": "Gemma 4 4B",
+          "Template": "Gemma4_4B"
+        },
+        {
+          "Name": "Gemma 4 12B",
+          "Template": "Gemma4_12B"
+        },
+        {
+          "Name": "Gemma 4 26B",
+          "Template": "Gemma4_26B"
+        },
+        {
+          "Name": "Gemma 4 31B",
+          "Template": "Gemma4_31B"
+        }
+      ]
+    }
   ]
 }

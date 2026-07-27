@@ -117,6 +117,7 @@ namespace Amuse.App.Controls
                 // Keep
                 Seed = previousOptions?.Seed ?? 0,
                 Prompt = previousOptions?.Prompt ?? DefaultPrompt,
+                IsThinkingEnabled = previousOptions?.IsThinkingEnabled ?? newOptions?.IsThinkingEnabled ?? false,
 
                 MinLength = newOptions.MinLength,
                 MaxLength = newOptions.MaxLength,
@@ -146,7 +147,9 @@ namespace Amuse.App.Controls
 
             // Context
             ContextControlElement.IsTextEnabled = true;
-            ContextControlElement.IsImageEnabled = newModel.ModelType == "Vision";
+            ContextControlElement.IsImageEnabled = newModel.ModelType == "Vision" || newModel.ModelType == "Multi";
+            ContextControlElement.IsAudioEnabled = newModel.ModelType == "Multi";
+            //ContextControlElement.IsVideoEnabled = newModel.ModelType == "Multi";
             return Task.CompletedTask;
         }
 

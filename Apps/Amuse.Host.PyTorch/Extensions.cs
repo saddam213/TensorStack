@@ -194,8 +194,10 @@ namespace Amuse.Host.PyTorch
                 LengthPenalty = options.LengthPenalty,
                 RepetitionPenalty = options.RepetitionPenalty,
                 NoRepeatNgramSize = options.NoRepeatNgramSize,
+                IsThinkingEnabled = options.IsThinkingEnabled,
                 InputImages = options.InputImages,
                 InputAudios = options.InputAudios,
+                SampleRate = options.SampleRate,
             };
         }
 
@@ -1337,7 +1339,7 @@ namespace Amuse.Host.PyTorch
 
         public static TensorStack.Python.Common.ConversationMessage[] ToPythonOptions(this Common.ConversationMessage[] messages)
         {
-            return messages.Select(x => new TensorStack.Python.Common.ConversationMessage(x.Role.Cast<Common.ConversationRole, TensorStack.Python.Common.ConversationRole>(), x.Content, x.ImageIndex)).ToArray();
+            return messages.Select(x => new TensorStack.Python.Common.ConversationMessage(x.Role.Cast<Common.ConversationRole, TensorStack.Python.Common.ConversationRole>(), x.Content, x.ImageIndex, x.AudioIndex)).ToArray();
         }
 
 
