@@ -12114,7 +12114,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Qwen3_Base",
-      "Template": "Qwen3_4B",
+      "Template": "Qwen30_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
@@ -12158,7 +12158,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Qwen3_Vision",
-      "Template": "Qwen3_4B_VL",
+      "Template": "Qwen30_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Vision",
       "BaseType": "bfloat16",
@@ -12202,7 +12202,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Qwen3_8B",
-      "Template": "Qwen3_8B",
+      "Template": "Qwen30_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
@@ -12246,7 +12246,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Qwen3_8B_VL",
-      "Template": "Qwen3_8B_VL",
+      "Template": "Qwen30_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Vision",
       "BaseType": "bfloat16",
@@ -12290,7 +12290,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Qwen3_14B",
-      "Template": "Qwen3_14B",
+      "Template": "Qwen30_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
@@ -12334,7 +12334,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Qwen3_32B",
-      "Template": "Qwen3_32B",
+      "Template": "Qwen30_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
@@ -12378,7 +12378,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Qwen35_4B",
-      "Template": "Qwen35_4B",
+      "Template": "Qwen35_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Vision",
       "BaseType": "bfloat16",
@@ -12422,7 +12422,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Qwen35_9B",
-      "Template": "Qwen35_9B",
+      "Template": "Qwen35_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Vision",
       "BaseType": "bfloat16",
@@ -12466,7 +12466,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Qwen35_27B",
-      "Template": "Qwen35_27B",
+      "Template": "Qwen35_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Vision",
       "BaseType": "bfloat16",
@@ -12510,7 +12510,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Qwen36_27B",
-      "Template": "Qwen36_27B",
+      "Template": "Qwen36_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Vision",
       "BaseType": "bfloat16",
@@ -12554,7 +12554,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Gemma4_2B",
-      "Template": "Gemma4_2B",
+      "Template": "Gemma4_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Multi",
       "BaseType": "bfloat16",
@@ -12598,7 +12598,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Gemma4_4B",
-      "Template": "Gemma4_4B",
+      "Template": "Gemma4_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Multi",
       "BaseType": "bfloat16",
@@ -12642,7 +12642,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Gemma4_12B",
-      "Template": "Gemma4_12B",
+      "Template": "Gemma4_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Multi",
       "BaseType": "bfloat16",
@@ -12686,7 +12686,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Gemma4_26B",
-      "Template": "Gemma4_26B",
+      "Template": "Gemma4_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Multi",
       "BaseType": "bfloat16",
@@ -12730,7 +12730,7 @@
     {
       "Backend": "PyTorch",
       "Name": "Gemma4_31B",
-      "Template": "Gemma4_31B",
+      "Template": "Gemma4_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Multi",
       "BaseType": "bfloat16",

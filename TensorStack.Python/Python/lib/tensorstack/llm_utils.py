@@ -1,4 +1,4 @@
-﻿from tensorstack.utils import Stopwatch, token_push
+from tensorstack.utils import Stopwatch, token_push
 from tensorstack.data_objects import PipelineConfig, GenerateTextOptions
 from tensorstack.enums import  MemoryMode
 import threading
@@ -38,7 +38,6 @@ class TextPipeline:
     kwargs: dict[str, Any]
     streamer: Optional[CountingStreamer] = None
     special_replacements: tuple[tuple[str, str], ...] = ()
-
     def __post_init__(self):
         self._build_token_replacements()
 
@@ -57,8 +56,8 @@ class TextPipeline:
             self.streamer = CountingStreamer(
                 self.tokenizer,
                 skip_prompt=True,
-                skip_special_tokens=False,
-                timeout=1
+                timeout=1,
+                skip_special_tokens=False
             )
 
         generation_kwargs = dict(
@@ -117,8 +116,10 @@ class TextPipeline:
                 chunk = next(self.streamer)
                 chunk = self._replace_tokens(chunk)
                 chunks.append(chunk)
-                token_push(token=chunk,token_count=self.streamer.token_count, elapsed=stopwatch.reset())
-                #print(f"[DEBUG] [TokenPush] Chunk: {chunk}")
+                elapsed = stopwatch.reset()
+                token_count=self.streamer.token_count
+                token_push(token=chunk,token_count=token_count, elapsed=elapsed)
+                #print(f"[DEBUG] [TokenPush] Tokens: {token_count}, TPS: {1000 / elapsed}, Chunk: {chunk}")
             except StopIteration:
                 break
             except Empty:
@@ -163,7 +164,7 @@ class TextPipeline:
         if options.conversation is None:
             return messages
 
-        print(f"[DEBUG] Conversation Before: {options.conversation}")
+        #print(f"[DEBUG] Conversation Before: {options.conversation}")
         for message in options.conversation:
             image_indices = message.get("image_index", [])
             audio_indices = message.get("audio_index", [])
@@ -187,7 +188,7 @@ class TextPipeline:
 
             messages.append({ "role": role, "content": content })
 
-        print(f"[DEBUG] Conversation After: {messages}")
+        #print(f"[DEBUG] Conversation After: {messages}")
         return messages
 
 
@@ -224,7 +225,6 @@ class TextPipeline:
                 videos=videos,
                 return_tensors="pt"
             )
-
         return self.tokenizer(prompt, return_tensors="pt")
 
 
@@ -232,9 +232,9 @@ class TextPipeline:
     # Build token replacement map
     #------------------------------------------------
     def _build_token_replacements(self):
+        replacements = []
         thinking_start = { "<|channel>" }
         thinking_end = { "<channel|>" }
-        replacements = []
         for token in self.tokenizer.all_special_tokens:
             if token in thinking_start:
                 replacements.append((token, "<think>\n"))
@@ -255,8 +255,6 @@ class TextPipeline:
             text = text.replace(src, dst)
         return text
 
-
-
 #------------------------------------------------
 # Event based StoppingCriteria
 #------------------------------------------------
@@ -276,6 +274,7 @@ def get_model_config(file_path: str, config: PipelineConfig):
 
     # Configs
     base_model_config = template_path / "config.json"
+    chat_template_file, chat_template = load_chat_template(template_path / "chat_template.jinja")
 
     # Paths
     base_model_path = Path(config.checkpoint_config.text_encoder) if config.checkpoint_config.text_encoder else None
@@ -286,9 +285,10 @@ def get_model_config(file_path: str, config: PipelineConfig):
         "single_file": single_file,
         "base_model": base_model_path,
         "base_model_config": base_model_config,
+        "chat_template": chat_template
     }
 
-    info_1 = f"\n\tTemplate: {config.template} \n\tModelType: {config.model_type} \n\tModelPath: {config.model_path} \n\tTemplatePath: {template_path}\n\tBaseModel: {base_model_path}"
+    info_1 = f"\n\tModelType: {config.model_type}\n\tTemplate: {config.template}\n\tTemplatePath: {template_path}\n\tChatTemplate: {chat_template_file}\n\tModelPath: {config.model_path} \n\tBaseModel: {base_model_path}"
     print(f"[Load] Initialize Model... \n[ {info_1} \n]")
     return _model_config
 
@@ -309,3 +309,31 @@ def configure_memory(pipeline: TextPipeline, execution_device: str, config: Pipe
     if config.memory_mode == MemoryMode.OffloadGPU:
         pipeline.base_model.to(execution_device)
     return config.memory_mode in (MemoryMode.OffloadCPU, MemoryMode.OffloadModel)
+
+
+#------------------------------------------------
+# Load chat template from file
+#------------------------------------------------
+def load_chat_template(template_path: Path):
+    if not template_path.exists():
+        return None, None
+
+    chat_template = None
+    with open(template_path, "r", encoding="utf-8") as f:
+        chat_template = f.read()
+
+    return template_path, chat_template
+
+
+#------------------------------------------------
+# Override default template with out own
+#------------------------------------------------
+def apply_chat_template_override(tokenizer, chat_template):
+    if not chat_template:
+        return
+    # Tokenizer template
+    if hasattr(tokenizer, "chat_template"):
+        tokenizer.chat_template = chat_template
+    # Processor tokenizer
+    if hasattr(tokenizer, "tokenizer") and tokenizer.tokenizer is not None:
+        tokenizer.tokenizer.chat_template = chat_template

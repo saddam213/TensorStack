@@ -16,6 +16,8 @@ namespace Amuse.App.Common
         private string _template;
         private PipelineType _pipeline;
         private string _modelType = "Base";
+        private int _modelSize;
+        private int _modelParams;
         private string _variant;
         private VendorType[] _vendor;
         private DataType _baseType;
@@ -63,6 +65,19 @@ namespace Amuse.App.Common
             get { return _modelType; }
             set { SetProperty(ref _modelType, value); }
         }
+
+        public int ModelSize
+        {
+            get { return _modelSize; }
+            set { SetProperty(ref _modelSize, value); }
+        }
+
+        public int ModelParams
+        {
+            get { return _modelParams; }
+            set { SetProperty(ref _modelParams, value); }
+        }
+
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Variant

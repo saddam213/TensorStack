@@ -21,7 +21,8 @@ from tensorstack.llm_utils import (
     TextPipeline,
     get_device_map,
     get_model_config,
-    configure_memory
+    configure_memory,
+    apply_chat_template_override
 )
 import torch
 from threading import Event
@@ -159,13 +160,17 @@ def load_tokenizer(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
         print(f"[Load] Loading Cached Tokenizer")
         return _pipeline.tokenizer
 
+    tokenizer_path = _model_config["base_model"]
+    chat_template = _model_config["chat_template"]
+
     # 1. Load from pretrained folder
     print(f"[Load] Loading Pretrained Tokenizer")
     tokenizer = AutoTokenizer.from_pretrained(
-        _model_config["base_model"],
+        tokenizer_path,
         dtype=config.data_type,
         **pipeline_kwargs
     )
+    apply_chat_template_override(tokenizer, chat_template)
     return tokenizer
 
 
@@ -177,14 +182,19 @@ def load_processor(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
         print(f"[Load] Loading Cached Processor")
         return _pipeline.processor
 
+    processor_path = _model_config["base_model"]
+    chat_template = _model_config["chat_template"]
+
     try:
         # 1. Load from pretrained folder
         print(f"[Load] Loading Processor")
-        return AutoProcessor.from_pretrained(
-            _model_config["base_model"],
+        processor = AutoProcessor.from_pretrained(
+            processor_path,
             dtype=config.data_type,
             **pipeline_kwargs
         )
+        apply_chat_template_override(processor, chat_template)
+        return processor
     except Exception:
         return None
 
