@@ -12113,7 +12113,7 @@
   "LanguageTemplates": [
     {
       "Backend": "PyTorch",
-      "Name": "Qwen3_Base",
+      "Name": "Qwen30_IT",
       "Template": "Qwen30_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Base",
@@ -12127,20 +12127,7 @@
           "Path": ""
         }
       },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
-        }
-      ],
+      "MemoryProfile": [],
       "DefaultOptions": {
         "MaxLength": 40960,
         "Beams": 1,
@@ -12157,7 +12144,7 @@
     },
     {
       "Backend": "PyTorch",
-      "Name": "Qwen3_Vision",
+      "Name": "Qwen30_VL",
       "Template": "Qwen30_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Vision",
@@ -12171,108 +12158,7 @@
           "Path": ""
         }
       },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
-        }
-      ],
-      "DefaultOptions": {
-        "MaxLength": 262144,
-        "Beams": 1,
-        "TopK": 20,
-        "TopP": 0.95,
-        "TopH": 1,
-        "TypicalP": 1,
-        "LengthPenalty": 0,
-        "RepetitionPenalty": 1,
-        "Temperature": 0.6,
-        "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
-      }
-    },
-    {
-      "Backend": "PyTorch",
-      "Name": "Qwen3_8B",
-      "Template": "Qwen30_IT",
-      "Pipeline": "AutoTextPipeline",
-      "ModelType": "Base",
-      "BaseType": "bfloat16",
-      "MediaType": "Text",
-      "ProcessTypes": [ "TextToText" ],
-      "Checkpoint": {
-        "TextModel": {
-          "Name": "TextModel",
-          "Type": "LocalFolder",
-          "Path": ""
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 10 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 12 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 16 ]
-        }
-      ],
-      "DefaultOptions": {
-        "MaxLength": 40960,
-        "Beams": 1,
-        "TopK": 20,
-        "TopP": 0.95,
-        "TopH": 1,
-        "TypicalP": 1,
-        "LengthPenalty": 0,
-        "RepetitionPenalty": 1,
-        "Temperature": 0.6,
-        "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
-      }
-    },
-    {
-      "Backend": "PyTorch",
-      "Name": "Qwen3_8B_VL",
-      "Template": "Qwen30_IT",
-      "Pipeline": "AutoTextPipeline",
-      "ModelType": "Vision",
-      "BaseType": "bfloat16",
-      "MediaType": "Text",
-      "ProcessTypes": [ "TextToText", "ImageToText" ],
-      "Checkpoint": {
-        "TextModel": {
-          "Name": "TextModel",
-          "Type": "LocalFolder",
-          "Path": ""
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 10 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 12 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 16 ]
-        }
-      ],
+      "MemoryProfile": [],
       "DefaultOptions": {
         "MaxLength": 262144,
         "Beams": 1,
@@ -12289,95 +12175,7 @@
     },
     {
       "Backend": "PyTorch",
-      "Name": "Qwen3_14B",
-      "Template": "Qwen30_IT",
-      "Pipeline": "AutoTextPipeline",
-      "ModelType": "Base",
-      "BaseType": "bfloat16",
-      "MediaType": "Text",
-      "ProcessTypes": [ "TextToText" ],
-      "Checkpoint": {
-        "TextModel": {
-          "Name": "TextModel",
-          "Type": "LocalFolder",
-          "Path": ""
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 12 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 17 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 26 ]
-        }
-      ],
-      "DefaultOptions": {
-        "MaxLength": 40960,
-        "Beams": 1,
-        "TopK": 20,
-        "TopP": 0.95,
-        "TopH": 1,
-        "TypicalP": 1,
-        "LengthPenalty": 0,
-        "RepetitionPenalty": 1,
-        "Temperature": 0.6,
-        "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
-      }
-    },
-    {
-      "Backend": "PyTorch",
-      "Name": "Qwen3_32B",
-      "Template": "Qwen30_IT",
-      "Pipeline": "AutoTextPipeline",
-      "ModelType": "Base",
-      "BaseType": "bfloat16",
-      "MediaType": "Text",
-      "ProcessTypes": [ "TextToText" ],
-      "Checkpoint": {
-        "TextModel": {
-          "Name": "TextModel",
-          "Type": "LocalFolder",
-          "Path": ""
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 20 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 34 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 60 ]
-        }
-      ],
-      "DefaultOptions": {
-        "MaxLength": 40960,
-        "Beams": 1,
-        "TopK": 20,
-        "TopP": 0.95,
-        "TopH": 1,
-        "TypicalP": 1,
-        "LengthPenalty": 0,
-        "RepetitionPenalty": 1,
-        "Temperature": 0.6,
-        "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
-      }
-    },
-    {
-      "Backend": "PyTorch",
-      "Name": "Qwen35_4B",
+      "Name": "Qwen35_IT",
       "Template": "Qwen35_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Vision",
@@ -12391,20 +12189,7 @@
           "Path": ""
         }
       },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 20 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 34 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 60 ]
-        }
-      ],
+      "MemoryProfile": [],
       "DefaultOptions": {
         "MaxLength": 262144,
         "Beams": 1,
@@ -12421,95 +12206,7 @@
     },
     {
       "Backend": "PyTorch",
-      "Name": "Qwen35_9B",
-      "Template": "Qwen35_IT",
-      "Pipeline": "AutoTextPipeline",
-      "ModelType": "Vision",
-      "BaseType": "bfloat16",
-      "MediaType": "Text",
-      "ProcessTypes": [ "TextToText", "ImageToText" ],
-      "Checkpoint": {
-        "TextModel": {
-          "Name": "TextModel",
-          "Type": "LocalFolder",
-          "Path": ""
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 20 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 34 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 60 ]
-        }
-      ],
-      "DefaultOptions": {
-        "MaxLength": 262144,
-        "Beams": 1,
-        "TopK": 20,
-        "TopP": 0.95,
-        "TopH": 1,
-        "TypicalP": 1,
-        "LengthPenalty": 0,
-        "RepetitionPenalty": 1,
-        "Temperature": 1,
-        "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
-      }
-    },
-    {
-      "Backend": "PyTorch",
-      "Name": "Qwen35_27B",
-      "Template": "Qwen35_IT",
-      "Pipeline": "AutoTextPipeline",
-      "ModelType": "Vision",
-      "BaseType": "bfloat16",
-      "MediaType": "Text",
-      "ProcessTypes": [ "TextToText", "ImageToText" ],
-      "Checkpoint": {
-        "TextModel": {
-          "Name": "TextModel",
-          "Type": "LocalFolder",
-          "Path": ""
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 20 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 34 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 60 ]
-        }
-      ],
-      "DefaultOptions": {
-        "MaxLength": 262144,
-        "Beams": 1,
-        "TopK": 20,
-        "TopP": 0.95,
-        "TopH": 1,
-        "TypicalP": 1,
-        "LengthPenalty": 0,
-        "RepetitionPenalty": 1,
-        "Temperature": 1,
-        "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
-      }
-    },
-    {
-      "Backend": "PyTorch",
-      "Name": "Qwen36_27B",
+      "Name": "Qwen36_IT",
       "Template": "Qwen36_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Vision",
@@ -12523,20 +12220,7 @@
           "Path": ""
         }
       },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 20 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 34 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 60 ]
-        }
-      ],
+      "MemoryProfile": [],
       "DefaultOptions": {
         "MaxLength": 262144,
         "Beams": 1,
@@ -12553,7 +12237,7 @@
     },
     {
       "Backend": "PyTorch",
-      "Name": "Gemma4_2B",
+      "Name": "Gemma4_IT",
       "Template": "Gemma4_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Multi",
@@ -12567,196 +12251,7 @@
           "Path": ""
         }
       },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
-        }
-      ],
-      "DefaultOptions": {
-        "MaxLength": 131072,
-        "Beams": 1,
-        "TopK": 64,
-        "TopP": 0.95,
-        "TopH": 1,
-        "TypicalP": 1,
-        "LengthPenalty": 0,
-        "RepetitionPenalty": 1,
-        "Temperature": 1,
-        "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
-      }
-    },
-    {
-      "Backend": "PyTorch",
-      "Name": "Gemma4_4B",
-      "Template": "Gemma4_IT",
-      "Pipeline": "AutoTextPipeline",
-      "ModelType": "Multi",
-      "BaseType": "bfloat16",
-      "MediaType": "Text",
-      "ProcessTypes": [ "TextToText", "ImageToText" ],
-      "Checkpoint": {
-        "TextModel": {
-          "Name": "TextModel",
-          "Type": "LocalFolder",
-          "Path": ""
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
-        }
-      ],
-      "DefaultOptions": {
-        "MaxLength": 131072,
-        "Beams": 1,
-        "TopK": 64,
-        "TopP": 0.95,
-        "TopH": 1,
-        "TypicalP": 1,
-        "LengthPenalty": 0,
-        "RepetitionPenalty": 1,
-        "Temperature": 1,
-        "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
-      }
-    },
-    {
-      "Backend": "PyTorch",
-      "Name": "Gemma4_12B",
-      "Template": "Gemma4_IT",
-      "Pipeline": "AutoTextPipeline",
-      "ModelType": "Multi",
-      "BaseType": "bfloat16",
-      "MediaType": "Text",
-      "ProcessTypes": [ "TextToText", "ImageToText" ],
-      "Checkpoint": {
-        "TextModel": {
-          "Name": "TextModel",
-          "Type": "LocalFolder",
-          "Path": ""
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
-        }
-      ],
-      "DefaultOptions": {
-        "MaxLength": 262144,
-        "Beams": 1,
-        "TopK": 64,
-        "TopP": 0.95,
-        "TopH": 1,
-        "TypicalP": 1,
-        "LengthPenalty": 0,
-        "RepetitionPenalty": 1,
-        "Temperature": 1,
-        "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
-      }
-    },
-    {
-      "Backend": "PyTorch",
-      "Name": "Gemma4_26B",
-      "Template": "Gemma4_IT",
-      "Pipeline": "AutoTextPipeline",
-      "ModelType": "Multi",
-      "BaseType": "bfloat16",
-      "MediaType": "Text",
-      "ProcessTypes": [ "TextToText", "ImageToText" ],
-      "Checkpoint": {
-        "TextModel": {
-          "Name": "TextModel",
-          "Type": "LocalFolder",
-          "Path": ""
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
-        }
-      ],
-      "DefaultOptions": {
-        "MaxLength": 262144,
-        "Beams": 1,
-        "TopK": 64,
-        "TopP": 0.95,
-        "TopH": 1,
-        "TypicalP": 1,
-        "LengthPenalty": 0,
-        "RepetitionPenalty": 1,
-        "Temperature": 1,
-        "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
-      }
-    },
-    {
-      "Backend": "PyTorch",
-      "Name": "Gemma4_31B",
-      "Template": "Gemma4_IT",
-      "Pipeline": "AutoTextPipeline",
-      "ModelType": "Multi",
-      "BaseType": "bfloat16",
-      "MediaType": "Text",
-      "ProcessTypes": [ "TextToText", "ImageToText" ],
-      "Checkpoint": {
-        "TextModel": {
-          "Name": "TextModel",
-          "Type": "LocalFolder",
-          "Path": ""
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
-        }
-      ],
+      "MemoryProfile": [],
       "DefaultOptions": {
         "MaxLength": 262144,
         "Beams": 1,
@@ -12774,74 +12269,116 @@
   ],
   "LanguageTemplateMap": [
     {
-      "Name": "Qwen",
-      "Backend": "PyTorch",
-      "Options": [
-        {
-          "Name": "Qwen 3.0 4B",
-          "Template": "Qwen3_4B"
-        },
-        {
-          "Name": "Qwen 3.0 4B VL",
-          "Template": "Qwen3_4B_VL"
-        },
-        {
-          "Name": "Qwen 3.0 8B",
-          "Template": "Qwen3_8B"
-        },
-        {
-          "Name": "Qwen 3.0 8B VL",
-          "Template": "Qwen3_8B_VL"
-        },
-        {
-          "Name": "Qwen 3.0 14B",
-          "Template": "Qwen3_14B"
-        },
-        {
-          "Name": "Qwen 3.0 32B",
-          "Template": "Qwen3_32B"
-        },
-        {
-          "Name": "Qwen 3.5 4B",
-          "Template": "Qwen35_4B"
-        },
-        {
-          "Name": "Qwen 3.5 9B",
-          "Template": "Qwen35_9B"
-        },
-        {
-          "Name": "Qwen 3.5 27B",
-          "Template": "Qwen35_27B"
-        },
-        {
-          "Name": "Qwen 3.6 27B",
-          "Template": "Qwen36_27B"
-        }
-      ]
-    },
-    {
-      "Name": "Gemma",
+      "Name": "Gemma 4",
       "Backend": "PyTorch",
       "Options": [
         {
           "Name": "Gemma 4 2B",
-          "Template": "Gemma4_2B"
+          "Template": "Gemma4_IT",
+          "ModelParams": 2,
+          "ModelMaxLength": 131072
         },
         {
           "Name": "Gemma 4 4B",
-          "Template": "Gemma4_4B"
+          "Template": "Gemma4_IT",
+          "ModelParams": 4,
+          "ModelMaxLength": 131072
         },
         {
           "Name": "Gemma 4 12B",
-          "Template": "Gemma4_12B"
+          "Template": "Gemma4_IT",
+          "ModelParams": 12,
+          "ModelMaxLength": 262144
         },
         {
           "Name": "Gemma 4 26B",
-          "Template": "Gemma4_26B"
+          "Template": "Gemma4_IT",
+          "ModelParams": 26,
+          "ModelMaxLength": 262144
         },
         {
           "Name": "Gemma 4 31B",
-          "Template": "Gemma4_31B"
+          "Template": "Gemma4_IT",
+          "ModelParams": 31,
+          "ModelMaxLength": 262144
+        }
+      ]
+    },
+    {
+      "Name": "Qwen 3.0",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Qwen 3.0 4B",
+          "Template": "Qwen30_IT",
+          "ModelParams": 4,
+          "ModelMaxLength": 40960
+        },
+        {
+          "Name": "Qwen 3.0 4B VL",
+          "Template": "Qwen30_VL",
+          "ModelParams": 4,
+          "ModelMaxLength": 262144
+        },
+        {
+          "Name": "Qwen 3.0 8B",
+          "Template": "Qwen30_IT",
+          "ModelParams": 8,
+          "ModelMaxLength": 40960
+        },
+        {
+          "Name": "Qwen 3.0 8B VL",
+          "Template": "Qwen30_VL",
+          "ModelParams": 8,
+          "ModelMaxLength": 262144
+        },
+        {
+          "Name": "Qwen 3.0 14B",
+          "Template": "Qwen30_IT",
+          "ModelParams": 14,
+          "ModelMaxLength": 40960
+        },
+        {
+          "Name": "Qwen 3.0 32B",
+          "Template": "Qwen30_IT",
+          "ModelParams": 32,
+          "ModelMaxLength": 40960
+        }
+      ]
+    },
+    {
+      "Name": "Qwen 3.5",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Qwen 3.5 4B",
+          "Template": "Qwen35_IT",
+          "ModelParams": 4,
+          "ModelMaxLength": 262144
+        },
+        {
+          "Name": "Qwen 3.5 9B",
+          "Template": "Qwen35_IT",
+          "ModelParams": 9,
+          "ModelMaxLength": 262144
+        },
+        {
+          "Name": "Qwen 3.5 27B",
+          "Template": "Qwen35_IT",
+          "ModelParams": 27,
+          "ModelMaxLength": 262144
+        }
+      ]
+    },
+    {
+      "Name": "Qwen 3.6",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Qwen 3.6 27B",
+          "Template": "Qwen36_IT",
+          "ModelParams": 27,
+          "ModelMaxLength": 262144
         }
       ]
     }

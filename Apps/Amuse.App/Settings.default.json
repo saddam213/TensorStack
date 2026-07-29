@@ -20,7 +20,7 @@
       "Vendor": "Nvidia",
       "Environment": "cuda-130",
       "PythonVersion": "3.14",
-      "Version": 10,
+      "Version": 12,
       "IsDefault": true,
       "Status": "Create",
       "Variables": {
@@ -58,7 +58,7 @@
       "Vendor": "AMD",
       "Environment": "rocm-721",
       "PythonVersion": "3.12",
-      "Version": 10,
+      "Version": 12,
       "Status": "Create",
       "IsDefault": true,
       "Variables": {
@@ -26675,7 +26675,7 @@
       "Link": "https://huggingface.co/saddam213/NeverendingDream_v122-amuse"
     },
     {
-      "Id": 500,
+      "Id": 2100,
       "Backend": "OnnxRuntime",
       "Name": "Photon",
       "Template": null,
@@ -26853,7 +26853,7 @@
       "Link": "https://huggingface.co/saddam213/Photon-amuse"
     },
     {
-      "Id": 501,
+      "Id": 2101,
       "Backend": "OnnxRuntime",
       "Name": "Real Cartoon 3D",
       "Template": null,
@@ -27031,7 +27031,7 @@
       "Link": "https://huggingface.co/saddam213/RealCartoon3D-amuse"
     },
     {
-      "Id": 502,
+      "Id": 2102,
       "Backend": "OnnxRuntime",
       "Name": "RealDosMix",
       "Template": null,
@@ -27209,7 +27209,7 @@
       "Link": "https://huggingface.co/saddam213/Realdosmix-amuse"
     },
     {
-      "Id": 503,
+      "Id": 2103,
       "Backend": "OnnxRuntime",
       "Name": "Realistic Vision v6",
       "Template": null,
@@ -27387,7 +27387,7 @@
       "Link": "https://huggingface.co/saddam213/RealisticVision_v6-amuse"
     },
     {
-      "Id": 504,
+      "Id": 2104,
       "Backend": "OnnxRuntime",
       "Name": "ReV Animated",
       "Template": null,
@@ -27565,7 +27565,7 @@
       "Link": "https://huggingface.co/saddam213/RevAnimated_v2-amuse"
     },
     {
-      "Id": 505,
+      "Id": 2105,
       "Backend": "OnnxRuntime",
       "Name": "RPG",
       "Template": null,
@@ -27743,7 +27743,7 @@
       "Link": "https://huggingface.co/saddam213/RPG_v5-amuse"
     },
     {
-      "Id": 506,
+      "Id": 2106,
       "Backend": "OnnxRuntime",
       "Name": "SXZ Luma",
       "Template": null,
@@ -27921,7 +27921,7 @@
       "Link": "https://huggingface.co/saddam213/sxzLuma-amuse"
     },
     {
-      "Id": 507,
+      "Id": 2107,
       "Backend": "OnnxRuntime",
       "Name": "ToonYou",
       "Template": null,
@@ -28099,7 +28099,7 @@
       "Link": "https://huggingface.co/saddam213/ToonYou_v6-amuse"
     },
     {
-      "Id": 508,
+      "Id": 2108,
       "Backend": "OnnxRuntime",
       "Name": "unStable Illusion",
       "Template": null,
@@ -28277,7 +28277,7 @@
       "Link": "https://huggingface.co/saddam213/UnstableIllusion-amuse"
     },
     {
-      "Id": 509,
+      "Id": 2109,
       "Backend": "OnnxRuntime",
       "Name": "YesMix",
       "Template": null,

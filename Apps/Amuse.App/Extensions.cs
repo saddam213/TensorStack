@@ -242,6 +242,41 @@ namespace Amuse.App
             return content;
         }
 
+
+        public static MemoryProfile[] GetMemoryProfile(double parameterCount)
+        {
+            const double size4Bit = 0.5;
+            const double size8Bit = 1.0;
+            const double size16Bit = 2.0;
+            const double overhead4Bit = 1.3;
+            const double overhead8Bit = 1.1;
+            const double overhead16Bit = 1.1;
+            return
+            [
+                new MemoryProfile
+                {
+                    QualityMode = QualityMode.Draft,
+                    MemoryModes = [Estimate(parameterCount, size4Bit, overhead4Bit)]
+                },
+                 new MemoryProfile
+                {
+                    QualityMode = QualityMode.Standard,
+                    MemoryModes = [Estimate(parameterCount, size8Bit, overhead8Bit)]
+                },
+                 new MemoryProfile
+                {
+                    QualityMode = QualityMode.Production,
+                    MemoryModes = [Estimate(parameterCount, size16Bit, overhead16Bit)]
+                }
+            ];
+        }
+
+
+        private static int Estimate(double parametersBillion, double bytesPerParam, double overhead)
+        {
+            return (int)Math.Ceiling(parametersBillion * bytesPerParam * overhead);
+        }
+
     }
 
 

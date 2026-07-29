@@ -31,6 +31,7 @@ namespace Amuse.App.Dialogs
             DataTypes = [DataType.Bfloat16, DataType.Float16, DataType.Float8, DataType.Int8];
             SaveCommand = new AsyncRelayCommand(SaveAsync, CanExecuteSave);
             CancelCommand = new AsyncRelayCommand(CancelAsync);
+            EstimateMemoryCommand = new AsyncRelayCommand(EstimateMemoryAsync);
             Errors = new ObservableCollection<string>();
             AccessTokens = [new AccessToken("None", null), .. settings.AccessTokens.Select(x => new AccessToken(x.Name, x.Name))];
             InitializeComponent();
@@ -39,6 +40,7 @@ namespace Amuse.App.Dialogs
         public Settings Settings { get; }
         public AsyncRelayCommand SaveCommand { get; }
         public AsyncRelayCommand CancelCommand { get; }
+        public AsyncRelayCommand EstimateMemoryCommand { get; }
         public ObservableCollection<string> Errors { get; }
         public bool IsUpdateMode => _originalLanguageModel is not null;
         public DataType[] DataTypes { get; }
@@ -297,6 +299,18 @@ namespace Amuse.App.Dialogs
                     CheckBoxViewTextConverse.IsChecked = true;
             }
         }
+
+
+        private Task EstimateMemoryAsync()
+        {
+            if (_languageModel.ModelParams > 0)
+            {
+                _languageModel.MemoryProfile = Utils.GetMemoryProfile(_languageModel.ModelParams);
+                _languageModel.NotifyPropertyChanged(nameof(MemoryProfile));
+            }
+            return Task.CompletedTask;
+        }
+
 
         public record AccessToken(string Name, string Value);
     }

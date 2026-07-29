@@ -38,7 +38,7 @@ namespace Amuse.App.Dialogs
             CancelCommand = new AsyncRelayCommand(CancelAsync);
             SaveCommand = new AsyncRelayCommand(SaveAsync, CanExecuteSave);
             SelectedSource = ModelSourceType.LocalFolder;
-            ModelSources = [ ModelSourceType.LocalFolder, ModelSourceType.Checkpoint];
+            ModelSources = [ModelSourceType.LocalFolder, ModelSourceType.Checkpoint];
             InitializeComponent();
         }
 
@@ -137,6 +137,9 @@ namespace Amuse.App.Dialogs
                 }
             }
 
+            _selectedTemplate.ModelParams = _selectedTemplateOption.ModelParams;
+            _selectedTemplate.DefaultOptions.MaxLength = _selectedTemplateOption.ModelMaxLength;
+            _selectedTemplate.MemoryProfile = Utils.GetMemoryProfile(_selectedTemplate.ModelParams);
             _selectedTemplate.Initialize(Settings);
             Settings.LanguageModels.Add(_selectedTemplate);
             return base.SaveAsync();
@@ -187,13 +190,16 @@ namespace Amuse.App.Dialogs
 
         private void SetModelName()
         {
-            if (!string.IsNullOrEmpty(_selectedName))
+            if (string.IsNullOrEmpty(_selectedPath))
                 return;
 
             if (_selectedSource == ModelSourceType.LocalFolder)
             {
-                if (!string.IsNullOrEmpty(_selectedPath))
-                    SelectedName = Path.GetFileNameWithoutExtension(_selectedPath);
+                SelectedName = Path.GetFileName(_selectedPath);
+            }
+            else if (_selectedSource == ModelSourceType.LocalFile)
+            {
+                SelectedName = Path.GetFileNameWithoutExtension(_selectedPath);
             }
         }
 

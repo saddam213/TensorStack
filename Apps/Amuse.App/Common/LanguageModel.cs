@@ -17,7 +17,7 @@ namespace Amuse.App.Common
         private PipelineType _pipeline;
         private string _modelType = "Base";
         private int _modelSize;
-        private int _modelParams;
+        private double _modelParams;
         private string _variant;
         private VendorType[] _vendor;
         private DataType _baseType;
@@ -72,7 +72,7 @@ namespace Amuse.App.Common
             set { SetProperty(ref _modelSize, value); }
         }
 
-        public int ModelParams
+        public double ModelParams
         {
             get { return _modelParams; }
             set { SetProperty(ref _modelParams, value); }
@@ -227,6 +227,8 @@ namespace Amuse.App.Common
                 Template = Template,
                 Pipeline = Pipeline,
                 ModelType = ModelType,
+                ModelSize = ModelSize,
+                ModelParams = ModelParams,
                 Variant = Variant,
                 BaseType = BaseType,
                 MediaType = MediaType,
