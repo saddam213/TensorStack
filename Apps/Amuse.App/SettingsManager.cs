@@ -133,7 +133,8 @@ namespace Amuse.App
                             if (environment.Id > 1000)
                             {
                                 // Add back any Environments the user has created
-                                defaultSettings.Environments.Add(environment);
+                                if (!defaultSettings.Environments.Any(x => x.Id == environment.Id))
+                                    defaultSettings.Environments.Add(environment);
                             }
                             else
                             {
@@ -175,8 +176,8 @@ namespace Amuse.App
                         {
                             if (diffusionModel.Id > 1000)
                             {
-                                // Add back any diffusion Model the user has created
-                                defaultSettings.DiffusionModels.Add(diffusionModel);
+                                if (!defaultSettings.DiffusionModels.Any(x => x.Id == diffusionModel.Id))
+                                    defaultSettings.DiffusionModels.Add(diffusionModel);
                             }
                             else
                             {
@@ -204,7 +205,8 @@ namespace Amuse.App
                         foreach (var controlNetModel in currentSettings.ControlNetModels.Where(x => x.Id > 1000))
                         {
                             // Add back any controlNet Model the user has created
-                            defaultSettings.ControlNetModels.Add(controlNetModel);
+                            if (!defaultSettings.ControlNetModels.Any(x => x.Id == controlNetModel.Id))
+                                defaultSettings.ControlNetModels.Add(controlNetModel);
                         }
                     }
                     if (property.Name == nameof(defaultSettings.ExtractModels))
