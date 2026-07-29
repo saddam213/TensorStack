@@ -13,11 +13,11 @@
             <Button Command="{Binding AddImageCommand}">
                 <CommonControls:FontAwesome Icon="f03e"/>
             </Button>
-            <Button Command="{Binding AddVideoCommand}">
-                <CommonControls:FontAwesome Icon="f008"/>
-            </Button>
             <Button Command="{Binding AddAudioCommand}">
                 <CommonControls:FontAwesome Icon="f001"/>
+            </Button>
+            <Button Command="{Binding AddVideoCommand}">
+                <CommonControls:FontAwesome Icon="f008"/>
             </Button>
             <Button Command="{Binding ClearCommand}">
                 <CommonControls:FontAwesome Icon="f00d" Color="{StaticResource DangerColour}"/>

@@ -17,7 +17,7 @@ namespace TensorStack.Python.Config
         [
             "typing==3.7.4.3",
             "wheel==0.47.0",
-            "transformers==5.5.4",
+            "transformers==5.14.1",
             "accelerate==1.14.0",
             "diffusers==0.39.0",
             "protobuf==7.35.1",

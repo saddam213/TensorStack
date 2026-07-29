@@ -4,7 +4,7 @@ html, body {
     height: fit-content;
     min-height: 0;
     overflow: hidden;
-    padding: 0.1em 0.1em 1em 0.1em;
+    padding: 0em 0.1em 1em 0.1em;
     box-sizing: border-box;
 }
 

@@ -295,11 +295,13 @@ namespace TensorStack.Python
                         _logger?.LogInformation("[PythonPipeline] [Generate] Executing pipeline.");
                         cancellationToken.Register(() => GenerateCancelAsync(), true);
 
-                        var inputTensors = GetInputData(inputImages: options.InputImages);
+                        var inputImages = GetInputData(inputImages: options.InputImages);
+                        var inputAudios = GetInputData(inputAudios: options.InputAudios);
                         var inferenceOptionsDict = options.ToPythonDictionary();
-                        using (var inputTensorsData = PyObject.From(inputTensors))
+                        using (var inputImageData = PyObject.From(inputImages))
+                        using (var inputAudioData = PyObject.From(inputAudios))
                         using (var inferenceOptions = PyObject.From(inferenceOptionsDict))
-                        using (var pythonResults = _functionGenerate.Call(inferenceOptions, inputTensorsData))
+                        using (var pythonResults = _functionGenerate.Call(inferenceOptions, inputImageData, inputAudioData))
                         {
                             return pythonResults
                                 .AsEnumerable<Tuple<string, int, float, int>>()

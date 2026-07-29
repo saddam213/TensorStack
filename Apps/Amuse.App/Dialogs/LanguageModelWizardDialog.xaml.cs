@@ -37,8 +37,8 @@ namespace Amuse.App.Dialogs
             Errors = new ObservableCollection<string>();
             CancelCommand = new AsyncRelayCommand(CancelAsync);
             SaveCommand = new AsyncRelayCommand(SaveAsync, CanExecuteSave);
-            SelectedSource = ModelSourceType.LocalFile;
-            ModelSources = [ModelSourceType.LocalFile, ModelSourceType.LocalFolder, ModelSourceType.Checkpoint];
+            SelectedSource = ModelSourceType.LocalFolder;
+            ModelSources = [ModelSourceType.LocalFolder, ModelSourceType.Checkpoint];
             InitializeComponent();
         }
 
@@ -137,6 +137,9 @@ namespace Amuse.App.Dialogs
                 }
             }
 
+            _selectedTemplate.ModelParams = _selectedTemplateOption.ModelParams;
+            _selectedTemplate.DefaultOptions.MaxLength = _selectedTemplateOption.ModelMaxLength;
+            _selectedTemplate.MemoryProfile = Utils.GetMemoryProfile(_selectedTemplate.ModelParams);
             _selectedTemplate.Initialize(Settings);
             Settings.LanguageModels.Add(_selectedTemplate);
             return base.SaveAsync();
@@ -167,7 +170,7 @@ namespace Amuse.App.Dialogs
 
         private void Reset()
         {
-            SelectedSource = ModelSourceType.LocalFile;
+            SelectedSource = ModelSourceType.LocalFolder;
         }
 
 
@@ -187,18 +190,16 @@ namespace Amuse.App.Dialogs
 
         private void SetModelName()
         {
-            if (!string.IsNullOrEmpty(_selectedName))
+            if (string.IsNullOrEmpty(_selectedPath))
                 return;
 
-            if (_selectedSource == ModelSourceType.LocalFile)
+            if (_selectedSource == ModelSourceType.LocalFolder)
             {
-                if (!string.IsNullOrEmpty(_selectedFile))
-                    SelectedName = Path.GetFileNameWithoutExtension(_selectedFile);
+                SelectedName = Path.GetFileName(_selectedPath);
             }
-            else if (_selectedSource == ModelSourceType.LocalFolder)
+            else if (_selectedSource == ModelSourceType.LocalFile)
             {
-                if (!string.IsNullOrEmpty(_selectedPath))
-                    SelectedName = Path.GetFileNameWithoutExtension(_selectedPath);
+                SelectedName = Path.GetFileNameWithoutExtension(_selectedPath);
             }
         }
 
@@ -234,12 +235,7 @@ namespace Amuse.App.Dialogs
             if (Settings.LanguageModels.Any(x => x.Name.Equals(_selectedName, StringComparison.OrdinalIgnoreCase)))
                 yield return $"Model with name '{_selectedName}' already exists";
 
-            if (_selectedSource == ModelSourceType.LocalFile)
-            {
-                if (string.IsNullOrEmpty(_selectedFile))
-                    yield return "Model file name cannot be empty";
-            }
-            else if (_selectedSource == ModelSourceType.LocalFolder)
+            if (_selectedSource == ModelSourceType.LocalFolder)
             {
                 if (string.IsNullOrEmpty(_selectedPath))
                     yield return "Model folder name cannot be empty";

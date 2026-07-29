@@ -12109,5 +12109,278 @@
         }
       ]
     }
+  ],
+  "LanguageTemplates": [
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen30_IT",
+      "Template": "Qwen30_IT",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [],
+      "DefaultOptions": {
+        "MaxLength": 40960,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.6,
+        "IsSamplingEnabled": true,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen30_VL",
+      "Template": "Qwen30_IT",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.8,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 0.7,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen35_IT",
+      "Template": "Qwen35_IT",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Qwen36_IT",
+      "Template": "Qwen36_IT",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    },
+    {
+      "Backend": "PyTorch",
+      "Name": "Gemma4_IT",
+      "Template": "Gemma4_IT",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Multi",
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextModel",
+          "Type": "LocalFolder",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 64,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0
+      }
+    }
+  ],
+  "LanguageTemplateMap": [
+    {
+      "Name": "Gemma 4",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Gemma 4 2B",
+          "Template": "Gemma4_IT",
+          "ModelParams": 2,
+          "ModelMaxLength": 131072
+        },
+        {
+          "Name": "Gemma 4 4B",
+          "Template": "Gemma4_IT",
+          "ModelParams": 4,
+          "ModelMaxLength": 131072
+        },
+        {
+          "Name": "Gemma 4 12B",
+          "Template": "Gemma4_IT",
+          "ModelParams": 12,
+          "ModelMaxLength": 262144
+        },
+        {
+          "Name": "Gemma 4 26B",
+          "Template": "Gemma4_IT",
+          "ModelParams": 26,
+          "ModelMaxLength": 262144
+        },
+        {
+          "Name": "Gemma 4 31B",
+          "Template": "Gemma4_IT",
+          "ModelParams": 31,
+          "ModelMaxLength": 262144
+        }
+      ]
+    },
+    {
+      "Name": "Qwen 3.0",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Qwen 3.0 4B",
+          "Template": "Qwen30_IT",
+          "ModelParams": 4,
+          "ModelMaxLength": 40960
+        },
+        {
+          "Name": "Qwen 3.0 4B VL",
+          "Template": "Qwen30_VL",
+          "ModelParams": 4,
+          "ModelMaxLength": 262144
+        },
+        {
+          "Name": "Qwen 3.0 8B",
+          "Template": "Qwen30_IT",
+          "ModelParams": 8,
+          "ModelMaxLength": 40960
+        },
+        {
+          "Name": "Qwen 3.0 8B VL",
+          "Template": "Qwen30_VL",
+          "ModelParams": 8,
+          "ModelMaxLength": 262144
+        },
+        {
+          "Name": "Qwen 3.0 14B",
+          "Template": "Qwen30_IT",
+          "ModelParams": 14,
+          "ModelMaxLength": 40960
+        },
+        {
+          "Name": "Qwen 3.0 32B",
+          "Template": "Qwen30_IT",
+          "ModelParams": 32,
+          "ModelMaxLength": 40960
+        }
+      ]
+    },
+    {
+      "Name": "Qwen 3.5",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Qwen 3.5 4B",
+          "Template": "Qwen35_IT",
+          "ModelParams": 4,
+          "ModelMaxLength": 262144
+        },
+        {
+          "Name": "Qwen 3.5 9B",
+          "Template": "Qwen35_IT",
+          "ModelParams": 9,
+          "ModelMaxLength": 262144
+        },
+        {
+          "Name": "Qwen 3.5 27B",
+          "Template": "Qwen35_IT",
+          "ModelParams": 27,
+          "ModelMaxLength": 262144
+        }
+      ]
+    },
+    {
+      "Name": "Qwen 3.6",
+      "Backend": "PyTorch",
+      "Options": [
+        {
+          "Name": "Qwen 3.6 27B",
+          "Template": "Qwen36_IT",
+          "ModelParams": 27,
+          "ModelMaxLength": 262144
+        }
+      ]
+    }
   ]
 }

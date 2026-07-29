@@ -12,6 +12,7 @@ from tensorstack.utils import (
     notification_get,
     notification_push,
     prepare_images,
+    prepare_audios,
     token_get
 )
 redirect_output()
@@ -20,7 +21,8 @@ from tensorstack.llm_utils import (
     TextPipeline,
     get_device_map,
     get_model_config,
-    configure_memory
+    configure_memory,
+    apply_chat_template_override
 )
 import torch
 from threading import Event
@@ -158,13 +160,17 @@ def load_tokenizer(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
         print(f"[Load] Loading Cached Tokenizer")
         return _pipeline.tokenizer
 
+    tokenizer_path = _model_config["base_model"]
+    chat_template = _model_config["chat_template"]
+
     # 1. Load from pretrained folder
     print(f"[Load] Loading Pretrained Tokenizer")
     tokenizer = AutoTokenizer.from_pretrained(
-        _model_config["base_model"],
+        tokenizer_path,
         dtype=config.data_type,
         **pipeline_kwargs
     )
+    apply_chat_template_override(tokenizer, chat_template)
     return tokenizer
 
 
@@ -176,14 +182,19 @@ def load_processor(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
         print(f"[Load] Loading Cached Processor")
         return _pipeline.processor
 
+    processor_path = _model_config["base_model"]
+    chat_template = _model_config["chat_template"]
+
     try:
         # 1. Load from pretrained folder
         print(f"[Load] Loading Processor")
-        return AutoProcessor.from_pretrained(
-            _model_config["base_model"],
+        processor = AutoProcessor.from_pretrained(
+            processor_path,
             dtype=config.data_type,
             **pipeline_kwargs
         )
+        apply_chat_template_override(processor, chat_template)
+        return processor
     except Exception:
         return None
 
@@ -197,7 +208,7 @@ def load_base_model(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
         return _pipeline.base_model
 
     # 1. Load from pretrained folder
-    if config.model_type == "Vision":
+    if config.model_type in("Vision", "Multi"):
         print(f"[Load] Loading AutoModelForImageTextToText BaseModel")
         base_model = AutoModelForImageTextToText.from_pretrained(
             _model_config["base_model"],
@@ -250,7 +261,8 @@ def create_pipeline(config: PipelineConfig):
 #------------------------------------------------
 def generate(
         inference_args: Dict[str, Any],
-        input_tensors: Optional[List[Tuple[Sequence[float],Sequence[int]]]] = None
+        input_images: Optional[List[Tuple[Sequence[float],Sequence[int]]]] = None,
+        input_audios: Optional[List[Tuple[Sequence[float],Sequence[int]]]] = None
     ) -> Sequence[Buffer]:
     global _stopwatch
     _cancel_event.clear()
@@ -258,18 +270,22 @@ def generate(
     _stopwatch.start()
     notification_push(key="Generate", subkey="Initialize")
 
-    images = prepare_images(input_tensors)
-    print(f"[Generate] Input Received - Images: {get_len(images)}")
-
     # Options
     options = GenerateTextOptions(**inference_args)
+
+    # Input Tensors
+    images = prepare_images(input_images)
+    audios = prepare_audios(input_audios)
+    print(f"[Generate] Input Received - Image: {get_len(images)}")
+    print(f"[Generate] Input Received - Audio: {get_len(audios)}, SampleRate: {options.sample_rate}")
 
     # Generation Inputs
     notification_push(key="Generate", subkey="Tokenizer", elapsedkey="Initialize", elapsed=_stopwatch.reset())
     inputs = _pipeline.generate_inputs(
         options= options,
         cancel=_cancel_event,
-        images=images
+        images=images,
+        audios=audios
     )
 
     # Generation Result

@@ -563,6 +563,26 @@ def prepare_audio(
 
 
 #------------------------------------------------
+# Prepare the input audio tensors
+#------------------------------------------------
+def prepare_audios(
+    lst: Optional[List[Tuple[Sequence[float], Sequence[int]]]]
+) -> Optional[Union[torch.Tensor, List[torch.Tensor]]]:
+    if not lst:
+        return None
+
+    def make_tensor(pair: Tuple[Sequence[float], Sequence[int]]):
+        data, shape = pair
+        return audioFromInput(data, shape).cpu().numpy()
+
+    # Return a single tensor if list length is 1, otherwise a list
+    if len(lst) == 1:
+        return make_tensor(lst[0])
+
+    return [make_tensor(pair) for pair in lst]
+
+
+#------------------------------------------------
 # Run garbage collection and empty cuda cache
 #------------------------------------------------
 def trim_memory(isMemoryOffload: bool):

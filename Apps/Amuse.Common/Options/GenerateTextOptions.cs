@@ -30,6 +30,8 @@ namespace Amuse.Common
         public int NoRepeatNgramSize { get; set; }
         public string EarlyStopping { get; set; }
         public int ChunkSize { get; set; }
+        public bool IsThinkingEnabled { get; set; }
+        public int SampleRate { get; set; }
 
         [JsonIgnore]
         public List<ImageTensor> InputImages { get; set; } = [];
@@ -73,6 +75,15 @@ namespace Amuse.Common
                 InputImages = request.Tensors
                     .Take(request.ImageTensorCount)
                     .Select(x => x.AsImageTensor())
+                    .ToList();
+            }
+
+            if (request.AudioTensorCount > 0)
+            {
+                InputAudios = request.Tensors
+                    .Skip(request.ImageTensorCount)
+                    .Take(request.AudioTensorCount)
+                    .Select(x => x.AsAudioTensor(SampleRate))
                     .ToList();
             }
         }

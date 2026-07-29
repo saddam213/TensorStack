@@ -40,8 +40,8 @@ namespace Amuse.App.Views
             SaveCommand = new AsyncRelayCommand(SaveAsync);
             AddModelWizardCommand = new AsyncRelayCommand(AddModelWizardAsync);
             CopyModelCommand = new AsyncRelayCommand(CopyModelAsync, () => SelectedModel is not null);
-            UpdateModelCommand = new AsyncRelayCommand(UpdateModelAsync);
-            RemoveModelCommand = new AsyncRelayCommand(RemoveModelAsync);
+            UpdateModelCommand = new AsyncRelayCommand(UpdateModelAsync, () => SelectedModel?.Id > Utils.FixedIdRange);
+            RemoveModelCommand = new AsyncRelayCommand(RemoveModelAsync, () => SelectedModel?.Id > Utils.FixedIdRange);
             ImportModelCommand = new AsyncRelayCommand(ImportModelAsync);
             ExportModelCommand = new AsyncRelayCommand(ExportModelAsync, () => SelectedModel is not null);
             DeleteModelCommand = new AsyncRelayCommand(DeleteModelAsync, () => SelectedModel is not null);

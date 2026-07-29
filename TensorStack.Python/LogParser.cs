@@ -36,7 +36,7 @@ namespace TensorStack.Python
         {
             try
             {
-                var messageSections = logEntry.Split('|', 3, StringSplitOptions.TrimEntries).AsSpan();
+                var messageSections = logEntry.Split('|', 2, StringSplitOptions.TrimEntries).AsSpan();
                 if (messageSections.Length < 2)
                     return default;
 

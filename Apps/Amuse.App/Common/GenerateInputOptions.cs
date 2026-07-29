@@ -62,6 +62,7 @@ namespace Amuse.App.Common
         private int _chunkSize;
         private List<ConversationModel> _conversation;
         private bool _isSamplingEnabled;
+        private bool _isThinkingEnabled;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Width
@@ -420,7 +421,12 @@ namespace Amuse.App.Common
             set { SetProperty(ref _conversation, value); }
         }
 
-
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public bool IsThinkingEnabled
+        {
+            get { return _isThinkingEnabled; }
+            set { SetProperty(ref _isThinkingEnabled, value); }
+        }
 
         [JsonIgnore]
         public List<ImageTensor> InputImages { get; set; } = [];
