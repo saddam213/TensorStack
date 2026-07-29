@@ -34,7 +34,7 @@
         "torchvision==0.26.0+cu130",
         "typing==3.7.4.3",
         "wheel==0.47.0",
-        "transformers==5.14.1",
+        "transformers==5.13.1",
         "accelerate==1.14.0",
         "diffusers==0.39.0",
         "protobuf==7.35.1",
@@ -48,11 +48,11 @@
         "soundfile==0.14.0",
         "torchao==0.17.0",
         "optimum-quanto==0.2.7",
-        "bitsandbytes==0.49.2"
+        "bitsandbytes==0.50.0"
       ]
     },
     {
-      "Id": 2000,
+      "Id": 3,
       "Name": "ROCM (7.2.1)",
       "Type": "Vendor",
       "Vendor": "AMD",
@@ -76,7 +76,7 @@
         "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torchvision-0.24.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl",
         "typing==3.7.4.3",
         "wheel==0.47.0",
-        "transformers==5.14.1",
+        "transformers==5.13.1",
         "accelerate==1.14.0",
         "diffusers==0.39.0",
         "protobuf==7.35.1",
@@ -89,7 +89,7 @@
         "av==18.0.0",
         "soundfile==0.14.0",
         "optimum-quanto==0.2.7",
-        "https://github.com/0xDELUXA/bitsandbytes_win_rocm/releases/download/v0.49.2.dev0-py312-rocm7.12-all/bitsandbytes-0.49.2.dev0-cp312-cp312-win_amd64.whl"
+        "bitsandbytes==0.50.0"
       ]
     }
   ],
@@ -30598,15 +30598,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
+          "MemoryModes": [ 4 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
+          "MemoryModes": [ 6 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
+          "MemoryModes": [ 10 ]
         }
       ],
       "DefaultOptions": {
@@ -30660,15 +30660,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
+          "MemoryModes": [ 4 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
+          "MemoryModes": [ 6 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
+          "MemoryModes": [ 10 ]
         }
       ],
       "DefaultOptions": {
@@ -30723,15 +30723,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 10 ]
+          "MemoryModes": [ 6 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 12 ]
+          "MemoryModes": [ 9 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 16 ]
+          "MemoryModes": [ 18 ]
         }
       ],
       "DefaultOptions": {
@@ -30787,15 +30787,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 10 ]
+          "MemoryModes": [ 6 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 12 ]
+          "MemoryModes": [ 9 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 16 ]
+          "MemoryModes": [ 18 ]
         }
       ],
       "DefaultOptions": {
@@ -30852,15 +30852,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 12 ]
+          "MemoryModes": [ 10 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 17 ]
+          "MemoryModes": [ 16 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 26 ]
+          "MemoryModes": [ 31 ]
         }
       ],
       "DefaultOptions": {
@@ -30926,15 +30926,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 20 ]
+          "MemoryModes": [ 21 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 34 ]
+          "MemoryModes": [ 36 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 60 ]
+          "MemoryModes": [ 71 ]
         }
       ],
       "DefaultOptions": {
@@ -30987,15 +30987,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 20 ]
+          "MemoryModes": [ 4 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 34 ]
+          "MemoryModes": [ 6 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 60 ]
+          "MemoryModes": [ 10 ]
         }
       ],
       "DefaultOptions": {
@@ -31050,15 +31050,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 20 ]
+          "MemoryModes": [ 6 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 34 ]
+          "MemoryModes": [ 10 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 60 ]
+          "MemoryModes": [ 20 ]
         }
       ],
       "DefaultOptions": {
@@ -31121,11 +31121,11 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 20 ]
+          "MemoryModes": [ 18 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 34 ]
+          "MemoryModes": [ 30 ]
         },
         {
           "QualityMode": "Production",
@@ -31197,11 +31197,11 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 20 ]
+          "MemoryModes": [ 18 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 34 ]
+          "MemoryModes": [ 30 ]
         },
         {
           "QualityMode": "Production",
@@ -31254,15 +31254,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
+          "MemoryModes": [ 2 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
+          "MemoryModes": [ 4 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
+          "MemoryModes": [ 6 ]
         }
       ],
       "DefaultOptions": {
@@ -31313,15 +31313,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
+          "MemoryModes": [ 4 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
+          "MemoryModes": [ 6 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
+          "MemoryModes": [ 10 ]
         }
       ],
       "DefaultOptions": {
@@ -31372,15 +31372,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
-        },
-        {
-          "QualityMode": "Standard",
           "MemoryModes": [ 8 ]
         },
         {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 14 ]
+        },
+        {
           "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
+          "MemoryModes": [ 27 ]
         }
       ],
       "DefaultOptions": {
@@ -31399,67 +31399,6 @@
         "Channels": 1
       },
       "Link": "https://huggingface.co/google/gemma-4-12B-it"
-    },
-    {
-      "Id": 823,
-      "Backend": "PyTorch",
-      "Name": "Gemma4 26B IT",
-      "Template": "Gemma4_IT",
-      "Pipeline": "AutoTextPipeline",
-      "ModelType": "Multi",
-      "ModelSize": 52,
-      "ModelParams": 26,
-      "BaseType": "bfloat16",
-      "MediaType": "Text",
-      "ProcessTypes": [ "TextToText", "ImageToText" ],
-      "Checkpoint": {
-        "TextModel": {
-          "Name": "TextEncoder",
-          "Type": "OnlineFolder",
-          "Folder": "Gemma-4-26B-IT",
-          "DownloadFiles": [
-            "https://huggingface.co/google/gemma-4-26B-A4B-it/resolve/main/chat_template.jinja",
-            "https://huggingface.co/google/gemma-4-26B-A4B-it/resolve/main/config.json",
-            "https://huggingface.co/google/gemma-4-26B-A4B-it/resolve/main/generation_config.json",
-            "https://huggingface.co/google/gemma-4-26B-A4B-it/resolve/main/model-00001-of-00002.safetensors",
-            "https://huggingface.co/google/gemma-4-26B-A4B-it/resolve/main/model-00002-of-00002.safetensors",
-            "https://huggingface.co/google/gemma-4-26B-A4B-it/resolve/main/model.safetensors.index.json",
-            "https://huggingface.co/google/gemma-4-26B-A4B-it/resolve/main/processor_config.json",
-            "https://huggingface.co/google/gemma-4-26B-A4B-it/resolve/main/tokenizer.json",
-            "https://huggingface.co/google/gemma-4-26B-A4B-it/resolve/main/tokenizer_config.json"
-          ]
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
-        }
-      ],
-      "DefaultOptions": {
-        "MaxLength": 262144,
-        "Beams": 1,
-        "TopK": 64,
-        "TopP": 0.95,
-        "TopH": 1,
-        "TypicalP": 1,
-        "LengthPenalty": 0,
-        "RepetitionPenalty": 1,
-        "Temperature": 1,
-        "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0,
-        "SampleRate": 16000,
-        "Channels": 1
-      },
-      "Link": "https://huggingface.co/google/gemma-4-26B-A4B-it"
     },
     {
       "Id": 824,
@@ -31494,15 +31433,15 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 6 ]
+          "MemoryModes": [ 21 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 8 ]
+          "MemoryModes": [ 35 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 12 ]
+          "MemoryModes": [ 69 ]
         }
       ],
       "DefaultOptions": {

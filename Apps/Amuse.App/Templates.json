@@ -12263,7 +12263,9 @@
         "RepetitionPenalty": 1,
         "Temperature": 1,
         "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
+        "NoRepeatNgramSize": 0,
+        "SampleRate": 16000,
+        "Channels":  1
       }
     }
   ],
@@ -12288,12 +12290,6 @@
           "Name": "Gemma 4 12B",
           "Template": "Gemma4_IT",
           "ModelParams": 12,
-          "ModelMaxLength": 262144
-        },
-        {
-          "Name": "Gemma 4 26B",
-          "Template": "Gemma4_IT",
-          "ModelParams": 26,
           "ModelMaxLength": 262144
         },
         {

@@ -1,5 +1,5 @@
 ﻿from tensorstack.enums import ProcessType, QuantTarget
-from tensorstack.quantization import auto_pretrained_config
+from tensorstack.quantization import auto_llm_pretrained_config
 from tensorstack.data_objects import PipelineConfig, GenerateTextOptions
 from tensorstack.utils import (
     Stopwatch,
@@ -214,7 +214,7 @@ def load_base_model(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
             _model_config["base_model"],
             dtype=config.data_type,
             device_map=_device_map,
-            quantization_config=auto_pretrained_config(config, QuantTarget.TEXT_ENCODER),
+            quantization_config=auto_llm_pretrained_config(config),
             **pipeline_kwargs
         )
     else:
@@ -223,7 +223,7 @@ def load_base_model(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
             _model_config["base_model"],
             dtype=config.data_type,
             device_map=_device_map,
-            quantization_config=auto_pretrained_config(config, QuantTarget.TEXT_ENCODER),
+            quantization_config=auto_llm_pretrained_config(config),
             **pipeline_kwargs
         )
     trim_memory(True)

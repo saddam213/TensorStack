@@ -120,14 +120,14 @@ def pretrained_config(target: QuantTarget, backend: QuantBackend, quant_type: Qu
     elif backend == QuantBackend.BITSANDBYTES:
         if target == QuantTarget.TEXT_ENCODER:
             if quant_type == QuantType.Q8Bit:
-                return TransformersBitsAndBytesConfig(load_in_8bit=True)
+                return TransformersBitsAndBytesConfig(load_in_8bit=True, llm_int8_enable_fp32_cpu_offload=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=quant_datatype, bnb_4bit_use_double_quant=True)
             elif quant_type == QuantType.Q4Bit:
-                return TransformersBitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=quant_datatype, bnb_4bit_use_double_quant=True)
+                return TransformersBitsAndBytesConfig(load_in_4bit=True, llm_int8_enable_fp32_cpu_offload=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=quant_datatype, bnb_4bit_use_double_quant=True)
         elif target == QuantTarget.TRANSFORMER:
             if quant_type == QuantType.Q8Bit:
-                return DiffusersBitsAndBytesConfig(load_in_8bit=True)
+                return DiffusersBitsAndBytesConfig(load_in_8bit=True, llm_int8_enable_fp32_cpu_offload=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=quant_datatype, bnb_4bit_use_double_quant=True)
             elif quant_type == QuantType.Q4Bit:
-                return DiffusersBitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=quant_datatype, bnb_4bit_use_double_quant=True)
+                return DiffusersBitsAndBytesConfig(load_in_4bit=True, llm_int8_enable_fp32_cpu_offload=True, bnb_4bit_compute_dtype=compute_type, bnb_4bit_quant_type=quant_datatype, bnb_4bit_use_double_quant=True)
 
     # TorchAO
     elif backend == QuantBackend.TorchAO:
@@ -181,5 +181,37 @@ def auto_single_file_config(config: DataObjects.PipelineConfig, target: QuantTar
     if config.memory_mode ==  MemoryMode.OffloadCPU:
         print(f"[Quantize] OffloadCPU not supported")
         return None
+
+    return None
+
+
+#------------------------------------------------
+# Auto Quantization Configuration for from_pretrained
+#------------------------------------------------
+def auto_llm_pretrained_config(config: DataObjects.PipelineConfig):
+    if config.memory_mode ==  MemoryMode.OffloadCPU:
+        print(f"[Quantize] OffloadCPU not supported")
+        return None
+
+    data_type = config.data_type
+    quant_type = config.quant_type
+    device_vendor = config.device_vendor
+    target = QuantTarget.TEXT_ENCODER
+    if quant_type == QuantType.Q16Bit:
+        return pretrained_config(target, QuantBackend.NONE, QuantType.Q16Bit, data_type)
+
+    # AMD
+    if device_vendor == VendorType.AMD:
+        if quant_type == QuantType.Q8Bit:
+            return pretrained_config(target, QuantBackend.QUANTO, QuantType.Q8Bit, data_type)
+        elif quant_type == QuantType.Q4Bit:
+            return pretrained_config(target, QuantBackend.BITSANDBYTES, QuantType.Q4Bit, data_type)
+
+    # Nvidia
+    elif device_vendor == VendorType.Nvidia:
+        if quant_type == QuantType.Q8Bit:
+            return pretrained_config(target, QuantBackend.TorchAO, QuantType.Q8Bit, data_type)
+        elif quant_type == QuantType.Q4Bit:
+            return pretrained_config(target, QuantBackend.BITSANDBYTES, QuantType.Q4Bit, data_type)
 
     return None
