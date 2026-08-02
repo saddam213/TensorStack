@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using TensorStack.Common;
@@ -182,6 +185,7 @@ namespace Amuse.App
                     yield return descendant;
             }
         }
+
     }
 
     public static partial class Utils
@@ -315,5 +319,18 @@ namespace Amuse.App
             typeof(Brushes).GetProperties()
                 .Where(p => p.PropertyType == typeof(Brush))
                 .Select(p => (Brush)p.GetValue(null));
+    }
+
+
+    public static partial class RegexManager
+    {
+        public static bool HasUnclosedFence(string markdown)
+        {
+            int count = UnclosedFence().Count(markdown);
+            return count % 2 != 0;
+        }
+
+        [GeneratedRegex(@"^```", RegexOptions.Multiline)]
+        private static partial Regex UnclosedFence();
     }
 }

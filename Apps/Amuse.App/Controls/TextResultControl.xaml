@@ -10,11 +10,7 @@
              xmlns:Controls="clr-namespace:Amuse.App.Controls"
              Focusable="True">
     <CommonControls:BaseControl.InputBindings>
-        <KeyBinding Modifiers="Ctrl" Key="A"  Command="{Binding CopySourceCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
-        <KeyBinding Modifiers="Ctrl" Key="C"  Command="{Binding CopyResponseCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
-        <KeyBinding Modifiers="Ctrl" Key="T"  Command="{Binding CopyThinkingCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
-        <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding SaveSourceCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
-        <KeyBinding Modifiers="Ctrl" Key="Z"  Command="{Binding ClearCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
+        <KeyBinding Modifiers="Ctrl" Key="X"  Command="{Binding ClearCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}}" />
     </CommonControls:BaseControl.InputBindings>
     <Border DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type Controls:TextResultControl}}, Mode=OneTime}" BorderBrush="{StaticResource ButtonBorderBrush}" Background="{StaticResource ContainerBackground}" BorderThickness="1" >
         <DockPanel>
@@ -143,7 +139,7 @@
                 <Grid x:Name="MainContent" Background="Transparent">
 
                     <!--PlaceHolder-->
-                    <Image Source="{Binding Placeholder, TargetNullValue={StaticResource PlaceholderText}}" Stretch="Uniform" IsHitTestVisible="False"/>
+                    <Image Source="{StaticResource PlaceholderText}" Stretch="Uniform" IsHitTestVisible="False"/>
 
                     <!--Text Result-->
                     <Grid Visibility="{Binding Result, Converter={StaticResource NullOrEmptyVisibilityConverter}}" Background="{StaticResource ControlDefaultBackground}">
@@ -203,55 +199,6 @@
                                 IsScrollToBottomEnabled="{Binding IsPreviewEnabled, UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid>
                     </Grid>
-
-                    <!--ContextMenu-->
-                    <Grid.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Save As" InputGestureText="Ctrl+S" Command="{Binding SaveSourceCommand}">
-                                <MenuItem.Icon>
-                                    <CommonControls:FontAwesome Icon="f0c7" IconStyle="Light" Size="15"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="Copy All" InputGestureText="Ctrl+A" Command="{Binding CopySourceCommand}">
-                                <MenuItem.Icon>
-                                    <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="Copy Response" InputGestureText="Ctrl+C" Command="{Binding CopyResponseCommand}">
-                                <MenuItem.Icon>
-                                    <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="Copy Thinking" InputGestureText="Ctrl+T" Command="{Binding CopyThinkingCommand}">
-                                <MenuItem.Icon>
-                                    <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-                         
-                            <MenuItem Header="Clear" InputGestureText="Ctrl+Z" Command="{Binding ClearCommand}">
-                                <MenuItem.Icon>
-                                    <CommonControls:FontAwesome Icon="f2ed" IconStyle="Light" Size="15"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <ContextMenu.Style>
-                                <Style TargetType="{x:Type ContextMenu}" BasedOn="{StaticResource {x:Type ContextMenu}}">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                    <Style.Triggers>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding IsInputEnabled}" Value="True"/>
-                                                <Condition Binding="{Binding IsContextMenuEnabled}" Value="True"/>
-                                                <Condition Binding="{Binding IsResultMarkdownEnabled}" Value="false"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <MultiDataTrigger.Setters>
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </MultiDataTrigger.Setters>
-                                        </MultiDataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ContextMenu.Style>
-                        </ContextMenu>
-                    </Grid.ContextMenu>
 
                 </Grid>
             </Border>

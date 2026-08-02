@@ -50,6 +50,23 @@ ul, ol {
     padding-left: 1.5em
 }
 
+img {
+    max-height: 100px;
+    width: auto;
+    object-fit: contain;
+    margin-right: 0.1em;
+    margin-bottom: 0.1em;
+}
+
+video {
+    max-height: 100px;
+    width: auto;
+    object-fit: contain;
+    margin-right: 0.1em;
+    margin-bottom: 0.1em;
+}
+
+
 code, code span {
     background-color: #343434;
     border-radius: 4px;
@@ -166,6 +183,22 @@ details {
         background: #2D2D2D;
     }
 
+
+.message-system {
+    display: none;
+}
+
+
+.message-user {
+    display: block;
+    padding: 0px 15px 0px 15px;
+    margin: 20px 10px 20px 10px;
+    border-radius: 2px;
+    max-width: 70%;
+    margin-left: auto;
+    border: 1px solid #3C3C3C;
+    background: #343434;
+}
 
 
 plainText {

@@ -1,5 +1,6 @@
 ﻿using Amuse.Common;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using TensorStack.Audio;
@@ -60,7 +61,7 @@ namespace Amuse.App.Common
         private float _typicalP;
         private float _repetitionPenalty;
         private int _chunkSize;
-        private List<ConversationModel> _conversation;
+        private ObservableCollection<ConversationModel> _conversation;
         private bool _isSamplingEnabled;
         private bool _isThinkingEnabled;
 
@@ -415,7 +416,7 @@ namespace Amuse.App.Common
 
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public List<ConversationModel> Conversation
+        public ObservableCollection<ConversationModel> Conversation
         {
             get { return _conversation; }
             set { SetProperty(ref _conversation, value); }

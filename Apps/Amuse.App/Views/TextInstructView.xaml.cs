@@ -1,10 +1,10 @@
 ﻿using Amuse.App.Common;
-using Amuse.App.Controls;
 using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -35,7 +35,7 @@ namespace Amuse.App.Views
         /// Gets the view.
         /// </summary>
         public override View View => View.TextInstruct;
-       
+
         /// <summary>
         /// Gets or sets the automation prompt.
         /// </summary>
@@ -44,11 +44,6 @@ namespace Amuse.App.Views
             get { return _automationPrompt; }
             set { SetProperty(ref _automationPrompt, value); }
         }
-
-        /// <summary>
-        /// Gets the text result control.
-        /// </summary>
-        protected override TextResultControl TextResultControl => TextResultElement;
 
 
         /// <summary>
@@ -75,7 +70,7 @@ namespace Amuse.App.Views
                 Progress.Clear();
                 Statistics.Clear();
                 ResultText = default;
-                await TextResultControl.ClearAsync();
+                await TextResultElement.ClearAsync();
                 Statistics.Start();
 
                 // Context
@@ -84,26 +79,13 @@ namespace Amuse.App.Views
                 var audioContext = InputControl.GetAudioContext(Options.Prompt);
 
                 // Conversation
-                var conversation = new List<ConversationModel>();
-                if (!string.IsNullOrEmpty(Options.Prompt2))
-                {
-                    // System Prompt
-                    conversation.Add(new ConversationModel
-                    {
-                        Role = ConversationRole.System,
-                        Content = Options.Prompt2
-                    });
-                }
+                await TextResultElement.AddSystemPromptAsync(Options.Prompt2);
 
                 // User Prompt
-                textContext.Append(Options.Prompt);
-                conversation.Add(new ConversationModel
-                {
-                    Role = ConversationRole.User,
-                    Content = textContext.ToString(),
-                    ImageIndex = [.. Enumerable.Range(0, imageContext.Count)],
-                    AudioIndex = [.. Enumerable.Range(0, audioContext.Count)]
-                });
+                List<int> imageIndex = [.. Enumerable.Range(0, imageContext.Count)];
+                List<int> audioIndex = [.. Enumerable.Range(0, audioContext.Count)];
+                await TextResultElement.AddUserPromptAsync(Options.Prompt, imageIndex, audioIndex);
+                // Options.Prompt = string.Empty;
 
                 // Options
                 var options = Options with
@@ -112,18 +94,21 @@ namespace Amuse.App.Views
                     Prompt2 = null,
                     InputImages = imageContext,
                     InputAudios = audioContext,
-                    Conversation = conversation
+                    Conversation = TextResultElement.Conversation
                 };
 
                 // Execute
                 var textResult = await ExecuteLanguageModelAsync(options);
+                TextResultElement.AddBeamResults(textResult.Results);
+
+                // End Stream
+                await TextResultElement.EndStreamResponseAsync();
 
                 // Result
                 Statistics.Stop();
-                ResultText = textResult;
 
                 // History
-                await SaveHistoryAsync(options);
+                // await SaveHistoryAsync(options);
                 Logger.LogInformation("[TextInstruct] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)
@@ -141,6 +126,7 @@ namespace Amuse.App.Views
             finally
             {
                 Progress.Clear();
+                await TextResultElement.EndStreamResponseAsync();
             }
         }
 
@@ -169,14 +155,14 @@ namespace Amuse.App.Views
                 var imageIndex = Enumerable.Range(0, imageContext.Count).ToList();
 
                 // Conversation
-                var conversation = new List<ConversationModel>();
+                var conversation = new ObservableCollection<ConversationModel>();
                 if (!string.IsNullOrEmpty(Options.Prompt2))
                 {
                     // System Prompt
-                    conversation.Add(new ConversationModel 
-                    { 
-                        Role =  ConversationRole.System, 
-                        Content = Options.Prompt2 
+                    conversation.Add(new ConversationModel
+                    {
+                        Role = ConversationRole.System,
+                        Content = Options.Prompt2
                     });
                 }
 
@@ -188,14 +174,14 @@ namespace Amuse.App.Views
 
                     // Reset
                     ResultText = default;
-                    await TextResultControl.ClearAsync();
+                    await TextResultElement.ClearAsync();
                     conversation.RemoveAll(x => !x.Role.Equals("system"));
                     AutomationPrompt = $"{Options.Prompt}{automationJob.GenerateOptions.Prompt}";
 
                     // User Prompt
                     conversation.Add(new ConversationModel
                     {
-                        Role =  ConversationRole.User,
+                        Role = ConversationRole.User,
                         ImageIndex = imageIndex,
                         Content = $"{textContext}{automationJob.GenerateOptions.Prompt}",
                     });
@@ -270,6 +256,23 @@ namespace Amuse.App.Views
             });
             Logger.LogInformation($"[TextInstruct] [SaveHistory] History saved.");
             return result;
+        }
+
+
+        protected override void OnProgress(PipelineProgress progress)
+        {
+            base.OnProgress(progress);
+            if (progress.Key == "Generate" && progress.Subkey == "Token")
+            {
+
+                TextResultElement.UpdateStreamResponse(progress.Message, progress.Value);
+            }
+        }
+
+
+        protected override bool CanExecute()
+        {
+            return base.CanExecute() && !string.IsNullOrEmpty(Options?.Prompt);
         }
     }
 }

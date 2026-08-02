@@ -32,7 +32,7 @@ class QuantBackend(Enum):
     NONE = 0
     QUANTO = 1
     BITSANDBYTES = 2
-    TorchAO = 3
+    TORCHAO = 3
 
 
 class QuantTarget(Enum):

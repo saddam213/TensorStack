@@ -5,6 +5,7 @@ using Amuse.Common.Config;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -712,7 +713,7 @@ namespace Amuse.App.Runtime
         }
 
 
-        private static ConversationMessage[] CreateConversation(List<ConversationModel> conversation)
+        private static ConversationMessage[] CreateConversation(ObservableCollection<ConversationModel> conversation)
         {
             if (conversation.IsNullOrEmpty())
                 return default;

@@ -1,5 +1,4 @@
 ﻿using Amuse.App.Common;
-using Amuse.App.Controls;
 using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
@@ -89,11 +88,6 @@ namespace Amuse.App.Views
         /// Gets or sets the automation progress.
         /// </summary>
         public ProgressInfo AutomationProgress { get; }
-
-        /// <summary>
-        /// Gets the text result control.
-        /// </summary>
-        protected abstract TextResultControl TextResultControl { get; }
 
 
         /// <summary>
@@ -430,7 +424,6 @@ namespace Amuse.App.Views
                 else if (progress.Subkey == "Token")
                 {
                     Statistics.Update(progress);
-                    TextResultControl?.UpdateProgress(progress);
                 }
                 else
                 {
