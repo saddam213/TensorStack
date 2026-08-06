@@ -10,8 +10,10 @@ namespace Amuse.App.Common
     {
         private ConversationRole _role;
         private string _content;
-        private List<int> _imageIndex;
-        private List<int> _audioIndex;
+        private string _thinking;
+        private Dictionary<int, string> _imageIndex;
+        private Dictionary<int, string> _audioIndex;
+        private Dictionary<int, string> _videoIndex;
 
         public ConversationRole Role
         {
@@ -26,17 +28,31 @@ namespace Amuse.App.Common
         }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public List<int> ImageIndex
+        public string Thinking
+        {
+            get { return _thinking; }
+            set { SetProperty(ref _thinking, value); }
+        }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Dictionary<int, string> ImageIndex
         {
             get { return _imageIndex; }
             set { SetProperty(ref _imageIndex, value); }
         }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public List<int> AudioIndex
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Dictionary<int, string> AudioIndex
         {
             get { return _audioIndex; }
             set { SetProperty(ref _audioIndex, value); }
+        }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Dictionary<int, string> VideoIndex
+        {
+            get { return _videoIndex; }
+            set { SetProperty(ref _videoIndex, value); }
         }
 
         public bool Equals(ConversationModel other) => ReferenceEquals(this, other);

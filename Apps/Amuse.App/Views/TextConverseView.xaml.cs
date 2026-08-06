@@ -54,6 +54,9 @@ namespace Amuse.App.Views
                 ModelControl.SetPipeline(GenerateService.Pipeline);
         }
 
+        private int _contextLengthText;
+        private int _contextLengthImage;
+        private int _contextLengthAudio;
 
         /// <summary>
         /// Execute thge pipeline.
@@ -70,33 +73,78 @@ namespace Amuse.App.Views
                 Statistics.Start();
 
                 // Context
-                // var textContext = InputControl.GetTextContext(Options.Prompt);
-                // var imageContext = InputControl.GetImageContext(Options.Prompt);
-                // var audioContext = InputControl.GetAudioContext(Options.Prompt);
+                var prompt = Options.Prompt;
+                var textContext = InputControl.GetTextContext(prompt);
+                var imageContext = InputControl.GetImageContext(prompt);
+                var audioContext = InputControl.GetAudioContext(prompt);
+                var imageIndex = default(Dictionary<int, string>);
+                var audioIndex = default(Dictionary<int, string>);
+
+                if (ConversationElement.Count == 0)
+                {
+                    _contextLengthText = textContext.Length;
+                    _contextLengthImage = imageContext.Count;
+                    _contextLengthAudio = audioContext.Count;
+                    imageIndex = imageContext.GetIndexedInputs();
+                    audioIndex = audioContext.GetIndexedInputs();
+                    prompt = $"{textContext}\n{prompt}";
+                }
+                else
+                {
+                    if (textContext.Length > _contextLengthText)
+                    {
+                        // new content
+                        prompt = $"{textContext.ToString(_contextLengthText, textContext.Length - _contextLengthText)}\n{prompt}";
+                        _contextLengthText = textContext.Length;
+                    }
+                    if (imageContext.Count > _contextLengthImage)
+                    {
+                        // new imege
+                        imageIndex = [];
+                        for (int i = _contextLengthImage; i < imageContext.Count; i++)
+                        {
+                            imageIndex.Add(i, imageContext[i].SourceFile);
+                        }
+                        _contextLengthImage = imageContext.Count;
+                    }
+                    if (audioContext.Count > _contextLengthAudio)
+                    {
+                        // new audio
+                        audioIndex = [];
+                        for (int i = _contextLengthAudio; i < audioContext.Count; i++)
+                        {
+                            audioIndex.Add(i, audioContext[i].SourceFile);
+                        }
+                        _contextLengthAudio = audioContext.Count;
+                    }
+                }
+                Options.Prompt = string.Empty;
+
 
                 // System Prompt
                 await ConversationElement.AddSystemPromptAsync(Options.Prompt2);
 
-
                 // User Prompt
-                await ConversationElement.AddUserPromptAsync(Options.Prompt);
-                Options.Prompt = string.Empty;
+                await ConversationElement.AddUserPromptAsync(prompt, imageIndex, audioIndex);
 
-                // Generate
-                var generateResult = await ExecuteLanguageModelAsync(Options with
+                // Options
+                var options = Options with
                 {
                     Prompt = null,
                     Prompt2 = null,
-                    InputImages = [],
-                    InputAudios = [],
+                    InputAudios = audioContext,
+                    InputImages = imageContext.AsImageTensors(),
                     Conversation = ConversationElement.Conversation
-                });
+                };
 
-                // End Stream
-                await ConversationElement.EndStreamResponseAsync();
+                // Generate
+                var textResult = await ExecuteLanguageModelAsync(options);
 
                 // Result
+                await ConversationElement.EndStreamResponseAsync();
                 Statistics.Stop();
+
+                // History
                 Logger.LogInformation("[TextConverse] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)

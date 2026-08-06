@@ -25,6 +25,7 @@ namespace Amuse.App.Views
             MoveHistoryDirectoryCommand = new AsyncRelayCommand(MoveHistoryDirectoryAsync);
             MoveTempDirectoryCommand = new AsyncRelayCommand(MoveTempDirectoryAsync);
             OpenDirectoryCommand = new AsyncRelayCommand<string>(OpenDirectoryAsync);
+            ResetDialogsCommand = new AsyncRelayCommand(ResetDialogsAsync);
             ScaleOptions = [.. Enumerable.Range(5, 26).Select(x => new ScaleOption($"{x * 10}%", x / 10.0))];
             InitializeComponent();
         }
@@ -35,6 +36,7 @@ namespace Amuse.App.Views
         public AsyncRelayCommand MoveHistoryDirectoryCommand { get; }
         public AsyncRelayCommand MoveTempDirectoryCommand { get; }
         public AsyncRelayCommand<string> OpenDirectoryCommand { get; }
+        public AsyncRelayCommand ResetDialogsCommand { get; }
         public IReadOnlyList<ScaleOption> ScaleOptions { get; }
 
 
@@ -80,6 +82,13 @@ namespace Amuse.App.Views
                 Settings.NotifyPropertyChanged(nameof(Settings.DirectoryTemp));
                 await SaveAsync();
             }
+        }
+
+
+        private async Task ResetDialogsAsync()
+        {
+            Settings.IsExternalLinksAcknowledged = false;
+            await SaveAsync();
         }
 
 

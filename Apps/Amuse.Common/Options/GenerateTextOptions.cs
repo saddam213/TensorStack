@@ -32,6 +32,7 @@ namespace Amuse.Common
         public int ChunkSize { get; set; }
         public bool IsThinkingEnabled { get; set; }
         public int SampleRate { get; set; }
+        public CacheType CacheType { get; set; }
 
         [JsonIgnore]
         public List<ImageTensor> InputImages { get; set; } = [];

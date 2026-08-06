@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using TensorStack.Audio;
-using TensorStack.Common.Tensor;
+using TensorStack.Image;
 using TensorStack.Video;
 using TensorStack.WPF;
 using TensorStack.WPF.Controls;
@@ -132,7 +132,8 @@ namespace Amuse.App.Controls
                 LengthPenalty = newOptions.LengthPenalty,
                 NoRepeatNgramSize = newOptions.NoRepeatNgramSize,
                 EarlyStopping = newOptions.EarlyStopping,
-                ChunkSize = newOptions.ChunkSize
+                ChunkSize = newOptions.ChunkSize,
+                CacheType = newOptions.CacheType,
             };
 
             // Automation
@@ -166,7 +167,7 @@ namespace Amuse.App.Controls
         }
 
 
-        public List<ImageTensor> GetImageContext(string query = default)
+        public List<ImageInput> GetImageContext(string query = default)
         {
             return ContextControlElement.GetImageContext(query);
         }

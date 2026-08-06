@@ -296,7 +296,8 @@ namespace Amuse.App.Controls
                 LoraAdapterModel = _currentLoraEnabled ? _currentLora : default,
                 MemoryMode = _currentMemoryMode,
                 QualityMode = _currentQualityMode,
-                ProcessType = GetProcessType()
+                ProcessType = GetProcessType(),
+                ViewType = ViewType
             };
 
             SelectionChanged?.Invoke(this, pipeline);
@@ -336,7 +337,8 @@ namespace Amuse.App.Controls
                 Device = _selectedDevice,
                 MemoryMode = _selectedMemoryMode.MemoryMode,
                 QualityMode = _selectedQualityMode,
-                ProcessType = _processType
+                ProcessType = _processType,
+                ViewType = ViewType
             };
 
             SelectionChanged?.Invoke(this, pipeline);

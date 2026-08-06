@@ -698,7 +698,7 @@ namespace Amuse.App.Views
                 var message = Globalization.GetProgressMessage(progress);
                 if (progress.Subkey == "Step")
                 {
-                    Statistics.Update(progress);
+                    Statistics.UpdateStep(progress);
                     Progress.Update(progress.Value, progress.Maximum, message);
                     var previewImage = await GenerateService.GeneratePreviewAsync(progress);
                     if (previewImage != null && GenerateService.IsExecuting)

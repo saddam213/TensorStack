@@ -1,6 +1,8 @@
 from tensorstack.utils import Stopwatch, token_push
 from tensorstack.data_objects import PipelineConfig, GenerateTextOptions
-from tensorstack.enums import  MemoryMode
+from tensorstack.enums import  MemoryMode, CacheType
+import time
+import torch
 import threading
 from pathlib import Path
 from queue import Queue, Empty
@@ -19,6 +21,10 @@ from transformers import (
     StoppingCriteriaList,
     set_seed,
 )
+torch.backends.cuda.matmul.allow_tf32 = True
+torch.backends.cudnn.allow_tf32 = True
+torch.set_float32_matmul_precision("high")
+
 
 class CountingStreamer(TextIteratorStreamer):
     def __init__(self, tokenizer, **kwargs):
@@ -26,8 +32,26 @@ class CountingStreamer(TextIteratorStreamer):
         self.token_count = 0
 
     def put(self, value):
-        self.token_count += value.numel()
+        if value.shape[-1] == 1:
+            self.token_count += 1
         super().put(value)
+
+
+class TokenLatencyTracker:
+    def __init__(self):
+        self._start = 0.0
+        self.last_token_count = 0
+
+    def start(self):
+        self._start = time.perf_counter()
+
+    def elapsed_per_token(self, token_count):
+        elapsed = time.perf_counter() - self._start
+        new_tokens = token_count - self.last_token_count
+        self.last_token_count = token_count
+        if new_tokens > 0:
+            elapsed /= new_tokens
+        return elapsed
 
 
 @dataclass(slots=True)
@@ -49,8 +73,12 @@ class TextPipeline:
         device = self.base_model.device
         conversation = self._parse_conversation(options)
         prompt = self._apply_chat_template(options, conversation)
-        inputs = self._get_inputs(prompt, images, audios, videos).to(device)
+        inputs = self._get_inputs(prompt, images, audios, videos)
+        use_cache, use_device, cache_type = self._get_cache_config(options.cache_type)
+        if use_device:
+            inputs = inputs.to(device)
 
+        print(f"[DEBUG] use_cache: {use_cache}, use_device: {use_device}, cache_type: {cache_type}")
         self.streamer = None
         if options.num_beams == 1:
             self.streamer = CountingStreamer(
@@ -60,50 +88,57 @@ class TextPipeline:
                 skip_special_tokens=False
             )
 
+        do_sample=options.do_sample if options.num_beams == 1 else False
         generation_kwargs = dict(
             **inputs,
+            use_cache=use_cache,
+            cache_implementation=cache_type,
             max_new_tokens=options.max_length,
-            temperature=options.temperature,
-            top_k=options.top_k,
-            top_p=options.top_p,
-            top_h=options.top_h,
-            typical_p=options.typical_p,
             repetition_penalty=options.repetition_penalty,
             length_penalty=options.length_penalty,
             no_repeat_ngram_size=options.no_repeat_ngram_size,
-            output_scores=True,
-            return_dict_in_generate=True,
             num_beams=options.num_beams,
             num_return_sequences=options.num_beams,
-            do_sample=options.do_sample if options.num_beams == 1 else False,
+            do_sample=do_sample,
             streamer=self.streamer,
             stopping_criteria=StoppingCriteriaList([
                 CancellationCriteria(cancel)
             ])
         )
+
+        if do_sample:
+            generation_kwargs.update({
+                "temperature": options.temperature,
+                "top_k": options.top_k,
+                "top_p": options.top_p,
+                "top_h": options.top_h,
+                "typical_p": options.typical_p,
+            })
         return generation_kwargs
 
 
     #------------------------------------------------
     # Generate the results
     #------------------------------------------------
-    def generate_result(self, options: GenerateTextOptions, stopwatch: Stopwatch, kwargs: dict[str, Any]):
+    def generate_result(self, options: GenerateTextOptions, kwargs: dict[str, Any]):
         if options.num_beams > 1:
             return self._generate_beam_result(kwargs)
 
-        return self._generate_text_result(stopwatch, kwargs)
+        return self._generate_text_result(kwargs)
 
 
     #------------------------------------------------
     # Generate the greedy results (supports streaming)
     #------------------------------------------------
-    def _generate_text_result(self, stopwatch: Stopwatch, kwargs: dict[str, Any]):
+    def _generate_text_result(self, kwargs: dict[str, Any]):
         results = Queue()
         exceptions = Queue()
+        tracker = TokenLatencyTracker()
         def worker():
             try:
-                result = self.base_model.generate(**kwargs)
-                results.put(result)
+                with torch.inference_mode():
+                    result = self.base_model.generate(**kwargs)
+                    results.put(result)
             except Exception as e:
                 exceptions.put(e)
 
@@ -113,13 +148,15 @@ class TextPipeline:
         chunks = []
         while True:
             try:
+                tracker.start()
                 chunk = next(self.streamer)
+                token_count=self.streamer.token_count
+                elapsed = tracker.elapsed_per_token(token_count)
+
                 chunk = self._replace_tokens(chunk)
                 chunks.append(chunk)
-                elapsed = stopwatch.reset()
-                token_count=self.streamer.token_count
-                token_push(token=chunk,token_count=token_count, elapsed=elapsed)
-                #print(f"[DEBUG] [TokenPush] Tokens: {token_count}, TPS: {1000 / elapsed}, Chunk: {chunk}")
+                token_push(token=chunk, token_count=token_count, elapsed=elapsed)
+                #print(f"[DEBUG] [TokenPush] Tokens: {token_count}, TPS: {elapsed}, Chunk: {chunk}")
             except StopIteration:
                 break
             except Empty:
@@ -133,7 +170,7 @@ class TextPipeline:
             raise exceptions.get()
 
         result = results.get()
-        total_tokens = result.sequences.shape[-1]
+        total_tokens = result.shape[-1]
         return [("".join(chunks), 0, 0.0, total_tokens)]
 
 
@@ -141,17 +178,24 @@ class TextPipeline:
     # Generate the beam results
     #------------------------------------------------
     def _generate_beam_result(self, kwargs: dict[str, Any]):
+        kwargs = kwargs.copy()
+        kwargs.pop("streamer", None)
+        kwargs.update({
+            "output_scores": True,
+            "return_dict_in_generate": True,
+        })
         results = []
-        input_length = kwargs["input_ids"].shape[-1]
-        output = self.base_model.generate(**kwargs)
-        for beam_idx, sequence in enumerate(output.sequences):
-            score = 0.0
-            text = self.tokenizer.decode(sequence[input_length:], skip_special_tokens=False)
-            text = self._replace_tokens(text)
-            if output.sequences_scores is not None:
-                score = float(output.sequences_scores[beam_idx])
+        with torch.inference_mode():
+            input_length = kwargs["input_ids"].shape[-1]
+            output = self.base_model.generate(**kwargs)
+            for beam_idx, sequence in enumerate(output.sequences):
+                score = 0.0
+                text = self.tokenizer.decode(sequence[input_length:], skip_special_tokens=False)
+                text = self._replace_tokens(text)
+                if output.sequences_scores is not None:
+                    score = float(output.sequences_scores[beam_idx])
 
-            results.append((text, beam_idx, score, sequence.shape[-1]))
+                results.append((text, beam_idx, score, sequence.shape[-1]))
 
         return results
 
@@ -254,6 +298,24 @@ class TextPipeline:
         for src, dst in self.special_replacements:
             text = text.replace(src, dst)
         return text
+
+
+    #------------------------------------------------
+    # Get K/V cahce settings
+    #------------------------------------------------
+    def _get_cache_config(self, cache_type: CacheType):
+        if cache_type == CacheType.Dynamic:
+            return True, True, "dynamic"
+        elif cache_type == CacheType.DynamicOffload:
+            return True, False,"offloaded"
+        elif cache_type == CacheType.Static:
+            return True, True, "static"
+        elif cache_type == CacheType.StaticOffload:
+            return True, False, "offloaded_static"
+        elif cache_type == CacheType.Quantized:
+            return True, True, "quantized"
+        return False, True, None
+
 
 #------------------------------------------------
 # Event based StoppingCriteria

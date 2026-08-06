@@ -64,6 +64,7 @@ namespace Amuse.App.Common
         private ObservableCollection<ConversationModel> _conversation;
         private bool _isSamplingEnabled;
         private bool _isThinkingEnabled;
+        private CacheType _cacheType;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Width
@@ -427,6 +428,13 @@ namespace Amuse.App.Common
         {
             get { return _isThinkingEnabled; }
             set { SetProperty(ref _isThinkingEnabled, value); }
+        }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public CacheType CacheType
+        {
+            get { return _cacheType; }
+            set { SetProperty(ref _cacheType, value); }
         }
 
         [JsonIgnore]

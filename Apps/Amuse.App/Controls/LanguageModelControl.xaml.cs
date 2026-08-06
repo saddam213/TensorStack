@@ -136,7 +136,8 @@ namespace Amuse.App.Controls
                 LanguageModel = _currentModel,
                 MemoryMode = _selectedQualityMode.MemoryMode,
                 QualityMode = _selectedQualityMode.DetectedMode,
-                ProcessType = _processType
+                ProcessType = _processType,
+                ViewType = ViewType
             };
 
             SelectionChanged?.Invoke(this, pipeline);
@@ -160,7 +161,8 @@ namespace Amuse.App.Controls
                 Device = _selectedDevice,
                 MemoryMode = _selectedQualityMode.MemoryMode,
                 QualityMode = _selectedQualityMode.DetectedMode,
-                ProcessType = _processType
+                ProcessType = _processType,
+                ViewType = ViewType
             };
 
             SelectionChanged?.Invoke(this, pipeline);

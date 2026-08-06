@@ -1,18 +1,23 @@
 ﻿using Amuse.App.Services;
 using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using TensorStack.Common;
 using TensorStack.WPF;
 using TensorStack.WPF.Controls;
+using TensorStack.WPF.Services;
 
 namespace Amuse.App.Controls
 {
@@ -23,6 +28,7 @@ namespace Amuse.App.Controls
         private readonly SemaphoreSlim _createLock = new(1, 1);
         private readonly SemaphoreSlim _updateLock = new(1, 1);
         private readonly SemaphoreSlim _switchLock = new(1, 1);
+        private WebView2 WebViewer;
         private bool _isInitialized;
         private bool _isUpdatePending;
         private bool _isContentReady;
@@ -67,7 +73,7 @@ namespace Amuse.App.Controls
         public AsyncRelayCommand<bool> CopyCommand { get; }
         public AsyncRelayCommand<bool> CopyResponseCommand { get; }
         public AsyncRelayCommand<bool> CopyThinkingCommand { get; }
-
+        public bool IsConversationMode { get; set; }
         /// <summary>
         /// Gets or sets the settings.
         /// </summary>
@@ -211,6 +217,19 @@ namespace Amuse.App.Controls
 
 
         /// <summary>
+        /// Clears body content.
+        /// </summary>
+        /// <returns>Task.</returns>
+        public Task CloseAsync()
+        {
+            _cacheLength = 0;
+            TextViewer.Clear();
+            DestroyWebView();
+            return Task.CompletedTask;
+        }
+
+
+        /// <summary>
         /// Gets the plain text.
         /// </summary>
         public string GetPlainText()
@@ -224,7 +243,7 @@ namespace Amuse.App.Controls
         /// </summary>
         public string GetThinkingText()
         {
-            return Utils.GetThinkingText(TextViewer?.Text);
+            return Utils.GetThinkingText(TextViewer?.Text, IsConversationMode);
         }
 
 
@@ -233,7 +252,7 @@ namespace Amuse.App.Controls
         /// </summary>
         public string GetResponseText()
         {
-            return Utils.GetResponseText(TextViewer?.Text);
+            return Utils.GetResponseText(TextViewer?.Text, IsConversationMode);
         }
 
 
@@ -242,7 +261,100 @@ namespace Amuse.App.Controls
         /// </summary>
         public string GetHtmlPage()
         {
-            return MarkdownConverter.BuildFullHtml(TextViewer?.Text, FontSize, FontFamily, IsThinkingVisible);
+            return MarkdownConverter.BuildCleanHtml(TextViewer?.Text);
+        }
+
+
+        /// <summary>
+        /// Save the content
+        /// </summary>
+        /// <param name="isFormatted">if set to <c>true</c> format the output.</param>
+        public async Task SaveAsync(bool isFormatted)
+        {
+            if (!IsInputEnabled)
+                return;
+
+            if (isFormatted)
+            {
+                var saveFilename = await DialogService.SaveFileAsync("Save Html", "ModelOutput", filter: "Html files (*.html)|*.html", defualtExt: "html");
+                if (!string.IsNullOrEmpty(saveFilename))
+                {
+                    await File.WriteAllTextAsync(saveFilename, MarkdownConverter.BuildCleanHtml(TextViewer.Text));
+                }
+            }
+            else
+            {
+                var saveFilename = await DialogService.SaveFileAsync("Save Text", "ModelOutput", filter: "Text Files (*.md;*.txt;*.json;)|*.md;*.txt;*.json;|Html files (*.html)|*.html|All Files|*.*", defualtExt: "md");
+                if (!string.IsNullOrEmpty(saveFilename))
+                {
+                    var content = !Path.GetExtension(saveFilename).Equals(".html")
+                        ? TextViewer.Text
+                        : MarkdownConverter.BuildCleanHtml(TextViewer.Text);
+                    await File.WriteAllTextAsync(saveFilename, content);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Copy the content to clipboard
+        /// </summary>
+        /// <param name="isFormatted">if set to <c>true</c> format the output.</param>
+        public async Task CopyAsync(bool isFormatted)
+        {
+            if (!IsInputEnabled)
+                return;
+
+            var content = isFormatted ? GetHtmlPage() : TextViewer.Text;
+            await ClipboardManager.SetTextAsync(content);
+        }
+
+
+        /// <summary>
+        /// Copy the response to clipboard
+        /// </summary>
+        /// <param name="isFormatted">if set to <c>true</c> format the output.</param>
+        public async Task CopyResponseAsync(bool isFormatted)
+        {
+            if (!IsInputEnabled)
+                return;
+
+            var content = GetResponseText();
+            if (isFormatted)
+            {
+                content = MarkdownConverter.BuildCleanHtml(content);
+            }
+            await ClipboardManager.SetTextAsync(content);
+        }
+
+
+        /// <summary>
+        /// Copy the thinking to clipboard
+        /// </summary>
+        /// <param name="isFormatted">if set to <c>true</c> format the output.</param>
+        public async Task CopyThinkingAsync(bool isFormatted)
+        {
+            if (!IsInputEnabled)
+                return;
+
+            var content = GetThinkingText();
+            if (isFormatted)
+            {
+                content = MarkdownConverter.BuildCleanHtml(content);
+            }
+            await ClipboardManager.SetTextAsync(content);
+        }
+
+
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.Input.Mouse.MouseEnter" /> attached event is raised on this element. Implement this method to add class handling for this event.
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.Input.MouseEventArgs" /> that contains the event data.</param>
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
+            if (!IsKeyboardFocusWithin)
+                Focus();
         }
 
 
@@ -257,16 +369,14 @@ namespace Amuse.App.Controls
                 if (IsMarkdownEnabled)
                 {
                     await ReloadAsync();
-                    WebViewer.Visibility = Visibility.Visible;
+                    WebViewerContainer.Visibility = Visibility.Visible;
                     TextViewer.Visibility = Visibility.Collapsed;
-                    WebViewer.Focus();
                 }
                 else
                 {
                     TextViewer.Height = double.NaN;
                     TextViewer.Visibility = Visibility.Visible;
-                    WebViewer.Visibility = Visibility.Collapsed;
-                    TextViewer.Focus();
+                    WebViewerContainer.Visibility = Visibility.Collapsed;
                 }
 
             }
@@ -409,7 +519,7 @@ namespace Amuse.App.Controls
 
             try
             {
-                var htmlContent = MarkdownConverter.BuildHtml(FontSize, FontFamily, IsThinkingVisible);
+                var htmlContent = MarkdownConverter.BuildEmptyHtml(FontSize, FontFamily);
                 WebViewer.NavigateToString(htmlContent);
                 await tcs.Task.WaitAsync(TimeSpan.FromSeconds(2));
             }
@@ -435,12 +545,13 @@ namespace Amuse.App.Controls
                 if (_isInitialized)
                     return;
 
+                CreateWebView();
                 var environment = await GetEnvironmentAsync();
                 var options = environment.CreateCoreWebView2ControllerOptions();
                 options.AllowHostInputProcessing = true;
                 await WebViewer.EnsureCoreWebView2Async(environment, options);
                 WebViewer.Height = (int)ScrollViewerHost.ActualHeight;
-                WebViewer.CoreWebView2.SetVirtualHostNameToFolderMapping("history", Settings.DirectoryHistory, CoreWebView2HostResourceAccessKind.Allow);
+                WebViewer.CoreWebView2.AddWebResourceRequestedFilter("https://resource.amuse/*", CoreWebView2WebResourceContext.All);
                 WebViewer.CoreWebView2.Settings.IsScriptEnabled = true;
                 WebViewer.CoreWebView2.Settings.IsWebMessageEnabled = true;
                 WebViewer.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
@@ -457,6 +568,8 @@ namespace Amuse.App.Controls
                 WebViewer.CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
                 WebViewer.CoreWebView2.Settings.IsPinchZoomEnabled = false;
                 WebViewer.CoreWebView2.Settings.IsReputationCheckingRequired = false;
+                WebViewer.CoreWebView2.Settings.HiddenPdfToolbarItems = CoreWebView2PdfToolbarItems.Save | CoreWebView2PdfToolbarItems.SaveAs;
+                WebViewer.CoreWebView2.Settings.UserAgent = $"Amuse/{App.AppVersionDisplay}";
                 var source = PresentationSource.FromVisual(WebViewer);
                 if (source?.CompositionTarget != null)
                 {
@@ -467,6 +580,8 @@ namespace Amuse.App.Controls
                 WebViewer.NavigationStarting += WebView_NavigationStarting;
                 WebViewer.CoreWebView2.ContextMenuRequested += WebView_ContextMenuRequested;
                 WebViewer.CoreWebView2.WebMessageReceived += WebView_WebMessageReceived;
+                WebViewer.CoreWebView2.WebResourceRequested += WebView_WebResourceRequested;
+                WebViewer.CoreWebView2.DownloadStarting += WebView_DownloadStarting;
                 _isInitialized = true;
             }
             catch (Exception ex)
@@ -477,6 +592,47 @@ namespace Amuse.App.Controls
             {
                 _createLock.Release();
             }
+        }
+
+
+        /// <summary>
+        /// Creates the WebView2.
+        /// </summary>
+        private void CreateWebView()
+        {
+            WebViewer = new WebView2
+            {
+                SnapsToDevicePixels = true,
+                UseLayoutRounding = true,
+                DefaultBackgroundColor = Color.FromArgb(0xFF, 0x2D, 0x2D, 0x2D)
+            };
+
+            WebViewer.SetBinding(WebView2.ZoomFactorProperty, new Binding("Settings.UIScale"));
+            WebViewerContainer.Children.Add(WebViewer);
+        }
+
+
+        /// <summary>
+        /// Destroys the web view.
+        /// </summary>
+        private void DestroyWebView()
+        {
+            if (WebViewer == null)
+                return;
+
+            if (WebViewer.CoreWebView2 != null)
+            {
+                WebViewer.NavigationStarting -= WebView_NavigationStarting;
+                WebViewer.CoreWebView2.ContextMenuRequested -= WebView_ContextMenuRequested;
+                WebViewer.CoreWebView2.WebMessageReceived -= WebView_WebMessageReceived;
+                WebViewer.CoreWebView2.WebResourceRequested -= WebView_WebResourceRequested;
+                WebViewer.CoreWebView2.DownloadStarting -= WebView_DownloadStarting;
+                WebViewer.CoreWebView2.Stop();
+                _isInitialized = false;
+            }
+            WebViewerContainer.Children.Remove(WebViewer);
+            WebViewer.Dispose();
+            WebViewer = null;
         }
 
 
@@ -514,10 +670,21 @@ namespace Amuse.App.Controls
 
 
         /// <summary>
+        /// Handles the DownloadStarting event of the WebView control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="CoreWebView2DownloadStartingEventArgs"/> instance containing the event data.</param>
+        private void WebView_DownloadStarting(object sender, CoreWebView2DownloadStartingEventArgs e)
+        {
+            e.Cancel = true;
+        }
+
+
+        /// <summary>
         /// Handles the NavigationStarting event of the WebView control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        private void WebView_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
+        private async void WebView_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
             if (!e.IsUserInitiated)
                 return;
@@ -533,12 +700,58 @@ namespace Amuse.App.Controls
                 {
                     if (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
                     {
-                        URL.NavigateToUrl(e.Uri); //TODO: popup warning extranal links
+                        if (!Settings.IsExternalLinksAcknowledged)
+                        {
+                            var dialogResult = await DialogService.ShowMessageAsync("External Link", "This link was provided in a generated response and will open in your default web browser.\nGenerated content may contain incorrect/untrusted links.\n\nDo you want to continue?", TensorStack.WPF.Dialogs.MessageDialogType.YesNo, TensorStack.WPF.Dialogs.MessageBoxIconType.Warning, TensorStack.WPF.Dialogs.MessageBoxStyleType.Warning, true);
+                            Settings.IsExternalLinksAcknowledged = dialogResult.DontAskAgain;
+                            if (!dialogResult)
+                                return;
+
+                            Settings.IsExternalLinksEnabled = true;
+                        }
+
+                        if (Settings.IsExternalLinksEnabled)
+                            URL.NavigateToUrl(e.Uri);
                     }
                 }
             }
         }
 
+
+        /// <summary>
+        /// Handles the WebResourceRequested event of the WebView control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="CoreWebView2WebResourceRequestedEventArgs"/> instance containing the event data.</param>
+        /// <exception cref="System.IO.FileNotFoundException"></exception>
+        private void WebView_WebResourceRequested(object sender, CoreWebView2WebResourceRequestedEventArgs e)
+        {
+            if (e.ResourceContext != CoreWebView2WebResourceContext.Image && e.ResourceContext != CoreWebView2WebResourceContext.Media)
+                return;
+
+            var deferral = e.GetDeferral();
+            try
+            {
+                var uri = new Uri(e.Request.Uri);
+                var filename = Uri.UnescapeDataString(uri.LocalPath?.Trim('/') ?? "");
+                if (!File.Exists(filename))
+                    throw new FileNotFoundException(filename);
+
+                var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+                var disposableStream = new AutoDisposeStream(fileStream);
+
+                e.Response = WebViewer.CoreWebView2.Environment.CreateWebResourceResponse(disposableStream, 200, "OK", $"Content-Type: {GetContentType(filename)}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[WebView] [Exception] WebResourceRequested: {ex.Message}");
+                e.Response = WebViewer.CoreWebView2.Environment.CreateWebResourceResponse(null, 404, "Not Found", "Content-Type: text/plain");
+            }
+            finally
+            {
+                deferral.Complete();
+            }
+        }
 
 
         /// <summary>
@@ -564,7 +777,7 @@ namespace Amuse.App.Controls
             {
                 if (!string.IsNullOrEmpty(webMessage.Clipboard))
                 {
-                    await SetClipboardTextAsync(webMessage.Clipboard);
+                    await ClipboardManager.SetTextAsync(webMessage.Clipboard.Trim());
                 }
             }
         }
@@ -592,16 +805,23 @@ namespace Amuse.App.Controls
 
             if (e.ContextMenuTarget.Kind == CoreWebView2ContextMenuTargetKind.Page)
             {
-                var menuItemSave = CreateMenuItem("Save As                       Ctrl+S", SaveAsync, IsInputEnabled);
-                var menuItemCopy = CreateMenuItem("Copy                           Ctrl+C", default, false);
-                var menuItemCopyAll = CreateMenuItem("Copy All                      Ctrl+A", CopyAsync, IsInputEnabled);
-                var menuItemResponse = CreateMenuItem("Copy Response           Ctrl+R", CopyResponseAsync, IsInputEnabled);
-                var menuItemThinking = CreateMenuItem("Copy Thinking             Ctrl+T", CopyThinkingAsync, IsInputEnabled && Utils.HasThinkingText(TextViewer.Text));
-                menuItems.Insert(0, menuItemSave);
-                menuItems.Add(menuItemCopy);
+                var menuItemCopy = CreateMenuItem("Copy                                  Ctrl+C", false, default);
+                var menuItemSave = CreateMenuItem("Save As                              Ctrl+S", IsInputEnabled, SaveAsync);
+                var menuItemCopyAll = CreateMenuItem("Copy Text                           Ctrl+A", IsInputEnabled, CopyAsync);
+                var menuItemResponse = CreateMenuItem("Copy Response                  Ctrl+R", IsInputEnabled, CopyResponseAsync);
+                var menuItemThinking = CreateMenuItem("Copy Thinking                    Ctrl+T", IsInputEnabled, CopyThinkingAsync);
+                var menuItemCopyAllHtml = CreateMenuItem("Copy Html                          Ctrl+Shift+A", IsInputEnabled, CopyAsync, true);
+                var menuItemResponseHtml = CreateMenuItem("Copy Response Html          Ctrl+Shift+R", IsInputEnabled, CopyResponseAsync, true);
+                var menuItemThinkingHtml = CreateMenuItem("Copy Thinking Html            Ctrl+Shift+T", IsInputEnabled, CopyThinkingAsync, true);
+                menuItems.Insert(0, menuItemCopy);
+                menuItems.Insert(1, menuItemSave);
                 menuItems.Add(menuItemCopyAll);
                 menuItems.Add(menuItemResponse);
                 menuItems.Add(menuItemThinking);
+                menuItems.Add(WebViewer.CoreWebView2.Environment.CreateContextMenuItem(null, null, CoreWebView2ContextMenuItemKind.Separator));
+                menuItems.Add(menuItemCopyAllHtml);
+                menuItems.Add(menuItemResponseHtml);
+                menuItems.Add(menuItemThinkingHtml);
             }
 
             e.MenuItems.Clear();
@@ -616,13 +836,13 @@ namespace Amuse.App.Controls
         /// <param name="label">The label.</param>
         /// <param name="clickFunction">The click function.</param>
         /// <param name="isEnabled">if set to <c>true</c> [is enabled].</param>
-        private CoreWebView2ContextMenuItem CreateMenuItem(string label, Func<bool, Task> clickFunction = default, bool isEnabled = true)
+        private CoreWebView2ContextMenuItem CreateMenuItem(string label, bool isEnabled = true, Func<bool, Task> clickFunction = default, bool clickArg = false)
         {
             var menuItem = WebViewer.CoreWebView2.Environment.CreateContextMenuItem(label, null, CoreWebView2ContextMenuItemKind.Command);
             menuItem.IsEnabled = isEnabled;
             if (clickFunction != null)
             {
-                menuItem.CustomItemSelected += async (s, args) => await clickFunction(true);
+                menuItem.CustomItemSelected += async (s, args) => await clickFunction(clickArg);
             }
             return menuItem;
         }
@@ -635,7 +855,7 @@ namespace Amuse.App.Controls
         /// <param name="e">The <see cref="ScrollChangedEventArgs"/> instance containing the event data.</param>
         private void ScrollViewerHost_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (WebViewer.Handle == nint.Zero || Settings == null)
+            if (!_isInitialized || WebViewer.Handle == nint.Zero || Settings == null)
                 return;
 
             var scrollViewerRect = new Rect(0, 0, ScrollViewerHost.ActualWidth, ScrollViewerHost.ActualHeight);
@@ -663,57 +883,60 @@ namespace Amuse.App.Controls
             }
         }
 
-        private record WebMessage(WebMessageType Type, int X, int Y, string Clipboard);
 
+        /// <summary>
+        /// Gets the type of the content.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        private static string GetContentType(string path)
+        {
+            return Path.GetExtension(path).ToLowerInvariant() switch
+            {
+                // Images
+                ".png" => "image/png",
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".gif" => "image/gif",
+                ".webp" => "image/webp",
+                ".svg" => "image/svg+xml",
+                ".ico" => "image/x-icon",
+
+                // Audio
+                ".mp3" => "audio/mpeg",
+                ".wav" => "audio/wav",
+                ".ogg" => "audio/ogg",
+                ".aac" => "audio/aac",
+                ".m4a" => "audio/mp4",
+
+                // Video
+                ".mp4" => "video/mp4",
+                ".webm" => "video/webm",
+                ".ogg" or ".ogv" => "video/ogg",
+                ".mov" => "video/quicktime",
+
+                // Web Core Essentials
+                ".html" or ".htm" => "text/html",
+                ".css" => "text/css",
+                ".js" or ".mjs" => "text/javascript",
+                ".json" => "application/json",
+                ".txt" => "text/plain",
+
+                // Fonts
+                ".woff" => "font/woff",
+                ".woff2" => "font/woff2",
+                ".ttf" => "font/ttf",
+
+                // Fallback
+                _ => "application/octet-stream"
+            };
+        }
+
+        private record WebMessage(WebMessageType Type, int X, int Y, string Clipboard);
         public enum WebMessageType
         {
             Click = 0,
             Resize = 1,
             Clipboard = 2,
             Thinking = 3,
-        }
-
-        private static async Task SetClipboardTextAsync(string text)
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                try
-                {
-                    Clipboard.SetText(text);
-                    return;
-                }
-                catch (COMException)
-                {
-                    await Task.Delay(100);
-                }
-            }
-        }
-
-
-        private async Task CopyAsync(bool isHtml)
-        {
-            // copy plain all text
-            Debug.WriteLine($"CopyTextAsync - IsHtml: {isHtml}");
-        }
-
-        private async Task SaveAsync(bool isHtml)
-        {
-            // save plain all text
-            Debug.WriteLine($"SaveTextAsync - IsHtml: {isHtml}");
-        }
-
-
-        private async Task CopyResponseAsync(bool isHtml)
-        {
-            // save html doc
-            Debug.WriteLine($"CopyResponseAsync - IsHtml: {isHtml}");
-        }
-
-
-        private async Task CopyThinkingAsync(bool isHtml)
-        {
-            // save html doc
-            Debug.WriteLine($"CopyThinkingAsync - IsHtml: {isHtml}");
         }
     }
 }

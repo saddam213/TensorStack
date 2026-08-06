@@ -72,7 +72,7 @@ namespace TensorStack.Python.Common
                 ElapsedKey = "Token",
                 Message = parameters[2],
                 Value = int.Parse(parameters[0], CultureInfo.InvariantCulture),
-                Elapsed = float.Parse(parameters[1], CultureInfo.InvariantCulture),
+                Elapsed = float.Parse(parameters[1], CultureInfo.InvariantCulture) * 1000,
                 Timestamp = DateTime.UtcNow
             };
         }

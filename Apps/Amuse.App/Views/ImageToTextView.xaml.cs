@@ -4,13 +4,11 @@ using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
-using TensorStack.Common.Tensor;
 using TensorStack.Image;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
@@ -101,13 +99,12 @@ namespace Amuse.App.Views
             {
                 Progress.Clear();
                 Statistics.Clear();
-                ResultText = default;
-                await TextResultElement.ClearAsync();
+                await TextResultElement.ResetAsync();
                 Statistics.Start();
 
                 // Images
                 var inputImages = GetInputTensors();
-                var imageIndex = Enumerable.Range(0, inputImages.Count).ToList();
+                var imageIndex = inputImages.GetIndexedInputs();
 
                 // System Prompt
                 await TextResultElement.AddSystemPromptAsync(Options.Prompt2);
@@ -120,7 +117,7 @@ namespace Amuse.App.Views
                 {
                     Prompt = null,
                     Prompt2 = null,
-                    InputImages = inputImages,
+                    InputImages = inputImages.AsImageTensors(),
                     Conversation = TextResultElement.Conversation
                 };
 
@@ -128,14 +125,12 @@ namespace Amuse.App.Views
                 var textResult = await ExecuteLanguageModelAsync(options);
 
                 // Result
+                await TextResultElement.EndStreamResponseAsync();
                 TextResultElement.AddBeamResults(textResult.Results);
                 Statistics.Stop();
 
-                // End Stream
-                await TextResultElement.EndStreamResponseAsync();
-
                 // History
-                await SaveHistoryAsync(ResultText.Result, options);
+                await SaveHistoryAsync(textResult.Result, options);
                 Logger.LogInformation("[ImageToText] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)
@@ -172,7 +167,6 @@ namespace Amuse.App.Views
                 Progress.Clear();
                 AutomationProgress.Clear();
                 Statistics.Clear();
-                ResultText = default;
                 Statistics.Start();
                 CancellationTokenSource = new CancellationTokenSource();
 
@@ -181,8 +175,7 @@ namespace Amuse.App.Views
                 await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Text, MediaType.Image))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    ResultText = default;
-                    await TextResultElement.ClearAsync();
+                    await TextResultElement.ResetAsync();
 
                     // Source
                     if (!automationJob.InputImages.IsNullOrEmpty())
@@ -190,8 +183,7 @@ namespace Amuse.App.Views
 
                     // Images
                     var inputImages = GetInputTensors();
-                    var imageIndex = Enumerable.Range(0, inputImages.Count).ToList();
-
+                    var imageIndex = inputImages.GetIndexedInputs();
 
                     // System Prompt
                     await TextResultElement.AddSystemPromptAsync(Options.Prompt2);
@@ -204,28 +196,25 @@ namespace Amuse.App.Views
                     {
                         Prompt = null,
                         Prompt2 = null,
-                        InputImages = inputImages,
+                        InputImages = inputImages.AsImageTensors(),
                         Conversation = TextResultElement.Conversation
                     };
-
 
                     // Execute
                     var textResult = await ExecuteLanguageModelAsync(options);
 
                     // Result
+                    await TextResultElement.EndStreamResponseAsync();
                     TextResultElement.AddBeamResults(textResult.Results);
                     Statistics.Stop();
-
-                    // End Stream
-                    await TextResultElement.EndStreamResponseAsync();
 
                     // History
                     if (AutomationOptions.IsHistoryEnabled)
                     {
-                        await SaveHistoryAsync(ResultText.Result, options);
+                        await SaveHistoryAsync(textResult.Result, options);
                     }
 
-                    await automationJob.SaveAsync(ResultText.Result);
+                    await automationJob.SaveAsync(Utils.GetResponseText(textResult.Result.Text));
                     AutomationProgress.Update(automationJob.Id, automationJob.Count, $"Automation: {automationJob.Id}/{automationJob.Count}");
                 }
 
@@ -280,9 +269,9 @@ namespace Amuse.App.Views
         /// Gets the input tensors.
         /// </summary>
         /// <returns>List&lt;ImageTensor&gt;.</returns>
-        private List<ImageTensor> GetInputTensors()
+        private List<ImageInput> GetInputTensors()
         {
-            var inputImages = new List<ImageTensor>();
+            var inputImages = new List<ImageInput>();
             if (Options.IsSource1Enabled)
                 inputImages.AddIfNotNull(_sourceImage1);
             if (Options.IsSource2Enabled)
@@ -291,7 +280,6 @@ namespace Amuse.App.Views
                 inputImages.AddIfNotNull(_sourceImage3);
             if (Options.IsSource4Enabled)
                 inputImages.AddIfNotNull(_sourceImage4);
-
             return inputImages;
         }
 
@@ -303,6 +291,7 @@ namespace Amuse.App.Views
         private async Task<TextInput> SaveHistoryAsync(TextInput textResult, GenerateInputOptions options)
         {
             Logger.LogInformation($"[ImageToText] [SaveHistory] Saving history...");
+            textResult.Text = Utils.GetResponseText(textResult.Text);
             var result = await HistoryService.AddAsync(textResult, new DiffusionHistory
             {
                 Options = options,
@@ -315,6 +304,10 @@ namespace Amuse.App.Views
         }
 
 
+        /// <summary>
+        /// Called when progress is received from a Python pipeline
+        /// </summary>
+        /// <param name="progress">The progress.</param>
         protected override void OnProgress(PipelineProgress progress)
         {
             base.OnProgress(progress);

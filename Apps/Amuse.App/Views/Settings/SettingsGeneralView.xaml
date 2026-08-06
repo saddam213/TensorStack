@@ -118,6 +118,14 @@
                                     <TextBox Text="{Binding Settings.DirectoryTemp, Mode=OneWay}" IsReadOnly="True" />
                                 </StackPanel>
                             </DockPanel>
+
+                            <DockPanel Margin="0,6,0,0" Height="22">
+                                <Button DockPanel.Dock="Right" Content="Reset Dialogs" Command="{Binding ResetDialogsCommand}" Width="150"/>
+                                <UniformGrid Rows="1" >
+                                    <CheckBox Content="Enable External Links" IsChecked="{Binding Settings.IsExternalLinksEnabled}" />
+                                </UniformGrid>
+                            </DockPanel>
+                          
                         </StackPanel>
                     </GroupBox>
 

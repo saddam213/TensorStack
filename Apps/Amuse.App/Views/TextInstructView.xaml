@@ -79,22 +79,22 @@
             <!--Content-->
             <Grid>
                 <Border IsEnabled="{Binding IsViewBusy, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}">
-                    <Controls:BeamResultControl 
+                    <Controls:TextResultControl 
                         x:Name="TextResultElement" 
                         Settings="{Binding Settings, Mode=OneWay}"
                         MaxTokenLength="{Binding Options.MaxLength, Mode=OneWay}"
                         IsInputEnabled="{Binding GenerateService.IsExecuting,UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}">
-                        <Controls:BeamResultControl.Style>
-                            <Style TargetType="{x:Type Controls:BeamResultControl}">
+                        <Controls:TextResultControl.Style>
+                            <Style TargetType="{x:Type Controls:TextResultControl}">
                                 <Setter Property="IsMultipleBeamResult" Value="True" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Options.Beams, RelativeSource={RelativeSource AncestorType={x:Type local:TextInstructView}}}" Value="1">
+                                    <DataTrigger Binding="{Binding Options.Beams, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type local:TextInstructView}}}" Value="1">
                                         <Setter Property="IsMultipleBeamResult" Value="False" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </Controls:BeamResultControl.Style>
-                    </Controls:BeamResultControl>
+                        </Controls:TextResultControl.Style>
+                    </Controls:TextResultControl>
                 </Border>
 
                 <Grid.Style>
@@ -186,16 +186,15 @@
                                 PreviewKeyDown="OnSourceTextKeyDown"
                                 Placeholder="Please ask a question..." 
                                 VerticalScrollBarVisibility="Auto"
-                                Visibility="{Binding IsAutomating, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                                Visibility="{Binding IsAutomating, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"/>
                             <TextBox 
                                 Text="{Binding AutomationPrompt, Mode=OneWay}" 
                                 Padding="2,2,2,10" 
                                 IsReadOnly="True" 
                                 TextWrapping="Wrap" 
                                 VerticalScrollBarVisibility="Auto"
-                                Visibility="{Binding IsAutomating, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                Visibility="{Binding IsAutomating, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"/>
                         </Grid>
-
                     </Border>
 
                 </DockPanel>
@@ -219,7 +218,6 @@
                     </Style>
                 </Grid.Style>
             </Grid>
-
         </Grid>
     </Grid>
 </Views:ViewBaseLanguage>

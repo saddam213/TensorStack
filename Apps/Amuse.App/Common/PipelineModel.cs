@@ -1,4 +1,5 @@
 ﻿
+using Amuse.App.Views;
 using Amuse.Common;
 using TensorStack.WPF;
 
@@ -15,7 +16,9 @@ namespace Amuse.App.Common
         private UpscaleModel _upscaleModel;
         private MemoryMode _memoryMode;
         private ProcessType _processType;
+        private View _viewType;
         private QualityMode _qualityMode;
+        private View viewType;
 
         public DeviceModel Device
         {
@@ -82,12 +85,17 @@ namespace Amuse.App.Common
             set { SetProperty(ref _memoryMode, value); }
         }
 
+        public View ViewType
+        {
+            get { return _viewType; }
+            set { SetProperty(ref _viewType, value); }
+        }
+
         public QualityMode QualityMode
         {
             get { return _qualityMode; }
             set { SetProperty(ref _qualityMode, value); }
         }
-
 
         public bool IsLoadRequired(PipelineModel pipeline)
         {
@@ -106,7 +114,8 @@ namespace Amuse.App.Common
                 return false;
 
             // ProcessType, LoraAdapters and ControlNet are the only options that can be modified
-            return pipeline.ProcessType != _processType
+            return pipeline.ViewType != _viewType
+                || pipeline.ProcessType != _processType
                 || pipeline.ControlNetModel != _controlNetModel
                 || pipeline.LoraAdapterModel.HasChanged(_loraAdapterModel);
         }

@@ -2,7 +2,7 @@
 
 FontAwesome Pro v7 Licence Required https://fontawesome.com/v7/download
 
-1. Download the 7.1.0 for the desktop package
+1. Download the 7.3.1 for the desktop package
 2. Add the font files to the Fonts directory
     - Brands-Regular-400.otf
     - Light-300.otf

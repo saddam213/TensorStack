@@ -3,25 +3,42 @@ using Amuse.App.Common;
 using Amuse.Common;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TensorStack.Common;
+using TensorStack.WPF;
 
 namespace Amuse.App.Controls
 {
     /// <summary>
     /// Interaction logic for ConversationControl.xaml
     /// </summary>
-    public partial class ConversationControl : TokenStreamBaseControl
+    public partial class ConversationControl : TextControlBase
     {
         ///// <summary>
         /// Initializes a new instance of the <see cref="ConversationControl"/> class.
         /// </summary>
         public ConversationControl()
         {
+            SaveCommand = new AsyncRelayCommand(SaveAsync, () => CurrentResult is not null);
+            CopyCommand = new AsyncRelayCommand<bool>(CopyAsync, (f) => CurrentResult is not null);
             InitializeComponent();
+        }
+
+        public AsyncRelayCommand SaveCommand { get; }
+        public AsyncRelayCommand<bool> CopyCommand { get; }
+    
+
+        /// <summary>
+        /// Resets the control
+        /// </summary>
+        public override async Task ResetAsync()
+        {
+            await base.ResetAsync();
+            await ClearConversationAsync();
         }
 
 
@@ -30,9 +47,9 @@ namespace Amuse.App.Controls
         /// </summary>
         public override async Task ClearAsync()
         {
-            TokenCount = 0;
-            Progress.Clear();
-            await ClearConversationAsync();
+            await base.ClearAsync();
+            ResetCurrentResult();
+            await ResultControl.CloseAsync();
         }
 
 
@@ -113,11 +130,11 @@ namespace Amuse.App.Controls
         /// <param name="prompt">The prompt.</param>
         /// <param name="imageIndex">Index of the image.</param>
         /// <param name="audioIndex">Index of the audio.</param>
-        public override async Task AddUserPromptAsync(string prompt, List<int> imageIndex = default, List<int> audioIndex = default)
+        public override async Task AddUserPromptAsync(string prompt, Dictionary<int, string> imageIndex = default, Dictionary<int, string> audioIndex = default, Dictionary<int, string> videoIndex = default)
         {
             ResetCurrentResult();
 
-            var message = AddConversationMessage(ConversationRole.User, prompt, imageIndex, audioIndex);
+            var message = AddConversationMessage(ConversationRole.User, prompt, imageIndex, audioIndex, videoIndex);
             var markdown = GenerateMarkdown(message, ConversationRole.Assistant);
             await ResultControl.AppendTextAsync(markdown);
         }
@@ -175,6 +192,25 @@ namespace Amuse.App.Controls
         }
 
 
+        /// <summary>
+        /// Copies the Response Text
+        /// </summary>
+        private async Task CopyAsync(bool formatted)
+        {
+            await ResultControl.CopyResponseAsync(formatted);
+        }
+
+
+        /// <summary>
+        /// Save the Response Text to file
+        /// </summary>
+        /// <returns>A Task representing the asynchronous operation.</returns>
+        private async Task SaveAsync()
+        {
+            await ResultControl.SaveAsync(false);
+        }
+
+
         private static string AssistantCloseTag(bool isUnclosed)
         {
             const string assistantClosed = $"\n</assistant>\n";
@@ -190,12 +226,35 @@ namespace Amuse.App.Controls
             const string assistant = "<assistant>\n{0}\n</assistant>{1}";
             var nextRoleTag = nextRole.HasValue ? $"\n{GenerateTag(nextRole.Value, true)}\n" : string.Empty;
 
-            if (message.Role == ConversationRole.User && !message.ImageIndex.IsNullOrEmpty())
+            if (message.Role == ConversationRole.User)
             {
                 var userMessage = new StringBuilder();
-                foreach (var imageIndex in message.ImageIndex)
+                if (!message.ImageIndex.IsNullOrEmpty())
                 {
-                    userMessage.Append($"![](https://history/GenerateImage_uvy3qytd.png)");
+                    foreach (var imageIndex in message.ImageIndex)
+                    {
+                        if (!File.Exists(imageIndex.Value))
+                            continue;
+                        userMessage.Append($"![Image{imageIndex.Key}](https://resource.amuse/{Uri.EscapeDataString(imageIndex.Value)})");
+                    }
+                }
+                if (!message.AudioIndex.IsNullOrEmpty())
+                {
+                    foreach (var audioIndex in message.AudioIndex)
+                    {
+                        if (!File.Exists(audioIndex.Value))
+                            continue;
+                        userMessage.Append($"![Image{audioIndex.Key}](https://resource.amuse/{Uri.EscapeDataString(audioIndex.Value)})");
+                    }
+                }
+                if (!message.VideoIndex.IsNullOrEmpty())
+                {
+                    foreach (var videoIndex in message.VideoIndex)
+                    {
+                        if (!File.Exists(videoIndex.Value))
+                            continue;
+                        userMessage.Append($"![Video{videoIndex.Key}](https://resource.amuse/{Uri.EscapeDataString(videoIndex.Value)})");
+                    }
                 }
                 userMessage.AppendLine();
                 userMessage.AppendLine(message.Content);

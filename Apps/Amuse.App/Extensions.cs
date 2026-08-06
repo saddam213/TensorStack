@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using TensorStack.Audio;
 using TensorStack.Common;
+using TensorStack.Common.Tensor;
+using TensorStack.Image;
+using TensorStack.Video;
 
 namespace Amuse.App
 {
@@ -193,14 +195,14 @@ namespace Amuse.App
         public const int FixedIdRange = 1000;
 
 
-        public static bool HasThinkingText(string content, string tagOpen = "<think>", string tagClose = "</think>")
-        {
-            if (string.IsNullOrWhiteSpace(content))
-                return false;
+        //public static bool HasThinkingText(string content, string tagOpen = "<think>", string tagClose = "</think>")
+        //{
+        //    if (string.IsNullOrWhiteSpace(content))
+        //        return false;
 
-            return content.StartsWith(tagOpen, StringComparison.OrdinalIgnoreCase)
-                && content.Contains(tagClose, StringComparison.OrdinalIgnoreCase);
-        }
+        //    return content.StartsWith(tagOpen, StringComparison.OrdinalIgnoreCase)
+        //        && content.Contains(tagClose, StringComparison.OrdinalIgnoreCase);
+        //}
 
 
         /// <summary>
@@ -209,10 +211,13 @@ namespace Amuse.App
         /// <param name="content">The content.</param>
         /// <param name="tagOpen">The tag open.</param>
         /// <param name="tagClose">The tag close.</param>
-        public static string GetThinkingText(string content, string tagOpen = "<think>", string tagClose = "</think>")
+        public static string GetThinkingText(string content, bool isConversation = false, string tagOpen = "<think>", string tagClose = "</think>")
         {
+            if (isConversation)
+                content = GetLastMessage(content);
+
             if (string.IsNullOrEmpty(content))
-                return string.Empty;
+                return default;
 
             if (content.StartsWith(tagOpen, StringComparison.OrdinalIgnoreCase))
             {
@@ -221,7 +226,7 @@ namespace Amuse.App
                 if (end > start)
                     return content[start..end].Trim();
             }
-            return string.Empty;
+            return default;
         }
 
 
@@ -232,8 +237,11 @@ namespace Amuse.App
         /// <param name="tagOpen">The tag open.</param>
         /// <param name="tagClose">The tag close.</param>
         /// <returns>System.String.</returns>
-        public static string GetResponseText(string content, string tagOpen = "<think>", string tagClose = "</think>")
+        public static string GetResponseText(string content, bool isConversation = false, string tagOpen = "<think>", string tagClose = "</think>")
         {
+            if (isConversation)
+                content = GetLastMessage(content);
+
             if (string.IsNullOrEmpty(content))
                 return string.Empty;
 
@@ -244,6 +252,24 @@ namespace Amuse.App
                     return content[(start + tagClose.Length)..].Trim();
             }
             return content;
+        }
+
+
+        public static string GetLastMessage(string content, string tagOpen = "\n<assistant>\n", string tagClose = "\n</assistant>\n")
+        {
+            if (string.IsNullOrEmpty(content))
+                return string.Empty;
+
+            int end = content.LastIndexOf(tagClose, StringComparison.Ordinal);
+            if (end < 0)
+                return null;
+
+            int start = content.LastIndexOf(tagOpen, end, StringComparison.Ordinal);
+            if (start < 0)
+                return null;
+
+            start += tagOpen.Length;
+            return content[start..end];
         }
 
 
@@ -279,6 +305,58 @@ namespace Amuse.App
         private static int Estimate(double parametersBillion, double bytesPerParam, double overhead)
         {
             return (int)Math.Ceiling(parametersBillion * bytesPerParam * overhead);
+        }
+
+
+        public static int[] GetIndexValues(this Dictionary<int, string> valuePairs)
+        {
+            if (valuePairs.IsNullOrEmpty())
+                return [];
+
+            return [.. valuePairs.Keys];
+        }
+
+        public static Dictionary<int, string> GetIndexedInputs(this List<ImageInput> images)
+        {
+            if (images.IsNullOrEmpty())
+                return default;
+            var dictonary = new Dictionary<int, string>();
+            foreach (var (key, value) in images.Index())
+            {
+                dictonary.Add(key, value.SourceFile);
+            }
+            return dictonary;
+        }
+
+
+        public static Dictionary<int, string> GetIndexedInputs(this List<AudioInputStream> audioStreams)
+        {
+            if (audioStreams.IsNullOrEmpty())
+                return default;
+            var dictonary = new Dictionary<int, string>();
+            foreach (var (key, value) in audioStreams.Index())
+            {
+                dictonary.Add(key, value.SourceFile);
+            }
+            return dictonary;
+        }
+
+        public static Dictionary<int, string> GetIndexedInputs(this List<VideoInputStream> videoStreams)
+        {
+            if (videoStreams.IsNullOrEmpty())
+                return default;
+            var dictonary = new Dictionary<int, string>();
+            foreach (var (key, value) in videoStreams.Index())
+            {
+                dictonary.Add(key, value.SourceFile);
+            }
+            return dictonary;
+        }
+
+
+        public static List<ImageTensor> AsImageTensors(this List<ImageInput> imageInputs)
+        {
+            return [.. imageInputs.Select(x => x.AsImageTensor())];
         }
 
     }

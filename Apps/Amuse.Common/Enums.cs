@@ -541,4 +541,15 @@ namespace Amuse.Common
         System = 1,
         Assistant = 2
     }
+
+
+    public enum CacheType
+    {
+        Dynamic = 0,
+        DynamicOffload = 1,
+        Static = 2,
+        StaticOffload = 3,
+        Quantized = 4,
+        Disabled = 100,
+    }
 }

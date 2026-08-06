@@ -13,20 +13,20 @@ using TensorStack.WPF.Controls;
 
 namespace Amuse.App.Controls
 {
-    public partial class TokenStreamBaseControl : BaseControl
+    public partial class TextControlBase : BaseControl
     {
         private readonly StreamingTextBuffer _streamBuffer;
         private readonly DispatcherTimer _streamUpdateTimer;
         private readonly StringBuilder _currentResultStream;
         private readonly ObservableCollection<ConversationModel> _conversation;
-        private float _streamUpdateInterval = 100;
+        private float _streamUpdateInterval = 60;
         private bool _isToolbarEnabled = true;
         private int _tokenCount;
 
         ///// <summary>
-        /// Initializes a new instance of the <see cref="TokenStreamBaseControl"/> class.
+        /// Initializes a new instance of the <see cref="TextControlBase"/> class.
         /// </summary>
-        public TokenStreamBaseControl()
+        public TextControlBase()
         {
             _streamBuffer = new StreamingTextBuffer();
             _currentResultStream = new StringBuilder();
@@ -36,16 +36,16 @@ namespace Amuse.App.Controls
             Progress = new ProgressInfo();
         }
 
-        public static readonly DependencyProperty SettingsProperty = DependencyProperty.Register(nameof(Settings), typeof(Settings), typeof(TokenStreamBaseControl));
-        public static readonly DependencyProperty IsSaveEnabledProperty = DependencyProperty.Register(nameof(IsSaveEnabled), typeof(bool), typeof(TokenStreamBaseControl), new PropertyMetadata(true));
-        public static readonly DependencyProperty IsRemoveEnabledProperty = DependencyProperty.Register(nameof(IsRemoveEnabled), typeof(bool), typeof(TokenStreamBaseControl), new PropertyMetadata(true));
-        public static readonly DependencyProperty ProgressProperty = DependencyProperty.Register(nameof(Progress), typeof(ProgressInfo), typeof(TokenStreamBaseControl), new PropertyMetadata(new ProgressInfo()));
-        public static readonly DependencyProperty IsInputEnabledProperty = DependencyProperty.Register(nameof(IsInputEnabled), typeof(bool), typeof(TokenStreamBaseControl), new PropertyMetadata(true));
-        public static readonly DependencyProperty IsContextMenuEnabledProperty = DependencyProperty.Register(nameof(IsContextMenuEnabled), typeof(bool), typeof(TokenStreamBaseControl), new PropertyMetadata(true));
-        public static readonly DependencyProperty IsMarkdownEnabledProperty = DependencyProperty.Register(nameof(IsMarkdownEnabled), typeof(bool), typeof(TokenStreamBaseControl), new PropertyMetadata(true));
-        public static readonly DependencyProperty IsStreamUpdateEnabledProperty = DependencyProperty.Register(nameof(IsStreamUpdateEnabled), typeof(bool), typeof(TokenStreamBaseControl), new PropertyMetadata(true));
-        public static readonly DependencyProperty IsThinkingVisibleProperty = DependencyProperty.Register(nameof(IsThinkingVisible), typeof(bool), typeof(TokenStreamBaseControl), new PropertyMetadata(true));
-        public static readonly DependencyProperty MaxTokenLengthProperty = DependencyProperty.Register(nameof(MaxTokenLength), typeof(int), typeof(TokenStreamBaseControl), new PropertyMetadata(0));
+        public static readonly DependencyProperty SettingsProperty = DependencyProperty.Register(nameof(Settings), typeof(Settings), typeof(TextControlBase));
+        public static readonly DependencyProperty IsSaveEnabledProperty = DependencyProperty.Register(nameof(IsSaveEnabled), typeof(bool), typeof(TextControlBase), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsRemoveEnabledProperty = DependencyProperty.Register(nameof(IsRemoveEnabled), typeof(bool), typeof(TextControlBase), new PropertyMetadata(true));
+        public static readonly DependencyProperty ProgressProperty = DependencyProperty.Register(nameof(Progress), typeof(ProgressInfo), typeof(TextControlBase), new PropertyMetadata(new ProgressInfo()));
+        public static readonly DependencyProperty IsInputEnabledProperty = DependencyProperty.Register(nameof(IsInputEnabled), typeof(bool), typeof(TextControlBase), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsContextMenuEnabledProperty = DependencyProperty.Register(nameof(IsContextMenuEnabled), typeof(bool), typeof(TextControlBase), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsMarkdownEnabledProperty = DependencyProperty.Register(nameof(IsMarkdownEnabled), typeof(bool), typeof(TextControlBase), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsStreamUpdateEnabledProperty = DependencyProperty.Register(nameof(IsStreamUpdateEnabled), typeof(bool), typeof(TextControlBase), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsThinkingVisibleProperty = DependencyProperty.Register(nameof(IsThinkingVisible), typeof(bool), typeof(TextControlBase), new PropertyMetadata(true));
+        public static readonly DependencyProperty MaxTokenLengthProperty = DependencyProperty.Register(nameof(MaxTokenLength), typeof(int), typeof(TextControlBase), new PropertyMetadata(0));
         public AsyncRelayCommand ClearCommand { get; }
         public int Count => _conversation?.Count ?? 0;
         public ConversationModel CurrentResult { get; protected set; }
@@ -138,13 +138,22 @@ namespace Amuse.App.Controls
 
 
         /// <summary>
-        /// Clears thes control
+        /// Resets the control
         /// </summary>
-        public virtual Task ClearAsync()
+        public virtual Task ResetAsync()
         {
             TokenCount = 0;
             Progress.Clear();
             return Task.CompletedTask;
+        }
+
+
+        /// <summary>
+        /// Clears the control
+        /// </summary>
+        public virtual async Task ClearAsync()
+        {
+            await ResetAsync();
         }
 
 
@@ -203,22 +212,29 @@ namespace Amuse.App.Controls
         /// <param name="content">The content.</param>
         /// <param name="imageIndex">Index of the image.</param>
         /// <param name="audioIndex">Index of the audio.</param>
-        protected virtual ConversationModel AddConversationMessage(ConversationRole role, string content, List<int> imageIndex = default, List<int> audioIndex = default)
+        protected virtual ConversationModel AddConversationMessage(ConversationRole role, string content, Dictionary<int, string> imageIndex = default, Dictionary<int, string> audioIndex = default, Dictionary<int, string> videoIndex = default)
         {
             var isUnclosed = RegexManager.HasUnclosedFence(content);
             var messageClose = GenerateCloseTag(isUnclosed);
             var message = new ConversationModel
             {
                 Role = role,
-                Content = content + messageClose,
                 ImageIndex = imageIndex,
-                AudioIndex = audioIndex
+                AudioIndex = audioIndex,
+                VideoIndex = videoIndex,
+                Content = content + messageClose
             };
 
             if (role == ConversationRole.System)
             {
                 _conversation.RemoveAll(x => x.Role == ConversationRole.System);
                 _conversation.Insert(0, message);
+            }
+            else if (role == ConversationRole.Assistant)
+            {
+                message.Thinking = Utils.GetThinkingText(content);
+                message.Content = Utils.GetResponseText(content) + messageClose;
+                _conversation.Add(message);
             }
             else
             {
@@ -284,11 +300,11 @@ namespace Amuse.App.Controls
         /// <param name="prompt">The prompt.</param>
         /// <param name="imageIndex">Index of the image.</param>
         /// <param name="audioIndex">Index of the audio.</param>
-        public virtual Task AddUserPromptAsync(string prompt, List<int> imageIndex = default, List<int> audioIndex = default)
+        public virtual Task AddUserPromptAsync(string prompt, Dictionary<int, string> imageIndex = default, Dictionary<int, string> audioIndex = default, Dictionary<int, string> videoIndex = default)
         {
             ResetCurrentResult();
 
-            AddConversationMessage(ConversationRole.User, prompt, imageIndex, audioIndex);
+            AddConversationMessage(ConversationRole.User, prompt, imageIndex, audioIndex, videoIndex);
             return Task.CompletedTask;
         }
 

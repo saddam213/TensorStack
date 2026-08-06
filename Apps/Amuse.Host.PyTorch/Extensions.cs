@@ -198,6 +198,7 @@ namespace Amuse.Host.PyTorch
                 InputImages = options.InputImages,
                 InputAudios = options.InputAudios,
                 SampleRate = options.SampleRate,
+                CacheType = options.CacheType.Cast<Amuse.Common.CacheType, TensorStack.Python.Common.CacheType>(),
             };
         }
 

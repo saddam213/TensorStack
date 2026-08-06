@@ -529,7 +529,8 @@ namespace Amuse.App.Runtime
                 Task = options.Task,
                 IsThinkingEnabled = options.IsThinkingEnabled,
                 InputImages = options.InputImages,
-                SampleRate = DefaultOptions.SampleRate
+                SampleRate = DefaultOptions.SampleRate,
+                CacheType = options.CacheType
             };
         }
 
@@ -718,7 +719,7 @@ namespace Amuse.App.Runtime
             if (conversation.IsNullOrEmpty())
                 return default;
 
-            return [.. conversation.Select(x => new ConversationMessage(x.Role, x.Content, [.. x.ImageIndex ?? []], [.. x.AudioIndex ?? []]))];
+            return [.. conversation.Select(x => new ConversationMessage(x.Role, x.Content, x.ImageIndex.GetIndexValues(), x.AudioIndex.GetIndexValues()))];
         }
 
 

@@ -69,6 +69,9 @@ namespace TensorStack.Python.Common
         [JsonPropertyName("sample_rate")]
         public int SampleRate { get; set; }
 
+        [JsonPropertyName("cache_type")]
+        public CacheType CacheType { get; set; }
+
 
         [JsonIgnore]
         public List<ImageTensor> InputImages { get; set; } = [];

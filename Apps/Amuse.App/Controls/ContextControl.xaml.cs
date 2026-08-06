@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Input;
 using TensorStack.Audio;
 using TensorStack.Common;
-using TensorStack.Common.Tensor;
 using TensorStack.Image;
 using TensorStack.Video;
 using TensorStack.WPF;
@@ -44,7 +43,6 @@ namespace Amuse.App.Controls
             ClearCommand = new AsyncRelayCommand(ClearAsync, () => ContextCollection.Count > 0);
             RemoveCommand = new AsyncRelayCommand<ContextModel>(RemoveAsync);
         }
-
         public AsyncRelayCommand AddTextCommand { get; }
         public AsyncRelayCommand AddImageCommand { get; }
         public AsyncRelayCommand AddVideoCommand { get; }
@@ -90,13 +88,14 @@ namespace Amuse.App.Controls
             if (!_isTextEnabled || !ContextCollection.Any(x => x.MediaType == MediaType.Text))
                 return contextBuilder;
 
+            contextBuilder.AppendLine("<context>");
             contextBuilder.AppendLine("The following are reference documents that may help answer the user's question.");
             contextBuilder.AppendLine("Use information from these documents when relevant.");
             contextBuilder.AppendLine("If the documents do not contain the answer, say you don't have enough information instead of making up details.");
             contextBuilder.AppendLine();
             contextBuilder.AppendLine("=== BEGIN REFERENCE DOCUMENTS ===");
             contextBuilder.AppendLine();
-            foreach (var (i, contextModel) in ContextCollection.Index())
+            foreach (var (i, contextModel) in ContextCollection.Where(x => x.MediaType == MediaType.Text).Index())
             {
                 var documentId = i + 1;
                 var filename = Path.GetFileName(contextModel.Filename);
@@ -109,13 +108,13 @@ namespace Amuse.App.Controls
                 contextBuilder.AppendLine();
             }
             contextBuilder.AppendLine("=== END REFERENCE DOCUMENTS ===");
-            contextBuilder.AppendLine();
+            contextBuilder.AppendLine("</context>");
             contextBuilder.AppendLine();
             return contextBuilder;
         }
 
 
-        public List<ImageTensor> GetImageContext(string query = default)
+        public List<ImageInput> GetImageContext(string query = default)
         {
             return ContextCollection
                 .Where(x => _isImageEnabled && x.MediaType == MediaType.Image)
@@ -295,7 +294,7 @@ namespace Amuse.App.Controls
         public MediaType MediaType { get; set; }
         public string Filename { get; set; }
         public TextInput Text { get; set; }
-        public ImageTensor Image { get; set; }
+        public ImageInput Image { get; set; }
         public AudioInputStream Audio { get; set; }
         public VideoInputStream Video { get; set; }
     }

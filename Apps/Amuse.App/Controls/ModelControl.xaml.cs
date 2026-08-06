@@ -149,7 +149,8 @@ namespace Amuse.App.Controls
             {
                 Device = _currentDevice,
                 ExtractModel = _isExtractorEnabled ? _currentExtractor : default,
-                UpscaleModel = _isUpscalerEnabled ? _currentUpscaler : default
+                UpscaleModel = _isUpscalerEnabled ? _currentUpscaler : default,
+                ViewType = ViewType
             };
 
             ValidateSelection();

@@ -423,7 +423,7 @@ namespace Amuse.App.Views
                 }
                 else if (progress.Subkey == "Token")
                 {
-                    Statistics.Update(progress);
+                    Statistics.UpdateToken(progress);
                 }
                 else
                 {

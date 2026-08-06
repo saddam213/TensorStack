@@ -65,7 +65,13 @@ namespace Amuse.App.Common
             Elapsed = TimeSpan.Zero;
         }
 
-        public void Update(PipelineProgress progress)
+        public void UpdateStep(PipelineProgress progress)
+        {
+            _perSecond.Add(progress.IterationsPerSecond);
+            _secondPer.Add(progress.SecondsPerIteration);
+        }
+
+        public void UpdateToken(PipelineProgress progress)
         {
             _perSecond.Add(progress.IterationsPerSecond);
             _secondPer.Add(progress.SecondsPerIteration);

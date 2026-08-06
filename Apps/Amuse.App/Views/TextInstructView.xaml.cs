@@ -3,8 +3,6 @@ using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -69,46 +67,45 @@ namespace Amuse.App.Views
             {
                 Progress.Clear();
                 Statistics.Clear();
-                ResultText = default;
-                await TextResultElement.ClearAsync();
+                await TextResultElement.ResetAsync();
                 Statistics.Start();
 
                 // Context
                 var textContext = InputControl.GetTextContext(Options.Prompt);
                 var imageContext = InputControl.GetImageContext(Options.Prompt);
                 var audioContext = InputControl.GetAudioContext(Options.Prompt);
+                var videoContext = InputControl.GetVideoContext(Options.Prompt);
+                var imageIndex = imageContext.GetIndexedInputs();
+                var audioIndex = audioContext.GetIndexedInputs();
+                var videoIndex = videoContext.GetIndexedInputs();
+                textContext.AppendLine(Options.Prompt);
 
                 // Conversation
                 await TextResultElement.AddSystemPromptAsync(Options.Prompt2);
 
                 // User Prompt
-                List<int> imageIndex = [.. Enumerable.Range(0, imageContext.Count)];
-                List<int> audioIndex = [.. Enumerable.Range(0, audioContext.Count)];
-                await TextResultElement.AddUserPromptAsync(Options.Prompt, imageIndex, audioIndex);
-                // Options.Prompt = string.Empty;
+                await TextResultElement.AddUserPromptAsync(textContext.ToString(), imageIndex, audioIndex, videoIndex);
 
                 // Options
                 var options = Options with
                 {
                     Prompt = null,
                     Prompt2 = null,
-                    InputImages = imageContext,
                     InputAudios = audioContext,
+                    InputImages = imageContext.AsImageTensors(),
                     Conversation = TextResultElement.Conversation
                 };
 
                 // Execute
                 var textResult = await ExecuteLanguageModelAsync(options);
-                TextResultElement.AddBeamResults(textResult.Results);
-
-                // End Stream
-                await TextResultElement.EndStreamResponseAsync();
 
                 // Result
+                await TextResultElement.EndStreamResponseAsync();
+                TextResultElement.AddBeamResults(textResult.Results);
                 Statistics.Stop();
 
                 // History
-                // await SaveHistoryAsync(options);
+                await SaveHistoryAsync(textResult.Result, options);
                 Logger.LogInformation("[TextInstruct] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)
@@ -145,69 +142,58 @@ namespace Amuse.App.Views
                 Progress.Clear();
                 AutomationProgress.Clear();
                 Statistics.Clear();
-                ResultText = default;
                 Statistics.Start();
                 CancellationTokenSource = new CancellationTokenSource();
-
-                // Context
-                var textContext = InputControl.GetTextContext(Options.Prompt);
-                var imageContext = InputControl.GetImageContext(Options.Prompt);
-                var imageIndex = Enumerable.Range(0, imageContext.Count).ToList();
-
-                // Conversation
-                var conversation = new ObservableCollection<ConversationModel>();
-                if (!string.IsNullOrEmpty(Options.Prompt2))
-                {
-                    // System Prompt
-                    conversation.Add(new ConversationModel
-                    {
-                        Role = ConversationRole.System,
-                        Content = Options.Prompt2
-                    });
-                }
+                await TextResultElement.ResetAsync();
 
                 AutomationProgress.Indeterminate($"Automation Started");
                 var cancellationToken = CancellationTokenSource.Token;
                 await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Text, MediaType.Text))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-
-                    // Reset
-                    ResultText = default;
-                    await TextResultElement.ClearAsync();
-                    conversation.RemoveAll(x => !x.Role.Equals("system"));
+                    await TextResultElement.ResetAsync();
                     AutomationPrompt = $"{Options.Prompt}{automationJob.GenerateOptions.Prompt}";
 
+                    // Context
+                    var textContext = InputControl.GetTextContext(AutomationPrompt);
+                    var imageContext = InputControl.GetImageContext(AutomationPrompt);
+                    var audioContext = InputControl.GetAudioContext(AutomationPrompt);
+                    var videoContext = InputControl.GetVideoContext(AutomationPrompt);
+                    var imageIndex = imageContext.GetIndexedInputs();
+                    var audioIndex = audioContext.GetIndexedInputs();
+                    var videoIndex = videoContext.GetIndexedInputs();
+                    textContext.AppendLine(AutomationPrompt);
+
+                    // Conversation
+                    await TextResultElement.AddSystemPromptAsync(Options.Prompt2);
+
                     // User Prompt
-                    conversation.Add(new ConversationModel
-                    {
-                        Role = ConversationRole.User,
-                        ImageIndex = imageIndex,
-                        Content = $"{textContext}{automationJob.GenerateOptions.Prompt}",
-                    });
+                    await TextResultElement.AddUserPromptAsync(textContext.ToString(), imageIndex, audioIndex, videoIndex);
 
                     // Options
                     var options = automationJob.GenerateOptions with
                     {
                         Prompt = null,
                         Prompt2 = null,
-                        InputImages = imageContext,
-                        Conversation = conversation
+                        InputAudios = audioContext,
+                        InputImages = imageContext.AsImageTensors(),
+                        Conversation = TextResultElement.Conversation
                     };
 
-                    // Diffusion
+                    // Execute
                     var textResult = await ExecuteLanguageModelAsync(options);
 
                     // Result
-                    ResultText = textResult;
+                    await TextResultElement.EndStreamResponseAsync();
+                    TextResultElement.AddBeamResults(textResult.Results);
 
                     // History
                     if (AutomationOptions.IsHistoryEnabled)
                     {
-                        await SaveHistoryAsync(options);
+                        await SaveHistoryAsync(textResult.Result, options);
                     }
 
-                    await automationJob.SaveAsync(Utils.GetResponseText(ResultText.Result.Text));
+                    await automationJob.SaveAsync(Utils.GetResponseText(textResult.Result.Text));
                     AutomationProgress.Update(automationJob.Id, automationJob.Count, $"Automation: {automationJob.Id}/{automationJob.Count}");
                 }
 
@@ -239,15 +225,23 @@ namespace Amuse.App.Views
 
 
         /// <summary>
+        /// Determines whether this process can execute.
+        /// </summary>
+        protected override bool CanExecute()
+        {
+            return base.CanExecute() && !string.IsNullOrEmpty(Options?.Prompt);
+        }
+
+
+        /// <summary>
         /// Save history
         /// </summary>
         /// <param name="options">The options.</param>
-        private async Task<TextInput> SaveHistoryAsync(GenerateInputOptions options)
+        private async Task<TextInput> SaveHistoryAsync(TextInput textResult, GenerateInputOptions options)
         {
             Logger.LogInformation($"[TextInstruct] [SaveHistory] Saving history...");
-            var history = new TextInput(Utils.GetResponseText(ResultText.Result.Text));
-            options.Conversation.Add(new ConversationModel { Role = ConversationRole.Assistant, Content = history.Text });
-            var result = await HistoryService.AddAsync(history, new DiffusionHistory
+            textResult.Text = Utils.GetResponseText(textResult.Text);
+            var result = await HistoryService.AddAsync(textResult, new DiffusionHistory
             {
                 Options = options,
                 Model = CurrentPipeline.LanguageModel.Name,
@@ -259,20 +253,18 @@ namespace Amuse.App.Views
         }
 
 
+        /// <summary>
+        /// Called when progress is received from a Python pipeline
+        /// </summary>
+        /// <param name="progress">The progress.</param>
         protected override void OnProgress(PipelineProgress progress)
         {
             base.OnProgress(progress);
             if (progress.Key == "Generate" && progress.Subkey == "Token")
             {
-
                 TextResultElement.UpdateStreamResponse(progress.Message, progress.Value);
             }
         }
 
-
-        protected override bool CanExecute()
-        {
-            return base.CanExecute() && !string.IsNullOrEmpty(Options?.Prompt);
-        }
     }
 }

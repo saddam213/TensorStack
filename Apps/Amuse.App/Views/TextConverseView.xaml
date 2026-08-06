@@ -79,13 +79,11 @@
             <!--Content-->
             <Grid>
                 <Border IsEnabled="{Binding IsViewBusy, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}">
-                    <Grid >
-                        <Controls:ConversationControl 
-                            x:Name="ConversationElement" 
-                            Settings="{Binding Settings, Mode=OneWay}"
-                            MaxTokenLength="{Binding Options.MaxLength, Mode=OneWay}"
-                            IsInputEnabled="{Binding GenerateService.IsExecuting, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}"/>
-                    </Grid>
+                    <Controls:ConversationControl 
+                        x:Name="ConversationElement" 
+                        Settings="{Binding Settings, Mode=OneWay}"
+                        MaxTokenLength="{Binding Options.MaxLength, Mode=OneWay}"
+                        IsInputEnabled="{Binding GenerateService.IsExecuting, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}"/>
                 </Border>
 
                 <Grid.Style>

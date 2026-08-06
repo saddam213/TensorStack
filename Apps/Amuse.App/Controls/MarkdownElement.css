@@ -54,16 +54,19 @@ img {
     max-height: 100px;
     width: auto;
     object-fit: contain;
-    margin-right: 0.1em;
-    margin-bottom: 0.1em;
+    margin-top: 0.5em;
 }
+
 
 video {
     max-height: 100px;
     width: auto;
     object-fit: contain;
-    margin-right: 0.1em;
-    margin-bottom: 0.1em;
+    margin-top: 0.5em;
+}
+
+audio {
+    margin-top: 0.5em;
 }
 
 
@@ -188,6 +191,9 @@ details {
     display: none;
 }
 
+.message-context {
+    display: none;
+}
 
 .message-user {
     display: block;

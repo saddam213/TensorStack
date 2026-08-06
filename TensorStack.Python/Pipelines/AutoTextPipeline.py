@@ -167,7 +167,6 @@ def load_tokenizer(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
     print(f"[Load] Loading Pretrained Tokenizer")
     tokenizer = AutoTokenizer.from_pretrained(
         tokenizer_path,
-        dtype=config.data_type,
         **pipeline_kwargs
     )
     apply_chat_template_override(tokenizer, chat_template)
@@ -190,7 +189,6 @@ def load_processor(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
         print(f"[Load] Loading Processor")
         processor = AutoProcessor.from_pretrained(
             processor_path,
-            dtype=config.data_type,
             **pipeline_kwargs
         )
         apply_chat_template_override(processor, chat_template)
@@ -227,6 +225,7 @@ def load_base_model(config: PipelineConfig, pipeline_kwargs: Dict[str, str]):
             **pipeline_kwargs
         )
     trim_memory(True)
+    base_model.eval()
     return base_model
 
 
@@ -239,6 +238,7 @@ def create_pipeline(config: PipelineConfig):
         "use_safetensors":True,
         "low_cpu_mem_usage":True,
         "local_files_only":True,
+        "attn_implementation":"sdpa",
     }
 
     # Load Models
@@ -292,11 +292,10 @@ def generate(
     notification_push(key="Generate", subkey="Transformer", elapsedkey="Tokenizer", elapsed=_stopwatch.reset())
     result = _pipeline.generate_result(
         options=options,
-        stopwatch=_stopwatch,
         kwargs=inputs
     )
 
     # Cleanup
-    notification_push(key="Generate", subkey="Complete", elapsedkey="Transformer", elapsed = _stopwatch.stop())
+    notification_push(key="Generate", subkey="Complete", elapsedkey="Transformer", elapsed = _stopwatch.reset())
     trim_memory(_isMemoryOffload)
     return result

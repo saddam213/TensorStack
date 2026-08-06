@@ -104,7 +104,7 @@ namespace TensorStack.WPF.Controls
 
         private async Task SaveAsync()
         {
-            var saveFilename = await DialogService.SaveFileAsync("Save Text", "Text", filter: "Text files (*.txt)|*.txt", defualtExt: "txt");
+            var saveFilename = await DialogService.SaveFileAsync("Save Text", "Text", filter: "Text files |*.txt;|*.md;", defualtExt: "txt");
             if (!string.IsNullOrEmpty(saveFilename))
             {
                 await File.WriteAllTextAsync(saveFilename, TextSource.Text);
