@@ -46,6 +46,7 @@ namespace Amuse.App.Controls
         public static readonly DependencyProperty IsStreamUpdateEnabledProperty = DependencyProperty.Register(nameof(IsStreamUpdateEnabled), typeof(bool), typeof(TextControlBase), new PropertyMetadata(true));
         public static readonly DependencyProperty IsThinkingVisibleProperty = DependencyProperty.Register(nameof(IsThinkingVisible), typeof(bool), typeof(TextControlBase), new PropertyMetadata(true));
         public static readonly DependencyProperty MaxTokenLengthProperty = DependencyProperty.Register(nameof(MaxTokenLength), typeof(int), typeof(TextControlBase), new PropertyMetadata(0));
+        public event EventHandler OnConversationClear;
         public AsyncRelayCommand ClearCommand { get; }
         public int Count => _conversation?.Count ?? 0;
         public ConversationModel CurrentResult { get; protected set; }
@@ -274,6 +275,7 @@ namespace Amuse.App.Controls
             ResetCurrentResult();
 
             Conversation.Clear();
+            OnConversationClear?.Invoke(this, new EventArgs());
             return Task.CompletedTask;
         }
 

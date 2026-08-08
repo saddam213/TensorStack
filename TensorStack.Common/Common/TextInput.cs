@@ -9,16 +9,14 @@ namespace TensorStack.Common
     {
         private readonly string _sourceFile;
         public TextInput() { }
-        public TextInput(string textInput)
+        public TextInput(string textInput, string filename = null)
         {
             Text = textInput;
+            _sourceFile = filename;
         }
 
         public TextInput(string filename, Encoding encoding)
-            : this(File.ReadAllText(filename, encoding))
-        {
-            _sourceFile = filename;
-        }
+            : this(File.ReadAllText(filename, encoding), filename) { }
 
         public string Text { get; set; }
 

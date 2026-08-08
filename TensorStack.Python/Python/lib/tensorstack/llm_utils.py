@@ -38,9 +38,10 @@ class CountingStreamer(TextIteratorStreamer):
 
 
 class TokenLatencyTracker:
-    def __init__(self):
+    def __init__(self, input_length: int):
         self._start = 0.0
         self.last_token_count = 0
+        self.input_length = input_length
 
     def start(self):
         self._start = time.perf_counter()
@@ -52,6 +53,9 @@ class TokenLatencyTracker:
         if new_tokens > 0:
             elapsed /= new_tokens
         return elapsed
+
+    def get_token_count(self):
+        return self.last_token_count + self.input_length
 
 
 @dataclass(slots=True)
@@ -133,7 +137,8 @@ class TextPipeline:
     def _generate_text_result(self, kwargs: dict[str, Any]):
         results = Queue()
         exceptions = Queue()
-        tracker = TokenLatencyTracker()
+        input_length = kwargs["input_ids"].shape[-1]
+        tracker = TokenLatencyTracker(input_length)
         def worker():
             try:
                 with torch.inference_mode():
@@ -150,13 +155,12 @@ class TextPipeline:
             try:
                 tracker.start()
                 chunk = next(self.streamer)
-                token_count=self.streamer.token_count
-                elapsed = tracker.elapsed_per_token(token_count)
+                elapsed = tracker.elapsed_per_token(self.streamer.token_count)
 
                 chunk = self._replace_tokens(chunk)
                 chunks.append(chunk)
-                token_push(token=chunk, token_count=token_count, elapsed=elapsed)
-                #print(f"[DEBUG] [TokenPush] Tokens: {token_count}, TPS: {elapsed}, Chunk: {chunk}")
+                token_push(token=chunk, token_count=tracker.get_token_count(), elapsed=elapsed)
+                #print(f"[DEBUG] [TokenPush] Tokens: {total_tokens}, TPS: {elapsed}, Chunk: {chunk}")
             except StopIteration:
                 break
             except Empty:
@@ -208,12 +212,12 @@ class TextPipeline:
         if options.conversation is None:
             return messages
 
-        #print(f"[DEBUG] Conversation Before: {options.conversation}")
+        print(f"[DEBUG] Conversation Before: {options.conversation}")
         for message in options.conversation:
             image_indices = message.get("image_index", [])
             audio_indices = message.get("audio_index", [])
             role = message["role"]
-            text = message["content"]
+            text = self.sanitize_special_tokens(message["content"])
             if not image_indices and not audio_indices:
                 messages.append({ "role": role, "content": text })
                 continue
@@ -232,7 +236,7 @@ class TextPipeline:
 
             messages.append({ "role": role, "content": content })
 
-        #print(f"[DEBUG] Conversation After: {messages}")
+        print(f"[DEBUG] Conversation After: {messages}")
         return messages
 
 
@@ -315,6 +319,15 @@ class TextPipeline:
         elif cache_type == CacheType.Quantized:
             return True, True, "quantized"
         return False, True, None
+
+
+    #------------------------------------------------
+    # Sanitize special tokens
+    #------------------------------------------------
+    def sanitize_special_tokens(self, text):
+        for token in self.tokenizer.all_special_tokens:
+            text = text.replace(token, token.strip("[]<>|"))
+        return text
 
 
 #------------------------------------------------

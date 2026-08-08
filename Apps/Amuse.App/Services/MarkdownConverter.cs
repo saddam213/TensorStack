@@ -337,9 +337,7 @@ namespace Amuse.App.Services
             switch (inline)
             {
                 case LiteralInline:
-                    renderer.Write("<p>");
                     renderer.Write(inline);
-                    renderer.Write("</p>");
                     break;
                 case LinkInline:
                 case AutolinkInline:
@@ -353,10 +351,21 @@ namespace Amuse.App.Services
                     break;
                 case ContainerInline container:
                     var child = container.FirstChild;
+                    bool isOpen = false;
                     while (child != null)
                     {
+                        if (child is LiteralInline && !isOpen)
+                        {
+                            isOpen = true;
+                            renderer.Write("<p>");
+                        }
                         RenderInlineFiltered(renderer, child);
                         child = child.NextSibling;
+                        if (child is not LiteralInline && isOpen)
+                        {
+                            isOpen = false;
+                            renderer.Write("</p>");
+                        }
                     }
                     break;
             }

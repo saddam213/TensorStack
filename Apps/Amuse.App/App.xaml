@@ -310,7 +310,7 @@
                     <MultiDataTrigger>
                         <MultiDataTrigger.Conditions>
                             <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
-                            <Condition Binding="{Binding IsTextEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding TextMaxCount, RelativeSource={RelativeSource Self}, Converter={StaticResource GreaterThanToBooleanConverter}, ConverterParameter=0}" Value="True" />
                             <Condition Binding="{Binding IsDragDrop, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="True" />
                             <Condition Binding="{Binding DragDropType, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="Text" />
                         </MultiDataTrigger.Conditions>
@@ -321,7 +321,7 @@
                     <MultiDataTrigger>
                         <MultiDataTrigger.Conditions>
                             <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
-                            <Condition Binding="{Binding IsImageEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding ImageMaxCount, RelativeSource={RelativeSource Self}, Converter={StaticResource GreaterThanToBooleanConverter}, ConverterParameter=0}" Value="True" />
                             <Condition Binding="{Binding IsDragDrop, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="True" />
                             <Condition Binding="{Binding DragDropType, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="Image" />
                         </MultiDataTrigger.Conditions>
@@ -332,7 +332,7 @@
                     <MultiDataTrigger>
                         <MultiDataTrigger.Conditions>
                             <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
-                            <Condition Binding="{Binding IsAudioEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding AudioMaxCount, RelativeSource={RelativeSource Self}, Converter={StaticResource GreaterThanToBooleanConverter}, ConverterParameter=0}" Value="True" />
                             <Condition Binding="{Binding IsDragDrop, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="True" />
                             <Condition Binding="{Binding DragDropType, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="Audio" />
                         </MultiDataTrigger.Conditions>
@@ -343,7 +343,7 @@
                     <MultiDataTrigger>
                         <MultiDataTrigger.Conditions>
                             <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
-                            <Condition Binding="{Binding IsVideoEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding VideoMaxCount, RelativeSource={RelativeSource Self}, Converter={StaticResource GreaterThanToBooleanConverter}, ConverterParameter=0}" Value="True" />
                             <Condition Binding="{Binding IsDragDrop, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="True" />
                             <Condition Binding="{Binding DragDropType, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="Video" />
                         </MultiDataTrigger.Conditions>

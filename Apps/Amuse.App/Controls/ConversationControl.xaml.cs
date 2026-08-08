@@ -233,7 +233,7 @@ namespace Amuse.App.Controls
                 {
                     foreach (var imageIndex in message.ImageIndex)
                     {
-                        if (!File.Exists(imageIndex.Value))
+                        if (imageIndex.Key < 0 || !File.Exists(imageIndex.Value))
                             continue;
                         userMessage.Append($"![Image{imageIndex.Key}](https://resource.amuse/{Uri.EscapeDataString(imageIndex.Value)})");
                     }
@@ -242,7 +242,7 @@ namespace Amuse.App.Controls
                 {
                     foreach (var audioIndex in message.AudioIndex)
                     {
-                        if (!File.Exists(audioIndex.Value))
+                        if (audioIndex.Key < 0 || !File.Exists(audioIndex.Value))
                             continue;
                         userMessage.Append($"![Image{audioIndex.Key}](https://resource.amuse/{Uri.EscapeDataString(audioIndex.Value)})");
                     }
@@ -251,7 +251,7 @@ namespace Amuse.App.Controls
                 {
                     foreach (var videoIndex in message.VideoIndex)
                     {
-                        if (!File.Exists(videoIndex.Value))
+                        if (videoIndex.Key < 0 || !File.Exists(videoIndex.Value))
                             continue;
                         userMessage.Append($"![Video{videoIndex.Key}](https://resource.amuse/{Uri.EscapeDataString(videoIndex.Value)})");
                     }

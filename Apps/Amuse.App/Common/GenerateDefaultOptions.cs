@@ -146,6 +146,15 @@ namespace Amuse.App.Common
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public CacheType CacheType { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int InputImageMaxCount { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int InputAudioMaxCount { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int InputVideoMaxCount { get; set; }
+
         public GenerateDefaultOptions DeepClone()
         {
             return new GenerateDefaultOptions
@@ -196,6 +205,9 @@ namespace Amuse.App.Common
                 TopH = TopH,
                 TypicalP = TypicalP,
                 CacheType = CacheType,
+                InputAudioMaxCount = InputAudioMaxCount,
+                InputImageMaxCount = InputImageMaxCount,
+                InputVideoMaxCount = InputVideoMaxCount,
             };
         }
 

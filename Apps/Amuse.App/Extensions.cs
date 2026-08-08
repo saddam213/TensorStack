@@ -195,16 +195,6 @@ namespace Amuse.App
         public const int FixedIdRange = 1000;
 
 
-        //public static bool HasThinkingText(string content, string tagOpen = "<think>", string tagClose = "</think>")
-        //{
-        //    if (string.IsNullOrWhiteSpace(content))
-        //        return false;
-
-        //    return content.StartsWith(tagOpen, StringComparison.OrdinalIgnoreCase)
-        //        && content.Contains(tagClose, StringComparison.OrdinalIgnoreCase);
-        //}
-
-
         /// <summary>
         /// Gets the thinking text.
         /// </summary>
@@ -313,44 +303,54 @@ namespace Amuse.App
             if (valuePairs.IsNullOrEmpty())
                 return [];
 
-            return [.. valuePairs.Keys];
+            return [.. valuePairs.Keys.Where(x => x >= 0)];
         }
 
-        public static Dictionary<int, string> GetIndexedInputs(this List<ImageInput> images)
+
+        public static Dictionary<int, string> GetIndexedInputs(this List<ImageInput> images, int maxCount = 0)
         {
             if (images.IsNullOrEmpty())
                 return default;
-            var dictonary = new Dictionary<int, string>();
-            foreach (var (key, value) in images.Index())
+
+            var start = maxCount > 0 ? maxCount - images.Count : 0;
+            var dictionary = new Dictionary<int, string>();
+            for (var i = 0; i < images.Count; i++)
             {
-                dictonary.Add(key, value.SourceFile);
+                dictionary.Add(start + i, images[i].SourceFile);
             }
-            return dictonary;
+            return dictionary;
         }
 
 
-        public static Dictionary<int, string> GetIndexedInputs(this List<AudioInputStream> audioStreams)
+        public static Dictionary<int, string> GetIndexedInputs(this List<AudioInputStream> audioStreams, int maxCount = 0)
         {
             if (audioStreams.IsNullOrEmpty())
                 return default;
+
+            var start = maxCount - audioStreams.Count;
             var dictonary = new Dictionary<int, string>();
-            foreach (var (key, value) in audioStreams.Index())
+            var dictionary = new Dictionary<int, string>();
+            for (var i = 0; i < audioStreams.Count; i++)
             {
-                dictonary.Add(key, value.SourceFile);
+                dictionary.Add(start + i, audioStreams[i].SourceFile);
             }
-            return dictonary;
+            return dictionary;
         }
 
-        public static Dictionary<int, string> GetIndexedInputs(this List<VideoInputStream> videoStreams)
+
+        public static Dictionary<int, string> GetIndexedInputs(this List<VideoInputStream> videoStreams, int maxCount = 0)
         {
             if (videoStreams.IsNullOrEmpty())
                 return default;
+
+            var start = maxCount - videoStreams.Count;
             var dictonary = new Dictionary<int, string>();
-            foreach (var (key, value) in videoStreams.Index())
+            var dictionary = new Dictionary<int, string>();
+            for (var i = 0; i < videoStreams.Count; i++)
             {
-                dictonary.Add(key, value.SourceFile);
+                dictionary.Add(start + i, videoStreams[i].SourceFile);
             }
-            return dictonary;
+            return dictionary;
         }
 
 

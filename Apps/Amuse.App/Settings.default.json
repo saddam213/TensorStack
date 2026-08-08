@@ -20,7 +20,7 @@
       "Vendor": "Nvidia",
       "Environment": "cuda-130",
       "PythonVersion": "3.14",
-      "Version": 12,
+      "Version": 14,
       "IsDefault": true,
       "Status": "Create",
       "Variables": {
@@ -58,7 +58,7 @@
       "Vendor": "AMD",
       "Environment": "rocm-721",
       "PythonVersion": "3.12",
-      "Version": 12,
+      "Version": 14,
       "Status": "Create",
       "IsDefault": true,
       "Variables": {
@@ -11901,7 +11901,8 @@
         "RepetitionPenalty": 1,
         "Temperature": 0.6,
         "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
+        "NoRepeatNgramSize": 0,
+        "InputImageMaxCount": 32
       },
       "Link": "https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct"
     },
@@ -12028,7 +12029,8 @@
         "RepetitionPenalty": 1,
         "Temperature": 0.7,
         "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
+        "NoRepeatNgramSize": 0,
+        "InputImageMaxCount": 32
       },
       "Link": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct"
     },
@@ -12228,7 +12230,8 @@
         "RepetitionPenalty": 1,
         "Temperature": 1,
         "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
+        "NoRepeatNgramSize": 0,
+        "InputImageMaxCount": 32
       },
       "Link": "https://huggingface.co/Qwen/Qwen3.5-4B"
     },
@@ -12291,7 +12294,8 @@
         "RepetitionPenalty": 1,
         "Temperature": 1,
         "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
+        "NoRepeatNgramSize": 0,
+        "InputImageMaxCount": 32
       },
       "Link": "https://huggingface.co/Qwen/Qwen3.5-9B"
     },
@@ -12362,7 +12366,8 @@
         "RepetitionPenalty": 1,
         "Temperature": 1,
         "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
+        "NoRepeatNgramSize": 0,
+        "InputImageMaxCount": 32
       },
       "Link": "https://huggingface.co/Qwen/Qwen3.5-27B"
     },
@@ -12438,7 +12443,8 @@
         "RepetitionPenalty": 1,
         "Temperature": 1,
         "IsSamplingEnabled": false,
-        "NoRepeatNgramSize": 0
+        "NoRepeatNgramSize": 0,
+        "InputImageMaxCount": 32
       },
       "Link": "https://huggingface.co/Qwen/Qwen3.6-27B"
     },
@@ -12497,7 +12503,9 @@
         "IsSamplingEnabled": false,
         "NoRepeatNgramSize": 0,
         "SampleRate": 16000,
-        "Channels": 1
+        "Channels": 1,
+        "InputImageMaxCount": 4,
+        "InputAudioMaxCount": 1
       },
       "Link": "https://huggingface.co/google/gemma-4-E2B-it"
     },
@@ -12556,7 +12564,9 @@
         "IsSamplingEnabled": false,
         "NoRepeatNgramSize": 0,
         "SampleRate": 16000,
-        "Channels": 1
+        "Channels": 1,
+        "InputImageMaxCount": 4,
+        "InputAudioMaxCount": 1
       },
       "Link": "https://huggingface.co/google/gemma-4-E4B-it"
     },
@@ -12615,7 +12625,9 @@
         "IsSamplingEnabled": false,
         "NoRepeatNgramSize": 0,
         "SampleRate": 16000,
-        "Channels": 1
+        "Channels": 1,
+        "InputImageMaxCount": 4,
+        "InputAudioMaxCount": 1
       },
       "Link": "https://huggingface.co/google/gemma-4-12B-it"
     },
@@ -12676,7 +12688,9 @@
         "IsSamplingEnabled": false,
         "NoRepeatNgramSize": 0,
         "SampleRate": 16000,
-        "Channels": 1
+        "Channels": 1,
+        "InputImageMaxCount": 4,
+        "InputAudioMaxCount": 1
       },
       "Link": "https://huggingface.co/google/gemma-4-31B-it"
     }

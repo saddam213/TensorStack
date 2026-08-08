@@ -71,28 +71,23 @@ namespace Amuse.App.Views
                 Statistics.Start();
 
                 // Context
-                var textContext = InputControl.GetTextContext(Options.Prompt);
-                var imageContext = InputControl.GetImageContext(Options.Prompt);
-                var audioContext = InputControl.GetAudioContext(Options.Prompt);
-                var videoContext = InputControl.GetVideoContext(Options.Prompt);
-                var imageIndex = imageContext.GetIndexedInputs();
-                var audioIndex = audioContext.GetIndexedInputs();
-                var videoIndex = videoContext.GetIndexedInputs();
-                textContext.AppendLine(Options.Prompt);
+                var prompt = Options.Prompt;
+                var systemPrompt = Options.Prompt2;
+                var promptInputs = InputControl.GetPromptInputs(prompt);
 
                 // Conversation
-                await TextResultElement.AddSystemPromptAsync(Options.Prompt2);
+                await TextResultElement.AddSystemPromptAsync(systemPrompt);
 
                 // User Prompt
-                await TextResultElement.AddUserPromptAsync(textContext.ToString(), imageIndex, audioIndex, videoIndex);
+                await TextResultElement.AddUserPromptAsync(promptInputs.Prompt, promptInputs.ImageIndex, promptInputs.AudioIndex, promptInputs.VideoIndex);
 
                 // Options
                 var options = Options with
                 {
                     Prompt = null,
                     Prompt2 = null,
-                    InputAudios = audioContext,
-                    InputImages = imageContext.AsImageTensors(),
+                    InputAudios = promptInputs.AudioContext,
+                    InputImages = promptInputs.ImageContext.AsImageTensors(),
                     Conversation = TextResultElement.Conversation
                 };
 
@@ -155,28 +150,23 @@ namespace Amuse.App.Views
                     AutomationPrompt = $"{Options.Prompt}{automationJob.GenerateOptions.Prompt}";
 
                     // Context
-                    var textContext = InputControl.GetTextContext(AutomationPrompt);
-                    var imageContext = InputControl.GetImageContext(AutomationPrompt);
-                    var audioContext = InputControl.GetAudioContext(AutomationPrompt);
-                    var videoContext = InputControl.GetVideoContext(AutomationPrompt);
-                    var imageIndex = imageContext.GetIndexedInputs();
-                    var audioIndex = audioContext.GetIndexedInputs();
-                    var videoIndex = videoContext.GetIndexedInputs();
-                    textContext.AppendLine(AutomationPrompt);
+                    var prompt = AutomationPrompt;
+                    var systemPrompt = Options.Prompt2;
+                    var promptInputs = InputControl.GetPromptInputs(prompt);
 
                     // Conversation
-                    await TextResultElement.AddSystemPromptAsync(Options.Prompt2);
+                    await TextResultElement.AddSystemPromptAsync(systemPrompt);
 
                     // User Prompt
-                    await TextResultElement.AddUserPromptAsync(textContext.ToString(), imageIndex, audioIndex, videoIndex);
+                    await TextResultElement.AddUserPromptAsync(promptInputs.Prompt, promptInputs.ImageIndex, promptInputs.AudioIndex, promptInputs.VideoIndex);
 
                     // Options
                     var options = automationJob.GenerateOptions with
                     {
                         Prompt = null,
                         Prompt2 = null,
-                        InputAudios = audioContext,
-                        InputImages = imageContext.AsImageTensors(),
+                        InputAudios = promptInputs.AudioContext,
+                        InputImages = promptInputs.ImageContext.AsImageTensors(),
                         Conversation = TextResultElement.Conversation
                     };
 

@@ -114,7 +114,7 @@
                                     <TextBlock Text="Conversation Context" Style="{StaticResource FieldTextBlockStyle}" Visibility="{Binding ViewType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=TextConverse}"/>
                                     <TextBlock Text="Additional Context" Style="{StaticResource FieldTextBlockStyle}" Visibility="{Binding ViewType, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=TextConverse}"/>
                                 </StackPanel>
-                                <Controls:ContextControl x:Name="ContextControlElement" />
+                                <Controls:ContextControl x:Name="ContextControlElement" IsInputEnabled="{Binding IsInputEnabled, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                             </DockPanel>
                            
                         </Border>

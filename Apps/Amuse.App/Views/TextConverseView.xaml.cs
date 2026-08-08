@@ -3,7 +3,6 @@ using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,9 +53,6 @@ namespace Amuse.App.Views
                 ModelControl.SetPipeline(GenerateService.Pipeline);
         }
 
-        private int _contextLengthText;
-        private int _contextLengthImage;
-        private int _contextLengthAudio;
 
         /// <summary>
         /// Execute thge pipeline.
@@ -74,66 +70,23 @@ namespace Amuse.App.Views
 
                 // Context
                 var prompt = Options.Prompt;
-                var textContext = InputControl.GetTextContext(prompt);
-                var imageContext = InputControl.GetImageContext(prompt);
-                var audioContext = InputControl.GetAudioContext(prompt);
-                var imageIndex = default(Dictionary<int, string>);
-                var audioIndex = default(Dictionary<int, string>);
-
-                if (ConversationElement.Count == 0)
-                {
-                    _contextLengthText = textContext.Length;
-                    _contextLengthImage = imageContext.Count;
-                    _contextLengthAudio = audioContext.Count;
-                    imageIndex = imageContext.GetIndexedInputs();
-                    audioIndex = audioContext.GetIndexedInputs();
-                    prompt = $"{textContext}\n{prompt}";
-                }
-                else
-                {
-                    if (textContext.Length > _contextLengthText)
-                    {
-                        // new content
-                        prompt = $"{textContext.ToString(_contextLengthText, textContext.Length - _contextLengthText)}\n{prompt}";
-                        _contextLengthText = textContext.Length;
-                    }
-                    if (imageContext.Count > _contextLengthImage)
-                    {
-                        // new imege
-                        imageIndex = [];
-                        for (int i = _contextLengthImage; i < imageContext.Count; i++)
-                        {
-                            imageIndex.Add(i, imageContext[i].SourceFile);
-                        }
-                        _contextLengthImage = imageContext.Count;
-                    }
-                    if (audioContext.Count > _contextLengthAudio)
-                    {
-                        // new audio
-                        audioIndex = [];
-                        for (int i = _contextLengthAudio; i < audioContext.Count; i++)
-                        {
-                            audioIndex.Add(i, audioContext[i].SourceFile);
-                        }
-                        _contextLengthAudio = audioContext.Count;
-                    }
-                }
+                var systemPrompt = Options.Prompt2;
+                var promptInputs = InputControl.GetPromptInputs(prompt, ConversationElement.Conversation);
                 Options.Prompt = string.Empty;
-
 
                 // System Prompt
                 await ConversationElement.AddSystemPromptAsync(Options.Prompt2);
 
                 // User Prompt
-                await ConversationElement.AddUserPromptAsync(prompt, imageIndex, audioIndex);
+                await ConversationElement.AddUserPromptAsync(promptInputs.Prompt, promptInputs.ImageIndex, promptInputs.AudioIndex, promptInputs.VideoIndex);
 
                 // Options
                 var options = Options with
                 {
                     Prompt = null,
                     Prompt2 = null,
-                    InputAudios = audioContext,
-                    InputImages = imageContext.AsImageTensors(),
+                    InputAudios = promptInputs.AudioContext,
+                    InputImages = promptInputs.ImageContext.AsImageTensors(),
                     Conversation = ConversationElement.Conversation
                 };
 
@@ -232,7 +185,7 @@ namespace Amuse.App.Views
         /// <summary>
         /// Save history
         /// </summary>
-        /// <param name="options">The options.</param>
+        /// <param name="progress">The progress.</param>
         //private async Task<TextInput> SaveHistoryAsync(GenerateInputOptions options)
         //{
         //    Logger.LogInformation($"[TextConverse] [SaveHistory] Saving history...");
@@ -250,6 +203,10 @@ namespace Amuse.App.Views
         //}
 
 
+        /// <summary>
+        /// Called when progress is received from a Python pipeline
+        /// </summary>
+        /// <param name="progress">The progress.</param>
         protected override void OnProgress(PipelineProgress progress)
         {
             base.OnProgress(progress);
@@ -260,9 +217,24 @@ namespace Amuse.App.Views
         }
 
 
+        /// <summary>
+        /// Determines whether this process can execute.
+        /// </summary>
+        /// <returns><c>true</c> if this instance can execute; otherwise, <c>false</c>.</returns>
         protected override bool CanExecute()
         {
             return base.CanExecute() && !string.IsNullOrEmpty(Options?.Prompt);
+        }
+
+
+        /// <summary>
+        /// Handles the <see cref="E:ConversationClear" /> event.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void OnConversationClear(object sender, EventArgs e)
+        {
+            InputControl.EndConversation();
         }
     }
 }
