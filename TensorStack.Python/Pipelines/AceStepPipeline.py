@@ -49,6 +49,7 @@ _pipelineMap = {
 #------------------------------------------------
 def load(config_args: Dict[str, Any]) -> bool:
     global _config, _pipeline, _generator, _processType, _execution_device, _isMemoryOffload
+    Utils.notification_push(key="Load", subkey="Pipeline", message=f"Loading Pipeline Components...")
 
     # Config
     _config = DataObjects.PipelineConfig(**config_args)

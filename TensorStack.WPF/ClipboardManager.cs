@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -26,6 +28,19 @@ namespace TensorStack.WPF
                     await Task.Delay(100);
                 }
             }
+        }
+
+
+        public static FileInfo GetFileDrop(this DragEventArgs dragEvent)
+        {
+            if (dragEvent == null)
+                return null;
+
+            var filename = ((string[])dragEvent.Data.GetData(DataFormats.FileDrop))?.FirstOrDefault();
+            if (!File.Exists(filename))
+                return null;
+
+            return new FileInfo(filename);
         }
 
     }

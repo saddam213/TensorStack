@@ -53,6 +53,7 @@ _stopwatch = None
 #------------------------------------------------
 def load(config_args: Dict[str, Any]) -> bool:
     global _config, _pipeline, _generator, _processType, _execution_device, _isMemoryOffload
+    notification_push(key="Load", subkey="Pipeline", message=f"Loading Pipeline Components...")
 
     # Config
     _config = PipelineConfig(**config_args)

@@ -83,16 +83,19 @@ namespace TensorStack.WPF.Controls
         protected override async void OnDrop(DragEventArgs e)
         {
             base.OnDrop(e);
-            if(e.Data.GetDataPresent(DataFormats.Text))
+            if (e.Data.GetDataPresent(DataFormats.Text))
             {
                 Text = (string)e.Data.GetData(DataFormats.Text);
             }
             else if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                var fileName = ((string[])e.Data.GetData(DataFormats.FileDrop))?.FirstOrDefault();
-                if(File.Exists(fileName)) 
+                var fileInfo = e.GetFileDrop();
+                if (fileInfo?.Exists == true)
                 {
-                    Text = await File.ReadAllTextAsync(fileName);
+                    if (Common.TextFileExtensions.Contains(fileInfo.Extension))
+                    {
+                        Text = await File.ReadAllTextAsync(fileInfo.FullName);
+                    }
                 }
             }
         }

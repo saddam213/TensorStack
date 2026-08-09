@@ -360,13 +360,13 @@ class GenerateTextOptions:
     max_length: int = 0
     do_sample: bool = False
     num_beams: int = 1
-    temperature: float = 0.00
+    temperature: float = 1.0
     top_k: int = 50
     top_p: float = 1.0
     top_h: float = 0.6
     typical_p: float = 1.0
-    repetition_penalty: float = 0
-    length_penalty: float = 0
+    repetition_penalty: float = 1
+    length_penalty: float = 1
     no_repeat_ngram_size: int = 0
     enable_thinking: bool = True
     sample_rate: int = 0

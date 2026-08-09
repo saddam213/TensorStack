@@ -114,7 +114,7 @@
                                     <TextBlock Text="Conversation Context" Style="{StaticResource FieldTextBlockStyle}" Visibility="{Binding ViewType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=TextConverse}"/>
                                     <TextBlock Text="Additional Context" Style="{StaticResource FieldTextBlockStyle}" Visibility="{Binding ViewType, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=TextConverse}"/>
                                 </StackPanel>
-                                <Controls:ContextControl x:Name="ContextControlElement" IsInputEnabled="{Binding IsInputEnabled, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                <Controls:ContextControl x:Name="ContextControlElement" IsControlBusy="{Binding IsControlBusy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                             </DockPanel>
                            
                         </Border>
@@ -173,7 +173,7 @@
             </TabItem>
 
             <!--Automation-->
-            <TabItem Style="{StaticResource DiffusionInputTab}">
+            <TabItem Style="{StaticResource DiffusionInputTab}" Visibility="{Binding ViewType, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=TextConverse}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" Margin="3">
                         <CommonControls:FontAwesome Icon="e0b6" IconStyle="Solid" Color="{StaticResource AccentColour2}" Size="12"/>

@@ -57,6 +57,8 @@ namespace Amuse.App.Services
                     historyItem = await Json.LoadAsync<DiffusionHistory>(historyFile.FullName);
                 else if (historyFile.Name.StartsWith("GenerateText_"))
                     historyItem = await Json.LoadAsync<DiffusionHistory>(historyFile.FullName);
+                else if (historyFile.Name.StartsWith("Conversation_"))
+                    historyItem = await Json.LoadAsync<DiffusionHistory>(historyFile.FullName);
                 else if (historyFile.Name.StartsWith("ExtractImage_"))
                     historyItem = await Json.LoadAsync<ExtractHistory>(historyFile.FullName);
                 else if (historyFile.Name.StartsWith("ExtractVideo_"))
@@ -509,7 +511,6 @@ namespace Amuse.App.Services
                 LastAccess = DateTime.Now,
                 FilePath = Path.Combine(_settings.DirectoryHistory, $"GenerateText_{key}.json"),
                 MediaPath = Path.Combine(_settings.DirectoryHistory, $"GenerateText_{key}.txt"),
-                //ThumbPath = Path.Combine(_settings.DirectoryHistory, $"GenerateAudio_{key}.png"),
                 Length = text.Length
             };
 
@@ -517,7 +518,63 @@ namespace Amuse.App.Services
         }
 
 
-        private string GetRandomName()
+        public async Task AddAsync(DiffusionHistory diffusionHistory, string conversationId, string conversationMarkdown)
+        {
+            if (_settings.HistoryItems <= 0)
+                return;
+
+            var timestamp = DateTime.Now;
+            var lastAccess = DateTime.Now;
+            var existing = _historyCollection.FirstOrDefault(x => x.Id == conversationId);
+            if (existing != null)
+            {
+                timestamp = existing.Timestamp;
+                _historyCollection.Remove(existing);
+            }
+
+            var history = diffusionHistory with
+            {
+                Id = conversationId,
+                Version = HistoryVersion,
+                Extension = "txt",
+                MediaType = MediaType.Text,
+                Timestamp = timestamp,
+                LastAccess = lastAccess,
+                FilePath = Path.Combine(_settings.DirectoryHistory, $"Conversation_{conversationId}.json"),
+                MediaPath = Path.Combine(_settings.DirectoryHistory, $"Conversation_{conversationId}.txt"),
+                Length = diffusionHistory.Options.Conversation.Count
+            };
+
+            await Json.SaveAsync(history.FilePath, history);
+            await File.WriteAllTextAsync(history.MediaPath, conversationMarkdown);
+            AddHistoryItem(history);
+        }
+
+
+        public Task BranchAsync(string conversationId, string newConversationId)
+        {
+            var existing = _historyCollection.FirstOrDefault(x => x.Id == conversationId) as DiffusionHistory;
+            if (existing == null)
+                return Task.CompletedTask;
+
+            var branchHistory = existing with
+            {
+                Id = newConversationId,
+                Timestamp = DateTime.Now,
+                LastAccess = DateTime.Now,
+                FilePath = Path.Combine(_settings.DirectoryHistory, $"Conversation_{newConversationId}.json"),
+                MediaPath = Path.Combine(_settings.DirectoryHistory, $"Conversation_{newConversationId}.txt"),
+            };
+
+            File.Copy(existing.FilePath, branchHistory.FilePath);
+            File.Copy(existing.MediaPath, branchHistory.MediaPath);
+            AddHistoryItem(branchHistory);
+            return Task.CompletedTask;
+        }
+
+
+
+        public string GetRandomName()
         {
             return Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
         }
@@ -568,7 +625,6 @@ namespace Amuse.App.Services
             }
             _historyCollection.Insert(0, historyItem);
         }
-
     }
 
 
@@ -597,9 +653,12 @@ namespace Amuse.App.Services
         Task<AudioInputStream> AddAsync(AudioInputStream audio, AudioHistory history);
         Task<AudioInputStream> AddAsync(AudioInputStream audio, DiffusionHistory history);
 
-     
+
         Task<TextInput> AddAsync(TextInput text, TextHistory history);
         Task<TextInput> AddAsync(TextInput text, DiffusionHistory history);
+        Task AddAsync(DiffusionHistory diffusionHistory, string conversationId, string conversationMarkdown);
+        string GetRandomName();
+        Task BranchAsync(string conversationId, string newConversationId);
     }
 
 }

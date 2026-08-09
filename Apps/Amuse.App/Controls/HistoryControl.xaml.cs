@@ -171,6 +171,10 @@ namespace Amuse.App.Controls
                             _ => throw new NotSupportedException()
                         };
 
+                        if (SelectedItem.Source == Views.View.TextConverse)
+                        {
+                            dropType = DragDropType.Conversation;
+                        }
                         DragDropHelper.DoDragDropFile(this, SelectedItem.MediaPath, dropType, listBoxItem);
                     }
                 }

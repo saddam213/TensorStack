@@ -126,6 +126,26 @@
                             ToolTipPlacement="Top"
                             ToolTipInitialDelay="600"
                             IsChecked="{Binding IsThinkingVisible, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+
+                        <TextBlock />
+                        <CommonControls:IconButton
+                            Width="30"
+                            Icon="f4a7"
+                            IconSize="11"
+                            IconColor="#80FFFFFF"
+                            ToolTip="Rewind Last Message"
+                            ToolTipService.Placement="Top"
+                            ToolTipService.InitialShowDelay="600"
+                            Command="{Binding RewindConversationCommand}"/>
+                        <CommonControls:IconButton
+                            Width="30"
+                            Icon="e1dd"
+                            IconSize="11"
+                            IconColor="#80FFFFFF"
+                            ToolTip="Branch Conversation"
+                            ToolTipService.Placement="Top"
+                            ToolTipService.InitialShowDelay="600"
+                            Command="{Binding BranchConversationCommand}"/>
                     </UniformGrid>
                     <Grid Margin="10,0,0,0">
                         <CommonControls:SliderControl 
@@ -142,7 +162,7 @@
             </DockPanel>
 
             <!--Main Content-->
-            <Border x:Name="DragDropContainer">
+            <Border x:Name="DragDropContainer" >
                 <Grid x:Name="MainContent" Background="Transparent">
                     <Image Source="{StaticResource PlaceholderText}" Stretch="Uniform" IsHitTestVisible="False"/>
                     <Grid Visibility="{Binding IsContentReady, ElementName=ResultControl, Converter={StaticResource BooleanToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
@@ -156,7 +176,36 @@
                             IsContextMenuEnabled="{Binding IsContextMenuEnabled, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
                             IsScrollToBottomEnabled="True"/>
                     </Grid>
+
+                    <!--DragDrop Notification-->
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding AllowDrop, ElementName=DragDropContainer, Converter={StaticResource BooleanToVisibilityConverter}}" IsHitTestVisible="False">
+                        <CommonControls:FontAwesome Icon="e74c" Size="30" IconStyle="SharpLight" Color="{StaticResource AccentColour2}"/>
+                        <TextBlock Text="Drag &amp; Drop Conversation Here" Foreground="{StaticResource AccentColour2}" FontSize="13" FontWeight="DemiBold" Margin="0,6,0,0"/>
+                    </StackPanel>
+
                 </Grid>
+
+
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="AllowDrop" Value="False"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsInputEnabled}" Value="True" />
+                                    <Condition Binding="{Binding IsDragDrop, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="True" />
+                                    <Condition Binding="{Binding DragDropType, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="Conversation" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="AllowDrop" Value="True"/>
+                                    <Setter Property="BorderBrush" Value="{StaticResource AccentColour2}"/>
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
             </Border>
 
         </DockPanel>

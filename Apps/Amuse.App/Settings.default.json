@@ -8256,6 +8256,7 @@
           "Height": 640
         }
       ],
+      "AccessToken": "HuggingFace",
       "Link": "https://huggingface.co/krea/Krea-2-Raw"
     },
     {
@@ -8377,6 +8378,7 @@
           "Height": 640
         }
       ],
+      "AccessToken": "HuggingFace",
       "Link": "https://huggingface.co/krea/Krea-2-Turbo"
     },
     {
@@ -12451,7 +12453,7 @@
     {
       "Id": 820,
       "Backend": "PyTorch",
-      "Name": "Gemma4 2B IT",
+      "Name": "Gemma4 E2B IT",
       "Template": "Gemma4_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Multi",
@@ -12512,7 +12514,7 @@
     {
       "Id": 821,
       "Backend": "PyTorch",
-      "Name": "Gemma4 4B IT",
+      "Name": "Gemma4 E4B IT",
       "Template": "Gemma4_IT",
       "Pipeline": "AutoTextPipeline",
       "ModelType": "Multi",
@@ -12626,8 +12628,7 @@
         "NoRepeatNgramSize": 0,
         "SampleRate": 16000,
         "Channels": 1,
-        "InputImageMaxCount": 4,
-        "InputAudioMaxCount": 1
+        "InputImageMaxCount": 8
       },
       "Link": "https://huggingface.co/google/gemma-4-12B-it"
     },
@@ -12689,8 +12690,7 @@
         "NoRepeatNgramSize": 0,
         "SampleRate": 16000,
         "Channels": 1,
-        "InputImageMaxCount": 4,
-        "InputAudioMaxCount": 1
+        "InputImageMaxCount": 8
       },
       "Link": "https://huggingface.co/google/gemma-4-31B-it"
     }

@@ -245,7 +245,7 @@ namespace Amuse.App
         }
 
 
-        public static string GetLastMessage(string content, string tagOpen = "\n<assistant>\n", string tagClose = "\n</assistant>\n")
+        public static string GetLastMessage(string content, string tagOpen = "\n<assistant>\n", string tagClose = $"\n</assistant>\n")
         {
             if (string.IsNullOrEmpty(content))
                 return string.Empty;
@@ -312,7 +312,7 @@ namespace Amuse.App
             if (images.IsNullOrEmpty())
                 return default;
 
-            var start = maxCount > 0 ? maxCount - images.Count : 0;
+            var start = maxCount > 0 && images.Count > maxCount ? maxCount - images.Count : 0;
             var dictionary = new Dictionary<int, string>();
             for (var i = 0; i < images.Count; i++)
             {
@@ -327,8 +327,7 @@ namespace Amuse.App
             if (audioStreams.IsNullOrEmpty())
                 return default;
 
-            var start = maxCount - audioStreams.Count;
-            var dictonary = new Dictionary<int, string>();
+            var start = maxCount > 0 && audioStreams.Count > maxCount ? maxCount - audioStreams.Count : 0;
             var dictionary = new Dictionary<int, string>();
             for (var i = 0; i < audioStreams.Count; i++)
             {
@@ -343,8 +342,7 @@ namespace Amuse.App
             if (videoStreams.IsNullOrEmpty())
                 return default;
 
-            var start = maxCount - videoStreams.Count;
-            var dictonary = new Dictionary<int, string>();
+            var start = maxCount > 0 && videoStreams.Count > maxCount ? maxCount - videoStreams.Count : 0;
             var dictionary = new Dictionary<int, string>();
             for (var i = 0; i < videoStreams.Count; i++)
             {

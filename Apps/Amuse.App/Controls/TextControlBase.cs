@@ -256,6 +256,17 @@ namespace Amuse.App.Controls
 
 
         /// <summary>
+        /// Sets the current result.
+        /// </summary>
+        protected void SetCurrentResult(ConversationModel message)
+        {
+            CurrentResult = message;
+            _currentResultStream.Clear();
+            _currentResultStream.Append(message?.Content);
+        }
+
+
+        /// <summary>
         /// Updates the stream response.
         /// </summary>
         /// <param name="token">The token.</param>

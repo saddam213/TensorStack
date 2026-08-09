@@ -31,6 +31,7 @@ namespace Amuse.App.Controls
         public static readonly DependencyProperty IsAutomatingProperty = DependencyProperty.Register(nameof(IsAutomating), typeof(bool), typeof(LanguageInputControl));
         public static readonly DependencyProperty AutomationProgressProperty = DependencyProperty.Register(nameof(AutomationProgress), typeof(ProgressInfo), typeof(LanguageInputControl));
         public static readonly DependencyProperty IsInputEnabledProperty = DependencyProperty.Register(nameof(IsInputEnabled), typeof(bool), typeof(LanguageInputControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsControlBusyProperty = DependencyProperty.Register(nameof(IsControlBusy), typeof(bool), typeof(LanguageInputControl), new PropertyMetadata(false));
 
         public View ViewType { get; set; }
         public ProcessType ProcessType { get; set; }
@@ -76,6 +77,12 @@ namespace Amuse.App.Controls
         {
             get { return (bool)GetValue(IsInputEnabledProperty); }
             set { SetValue(IsInputEnabledProperty, value); }
+        }
+
+        public bool IsControlBusy
+        {
+            get { return (bool)GetValue(IsControlBusyProperty); }
+            set { SetValue(IsControlBusyProperty, value); }
         }
 
         public InputTabOption SelectedOption
@@ -181,5 +188,10 @@ namespace Amuse.App.Controls
             return ContextControlElement.GetPromptInputs(prompt, conversation);
         }
 
+
+        public async Task CreateContextAsync(Collection<ConversationModel> conversation)
+        {
+            await ContextControlElement.CreateFromConversation(conversation);
+        }
     }
 }

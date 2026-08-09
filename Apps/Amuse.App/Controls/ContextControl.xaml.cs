@@ -49,7 +49,7 @@ namespace Amuse.App.Controls
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty IsInputEnabledProperty = DependencyProperty.Register(nameof(IsInputEnabled), typeof(bool), typeof(ContextControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsControlBusyProperty = DependencyProperty.Register(nameof(IsControlBusy), typeof(bool), typeof(ContextControl), new PropertyMetadata(false));
         public AsyncRelayCommand AddTextCommand { get; }
         public AsyncRelayCommand AddImageCommand { get; }
         public AsyncRelayCommand AddAudioCommand { get; }
@@ -59,10 +59,10 @@ namespace Amuse.App.Controls
         public ObservableCollection<ContextItemModel> ContextCollection { get; }
         public ContextCache CurrentContext => _currentContext;
 
-        public bool IsInputEnabled
+        public bool IsControlBusy
         {
-            get { return (bool)GetValue(IsInputEnabledProperty); }
-            set { SetValue(IsInputEnabledProperty, value); }
+            get { return (bool)GetValue(IsControlBusyProperty); }
+            set { SetValue(IsControlBusyProperty, value); }
         }
 
         public ContextItemModel SelectedContextItem
@@ -117,6 +117,88 @@ namespace Amuse.App.Controls
         {
             SetCurrentContext(null);
             SetContextReadOnly(false);
+        }
+
+
+        public async Task CreateFromConversation(Collection<ConversationModel> conversation)
+        {
+            IsControlBusy = true;
+
+            var imageIndex = new Dictionary<int, string>();
+            var audioIndex = new Dictionary<int, string>();
+            var videoIndex = new Dictionary<int, string>();
+            foreach (var message in conversation)
+            {
+                if (!message.ImageIndex.IsNullOrEmpty())
+                {
+                    foreach (var image in message.ImageIndex)
+                    {
+                        if (imageIndex.ContainsKey(image.Key))
+                            continue;
+
+                        imageIndex.Add(image.Key, image.Value);
+                    }
+                }
+
+                if (!message.AudioIndex.IsNullOrEmpty())
+                {
+                    foreach (var audio in message.AudioIndex)
+                    {
+                        if (audioIndex.ContainsKey(audio.Key))
+                            continue;
+
+                        audioIndex.Add(audio.Key, audio.Value);
+                    }
+                }
+
+                if (!message.VideoIndex.IsNullOrEmpty())
+                {
+                    foreach (var video in message.VideoIndex)
+                    {
+                        if (videoIndex.ContainsKey(video.Key))
+                            continue;
+
+                        videoIndex.Add(video.Key, video.Value);
+                    }
+                }
+            }
+
+            ContextCollection.Clear();
+            foreach (var image in imageIndex)
+            {
+                ContextCollection.Add(new ContextItemModel
+                {
+                    Filename = image.Value,
+                    MediaType = MediaType.Image,
+                    Id = ContextCollection.Count,
+                    Image = await ImageInput.CreateAsync(image.Value)
+                });
+            }
+            foreach (var audio in audioIndex)
+            {
+                ContextCollection.Add(new ContextItemModel
+                {
+                    Filename = audio.Value,
+                    MediaType = MediaType.Audio,
+                    Id = ContextCollection.Count,
+                    Audio = await AudioInputStream.CreateAsync(audio.Value)
+                });
+            }
+            foreach (var video in videoIndex)
+            {
+                ContextCollection.Add(new ContextItemModel
+                {
+                    Filename = video.Value,
+                    MediaType = MediaType.Video,
+                    Id = ContextCollection.Count,
+                    Video = await VideoInputStream.CreateAsync(video.Value)
+                });
+            }
+
+            UpdateContextItems();
+            _currentContext = CreateContext();
+            SetContextReadOnly(true);
+            IsControlBusy = false;
         }
 
 
@@ -331,7 +413,7 @@ namespace Amuse.App.Controls
             {
                 try
                 {
-                    IsInputEnabled = false;
+                    IsControlBusy = true;
                     var filename = ((string[])e.Data.GetData(DataFormats.FileDrop))?.FirstOrDefault();
                     if (File.Exists(filename))
                     {
@@ -361,7 +443,7 @@ namespace Amuse.App.Controls
                 }
                 finally
                 {
-                    IsInputEnabled = true;
+                    IsControlBusy = false;
                 }
             }
         }

@@ -3,10 +3,12 @@ using Amuse.App.Common;
 using Amuse.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using TensorStack.Common;
 using TensorStack.WPF;
@@ -25,12 +27,17 @@ namespace Amuse.App.Controls
         {
             SaveCommand = new AsyncRelayCommand(SaveAsync, () => CurrentResult is not null);
             CopyCommand = new AsyncRelayCommand<bool>(CopyAsync, (f) => CurrentResult is not null);
+            RewindConversationCommand = new AsyncRelayCommand(RewindConversationAsync, () => Count > 2);
+            BranchConversationCommand = new AsyncRelayCommand(BranchConversationAsync, () => Count > 0);
             InitializeComponent();
         }
 
         public AsyncRelayCommand SaveCommand { get; }
         public AsyncRelayCommand<bool> CopyCommand { get; }
-    
+        public AsyncRelayCommand RewindConversationCommand { get; }
+        public AsyncRelayCommand BranchConversationCommand { get; }
+        public event EventHandler OnConversationBranch;
+        public event EventHandler<string> OnConversationLoaded;
 
         /// <summary>
         /// Resets the control
@@ -50,6 +57,15 @@ namespace Amuse.App.Controls
             await base.ClearAsync();
             ResetCurrentResult();
             await ResultControl.CloseAsync();
+        }
+
+
+        /// <summary>
+        /// Gets the conversation markdown.
+        /// </summary>
+        public string GetConversationMarkdown()
+        {
+            return ResultControl.GetPlainText();
         }
 
 
@@ -211,6 +227,64 @@ namespace Amuse.App.Controls
         }
 
 
+        private async Task RewindConversationAsync()
+        {
+            Conversation.RemoveAt(Conversation.Count - 1);
+            Conversation.RemoveAt(Conversation.Count - 1);
+            await ReloadConversationAsync();
+        }
+
+
+        private Task BranchConversationAsync()
+        {
+            OnConversationBranch?.Invoke(this, EventArgs.Empty);
+            return Task.CompletedTask;
+        }
+
+
+
+        /// <summary>
+        /// Invoked when an unhandled <see cref="E:System.Windows.DragDrop.DragEnter" /> attached event reaches an element
+        /// </summary>
+        /// <param name="e">The <see cref="T:System.Windows.DragEventArgs" /> that contains the event data.</param>
+        protected override async void OnDrop(DragEventArgs e)
+        {
+            base.OnDrop(e);
+            if (!IsInputEnabled)
+                return;
+
+            try
+            {
+                Progress?.Indeterminate();
+                var conversationFile = e.GetFileDrop();
+                if (conversationFile?.Exists == true)
+                {
+                    var historyFilename = conversationFile.FullName.Replace(".txt", ".json");
+                    var diffusionHistory = await Json.LoadAsync<DiffusionHistory>(historyFilename);
+                    if (diffusionHistory != null)
+                    {
+                        Conversation.Clear();
+                        foreach (var message in diffusionHistory.Options.Conversation)
+                        {
+                            Conversation.Add(message);
+                        }
+                        await ReloadConversationAsync();
+                        OnConversationLoaded?.Invoke(this, diffusionHistory.Id);
+                        SetCurrentResult(Conversation.LastOrDefault());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ConversationControl] [Exception] OnDrop: {ex.Message}");
+            }
+            finally
+            {
+                Progress?.Clear();
+            }
+        }
+
+
         private static string AssistantCloseTag(bool isUnclosed)
         {
             const string assistantClosed = $"\n</assistant>\n";
@@ -256,18 +330,18 @@ namespace Amuse.App.Controls
                         userMessage.Append($"![Video{videoIndex.Key}](https://resource.amuse/{Uri.EscapeDataString(videoIndex.Value)})");
                     }
                 }
-                userMessage.AppendLine();
-                userMessage.AppendLine(message.Content);
-                return string.Format(user, userMessage, nextRoleTag);
+                userMessage.Append(message.Content);
+                return string.Format(user, userMessage, nextRoleTag).ReplaceLineEndings("\n");
             }
 
-            return message.Role switch
+            var result = message.Role switch
             {
                 ConversationRole.User => string.Format(user, message.Content, nextRoleTag),
                 ConversationRole.System => string.Format(system, message.Content, nextRoleTag),
                 ConversationRole.Assistant => string.Format(assistant, message.Content, nextRoleTag),
                 _ => throw new NotImplementedException()
             };
+            return result.ReplaceLineEndings("\n");
         }
 
 

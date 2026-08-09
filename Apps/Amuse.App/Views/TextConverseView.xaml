@@ -53,7 +53,8 @@
                                 IsExecuting="{Binding GenerateService.IsExecuting, Mode=OneWay}"
                                 IsAutomating="{Binding IsAutomating, Mode=OneWay}"
                                 IsEnabled="{Binding CurrentPipeline, Converter={StaticResource InverseNullBooleanConverter}, Mode=OneWay}"
-                                IsInputEnabled="{Binding IsViewBusy,Converter={StaticResource InverseBoolConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                IsInputEnabled="{Binding IsPipelineLoaded}"
+                                IsControlBusy="{Binding IsViewBusy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                         </Grid>
 
                     </DockPanel>
@@ -84,8 +85,10 @@
                         x:Name="ConversationElement" 
                         Settings="{Binding Settings, Mode=OneWay}"
                         OnConversationClear="OnConversationClear"
+                        OnConversationBranch="OnConversationBranch"
+                        OnConversationLoaded="OnConversationLoaded"
                         MaxTokenLength="{Binding Options.MaxLength, Mode=OneWay}"
-                        IsInputEnabled="{Binding GenerateService.IsExecuting, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}"/>
+                        IsInputEnabled="{Binding IsPipelineLoaded}"/>
                 </Border>
 
                 <Grid.Style>

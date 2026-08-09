@@ -654,7 +654,7 @@ namespace Amuse.App.Views
                 }
                 else
                 {
-                    Progress.Indeterminate($"Loading {CurrentPipeline.DiffusionModel.Name}...");
+                    Progress.Indeterminate($"Initializing {CurrentPipeline.DiffusionModel.Backend} Environment...");
                     if (!await LoadPipelineAsync())
                         return;// Canceled/Failed to load pipeline
 
@@ -693,7 +693,11 @@ namespace Amuse.App.Views
             if (CurrentPipeline is null)
                 return;
 
-            if (progress.Key == "Generate")
+            if (progress.Key == "Load")
+            {
+                Progress.Indeterminate(progress.Message);
+            }
+            else if (progress.Key == "Generate")
             {
                 var message = Globalization.GetProgressMessage(progress);
                 if (progress.Subkey == "Step")

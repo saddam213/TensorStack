@@ -4,6 +4,7 @@ using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
@@ -17,6 +18,7 @@ namespace Amuse.App.Views
     /// </summary>
     public partial class TextConverseView : ViewBaseLanguage
     {
+        private string _conversationId;
         private string _automationPrompt;
 
         /// <summary>
@@ -25,6 +27,7 @@ namespace Amuse.App.Views
         public TextConverseView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IGenerateService generateService, IExtractService extractService, IUpscaleService upscaleService, IHistoryService historyService, ILogger<TextConverseView> logger)
             : base(settings, navigationService, downloadService, generateService, extractService, upscaleService, historyService, logger)
         {
+            _conversationId = historyService.GetRandomName();
             InitializeComponent();
         }
 
@@ -60,6 +63,7 @@ namespace Amuse.App.Views
         protected override async Task ExecuteAsync()
         {
             var timestamp = Stopwatch.GetTimestamp();
+            var currentOptions = default(GenerateInputOptions);
             Logger.LogInformation($"[TextConverse] [Execute] Executing pipeline...");
 
             try
@@ -81,7 +85,7 @@ namespace Amuse.App.Views
                 await ConversationElement.AddUserPromptAsync(promptInputs.Prompt, promptInputs.ImageIndex, promptInputs.AudioIndex, promptInputs.VideoIndex);
 
                 // Options
-                var options = Options with
+                currentOptions = Options with
                 {
                     Prompt = null,
                     Prompt2 = null,
@@ -91,7 +95,7 @@ namespace Amuse.App.Views
                 };
 
                 // Generate
-                var textResult = await ExecuteLanguageModelAsync(options);
+                var textResult = await ExecuteLanguageModelAsync(currentOptions);
 
                 // Result
                 await ConversationElement.EndStreamResponseAsync();
@@ -116,10 +120,9 @@ namespace Amuse.App.Views
             {
                 Progress.Clear();
                 await ConversationElement.EndStreamResponseAsync();
+                await SaveHistoryAsync(currentOptions);
             }
         }
-
-
 
 
         /// <summary>
@@ -186,21 +189,26 @@ namespace Amuse.App.Views
         /// Save history
         /// </summary>
         /// <param name="progress">The progress.</param>
-        //private async Task<TextInput> SaveHistoryAsync(GenerateInputOptions options)
-        //{
-        //    Logger.LogInformation($"[TextConverse] [SaveHistory] Saving history...");
-        //    var history = new TextInput(Utils.GetResponseText(ResultText.Result.Text));
-        //    options.Conversation.Add(new ConversationModel { Role = ConversationRole.Assistant, Content = history.Text });
-        //    var result = await HistoryService.AddAsync(history, new DiffusionHistory
-        //    {
-        //        Options = options,
-        //        Model = CurrentPipeline.LanguageModel.Name,
-        //        LoraModels = CurrentPipeline.LoraAdapterModel?.Select(x => x.Name).ToArray(),
-        //        Source = View.TextConverse,
-        //    });
-        //    Logger.LogInformation($"[TextConverse] [SaveHistory] History saved.");
-        //    return result;
-        //}
+        private async Task SaveHistoryAsync(GenerateInputOptions options)
+        {
+            try
+            {
+                Logger.LogInformation($"[TextConverse] [SaveHistory] Saving history...");
+                var conversationMarkdown = ConversationElement.GetConversationMarkdown();
+                await HistoryService.AddAsync(new DiffusionHistory
+                {
+                    Options = options,
+                    Model = CurrentPipeline.LanguageModel.Name,
+                    LoraModels = CurrentPipeline.LoraAdapterModel?.Select(x => x.Name).ToArray(),
+                    Source = View.TextConverse,
+                }, _conversationId, conversationMarkdown);
+                Logger.LogInformation($"[TextConverse] [SaveHistory] History saved.");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, $"[TextConverse] [SaveHistory] Error saving history.");
+            }
+        }
 
 
         /// <summary>
@@ -232,9 +240,38 @@ namespace Amuse.App.Views
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private void OnConversationClear(object sender, EventArgs e)
+        protected void OnConversationClear(object sender, EventArgs e)
         {
             InputControl.EndConversation();
+            _conversationId = HistoryService.GetRandomName();
+        }
+
+
+        /// <summary>
+        /// Handles the <see cref="E:ConversationBranch" /> event.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected async void OnConversationBranch(object sender, EventArgs e)
+        {
+            InputControl.EndConversation();
+            var newConversationId = HistoryService.GetRandomName();
+            await HistoryService.BranchAsync(_conversationId, newConversationId);
+            _conversationId = newConversationId;
+        }
+
+
+        /// <summary>
+        /// Called when a conversation is loaded
+        /// </summary>
+        /// <param name="conversationId">The conversation identifier.</param>
+        protected async void OnConversationLoaded(object _, string conversationId)
+        {
+            InputControl.EndConversation();
+            _conversationId = conversationId;
+
+            // Load context
+            await InputControl.CreateContextAsync(ConversationElement.Conversation);
         }
     }
 }

@@ -302,6 +302,24 @@
                 </Style.Triggers>
             </Style>
 
+            <Style x:Key="ConversationDropZoneStyle" TargetType="{x:Type Border}">
+                <Setter Property="AllowDrop" Value="False"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Style.Triggers>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                            <Condition Binding="{Binding IsDragDrop, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="True" />
+                            <Condition Binding="{Binding DragDropType, RelativeSource={RelativeSource AncestorType=CommonControls:ViewControl}}" Value="Conversation" />
+                        </MultiDataTrigger.Conditions>
+                        <MultiDataTrigger.Setters>
+                            <Setter Property="AllowDrop" Value="True"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource AccentColour2}"/>
+                        </MultiDataTrigger.Setters>
+                    </MultiDataTrigger>
+                </Style.Triggers>
+            </Style>
 
 
             <Style TargetType="{x:Type Controls:ContextControl}">

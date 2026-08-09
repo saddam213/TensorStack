@@ -550,6 +550,8 @@ namespace Amuse.App.Controls
                 var options = environment.CreateCoreWebView2ControllerOptions();
                 options.AllowHostInputProcessing = true;
                 await WebViewer.EnsureCoreWebView2Async(environment, options);
+                WebViewer.AllowDrop = false;
+                WebViewer.AllowExternalDrop = false;
                 WebViewer.Height = (int)ScrollViewerHost.ActualHeight;
                 WebViewer.CoreWebView2.AddWebResourceRequestedFilter("https://resource.amuse/*", CoreWebView2WebResourceContext.All);
                 WebViewer.CoreWebView2.Settings.IsScriptEnabled = true;
