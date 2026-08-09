@@ -20,19 +20,21 @@ namespace TensorStack.Image
         /// Initializes a new instance of the <see cref="ImageInput"/> class.
         /// </summary>
         /// <param name="tensor">The tensor.</param>
-        public ImageInput(ImageTensor tensor) : base(tensor)
+        public ImageInput(ImageTensor tensor, string filename = default) : base(tensor)
         {
             _image = tensor.ToBitmapImage();
+            _sourceFile = filename;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageInput"/> class.
         /// </summary>
         /// <param name="image">The image.</param>
-        public ImageInput(WriteableBitmap image)
+        public ImageInput(WriteableBitmap image, string filename = default)
             : base(image.ToTensor())
         {
             _image = image;
+            _sourceFile = filename;
             if (!_image.IsFrozen)
                 _image.Freeze();
         }
@@ -41,8 +43,8 @@ namespace TensorStack.Image
         /// Initializes a new instance of the <see cref="ImageInput"/> class.
         /// </summary>
         /// <param name="image">The image.</param>
-        public ImageInput(BitmapSource image)
-            : this(new WriteableBitmap(image)) { }
+        public ImageInput(BitmapSource image, string filename = default)
+            : this(new WriteableBitmap(image), filename) { }
 
 
         /// <summary>
@@ -50,10 +52,7 @@ namespace TensorStack.Image
         /// </summary>
         /// <param name="filename">The filename.</param>
         public ImageInput(string filename)
-            : this(ImageService.Load(filename))
-        {
-            _sourceFile = filename;
-        }
+            : this(ImageService.Load(filename), filename) { }
 
 
         /// <summary>
@@ -129,7 +128,7 @@ namespace TensorStack.Image
         public static async Task<ImageInput> CreateAsync(string filename)
         {
             var bitmap = await ImageService.LoadFromFileAsync(filename);
-            return await Task.Run(() => new ImageInput(bitmap));
+            return await Task.Run(() => new ImageInput(bitmap, filename));
         }
     }
 }

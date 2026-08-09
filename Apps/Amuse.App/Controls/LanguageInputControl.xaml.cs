@@ -2,14 +2,10 @@
 using Amuse.App.Views;
 using Amuse.Common;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using TensorStack.Audio;
-using TensorStack.Common.Tensor;
-using TensorStack.Video;
 using TensorStack.WPF;
 using TensorStack.WPF.Controls;
 
@@ -34,6 +30,8 @@ namespace Amuse.App.Controls
         public static readonly DependencyProperty IsExecutingProperty = DependencyProperty.Register(nameof(IsExecuting), typeof(bool), typeof(LanguageInputControl));
         public static readonly DependencyProperty IsAutomatingProperty = DependencyProperty.Register(nameof(IsAutomating), typeof(bool), typeof(LanguageInputControl));
         public static readonly DependencyProperty AutomationProgressProperty = DependencyProperty.Register(nameof(AutomationProgress), typeof(ProgressInfo), typeof(LanguageInputControl));
+        public static readonly DependencyProperty IsInputEnabledProperty = DependencyProperty.Register(nameof(IsInputEnabled), typeof(bool), typeof(LanguageInputControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsControlBusyProperty = DependencyProperty.Register(nameof(IsControlBusy), typeof(bool), typeof(LanguageInputControl), new PropertyMetadata(false));
 
         public View ViewType { get; set; }
         public ProcessType ProcessType { get; set; }
@@ -73,6 +71,18 @@ namespace Amuse.App.Controls
         {
             get { return (bool)GetValue(IsAutomatingProperty); }
             set { SetValue(IsAutomatingProperty, value); }
+        }
+
+        public bool IsInputEnabled
+        {
+            get { return (bool)GetValue(IsInputEnabledProperty); }
+            set { SetValue(IsInputEnabledProperty, value); }
+        }
+
+        public bool IsControlBusy
+        {
+            get { return (bool)GetValue(IsControlBusyProperty); }
+            set { SetValue(IsControlBusyProperty, value); }
         }
 
         public InputTabOption SelectedOption
@@ -132,7 +142,8 @@ namespace Amuse.App.Controls
                 LengthPenalty = newOptions.LengthPenalty,
                 NoRepeatNgramSize = newOptions.NoRepeatNgramSize,
                 EarlyStopping = newOptions.EarlyStopping,
-                ChunkSize = newOptions.ChunkSize
+                ChunkSize = newOptions.ChunkSize,
+                CacheType = newOptions.CacheType,
             };
 
             // Automation
@@ -146,10 +157,10 @@ namespace Amuse.App.Controls
             };
 
             // Context
-            ContextControlElement.IsTextEnabled = true;
-            ContextControlElement.IsImageEnabled = newModel.ModelType == "Vision" || newModel.ModelType == "Multi";
-            ContextControlElement.IsAudioEnabled = newModel.ModelType == "Multi";
-            //ContextControlElement.IsVideoEnabled = newModel.ModelType == "Multi";
+            ContextControlElement.TextMaxCount = 10000;
+            ContextControlElement.ImageMaxCount = newOptions.InputImageMaxCount;
+            ContextControlElement.AudioMaxCount = newOptions.InputAudioMaxCount;
+            ContextControlElement.VideoMaxCount = newOptions.InputVideoMaxCount;
             return Task.CompletedTask;
         }
 
@@ -160,26 +171,27 @@ namespace Amuse.App.Controls
         }
 
 
-        public StringBuilder GetTextContext(string query = default)
+        public void EndConversation()
         {
-            return ContextControlElement.GetTextContext(query);
+            ContextControlElement.ReleaseContext();
         }
 
 
-        public List<ImageTensor> GetImageContext(string query = default)
+        public PromptInputs GetPromptInputs(string prompt)
         {
-            return ContextControlElement.GetImageContext(query);
+            return ContextControlElement.GetPromptInputs(prompt);
         }
 
 
-        public List<AudioInputStream> GetAudioContext(string query = default)
+        public PromptInputs GetPromptInputs(string prompt, Collection<ConversationModel> conversation)
         {
-            return ContextControlElement.GetAudioContext(query);
+            return ContextControlElement.GetPromptInputs(prompt, conversation);
         }
 
-        public List<VideoInputStream> GetVideoContext(string query = default)
+
+        public async Task CreateContextAsync(Collection<ConversationModel> conversation)
         {
-            return ContextControlElement.GetVideoContext(query);
+            await ContextControlElement.CreateFromConversation(conversation);
         }
     }
 }

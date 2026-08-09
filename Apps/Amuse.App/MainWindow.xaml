@@ -527,14 +527,14 @@
                                 CommandParameter="{x:Static Views:View.TextInstruct}" 
                                 IsSelected="{Binding View, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=TextInstruct}">
                             </CommonControls:IconButton>
-                            <!--<CommonControls:IconButton 
+                            <CommonControls:IconButton 
                                 Text="Converse" 
                                 Icon="e1e7"
                                 Style="{StaticResource SubmenuIconButton}"
                                 Command="{Binding NavigateCommand}" 
                                 CommandParameter="{x:Static Views:View.TextConverse}" 
                                 IsSelected="{Binding View, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=TextConverse}">
-                            </CommonControls:IconButton>-->
+                            </CommonControls:IconButton>
                         </UniformGrid>
                     </Grid>
                 </Grid>
@@ -565,6 +565,9 @@
                         <Setter Property="Orientation" Value="{Binding Settings.HistoryOrientation}"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding View, ElementName=UI}" Value="TextInstruct">
+                                <Setter Property="Orientation" Value="Vertical"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding View, ElementName=UI}" Value="TextConverse">
                                 <Setter Property="Orientation" Value="Vertical"/>
                             </DataTrigger>
                         </Style.Triggers>

@@ -192,6 +192,27 @@ namespace Amuse.App
                             }
                         }
                     }
+                    if (property.Name == nameof(defaultSettings.LanguageModels))
+                    {
+                        foreach (var languageModel in currentSettings.LanguageModels)
+                        {
+                            if (languageModel.Id > 1000)
+                            {
+                                if (!defaultSettings.LanguageModels.Any(x => x.Id == languageModel.Id))
+                                    defaultSettings.LanguageModels.Add(languageModel);
+                            }
+                            else
+                            {
+                                var defaultDiffusionModel = defaultSettings.LanguageModels.FirstOrDefault(x => x.Id == languageModel.Id);
+                                if (defaultDiffusionModel == null)
+                                    continue;
+
+                                // Merge any user settings
+                                defaultDiffusionModel.Status = languageModel.Status;
+                                defaultDiffusionModel.UserQualityMode = languageModel.UserQualityMode;
+                            }
+                        }
+                    }
                     if (property.Name == nameof(defaultSettings.LoraAdapterModels))
                     {
                         foreach (var loraAdapterModel in currentSettings.LoraAdapterModels.Where(x => x.Id > 1000))

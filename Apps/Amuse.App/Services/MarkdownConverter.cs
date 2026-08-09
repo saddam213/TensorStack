@@ -1,209 +1,512 @@
 ﻿using ColorCode;
-using HtmlAgilityPack;
 using Markdig;
 using Markdig.Parsers;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Windows.Media;
 
 namespace Amuse.App.Services
 {
-    internal static class MarkdownConverter
+    public static class MarkdownConverter
     {
-        private static readonly string _header;
         private static readonly MarkdownPipeline _pipeline;
         private static readonly HtmlClassFormatter _formatter;
+        private static readonly string _htmlStyleSheet;
+        private static readonly string _htmlJavascript;
 
         /// <summary>
         /// Initializes static members of the <see cref="MarkdownConverter"/> class.
         /// </summary>
         static MarkdownConverter()
         {
-            _header = BuildHeader();
+            _htmlStyleSheet = App.GetEmbeddedResource("Amuse.App.Controls.MarkdownElement.css");
+            _htmlJavascript = App.GetEmbeddedResource("Amuse.App.Controls.MarkdownElement.js");
             _formatter = new HtmlClassFormatter();
             _pipeline = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .DisableHtml()
-                .UseBootstrap()
                 .UseSmartyPants()
                 .UseEmojiAndSmiley()
-                .Use(new ThinkExtension())
+                .UseSoftlineBreakAsHardlineBreak()
+                .Use(new ConversationExtension())
+                .Use(new ColorCodeExtension(_formatter))
                 .Build();
         }
 
 
         /// <summary>
-        /// Builds the HTML.
+        /// Builds an HTML page with styles and scripts.
         /// </summary>
         /// <param name="markdown">The markdown.</param>
         /// <param name="fontSize">Size of the font.</param>
         /// <param name="fontFamily">The font family.</param>
+        /// <param name="isThinkingVisible">if set to <c>true</c> [is thinking visible].</param>
         public static string BuildHtml(string markdown, double fontSize, FontFamily fontFamily, bool isThinkingVisible)
         {
-            if (string.IsNullOrWhiteSpace(markdown))
-                return BuildHtmlPage(string.Empty, fontSize, fontFamily);
-
-            var markdownHtml = Markdown.ToHtml(markdown, _pipeline);
-            var processedHtml = ProcessCodeSegments(markdownHtml, isThinkingVisible);
-            return BuildHtmlPage(processedHtml, fontSize, fontFamily);
+            var htmlBody = BuildBody(markdown, isThinkingVisible);
+            return FormatHtmlPage(htmlBody, fontSize, fontFamily);
         }
 
 
         /// <summary>
-        /// Builds the HTML header.
+        /// Builds an empty HTML page with styles and scripts ready for streaming updates
         /// </summary>
-        private static string BuildHeader()
-        {
-            var styleSheet = App.GetEmbeddedResource("Amuse.App.Controls.MarkdownElement.css");
-            var javascript = App.GetEmbeddedResource("Amuse.App.Controls.MarkdownElement.js");
-            var htmlBuilder = new StringBuilder();
-            htmlBuilder.Append($@"<meta charset=""UTF-8"">");
-            htmlBuilder.Append($"<style>{styleSheet}</style>");
-            htmlBuilder.Append($"<script>{javascript}</script>");
-            return htmlBuilder.ToString();
-        }
-
-
-        /// <summary>
-        /// Builds the HTML page.
-        /// </summary>
-        /// <param name="body">The body.</param>
         /// <param name="fontSize">Size of the font.</param>
         /// <param name="fontFamily">The font family.</param>
-        private static string BuildHtmlPage(ReadOnlySpan<char> body, double fontSize, FontFamily fontFamily)
+        public static string BuildEmptyHtml(double fontSize, FontFamily fontFamily)
         {
-            const string htmlTemplate =
-            @"<!DOCTYPE html>
+            return FormatHtmlPage(string.Empty, fontSize, fontFamily);
+        }
+
+
+        /// <summary>
+        /// Builds an HTML page without styles and scripts.
+        /// </summary>
+        /// <param name="markdown">The markdown.</param>
+        public static string BuildCleanHtml(string markdown)
+        {
+            var bodyContent = BuildBody(markdown, true);
+            if (bodyContent.Contains(ColorCodeBlockRenderer.Button))
+                bodyContent = bodyContent.Replace(ColorCodeBlockRenderer.Button, string.Empty);
+
+            return FormatCleanHtmlPage(bodyContent);
+        }
+
+
+        /// <summary>
+        /// Builds an HTML body.
+        /// </summary>
+        /// <param name="markdown">The markdown.</param>
+        /// <param name="isThinkingVisible">if set to <c>true</c> [is thinking visible].</param>
+        public static string BuildBody(string markdown, bool isThinkingVisible)
+        {
+            if (string.IsNullOrEmpty(markdown))
+                return string.Empty;
+
+            var markdownHtml = Markdown.ToHtml(markdown, _pipeline);
+            if (isThinkingVisible && markdownHtml.Contains(ThinkBlockRenderer.ContainerClosed))
+                markdownHtml = markdownHtml.Replace(ThinkBlockRenderer.ContainerClosed, ThinkBlockRenderer.ContainerOpened);
+
+            return markdownHtml;
+        }
+
+
+        public static string FormatHtmlPage(ReadOnlySpan<char> bodyContent, double fontSize, FontFamily fontFamily)
+        {
+            return $$"""
+            <!DOCTYPE html>
             <html>
-                <head>{0}</head>
-                <body>{1}</body>
-            </html>";
-
-            const string fontTemplate =
-            @"<style>
-                body,p,span,pre,li,th,td {{
-                    font-size:{0}px;
-                    font-family:""{1}"";
-                }}
-            </style>";
-
-            var headerBuilder = new StringBuilder(_header);
-            headerBuilder.Append(string.Format(fontTemplate, fontSize, fontFamily));
-            return string.Format(htmlTemplate, headerBuilder, body.ToString());
+                <head>
+                    <meta charset="UTF-8">
+                    <script>
+                        {{_htmlJavascript}}
+                    </script>
+                    <style>
+                        body,p,span,pre,li,th,td {
+                            font-size:{{fontSize}}px;
+                            font-family:"{{fontFamily.Source}}";
+                        }
+                        {{_htmlStyleSheet}}
+                    </style>
+                </head>
+                <body>
+                    {{bodyContent}}
+                </body>
+            </html>
+            """;
         }
 
 
-        /// <summary>
-        /// Processes the code segments.
-        /// </summary>
-        /// <param name="markdownHtml">The markdown HTML.</param>
-        private static string ProcessCodeSegments(string markdownHtml, bool isThinkingVisible)
+        public static string FormatCleanHtmlPage(ReadOnlySpan<char> bodyContent)
         {
-            try
-            {
-                var document = new HtmlDocument();
-                document.LoadHtml(markdownHtml);
+            return $$"""
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <meta charset="UTF-8">
+                </head>
+                <body>
+                    {{bodyContent}}
+                </body>
+            </html>
+            """;
+        }
 
-                // Show/Hide thinking section
-                var thinkingNode = document.GetElementbyId("thinking-panel");
-                if (thinkingNode != null)
+    }
+
+
+    public sealed class ConversationExtension : IMarkdownExtension
+    {
+        public void Setup(MarkdownPipelineBuilder pipeline)
+        {
+            if (!pipeline.BlockParsers.Contains<ConversationBlockParser>())
+                pipeline.BlockParsers.Insert(0, new ConversationBlockParser());
+        }
+
+        public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
+        {
+            if (renderer is HtmlRenderer htmlRenderer)
+            {
+                if (!htmlRenderer.ObjectRenderers.Contains<TagBlockRenderer>())
+                    htmlRenderer.ObjectRenderers.Add(new TagBlockRenderer());
+                if (!htmlRenderer.ObjectRenderers.Contains<ThinkBlockRenderer>())
+                    htmlRenderer.ObjectRenderers.Add(new ThinkBlockRenderer());
+                if (!htmlRenderer.ObjectRenderers.Contains<HiddenBlockRenderer>())
+                    htmlRenderer.ObjectRenderers.Add(new HiddenBlockRenderer());
+            }
+        }
+    }
+
+
+    public sealed class ConversationBlockParser : BlockParser
+    {
+        private readonly string[] _stripTags;
+
+        public ConversationBlockParser()
+        {
+            OpeningCharacters = ['<'];
+            _stripTags = ["<assistant>", "</assistant>"];
+        }
+
+        public override BlockState TryOpen(BlockProcessor processor)
+        {
+            if (processor.Line.Match("<think>"))
+            {
+                processor.NewBlocks.Push(new ThinkBlock(this, "Thinking...", "</think>"));
+                processor.GoToColumn(processor.Line.End + 1);
+                return BlockState.ContinueDiscard;
+            }
+            if (processor.Line.Match("<user>"))
+            {
+                processor.NewBlocks.Push(new TagBlock(this, "User", "</user>"));
+                processor.GoToColumn(processor.Line.End + 1);
+                return BlockState.ContinueDiscard;
+            }
+            if (processor.Line.Match("<system>"))
+            {
+                processor.NewBlocks.Push(new HiddenBlock(this, "System", "</system>"));
+                processor.GoToColumn(processor.Line.End + 1);
+                return BlockState.ContinueDiscard;
+            }
+            if (processor.Line.Match("<context>"))
+            {
+                processor.NewBlocks.Push(new HiddenBlock(this, "Context", "</context>"));
+                processor.GoToColumn(processor.Line.End + 1);
+                return BlockState.ContinueDiscard;
+            }
+
+            foreach (var stripTags in _stripTags)
+            {
+                if (processor.Line.Match(stripTags))
                 {
-                    if (isThinkingVisible)
-                        thinkingNode.Attributes.Add("open", "");
-                    else
-                        thinkingNode.Attributes.Remove("open");
+                    processor.GoToColumn(processor.Line.End + 1);
+                    return BlockState.None;
+                }
+            }
+            return BlockState.None;
+        }
+
+
+        public override BlockState TryContinue(BlockProcessor processor, Block block)
+        {
+            if (block is ThinkBlock thinkBlock && processor.Line.Match(thinkBlock.CloseTag))
+            {
+                processor.GoToColumn(processor.Line.End + 1);
+                return BlockState.BreakDiscard;
+            }
+            if (block is TagBlock tagblock && processor.Line.Match(tagblock.CloseTag))
+            {
+                processor.GoToColumn(processor.Line.End + 1);
+                return BlockState.BreakDiscard;
+            }
+            if (block is HiddenBlock hiddenBlock && processor.Line.Match(hiddenBlock.CloseTag))
+            {
+                processor.GoToColumn(processor.Line.End + 1);
+                return BlockState.BreakDiscard;
+            }
+            return BlockState.Continue;
+        }
+    }
+
+
+    public sealed class ThinkBlock : ContainerBlock
+    {
+        public ThinkBlock(BlockParser parser, string label, string closeTag) : base(parser)
+        {
+            Label = label;
+            CloseTag = closeTag;
+        }
+        public string Label { get; }
+        public string CloseTag { get; }
+    }
+
+
+    public sealed class ThinkBlockRenderer : HtmlObjectRenderer<ThinkBlock>
+    {
+        protected override void Write(HtmlRenderer renderer, ThinkBlock block)
+        {
+            renderer.WriteLine(ContainerClosed);
+            renderer.WriteLine($"<summary class=\"thinking-summary\">{block.Label}</summary>");
+            renderer.WriteLine("<div>");
+            renderer.WriteChildren(block);
+            renderer.WriteLine("</div>");
+            renderer.Write("</details>");
+        }
+
+        public const string ContainerOpened = "<details class=\"thinking-panel\" open>";
+        public const string ContainerClosed = "<details class=\"thinking-panel\">";
+    }
+
+
+    public sealed class TagBlock : ContainerBlock
+    {
+        public TagBlock(BlockParser parser, string name, string closeTag) : base(parser)
+        {
+            Name = name;
+            CloseTag = closeTag;
+            ClassName = $"message-{Name.ToLowerInvariant()}";
+        }
+
+        public string Name { get; }
+        public string CloseTag { get; }
+        public string ClassName { get; }
+    }
+
+
+    public sealed class TagBlockRenderer : HtmlObjectRenderer<TagBlock>
+    {
+        protected override void Write(HtmlRenderer renderer, TagBlock block)
+        {
+            Block lastProcessedBlock = null;
+            renderer.WriteLine($"<div class=\"{block.ClassName}\">");
+            foreach (var subBlock in block.Descendants<Block>())
+            {
+                if (subBlock is HiddenBlock hiddenBlock)
+                {
+                    HiddenBlockRenderer.WriteBlock(renderer, hiddenBlock);
+                    continue;
                 }
 
-                // Format code segments
-                foreach (var codeSegment in document.DocumentNode.SelectNodes("//pre") ?? Enumerable.Empty<HtmlNode>())
+                if (subBlock.Parent is HiddenBlock)
+                    continue;
+
+                if (subBlock is CodeBlock codeBlock)
                 {
-                    var codeBlock = codeSegment.SelectSingleNode("./code");
-                    if (codeBlock == null)
-                        continue;
+                    if (lastProcessedBlock != null)
+                        renderer.EnsureLine();
 
-                    var language = "";
-                    var classAttr = codeBlock.GetAttributeValue("class", "");
-                    if (classAttr.StartsWith("language-"))
-                        language = classAttr["language-".Length..];
-
-                    var codeContent = WebUtility.HtmlDecode(codeBlock.InnerText);
-                    var replacementSegment = GetCodeSegment(language, codeContent);
-                    codeSegment.ParentNode.ReplaceChild(replacementSegment, codeSegment);
+                    lastProcessedBlock = subBlock;
+                    foreach (var line in codeBlock.Lines.Lines)
+                    {
+                        if (line.Slice.Length > 0)
+                        {
+                            renderer.WriteEscape(line.Slice);
+                            if (line.NewLine != Markdig.Helpers.NewLine.None)
+                                renderer.EnsureLine();
+                        }
+                    }
+                    continue;
                 }
-                return document.DocumentNode.OuterHtml;
+
+                if (subBlock is LeafBlock leafBlock && leafBlock.Inline != null)
+                {
+                    if (lastProcessedBlock != null && lastProcessedBlock != subBlock)
+                        renderer.EnsureLine();
+
+                    lastProcessedBlock = subBlock;
+                    Inline inline = leafBlock.Inline;
+                    while (inline != null)
+                    {
+                        RenderInlineFiltered(renderer, inline);
+                        inline = inline.NextSibling;
+                    }
+                }
             }
-            catch (Exception)
-            {
-                return markdownHtml;
-            }
+            renderer.WriteLine();
+            renderer.WriteLine("</div>");
         }
 
 
-        /// <summary>
-        /// Gets the code segment.
-        /// </summary>
-        /// <param name="language">The language.</param>
-        /// <param name="content">The content.</param>
-        private static HtmlNode GetCodeSegment(string language, ReadOnlySpan<char> content)
+        private static void RenderInlineFiltered(HtmlRenderer renderer, Inline inline)
         {
-            try
+            switch (inline)
             {
-                var languageId = Languages.FindById(GetLanguageCode(language));
-                if (languageId == null)
-                    return FormatCode(content, true);
-
-                var codeContent = content.Trim().ToString();
-                var formattedHtml = _formatter.GetHtmlString(codeContent, languageId).AsSpan();
-                var preStart = formattedHtml.IndexOf("<pre>");
-                var preEnd = formattedHtml.LastIndexOf("</pre>") + 6;
-                if (preEnd > preStart)
-                    return FormatCode(formattedHtml[preStart..preEnd], false);
-
-                return FormatCode(formattedHtml, false);
+                case LiteralInline:
+                    renderer.Write(inline);
+                    break;
+                case LinkInline:
+                case AutolinkInline:
+                    renderer.Write(inline);
+                    break;
+                case CodeInline codeInline:
+                    renderer.WriteEscape(codeInline.Content);
+                    break;
+                case LineBreakInline:
+                    renderer.EnsureLine();
+                    break;
+                case ContainerInline container:
+                    var child = container.FirstChild;
+                    bool isOpen = false;
+                    while (child != null)
+                    {
+                        if (child is LiteralInline && !isOpen)
+                        {
+                            isOpen = true;
+                            renderer.Write("<p>");
+                        }
+                        RenderInlineFiltered(renderer, child);
+                        child = child.NextSibling;
+                        if (child is not LiteralInline && isOpen)
+                        {
+                            isOpen = false;
+                            renderer.Write("</p>");
+                        }
+                    }
+                    break;
             }
-            catch (Exception)
+        }
+    }
+
+
+    public sealed class HiddenBlock : ContainerBlock
+    {
+        public HiddenBlock(BlockParser parser, string name, string closeTag) : base(parser)
+        {
+            Name = name;
+            CloseTag = closeTag;
+            ClassName = $"message-{Name.ToLowerInvariant()}";
+        }
+
+        public string Name { get; }
+        public string CloseTag { get; }
+        public string ClassName { get; }
+    }
+
+
+    public sealed class HiddenBlockRenderer : HtmlObjectRenderer<HiddenBlock>
+    {
+        protected override void Write(HtmlRenderer renderer, HiddenBlock block)
+        {
+            WriteBlock(renderer, block);
+        }
+
+        public static void WriteBlock(HtmlRenderer renderer, HiddenBlock block)
+        {
+            renderer.WriteLine($"<div class=\"{block.ClassName}\">");
+            renderer.WriteChildren(block);
+            renderer.WriteLine("</div>");
+        }
+    }
+
+
+    public sealed class ColorCodeExtension : IMarkdownExtension
+    {
+        private readonly HtmlClassFormatter _formatter;
+
+        public ColorCodeExtension(HtmlClassFormatter formatter)
+        {
+            _formatter = formatter;
+        }
+
+        public void Setup(MarkdownPipelineBuilder pipeline) { }
+
+        public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
+        {
+            if (renderer is HtmlRenderer htmlRenderer)
             {
-                return FormatCode(content, true);
+                var defaultRenderer = htmlRenderer.ObjectRenderers.Find<CodeBlockRenderer>();
+                if (defaultRenderer != null)
+                {
+                    htmlRenderer.ObjectRenderers.Remove(defaultRenderer);
+                }
+                htmlRenderer.ObjectRenderers.Add(new ColorCodeBlockRenderer(_formatter));
             }
+        }
+    }
+
+
+    public sealed class ColorCodeBlockRenderer : HtmlObjectRenderer<CodeBlock>
+    {
+        private readonly HtmlClassFormatter _formatter;
+
+        public ColorCodeBlockRenderer(HtmlClassFormatter formatter)
+        {
+            _formatter = formatter;
+        }
+
+        public const string Button = "<button class=\"copy-code\">📋</button>";
+
+        protected override void Write(HtmlRenderer renderer, CodeBlock block)
+        {
+            var codeContent = block.Lines.ToString();
+            var codeLanguage = GetCodeLanguage(block);
+            if (codeLanguage == null)
+            {
+                renderer.Write(FormatCodeSection(WebUtility.HtmlEncode(codeContent), true));
+                return;
+            }
+
+            var formattedHtmlSpan = _formatter.GetHtmlString(codeContent, codeLanguage).AsSpan();
+            var codeSectionStart = formattedHtmlSpan.IndexOf("<pre>");
+            var codeSectionEnd = formattedHtmlSpan.LastIndexOf("</pre>") + 6;
+            if (codeSectionEnd > codeSectionStart)
+                formattedHtmlSpan = FormatCodeSection(formattedHtmlSpan[codeSectionStart..codeSectionEnd], false);
+
+            renderer.Write(formattedHtmlSpan);
         }
 
 
-        /// <summary>
-        /// Formats the code.
-        /// </summary>
-        /// <param name="content">The content.</param>
-        private static HtmlNode FormatCode(ReadOnlySpan<char> content, bool isSimpleLayout)
+        private static string FormatCodeSection(ReadOnlySpan<char> codeContent, bool isSimpleLayout)
         {
             if (isSimpleLayout)
-                return HtmlNode.CreateNode($"<pre>{content}</pre>");
+                return $"<pre>{codeContent}</pre>";
 
-            const string codeTemplate =
-            @"<div class=""copy-block"">
-                <div class=""copy-content"">
-                    {0}
+            return $$"""
+            <div class="copy-block">
+                <div class="copy-content">
+                    {{codeContent}}
                 </div>
-                <button class=""copy-code"">📋</button>
-            </div>";
-            return HtmlNode.CreateNode(string.Format(codeTemplate, content.ToString()));
+                {{Button}}
+            </div>
+            """;
         }
 
 
-        /// <summary>
-        /// Gets the language code.
-        /// </summary>
-        /// <param name="language">The language code.</param>
-        private static string GetLanguageCode(string language)
+        private static ILanguage GetCodeLanguage(CodeBlock codeBlock)
         {
-            if (AlternateLanguages.TryGetValue(language, out var alternateLanguage))
-                return alternateLanguage;
+            try
+            {
+                var language = GetCodeBlockLanguage(codeBlock);
+                if (string.IsNullOrEmpty(language))
+                    return null;
 
-            return language;
+                if (AlternateLanguages.TryGetValue(language, out var alternateLanguage))
+                    return Languages.FindById(alternateLanguage);
+
+                return Languages.FindById(language);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+
+        private static string GetCodeBlockLanguage(CodeBlock codeBlock)
+        {
+            if (codeBlock is not FencedCodeBlock fencedCodeBlock || string.IsNullOrEmpty(fencedCodeBlock.Info))
+                return string.Empty;
+
+            var info = fencedCodeBlock.Info.AsSpan();
+            int end = info.IndexOfAny(' ', '\t');
+            if (end >= 0)
+                info = info[..end];
+            return info.Trim().ToString();
         }
 
 
@@ -219,88 +522,5 @@ namespace Amuse.App.Services
             {"kotlin", "csharp" },
             {"rust", "cplusplus" }
         };
-    }
-
-
-    public class ThinkBlock : ContainerBlock
-    {
-        public ThinkBlock(BlockParser parser, string description) : base(parser)
-        {
-            Description = description;
-        }
-
-        public string Description { get; }
-    }
-
-
-    public class ThinkBlockParser : BlockParser
-    {
-        private readonly string _tagOpen;
-        private readonly string _tagClose;
-        private readonly string _description;
-
-        public ThinkBlockParser(string description, string tagOpen, string tagClose)
-        {
-            _tagOpen = tagOpen;
-            _tagClose = tagClose;
-            _description = description;
-            OpeningCharacters = new[] { '<' };
-        }
-
-        public override BlockState TryOpen(BlockProcessor processor)
-        {
-            if (!processor.Line.Match(_tagOpen))
-                return BlockState.None;
-
-            processor.NewBlocks.Push(new ThinkBlock(this, _description));
-            return BlockState.ContinueDiscard;
-        }
-
-        public override BlockState TryContinue(BlockProcessor processor, Block block)
-        {
-            if (processor.Line.Match(_tagClose))
-            {
-                return BlockState.BreakDiscard;
-            }
-            return BlockState.Continue;
-        }
-    }
-
-
-    public class ThinkBlockRenderer : HtmlObjectRenderer<ThinkBlock>
-    {
-        protected override void Write(HtmlRenderer renderer, ThinkBlock block)
-        {
-            renderer.WriteLine("<details id=\"thinking-panel\">");
-            renderer.WriteLine($"<summary id=\"thinking-summary\">{block.Description}</summary>");
-            renderer.WriteLine("<div>");
-            renderer.WriteChildren(block);
-            renderer.WriteLine("</div>");
-            renderer.Write("</details>");
-        }
-    }
-
-
-    public class ThinkExtension : IMarkdownExtension
-    {
-        public void Setup(MarkdownPipelineBuilder pipeline)
-        {
-            if (!pipeline.BlockParsers.Contains<ThinkBlockParser>())
-            {
-                pipeline.BlockParsers.Insert(0, new ThinkBlockParser("Thinking...", "<think>", "</think>"));
-            }
-        }
-
-
-        public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
-        {
-            if (renderer is HtmlRenderer htmlRenderer)
-            {
-                if (!htmlRenderer.ObjectRenderers.Contains<ThinkBlockRenderer>())
-                {
-                    htmlRenderer.ObjectRenderers.Insert(0, new ThinkBlockRenderer());
-                }
-            }
-        }
     }
 }

@@ -8,26 +8,77 @@
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              xmlns:Behaviors="clr-namespace:TensorStack.WPF.Behaviors;assembly=TensorStack.WPF"
              xmlns:CommonControls="clr-namespace:TensorStack.WPF.Controls;assembly=TensorStack.WPF"
-             Background="#FF272727">
-    <ScrollViewer x:Name="ScrollViewerHost" DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MarkdownElement}}}" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" ScrollChanged="ScrollViewerHost_ScrollChanged" >
+             Background="#FF272727" Focusable="True">
+    <CommonControls:BaseControl.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding SaveCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type local:MarkdownElement}}}" CommandParameter="{StaticResource False}"/>
+        <KeyBinding Modifiers="Ctrl" Key="A" Command="{Binding CopyCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type local:MarkdownElement}}}" CommandParameter="{StaticResource False}"/>
+        <KeyBinding Modifiers="Ctrl" Key="R" Command="{Binding CopyResponseCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type local:MarkdownElement}}}" CommandParameter="{StaticResource False}"/>
+        <KeyBinding Modifiers="Ctrl" Key="T" Command="{Binding CopyThinkingCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type local:MarkdownElement}}}" CommandParameter="{StaticResource False}"/>
+        <KeyBinding Modifiers="Ctrl+Shift" Key="A" Command="{Binding CopyCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type local:MarkdownElement}}}" CommandParameter="{StaticResource True}"/>
+        <KeyBinding Modifiers="Ctrl+Shift" Key="R" Command="{Binding CopyResponseCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type local:MarkdownElement}}}" CommandParameter="{StaticResource True}"/>
+        <KeyBinding Modifiers="Ctrl+Shift" Key="T" Command="{Binding CopyThinkingCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type local:MarkdownElement}}}" CommandParameter="{StaticResource True}"/>
+    </CommonControls:BaseControl.InputBindings>
+    <ScrollViewer x:Name="ScrollViewerHost" DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MarkdownElement}}, Mode=OneTime}" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" ScrollChanged="ScrollViewerHost_ScrollChanged" >
         <i:Interaction.Behaviors>
-            <Behaviors:AutoScrollBehavior IsEnabled="{Binding IsScrollToBottomEnabled}"/>
+            <Behaviors:AutoScrollBehavior IsEnabled="{Binding IsScrollToBottomEnabled, Mode=OneWay}"/>
         </i:Interaction.Behaviors>
         <Grid>
-            <wv2:WebView2 x:Name="WebViewer" 
-                SnapsToDevicePixels="True" 
-                UseLayoutRounding="True" 
-                DefaultBackgroundColor="#FF2D2D2D"
-                ZoomFactor="{Binding Settings.UIScale, Mode=OneWay}">
-            </wv2:WebView2>
-            <TextBox x:Name="TextViewer" 
-                Background="{StaticResource ControlDefaultBackground}" 
+            <Grid x:Name="WebViewerContainer" >
+            </Grid>
+            <TextBox x:Name="TextViewer"
                 TextWrapping="Wrap" 
                 IsReadOnly="True" 
                 BorderThickness="0" 
                 IsUndoEnabled="False" 
                 UndoLimit="0" 
-                Padding="4" >
+                Padding="4"  
+                Background="{StaticResource ControlDefaultBackground}" >
+                <TextBox.ContextMenu>
+                    <ContextMenu IsEnabled="{Binding IsContextMenuEnabled, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Visibility="{Binding IsContextMenuEnabled, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BooleanToHiddenConverter}}">
+                        <MenuItem  Header="Copy" InputGestureText="Ctrl+C" Command="ApplicationCommands.Copy" >
+                            <MenuItem.Icon>
+                                <CommonControls:FontAwesome Icon="f0c7" IconStyle="Light" Size="15"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Save As" InputGestureText="Ctrl+S" Command="{Binding SaveCommand, Mode=OneWay}" CommandParameter="{StaticResource False}">
+                            <MenuItem.Icon>
+                                <CommonControls:FontAwesome Icon="f0c7" IconStyle="Light" Size="15"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator Opacity=".6" />
+                        <MenuItem  Header="Copy Text" InputGestureText="Ctrl+A" Command="{Binding CopyCommand, Mode=OneWay}" CommandParameter="{StaticResource False}">
+                            <MenuItem.Icon>
+                                <CommonControls:FontAwesome Icon="f0c7" IconStyle="Light" Size="15"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Copy Response" InputGestureText="Ctrl+R" Command="{Binding CopyResponseCommand, Mode=OneWay}" CommandParameter="{StaticResource False}">
+                            <MenuItem.Icon>
+                                <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Copy Thinking" InputGestureText="Ctrl+T" Command="{Binding CopyThinkingCommand, Mode=OneWay}" CommandParameter="{StaticResource False}">
+                            <MenuItem.Icon>
+                                <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator Opacity=".6" />
+                        <MenuItem  Header="Copy Html" InputGestureText="Ctrl+Shift+A" Command="{Binding CopyCommand, Mode=OneWay}" CommandParameter="{StaticResource True}">
+                            <MenuItem.Icon>
+                                <CommonControls:FontAwesome Icon="f0c7" IconStyle="Light" Size="15"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Copy Response Html" InputGestureText="Ctrl+Shift+R" Command="{Binding CopyResponseCommand, Mode=OneWay}" CommandParameter="{StaticResource True}">
+                            <MenuItem.Icon>
+                                <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Copy Thinking Html" InputGestureText="Ctrl+Shift+T" Command="{Binding CopyThinkingCommand, Mode=OneWay}" CommandParameter="{StaticResource True}">
+                            <MenuItem.Icon>
+                                <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </TextBox.ContextMenu>
             </TextBox>
         </Grid>
     </ScrollViewer>

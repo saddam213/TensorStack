@@ -17,6 +17,8 @@ namespace Amuse.App.Common
         private float _secondsPerIteration;
         private long _timestamp;
         private TimeSpan _elapsed;
+        private TimeSpan _firstAction;
+        private float _prefillPerSecond;
 
         public StatisticsModel(Dispatcher dispatcher)
         {
@@ -42,6 +44,18 @@ namespace Amuse.App.Common
             set { SetProperty(ref _secondsPerIteration, value); }
         }
 
+        public TimeSpan FirstAction
+        {
+            get { return _firstAction; }
+            set { SetProperty(ref _firstAction, value); }
+        }
+
+        public float PrefillPerSecond
+        {
+            get { return _prefillPerSecond; }
+            set { SetProperty(ref _prefillPerSecond, value); }
+        }
+
         public void Start()
         {
             _timestamp = Stopwatch.GetTimestamp();
@@ -63,10 +77,25 @@ namespace Amuse.App.Common
             IterationsPerSecond = 0;
             SecondsPerIteration = 0;
             Elapsed = TimeSpan.Zero;
+            FirstAction = TimeSpan.Zero;
+            PrefillPerSecond = 0;
         }
 
-        public void Update(PipelineProgress progress)
+        public void UpdateStep(PipelineProgress progress)
         {
+            _perSecond.Add(progress.IterationsPerSecond);
+            _secondPer.Add(progress.SecondsPerIteration);
+        }
+
+        public void UpdateToken(PipelineProgress progress)
+        {
+            if (FirstAction == TimeSpan.Zero)
+            {
+                FirstAction = TimeSpan.FromMilliseconds(progress.Elapsed);
+                PrefillPerSecond = (progress.Elapsed / progress.Value) * 1000;
+                return;
+            }
+
             _perSecond.Add(progress.IterationsPerSecond);
             _secondPer.Add(progress.SecondsPerIteration);
         }

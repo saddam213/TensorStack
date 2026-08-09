@@ -242,6 +242,7 @@ namespace TensorStack.WPF.Controls
         Text = 1,
         Image = 2,
         Video = 3,
-        Audio = 4
+        Audio = 4,
+        Conversation = 5
     }
 }

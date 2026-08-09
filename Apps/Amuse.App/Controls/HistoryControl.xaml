@@ -60,7 +60,10 @@
                             <CommonControls:FontAwesome Icon="f001" IconStyle="Solid" Size="70" Color="{StaticResource DefaultForeground}" Opacity=".2" />
                         </Border>
                         <Border Width="100" Height="100" Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}" BorderBrush="{StaticResource DefaultBorderColor}" BorderThickness="0,0,0,1">
-                            <CommonControls:FontAwesome Icon="f894" IconStyle="Solid" Size="70" Color="{StaticResource DefaultForeground}" Opacity=".2" />
+                            <Grid>
+                                <CommonControls:FontAwesome Icon="f894" IconStyle="Solid" Size="70" Color="{StaticResource DefaultForeground}" Opacity=".2" Visibility="{Binding Source, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=TextConverse}"/>
+                                <CommonControls:FontAwesome Icon="e1e7" IconStyle="Regular" Size="70" Color="{StaticResource DefaultForeground}" Opacity=".2" Visibility="{Binding Source, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=TextConverse}"/>
+                            </Grid>
                         </Border>
                         <CommonControls:TransparentImageElement 
                             Height="100" 
@@ -102,9 +105,9 @@
                         </StackPanel>
                         <StackPanel Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
                             <TextBlock TextAlignment="Center" LineHeight="14" LineStackingStrategy="BlockLineHeight">
-                               <Run Text="{Binding Length}" />
-                               <LineBreak/>
-                               <Run Text="{Binding Source}" />
+                                <Run Text="{Binding Length}" />
+                                <LineBreak/>
+                                <Run Text="{Binding Source}" />
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -116,7 +119,7 @@
                     <Border Background="#01000000">
                         <Border Style="{StaticResource HistoryContainer}" >
                             <Grid Margin="6,4,6,6">
-                                <StackPanel Visibility="{Binding MediaType, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=Audio}">
+                                <StackPanel Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Image|Video}">
                                     <TextBlock Text="{Binding Source}" />
                                     <TextBlock>
                                         <Run Text="{Binding Width}" />
@@ -130,6 +133,11 @@
                                     <TextBlock Text="{Binding Source}" /> 
                                     <TextBlock Text="{Binding Duration, FallbackValue=00:00:00, StringFormat={}mm\\:ss\\.ff}" />
                                     <TextBlock Text="{Binding SampleRate, StringFormat={}SampleRate: {0}}" />
+                                    <TextBlock Text="{Binding Model, StringFormat={}Model: {0}}" />
+                                    <TextBlock Text="{Binding MediaPath}" />
+                                </StackPanel>
+                                <StackPanel Visibility="{Binding MediaType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Text}">
+                                    <TextBlock Text="{Binding Source}" />
                                     <TextBlock Text="{Binding Model, StringFormat={}Model: {0}}" />
                                     <TextBlock Text="{Binding MediaPath}" />
                                 </StackPanel>

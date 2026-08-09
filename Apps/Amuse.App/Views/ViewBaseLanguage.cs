@@ -1,5 +1,4 @@
 ﻿using Amuse.App.Common;
-using Amuse.App.Controls;
 using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
@@ -89,11 +88,6 @@ namespace Amuse.App.Views
         /// Gets or sets the automation progress.
         /// </summary>
         public ProgressInfo AutomationProgress { get; }
-
-        /// <summary>
-        /// Gets the text result control.
-        /// </summary>
-        protected abstract TextResultControl TextResultControl { get; }
 
 
         /// <summary>
@@ -382,7 +376,7 @@ namespace Amuse.App.Views
                 }
                 else
                 {
-                    Progress.Indeterminate($"Loading {CurrentPipeline.LanguageModel.Name}...");
+                    Progress.Indeterminate($"Initializing {CurrentPipeline.LanguageModel.Backend} Environment...");
                     if (!await LoadPipelineAsync())
                         return;// Canceled/Failed to load pipeline
 
@@ -421,7 +415,11 @@ namespace Amuse.App.Views
             if (CurrentPipeline is null)
                 return;
 
-            if (progress.Key == "Generate")
+            if (progress.Key == "Load")
+            {
+                Progress.Indeterminate(progress.Message);
+            }
+            else if (progress.Key == "Generate")
             {
                 if (progress.Subkey == "Initialize")
                 {
@@ -429,8 +427,7 @@ namespace Amuse.App.Views
                 }
                 else if (progress.Subkey == "Token")
                 {
-                    Statistics.Update(progress);
-                    TextResultControl?.UpdateProgress(progress);
+                    Statistics.UpdateToken(progress);
                 }
                 else
                 {

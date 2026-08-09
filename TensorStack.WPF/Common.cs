@@ -15,8 +15,8 @@ namespace TensorStack.WPF
     {
         public const double DragDistance = 20.0;
 
-        public readonly static string[] TextFileExtensions = [".txt"];
-        public const string TextFileFilter = "Text Files|*.txt;|All Files|*.*";
+        public readonly static string[] TextFileExtensions = [".txt", ".md"];
+        public const string TextFileFilter = "Text Files|*.txt;*.md;|All Files|*.*";
 
         public readonly static string[] ImageFileExtensions = [".bmp", ".jpg", ".jpeg", ".png", ".tif", ".tiff"];
         public const string ImageFileFilter = "Image Files|*.bmp;*.jpg;*.jpeg;*.png;*.gif;*.tif;*.tiff|All Files|*.*";

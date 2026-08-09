@@ -5,9 +5,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
+using TensorStack.Audio;
 using TensorStack.Common;
+using TensorStack.Common.Tensor;
+using TensorStack.Image;
+using TensorStack.Video;
 
 namespace Amuse.App
 {
@@ -182,21 +187,12 @@ namespace Amuse.App
                     yield return descendant;
             }
         }
+
     }
 
     public static partial class Utils
     {
         public const int FixedIdRange = 1000;
-
-
-        public static bool HasThinkingText(string content, string tagOpen = "<think>", string tagClose = "</think>")
-        {
-            if (string.IsNullOrWhiteSpace(content))
-                return false;
-
-            return content.StartsWith(tagOpen, StringComparison.OrdinalIgnoreCase)
-                && content.Contains(tagClose, StringComparison.OrdinalIgnoreCase);
-        }
 
 
         /// <summary>
@@ -205,10 +201,13 @@ namespace Amuse.App
         /// <param name="content">The content.</param>
         /// <param name="tagOpen">The tag open.</param>
         /// <param name="tagClose">The tag close.</param>
-        public static string GetThinkingText(string content, string tagOpen = "<think>", string tagClose = "</think>")
+        public static string GetThinkingText(string content, bool isConversation = false, string tagOpen = "<think>", string tagClose = "</think>")
         {
+            if (isConversation)
+                content = GetLastMessage(content);
+
             if (string.IsNullOrEmpty(content))
-                return string.Empty;
+                return default;
 
             if (content.StartsWith(tagOpen, StringComparison.OrdinalIgnoreCase))
             {
@@ -217,7 +216,7 @@ namespace Amuse.App
                 if (end > start)
                     return content[start..end].Trim();
             }
-            return string.Empty;
+            return default;
         }
 
 
@@ -228,8 +227,11 @@ namespace Amuse.App
         /// <param name="tagOpen">The tag open.</param>
         /// <param name="tagClose">The tag close.</param>
         /// <returns>System.String.</returns>
-        public static string GetResponseText(string content, string tagOpen = "<think>", string tagClose = "</think>")
+        public static string GetResponseText(string content, bool isConversation = false, string tagOpen = "<think>", string tagClose = "</think>")
         {
+            if (isConversation)
+                content = GetLastMessage(content);
+
             if (string.IsNullOrEmpty(content))
                 return string.Empty;
 
@@ -240,6 +242,24 @@ namespace Amuse.App
                     return content[(start + tagClose.Length)..].Trim();
             }
             return content;
+        }
+
+
+        public static string GetLastMessage(string content, string tagOpen = "\n<assistant>\n", string tagClose = $"\n</assistant>\n")
+        {
+            if (string.IsNullOrEmpty(content))
+                return string.Empty;
+
+            int end = content.LastIndexOf(tagClose, StringComparison.Ordinal);
+            if (end < 0)
+                return null;
+
+            int start = content.LastIndexOf(tagOpen, end, StringComparison.Ordinal);
+            if (start < 0)
+                return null;
+
+            start += tagOpen.Length;
+            return content[start..end];
         }
 
 
@@ -275,6 +295,66 @@ namespace Amuse.App
         private static int Estimate(double parametersBillion, double bytesPerParam, double overhead)
         {
             return (int)Math.Ceiling(parametersBillion * bytesPerParam * overhead);
+        }
+
+
+        public static int[] GetIndexValues(this Dictionary<int, string> valuePairs)
+        {
+            if (valuePairs.IsNullOrEmpty())
+                return [];
+
+            return [.. valuePairs.Keys.Where(x => x >= 0)];
+        }
+
+
+        public static Dictionary<int, string> GetIndexedInputs(this List<ImageInput> images, int maxCount = 0)
+        {
+            if (images.IsNullOrEmpty())
+                return default;
+
+            var start = maxCount > 0 && images.Count > maxCount ? maxCount - images.Count : 0;
+            var dictionary = new Dictionary<int, string>();
+            for (var i = 0; i < images.Count; i++)
+            {
+                dictionary.Add(start + i, images[i].SourceFile);
+            }
+            return dictionary;
+        }
+
+
+        public static Dictionary<int, string> GetIndexedInputs(this List<AudioInputStream> audioStreams, int maxCount = 0)
+        {
+            if (audioStreams.IsNullOrEmpty())
+                return default;
+
+            var start = maxCount > 0 && audioStreams.Count > maxCount ? maxCount - audioStreams.Count : 0;
+            var dictionary = new Dictionary<int, string>();
+            for (var i = 0; i < audioStreams.Count; i++)
+            {
+                dictionary.Add(start + i, audioStreams[i].SourceFile);
+            }
+            return dictionary;
+        }
+
+
+        public static Dictionary<int, string> GetIndexedInputs(this List<VideoInputStream> videoStreams, int maxCount = 0)
+        {
+            if (videoStreams.IsNullOrEmpty())
+                return default;
+
+            var start = maxCount > 0 && videoStreams.Count > maxCount ? maxCount - videoStreams.Count : 0;
+            var dictionary = new Dictionary<int, string>();
+            for (var i = 0; i < videoStreams.Count; i++)
+            {
+                dictionary.Add(start + i, videoStreams[i].SourceFile);
+            }
+            return dictionary;
+        }
+
+
+        public static List<ImageTensor> AsImageTensors(this List<ImageInput> imageInputs)
+        {
+            return [.. imageInputs.Select(x => x.AsImageTensor())];
         }
 
     }
@@ -315,5 +395,18 @@ namespace Amuse.App
             typeof(Brushes).GetProperties()
                 .Where(p => p.PropertyType == typeof(Brush))
                 .Select(p => (Brush)p.GetValue(null));
+    }
+
+
+    public static partial class RegexManager
+    {
+        public static bool HasUnclosedFence(string markdown)
+        {
+            int count = UnclosedFence().Count(markdown);
+            return count % 2 != 0;
+        }
+
+        [GeneratedRegex(@"^```", RegexOptions.Multiline)]
+        private static partial Regex UnclosedFence();
     }
 }

@@ -5,6 +5,7 @@ using Amuse.Common.Config;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -528,7 +529,8 @@ namespace Amuse.App.Runtime
                 Task = options.Task,
                 IsThinkingEnabled = options.IsThinkingEnabled,
                 InputImages = options.InputImages,
-                SampleRate = DefaultOptions.SampleRate
+                SampleRate = DefaultOptions.SampleRate,
+                CacheType = options.CacheType
             };
         }
 
@@ -712,12 +714,12 @@ namespace Amuse.App.Runtime
         }
 
 
-        private static ConversationMessage[] CreateConversation(List<ConversationModel> conversation)
+        private static ConversationMessage[] CreateConversation(ObservableCollection<ConversationModel> conversation)
         {
             if (conversation.IsNullOrEmpty())
                 return default;
 
-            return [.. conversation.Select(x => new ConversationMessage(x.Role, x.Content, [.. x.ImageIndex ?? []], [.. x.AudioIndex ?? []]))];
+            return [.. conversation.Select(x => new ConversationMessage(x.Role, x.Content, x.ImageIndex.GetIndexValues(), x.AudioIndex.GetIndexValues()))];
         }
 
 

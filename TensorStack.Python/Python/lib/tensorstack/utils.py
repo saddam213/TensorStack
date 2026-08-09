@@ -5,6 +5,7 @@ os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
 os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
 os.environ["HF_HUB_DISABLE_UPDATE_CHECK"] = "1"
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
+os.environ["DISABLE_TELEMETRY"] = "1"
 import json
 import gc
 import sys
@@ -575,11 +576,7 @@ def prepare_audios(
         data, shape = pair
         return audioFromInput(data, shape).cpu().numpy()
 
-    # Return a single tensor if list length is 1, otherwise a list
-    if len(lst) == 1:
-        return make_tensor(lst[0])
-
-    return [make_tensor(pair) for pair in lst]
+    return make_tensor(lst[0]).squeeze(0)
 
 
 #------------------------------------------------

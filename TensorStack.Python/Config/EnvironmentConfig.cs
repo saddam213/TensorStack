@@ -17,20 +17,20 @@ namespace TensorStack.Python.Config
         [
             "typing==3.7.4.3",
             "wheel==0.47.0",
-            "transformers==5.14.1",
+            "transformers==5.13.1",
             "accelerate==1.14.0",
             "diffusers==0.39.0",
             "protobuf==7.35.1",
-            "sentencepiece==0.2.1",
+            "sentencepiece==0.2.2",
             "ftfy==6.3.1",
             "scipy==1.18.0",
-            "peft==0.19.1",
+            "peft==0.20.0",
             "torchsde==0.2.6",
             "gguf==0.19.0",
             "av==18.0.0",
             "soundfile==0.14.0",
             "optimum-quanto==0.2.7",
-            "bitsandbytes==0.49.2"
+            "bitsandbytes==0.50.0"
         ];
 
 
@@ -54,7 +54,7 @@ namespace TensorStack.Python.Config
                 "torch==2.9.1",
                 "torchvaudio==2.9.1",
                 "torchvision==0.24.1",
-                "torchao==0.17.0",
+                "torchao==0.18.0",
                 ..DefaultRequirements,
             ]
         };

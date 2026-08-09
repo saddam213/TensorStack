@@ -68,9 +68,7 @@
                         </UniformGrid>
 
                         <!--InputControl-->
-                        <DockPanel IsEnabled="{Binding GenerateService.IsLoaded, Mode=OneWay}" >
-
-                            <!--InputControl-->
+                        <Grid IsEnabled="{Binding GenerateService.IsLoaded, Mode=OneWay}" >
                             <Controls:LanguageInputControl 
                                 x:Name="InputControl"
                                 ViewType="ImageToText"
@@ -85,8 +83,7 @@
                                 IsExecuting="{Binding GenerateService.IsExecuting, Mode=OneWay}"
                                 IsAutomating="{Binding IsAutomating, Mode=OneWay}"
                                 IsEnabled="{Binding CurrentPipeline, Converter={StaticResource InverseNullBooleanConverter}, Mode=OneWay}"/>
-
-                        </DockPanel>
+                        </Grid>
 
                     </DockPanel>
                 </DockPanel>
@@ -110,7 +107,6 @@
                     PrefixSecondsPer=""
                     Statistics="{Binding Statistics, Mode=OneWay}"
                     Progress="{Binding Progress, Mode=OneWay}" />
-
                 <Border IsEnabled="{Binding IsViewBusy, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -310,18 +306,28 @@
 
                         <!--Result-->
                         <Grid Grid.Column="2">
-                            <Grid Margin="8,8,8,2">
+                            <Grid Margin="8,8,8,2" >
                                 <Controls:TextResultControl 
                                     x:Name="TextResultElement" 
-                                    Settings="{Binding Settings, Mode=OneWay}" 
-                                    Result="{Binding ResultText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                    MaxTokenLength="{Binding Options.MaxLength, Mode=OneWay}">
+                                    Settings="{Binding Settings, Mode=OneWay}"
+                                    MaxTokenLength="{Binding Options.MaxLength, Mode=OneWay}"
+                                    IsInputEnabled="{Binding GenerateService.IsExecuting,UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}">
+                                    <Controls:TextResultControl.Style>
+                                        <Style TargetType="{x:Type Controls:TextResultControl}">
+                                            <Setter Property="IsMultipleBeamResult" Value="True" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Options.Beams, RelativeSource={RelativeSource AncestorType={x:Type local:ImageToTextView}}, Mode=OneWay}" Value="1">
+                                                    <Setter Property="IsMultipleBeamResult" Value="False" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Controls:TextResultControl.Style>
                                 </Controls:TextResultControl>
                             </Grid>
                         </Grid>
+
                     </Grid>
                 </Border>
-
             </DockPanel>
         </Grid>
     </Grid>

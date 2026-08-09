@@ -32,7 +32,7 @@ class QuantBackend(Enum):
     NONE = 0
     QUANTO = 1
     BITSANDBYTES = 2
-    TorchAO = 3
+    TORCHAO = 3
 
 
 class QuantTarget(Enum):
@@ -45,3 +45,12 @@ class VendorType(Enum):
     AMD = 4098
     Nvidia = 4318
     Intel = 32902
+
+
+class CacheType(Enum):
+    Dynamic = 0
+    DynamicOffload = 1,
+    Static = 2
+    StaticOffload = 3,
+    Quantized = 4,
+    Disabled = 100

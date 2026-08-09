@@ -73,6 +73,7 @@
                             <CommonControls:SliderControl Text="Min Length" Value="{Binding Options.MinLength}" Maximum="{Binding Pipeline.LanguageModel.DefaultOptions.MaxLength}" TickFrequency="1" />
                             <CommonControls:SliderControl Text="Max Length" Value="{Binding Options.MaxLength}" Maximum="{Binding Pipeline.LanguageModel.DefaultOptions.MaxLength}" TickFrequency="1024" />
                         </UniformGrid>
+
                         <CheckBox Content="Thinking Enabled" IsChecked="{Binding Options.IsThinkingEnabled}" Margin="-1,8,0,4" FontStyle="Italic" FontSize="11" Opacity=".9"/>
                     </StackPanel>
 
@@ -108,7 +109,14 @@
 
                         <!--Context-->
                         <Border Visibility="{Binding IsPromptEnabled, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                            <Controls:ContextControl x:Name="ContextControlElement" />
+                            <DockPanel>
+                                <StackPanel DockPanel.Dock="Top">
+                                    <TextBlock Text="Conversation Context" Style="{StaticResource FieldTextBlockStyle}" Visibility="{Binding ViewType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=TextConverse}"/>
+                                    <TextBlock Text="Additional Context" Style="{StaticResource FieldTextBlockStyle}" Visibility="{Binding ViewType, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=TextConverse}"/>
+                                </StackPanel>
+                                <Controls:ContextControl x:Name="ContextControlElement" IsControlBusy="{Binding IsControlBusy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                            </DockPanel>
+                           
                         </Border>
 
                     </Grid>
@@ -139,6 +147,13 @@
                         <CheckBox Content="Sampling Enabled" IsChecked="{Binding Options.IsSamplingEnabled}" Margin="4,13,0,0" FontStyle="Italic" FontSize="11" Opacity=".9"/>
                     </UniformGrid>
 
+                    <UniformGrid DockPanel.Dock="Top" Columns="2">
+                        <StackPanel>
+                            <TextBlock Text="KV Cache" Style="{StaticResource FieldTextBlockStyle}" />
+                            <ComboBox ItemsSource="{Binding Source={StaticResource CacheType}}" SelectedItem="{Binding Options.CacheType}" Style="{StaticResource EnumComboBox}" />
+                        </StackPanel>
+                    </UniformGrid>
+
                     <Grid DockPanel.Dock="Bottom" Visibility="{Binding Options.Beams, Converter={StaticResource GreaterThanToVisibilityConverter}, ConverterParameter=1}">
                         <TextBlock FontSize="11" Foreground="{StaticResource WarningColour}" TextAlignment="Center" Opacity=".8" Margin="0,10,0,0" >
                             <Run Text="Note:" FontWeight="SemiBold" />
@@ -158,7 +173,7 @@
             </TabItem>
 
             <!--Automation-->
-            <TabItem Style="{StaticResource DiffusionInputTab}">
+            <TabItem Style="{StaticResource DiffusionInputTab}" Visibility="{Binding ViewType, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=TextConverse}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" Margin="3">
                         <CommonControls:FontAwesome Icon="e0b6" IconStyle="Solid" Color="{StaticResource AccentColour2}" Size="12"/>

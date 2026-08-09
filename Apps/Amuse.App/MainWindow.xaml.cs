@@ -18,7 +18,7 @@ namespace Amuse.App
     {
         private readonly double _defaultWidth = 1600;
         private readonly double _defaultHeight = 900;
-        private readonly View _defaultView = View.TextToImage;
+        private readonly View _defaultView = View.ImageToText;
         private View _view;
         private ViewCategory _viewCategory;
 

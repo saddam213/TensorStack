@@ -1,7 +1,7 @@
 
 from dataclasses import dataclass, fields
 from typing import Optional, Union, Sequence, get_args, get_origin
-from tensorstack.enums import ProcessType, MemoryMode, QuantType, VendorType
+from tensorstack.enums import ProcessType, MemoryMode, QuantType, VendorType, CacheType
 import torch
 
 def get_data_type(dtype: str):
@@ -360,16 +360,17 @@ class GenerateTextOptions:
     max_length: int = 0
     do_sample: bool = False
     num_beams: int = 1
-    temperature: float = 0.00
+    temperature: float = 1.0
     top_k: int = 50
     top_p: float = 1.0
     top_h: float = 0.6
     typical_p: float = 1.0
-    repetition_penalty: float = 0
-    length_penalty: float = 0
+    repetition_penalty: float = 1
+    length_penalty: float = 1
     no_repeat_ngram_size: int = 0
     enable_thinking: bool = True
     sample_rate: int = 0
+    cache_type: CacheType = CacheType.Dynamic
 
     def __post_init__(self):
         self.temperature = float(self.temperature)
@@ -378,3 +379,4 @@ class GenerateTextOptions:
         self.typical_p = float(self.typical_p)
         self.repetition_penalty = float(self.repetition_penalty)
         self.length_penalty = float(self.length_penalty)
+        self.cache_type = CacheType[self.cache_type]

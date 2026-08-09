@@ -51,7 +51,7 @@ namespace TensorStack.Python
                 _module = Import.ImportModule(_pipelineName);
                 BindFunctions();
             }
-            _ = NotificationLoop(50);
+            _ = NotificationLoop(100);
             _ = TokenProgressLoop(50);
         }
 

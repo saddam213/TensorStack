@@ -1,10 +1,8 @@
 ﻿using Amuse.App.Common;
-using Amuse.App.Controls;
 using Amuse.App.Services;
 using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -35,7 +33,7 @@ namespace Amuse.App.Views
         /// Gets the view.
         /// </summary>
         public override View View => View.TextInstruct;
-       
+
         /// <summary>
         /// Gets or sets the automation prompt.
         /// </summary>
@@ -44,11 +42,6 @@ namespace Amuse.App.Views
             get { return _automationPrompt; }
             set { SetProperty(ref _automationPrompt, value); }
         }
-
-        /// <summary>
-        /// Gets the text result control.
-        /// </summary>
-        protected override TextResultControl TextResultControl => TextResultElement;
 
 
         /// <summary>
@@ -74,56 +67,40 @@ namespace Amuse.App.Views
             {
                 Progress.Clear();
                 Statistics.Clear();
-                ResultText = default;
-                await TextResultControl.ClearAsync();
+                await TextResultElement.ResetAsync();
                 Statistics.Start();
 
                 // Context
-                var textContext = InputControl.GetTextContext(Options.Prompt);
-                var imageContext = InputControl.GetImageContext(Options.Prompt);
-                var audioContext = InputControl.GetAudioContext(Options.Prompt);
+                var prompt = Options.Prompt;
+                var systemPrompt = Options.Prompt2;
+                var promptInputs = InputControl.GetPromptInputs(prompt);
 
                 // Conversation
-                var conversation = new List<ConversationModel>();
-                if (!string.IsNullOrEmpty(Options.Prompt2))
-                {
-                    // System Prompt
-                    conversation.Add(new ConversationModel
-                    {
-                        Role = ConversationRole.System,
-                        Content = Options.Prompt2
-                    });
-                }
+                await TextResultElement.AddSystemPromptAsync(systemPrompt);
 
                 // User Prompt
-                textContext.Append(Options.Prompt);
-                conversation.Add(new ConversationModel
-                {
-                    Role = ConversationRole.User,
-                    Content = textContext.ToString(),
-                    ImageIndex = [.. Enumerable.Range(0, imageContext.Count)],
-                    AudioIndex = [.. Enumerable.Range(0, audioContext.Count)]
-                });
+                await TextResultElement.AddUserPromptAsync(promptInputs.Prompt, promptInputs.ImageIndex, promptInputs.AudioIndex, promptInputs.VideoIndex);
 
                 // Options
                 var options = Options with
                 {
                     Prompt = null,
                     Prompt2 = null,
-                    InputImages = imageContext,
-                    InputAudios = audioContext,
-                    Conversation = conversation
+                    InputAudios = promptInputs.AudioContext,
+                    InputImages = promptInputs.ImageContext.AsImageTensors(),
+                    Conversation = TextResultElement.Conversation
                 };
 
                 // Execute
                 var textResult = await ExecuteLanguageModelAsync(options);
 
                 // Result
+                await TextResultElement.EndStreamResponseAsync();
+                TextResultElement.AddBeamResults(textResult.Results);
                 Statistics.Stop();
-                ResultText = textResult;
 
                 // History
-                await SaveHistoryAsync(options);
+                await SaveHistoryAsync(textResult.Result, options);
                 Logger.LogInformation("[TextInstruct] [Execute] Executing pipeline complete, Elapsed: {Elapsed:c}", Stopwatch.GetElapsedTime(timestamp));
             }
             catch (OperationCanceledException)
@@ -141,6 +118,7 @@ namespace Amuse.App.Views
             finally
             {
                 Progress.Clear();
+                await TextResultElement.EndStreamResponseAsync();
             }
         }
 
@@ -159,69 +137,53 @@ namespace Amuse.App.Views
                 Progress.Clear();
                 AutomationProgress.Clear();
                 Statistics.Clear();
-                ResultText = default;
                 Statistics.Start();
                 CancellationTokenSource = new CancellationTokenSource();
-
-                // Context
-                var textContext = InputControl.GetTextContext(Options.Prompt);
-                var imageContext = InputControl.GetImageContext(Options.Prompt);
-                var imageIndex = Enumerable.Range(0, imageContext.Count).ToList();
-
-                // Conversation
-                var conversation = new List<ConversationModel>();
-                if (!string.IsNullOrEmpty(Options.Prompt2))
-                {
-                    // System Prompt
-                    conversation.Add(new ConversationModel 
-                    { 
-                        Role =  ConversationRole.System, 
-                        Content = Options.Prompt2 
-                    });
-                }
+                await TextResultElement.ResetAsync();
 
                 AutomationProgress.Indeterminate($"Automation Started");
                 var cancellationToken = CancellationTokenSource.Token;
                 await foreach (var automationJob in AutomationManager.CreateJobsAsync(AutomationOptions, Options, MediaType.Text, MediaType.Text))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-
-                    // Reset
-                    ResultText = default;
-                    await TextResultControl.ClearAsync();
-                    conversation.RemoveAll(x => !x.Role.Equals("system"));
+                    await TextResultElement.ResetAsync();
                     AutomationPrompt = $"{Options.Prompt}{automationJob.GenerateOptions.Prompt}";
 
+                    // Context
+                    var prompt = AutomationPrompt;
+                    var systemPrompt = Options.Prompt2;
+                    var promptInputs = InputControl.GetPromptInputs(prompt);
+
+                    // Conversation
+                    await TextResultElement.AddSystemPromptAsync(systemPrompt);
+
                     // User Prompt
-                    conversation.Add(new ConversationModel
-                    {
-                        Role =  ConversationRole.User,
-                        ImageIndex = imageIndex,
-                        Content = $"{textContext}{automationJob.GenerateOptions.Prompt}",
-                    });
+                    await TextResultElement.AddUserPromptAsync(promptInputs.Prompt, promptInputs.ImageIndex, promptInputs.AudioIndex, promptInputs.VideoIndex);
 
                     // Options
                     var options = automationJob.GenerateOptions with
                     {
                         Prompt = null,
                         Prompt2 = null,
-                        InputImages = imageContext,
-                        Conversation = conversation
+                        InputAudios = promptInputs.AudioContext,
+                        InputImages = promptInputs.ImageContext.AsImageTensors(),
+                        Conversation = TextResultElement.Conversation
                     };
 
-                    // Diffusion
+                    // Execute
                     var textResult = await ExecuteLanguageModelAsync(options);
 
                     // Result
-                    ResultText = textResult;
+                    await TextResultElement.EndStreamResponseAsync();
+                    TextResultElement.AddBeamResults(textResult.Results);
 
                     // History
                     if (AutomationOptions.IsHistoryEnabled)
                     {
-                        await SaveHistoryAsync(options);
+                        await SaveHistoryAsync(textResult.Result, options);
                     }
 
-                    await automationJob.SaveAsync(Utils.GetResponseText(ResultText.Result.Text));
+                    await automationJob.SaveAsync(Utils.GetResponseText(textResult.Result.Text));
                     AutomationProgress.Update(automationJob.Id, automationJob.Count, $"Automation: {automationJob.Id}/{automationJob.Count}");
                 }
 
@@ -253,15 +215,23 @@ namespace Amuse.App.Views
 
 
         /// <summary>
+        /// Determines whether this process can execute.
+        /// </summary>
+        protected override bool CanExecute()
+        {
+            return base.CanExecute() && !string.IsNullOrEmpty(Options?.Prompt);
+        }
+
+
+        /// <summary>
         /// Save history
         /// </summary>
         /// <param name="options">The options.</param>
-        private async Task<TextInput> SaveHistoryAsync(GenerateInputOptions options)
+        private async Task<TextInput> SaveHistoryAsync(TextInput textResult, GenerateInputOptions options)
         {
             Logger.LogInformation($"[TextInstruct] [SaveHistory] Saving history...");
-            var history = new TextInput(Utils.GetResponseText(ResultText.Result.Text));
-            options.Conversation.Add(new ConversationModel { Role = ConversationRole.Assistant, Content = history.Text });
-            var result = await HistoryService.AddAsync(history, new DiffusionHistory
+            textResult.Text = Utils.GetResponseText(textResult.Text);
+            var result = await HistoryService.AddAsync(textResult, new DiffusionHistory
             {
                 Options = options,
                 Model = CurrentPipeline.LanguageModel.Name,
@@ -271,5 +241,20 @@ namespace Amuse.App.Views
             Logger.LogInformation($"[TextInstruct] [SaveHistory] History saved.");
             return result;
         }
+
+
+        /// <summary>
+        /// Called when progress is received from a Python pipeline
+        /// </summary>
+        /// <param name="progress">The progress.</param>
+        protected override void OnProgress(PipelineProgress progress)
+        {
+            base.OnProgress(progress);
+            if (progress.Key == "Generate" && progress.Subkey == "Token")
+            {
+                TextResultElement.UpdateStreamResponse(progress.Message, progress.Value);
+            }
+        }
+
     }
 }

@@ -1,5 +1,4 @@
-﻿using Amuse.App.Controls;
-using Amuse.App.Views;
+﻿using Amuse.App.Views;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
