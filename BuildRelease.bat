@@ -43,9 +43,6 @@ dotnet pack TensorStack.Upscaler/TensorStack.Upscaler.csproj -c Release
 dotnet build TensorStack.TextGeneration/TensorStack.TextGeneration.csproj -c Release
 dotnet pack TensorStack.TextGeneration/TensorStack.TextGeneration.csproj -c Release
 
-dotnet build TensorStack.StableDiffusion/TensorStack.StableDiffusion.csproj -c Release
-dotnet pack TensorStack.StableDiffusion/TensorStack.StableDiffusion.csproj -c Release
-
 dotnet build TensorStack.Python/TensorStack.Python.csproj -c Release
 dotnet pack TensorStack.Python/TensorStack.Python.csproj -c Release
 

@@ -31,12 +31,12 @@
   <!--Debug-->
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\..\TensorStack.Providers.DML\TensorStack.Providers.DML.csproj" />
-    <ProjectReference Include="..\..\TensorStack.StableDiffusion\TensorStack.StableDiffusion.csproj" />
+    <ProjectReference Include="..\..\TensorStack.TextGeneration\TensorStack.TextGeneration.csproj" />
   </ItemGroup>
 
   <!--Release-->
   <ItemGroup Condition="'$(Configuration)' == 'Release' OR '$(Configuration)' == 'Release_Installer'">
-    <PackageReference Include="TensorStack.StableDiffusion" Version="$(PackageVersion)" />
+    <PackageReference Include="TensorStack.TextGeneration" Version="$(PackageVersion)" />
     <PackageReference Include="TensorStack.Providers.DML" Version="$(PackageVersion)" />
   </ItemGroup>
 

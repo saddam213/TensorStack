@@ -87,7 +87,6 @@ namespace Amuse.App
             builder.Services.AddSingleton<IInterpolationService, InterpolationService>();
             builder.Services.AddSingleton<IModelDownloadService, ModelDownloadService>();
             builder.Services.AddSingleton<IHttpService, HttpService>();
-            builder.Services.AddSingleton<IMigrationService, MigrationService>();
             builder.Services.AddSingleton<IPreviewService, PreviewService>();
 
             // Build
@@ -181,7 +180,6 @@ namespace Amuse.App
             _httpService = _appHost.Services.GetService<IHttpService>();
             var historyService = _appHost.Services.GetService<IHistoryService>();
             var hardwareService = _appHost.Services.GetService<IHardwareService>();
-            var migrationService = _appHost.Services.GetService<IMigrationService>();
 
             // Load History
             await historyService.InitializeAsync();
@@ -199,9 +197,6 @@ namespace Amuse.App
             MainWindow = _appHost.Services.GetMainWindow();
             MainWindow.Show();
             _splashscreen.Close();
-
-            // Run Migrations
-            await migrationService.RunAutoMigrationsAsync();
             Log.Logger.Information($"[AppStartup] Application started.");
         }
 

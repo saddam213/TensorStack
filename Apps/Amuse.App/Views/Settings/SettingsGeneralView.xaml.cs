@@ -14,12 +14,9 @@ namespace Amuse.App.Views
     /// </summary>
     public partial class SettingsGeneralView : ViewBase
     {
-        private readonly IMigrationService _migrationService;
-
-        public SettingsGeneralView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IHistoryService historyService, IMigrationService migrationService, ILogger<SettingsGeneralView> logger)
+        public SettingsGeneralView(Settings settings, NavigationService navigationService, IModelDownloadService downloadService, IHistoryService historyService, ILogger<SettingsGeneralView> logger)
             : base(settings, navigationService, downloadService, historyService, logger)
         {
-            _migrationService = migrationService;
             SaveCommand = new AsyncRelayCommand(SaveAsync);
             MoveModelDirectoryCommand = new AsyncRelayCommand(MoveModelDirectoryAsync);
             MoveHistoryDirectoryCommand = new AsyncRelayCommand(MoveHistoryDirectoryAsync);
@@ -55,7 +52,6 @@ namespace Amuse.App.Views
                 Settings.SetModelDirectory(moveDialog.DestinationDirectory);
                 Settings.NotifyPropertyChanged(nameof(Settings.DirectoryModel));
                 await SaveAsync();
-                await _migrationService.RunMigrationsAsync();
             }
         }
 

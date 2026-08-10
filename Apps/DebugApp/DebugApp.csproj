@@ -21,7 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\TensorStack.Common\TensorStack.Common.csproj" />
     <ProjectReference Include="..\..\TensorStack.Extractors\TensorStack.Extractors.csproj" />
-    <ProjectReference Include="..\..\TensorStack.StableDiffusion\TensorStack.StableDiffusion.csproj" />
     <ProjectReference Include="..\..\TensorStack.Upscaler\TensorStack.Upscaler.csproj" />
     <ProjectReference Include="..\..\TensorStack.Video.Windows\TensorStack.Video.Windows.csproj" />
     <ProjectReference Include="..\..\TensorStack.Video\TensorStack.Video.csproj" />

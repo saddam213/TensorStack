@@ -11,20 +11,10 @@ using TensorStack.Common;
 using TensorStack.Common.Pipeline;
 using TensorStack.Common.Tensor;
 using TensorStack.Providers;
-using TensorStack.StableDiffusion.Enums;
-using TensorStack.StableDiffusion.Pipelines.Flux;
-using TensorStack.StableDiffusion.Pipelines.LatentConsistency;
-using TensorStack.StableDiffusion.Pipelines.StableCascade;
-using TensorStack.StableDiffusion.Pipelines.StableDiffusion;
-using TensorStack.StableDiffusion.Pipelines.StableDiffusion3;
-using TensorStack.StableDiffusion.Pipelines.StableDiffusionXL;
 using TensorStack.TextGeneration.Common;
 using TensorStack.TextGeneration.Pipelines.Supertonic;
 using TensorStack.TextGeneration.Pipelines.Whisper;
-using GenerateOptions = TensorStack.StableDiffusion.Common.GenerateOptions;
-using GenerateProgress = TensorStack.StableDiffusion.Common.GenerateProgress;
-using GenerateTextProgress = TensorStack.TextGeneration.Common.GenerateProgress;
-using GenerateTextResult = TensorStack.TextGeneration.Common.GenerateResult;
+
 
 namespace Amuse.Host.Onnx
 {
@@ -32,7 +22,6 @@ namespace Amuse.Host.Onnx
     {
         private readonly IProgress<RunProgress> _progressRelayRunCallback;
         private readonly IProgress<GenerateProgress> _progressRelayGenerateCallback;
-        private readonly IProgress<GenerateTextProgress> _progressRelayGenerateTextCallback;
 
         private IPipeline _pipeline;
         private PipelineLoadOptions _pipelineOptions;
@@ -44,7 +33,6 @@ namespace Amuse.Host.Onnx
         {
             _progressRelayRunCallback = new Progress<RunProgress>(async (p) => await UpdateProgress(p));
             _progressRelayGenerateCallback = new Progress<GenerateProgress>(async (p) => await UpdateProgress(p));
-            _progressRelayGenerateTextCallback = new Progress<GenerateTextProgress>(async (p) => await UpdateProgress(p));
         }
 
 
@@ -94,20 +82,12 @@ namespace Amuse.Host.Onnx
                 _executionProvider = Provider.GetProvider(DeviceType.GPU, _pipelineOptions.DeviceId, GraphOptimizationLevel.ORT_ENABLE_ALL);
                 _executionProviderCPU = Provider.GetProvider(DeviceType.CPU, GraphOptimizationLevel.ORT_ENABLE_ALL); // TODO: DirectML not working with decoder
 
-                Enum.TryParse<ModelType>(_pipelineOptions.ModelType, true, out var modelType);
                 Enum.TryParse<WhisperType>(_pipelineOptions.ModelType, true, out var WhisperType);
 
                 var onnxModelPath = _pipelineOptions.CheckpointConfig.Compute;
 
                 _pipeline = _pipelineOptions.Pipeline switch
                 {
-                    "FluxPipeline" => FluxPipeline.FromFolder(onnxModelPath, modelType, _executionProvider, Logger),
-                    "LatentConsistencyPipeline" => LatentConsistencyPipeline.FromFolder(onnxModelPath, modelType, _executionProvider, Logger),
-                    "StableCascadePipeline" => StableCascadePipeline.FromFolder(onnxModelPath, modelType, _executionProvider, Logger),
-                    "StableDiffusionPipeline" => StableDiffusionPipeline.FromFolder(onnxModelPath, modelType, _executionProvider, Logger),
-                    "StableDiffusion3Pipeline" => StableDiffusion3Pipeline.FromFolder(onnxModelPath, modelType, _executionProvider, Logger),
-                    "StableDiffusionXLPipeline" => StableDiffusionXLPipeline.FromFolder(onnxModelPath, modelType, _executionProvider, Logger),
-
                     "SupertonicPipeline" => SupertonicPipeline.Create(onnxModelPath, _executionProvider),
                     "WhisperPipeline" => WhisperPipeline.Create(_executionProvider, _executionProviderCPU, onnxModelPath, WhisperType),
                     _ => throw new NotImplementedException()
@@ -175,11 +155,6 @@ namespace Amuse.Host.Onnx
                     var resultTensor = await GenerateAudioAsync(request.RunOptions.AudioOptions, cancellationToken);
                     await SendMessage(new PipelineResponse(resultTensor), cancellationToken);
                 }
-                else
-                {
-                    var resultTensor = await GenerateImageAsync(request.RunOptions.ImageOptions, cancellationToken);
-                    await SendMessage(new PipelineResponse(resultTensor), cancellationToken);
-                }
             }
             catch (OperationCanceledException ex)
             {
@@ -191,14 +166,6 @@ namespace Amuse.Host.Onnx
                 Logger.LogError(ex, "[PipelineServer] [RunPipeline] An exception occurred running pipeline.");
                 await SendException(ex, cancellationToken);
             }
-        }
-
-
-        private async Task<ImageTensor> GenerateImageAsync(Common.GenerateImageOptions options, CancellationToken cancellationToken)
-        {
-            var onnxOptions = options.ToOnnxOptions(_pipelineOptions, _executionProvider);
-            var diffusionPipeline = _pipeline as IPipeline<ImageTensor, GenerateOptions, GenerateProgress>;
-            return await diffusionPipeline.RunAsync(onnxOptions, _progressRelayGenerateCallback, cancellationToken);
         }
 
 
@@ -244,13 +211,13 @@ namespace Amuse.Host.Onnx
                 if (options.Beams == 0)
                 {
                     // Greedy Search
-                    var greedyPipeline = _pipeline as IPipeline<GenerateTextResult, WhisperOptions, GenerateTextProgress>;
-                    return [await greedyPipeline.RunAsync(pipelineOptions, _progressRelayGenerateTextCallback, cancellationToken)];
+                    var greedyPipeline = _pipeline as IPipeline<GenerateResult, WhisperOptions, GenerateProgress>;
+                    return [await greedyPipeline.RunAsync(pipelineOptions, _progressRelayGenerateCallback, cancellationToken)];
                 }
 
                 // Beam Search
-                var beamSearchPipeline = _pipeline as IPipeline<GenerateTextResult[], WhisperSearchOptions, GenerateTextProgress>;
-                return await beamSearchPipeline.RunAsync(new WhisperSearchOptions(pipelineOptions), _progressRelayGenerateTextCallback, cancellationToken);
+                var beamSearchPipeline = _pipeline as IPipeline<GenerateResult[], WhisperSearchOptions, GenerateProgress>;
+                return await beamSearchPipeline.RunAsync(new WhisperSearchOptions(pipelineOptions), _progressRelayGenerateCallback, cancellationToken);
             });
 
             var results = new TextInput[pipelineResult.Length];
@@ -270,22 +237,6 @@ namespace Amuse.Host.Onnx
 
 
         private async Task UpdateProgress(GenerateProgress progress)
-        {
-            var subkey = progress.Type == GenerateProgress.ProgressType.Step ? "Step" : null;
-            await QueueProgress(new PipelineProgress
-            {
-                Key = "Generate",
-                Subkey = subkey,
-                Value = progress.Value,
-                Maximum = progress.Max,
-                Message = progress.Message,
-                Elapsed = (float)progress.Elapsed.TotalMilliseconds,
-                Tensors = progress.Tensor == null ? null : [progress.Tensor]
-            });
-        }
-
-
-        private async Task UpdateProgress(GenerateTextProgress progress)
         {
             await QueueProgress(new PipelineProgress
             {
