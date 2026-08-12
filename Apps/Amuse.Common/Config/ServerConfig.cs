@@ -45,6 +45,17 @@ namespace Amuse.Common.Config
                     ChannelPipeName = "AmusePyTorch.PipeName",
                     ChannelProgress = "AmusePyTorch.Progress"
                 }
+            },
+            {
+                ServerType.StableDiffusionCpp,  new ServerConfig
+                {
+                    Name = "AmuseStableDiffusionCpp",
+                    Arguments = [nameof(ServerType.StableDiffusionCpp)],
+                    Executable = "AmuseHost.StableDiffusionCpp.exe",
+                    ChannelCommand = "AmuseStableDiffusionCpp.Command",
+                    ChannelPipeName = "AmuseStableDiffusionCpp.PipeName",
+                    ChannelProgress = "AmuseStableDiffusionCpp.Progress"
+                }
             }
         };
     }

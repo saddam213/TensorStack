@@ -5,7 +5,8 @@ namespace Amuse.Common
     public enum ServerType
     {
         OnnxRuntime = 0,
-        PyTorch = 10
+        PyTorch = 10,
+        StableDiffusionCpp = 20
     }
 
     public enum ProcessType
