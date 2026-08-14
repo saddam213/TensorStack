@@ -51,6 +51,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 {
                     SampleSteps = options.Steps,
                     SampleMethod = GetSampler(options.SchedulerOptions),
+                    Scheduler = GetSigmaSchedule(options.SchedulerOptions),
                     Guidance = new GuidanceParams
                     {
                         TxtCfg = Math.Max(1, options.GuidanceScale),
@@ -79,6 +80,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 {
                     SampleSteps = options.Steps,
                     SampleMethod = GetSampler(options.SchedulerOptions),
+                    Scheduler = GetSigmaSchedule(options.SchedulerOptions),
                     Guidance = new GuidanceParams
                     {
                         TxtCfg = Math.Max(1, options.GuidanceScale),
@@ -142,40 +144,53 @@ namespace Amuse.Host.StableDiffusionCpp
 
         private static string GetSampler(SchedulerOptions options)
         {
-            switch (options.Scheduler)
+            return options.Scheduler switch
             {
-                case SchedulerType.LMS:
-                    return "lms";
-                case SchedulerType.Euler:
-                    return "euler";
-                case SchedulerType.EulerAncestral:
-                    return "euler_a";
-                case SchedulerType.DDIM:
-                    return "ddim_trailing";
-                case SchedulerType.LCM:
-                    return "lcm";
-                case SchedulerType.FlowMatchEuler:
-                    return "euler";
-                case SchedulerType.FlowMatchHeun:
-                    return "heun";
-                case SchedulerType.Heun:
-                    return "heun";
-                case SchedulerType.DPMSolverMultistep:
-                    return "dpm++2m";
-                case SchedulerType.DPMSolverSinglestep:
-                    return "dpm++2s_a";
-                case SchedulerType.DPMSolverSDE:
-                    return "dpm++2m_sde";
-                case SchedulerType.FlowMatchLCM:
-                    return "lcm";
-                case SchedulerType.IPNDM:
-                    return "ipndm";
-                case SchedulerType.TCD:
-                    return "tcd";
-                default:
-                    break;
-            }
-            return "default";
+                SchedulerType.Euler => "euler",
+                SchedulerType.EulerAncestral => "euler_a",
+                SchedulerType.Heun => "heun",
+                SchedulerType.DPM2 => "dpm2",
+                SchedulerType.DPMPlusPlus2SAncestral => "dpm++2s_a",
+                SchedulerType.DPMPlusPlus2M => "dpm++2m",
+                SchedulerType.DPMPlusPlus2Mv2 => "dpm++2mv2",
+                SchedulerType.IPNDM => "ipndm",
+                SchedulerType.LCM => "lcm",
+                SchedulerType.DDIM => "ddim_trailing",
+                SchedulerType.TCD => "tcd",
+                SchedulerType.ResidualMultistep => "res_multistep",
+                SchedulerType.Residual2S => "res_2s",
+                SchedulerType.ERSDE => "er_sde",
+                SchedulerType.DPMPlusPlus2MSDE => "dpm++2m_sde",
+                SchedulerType.DPMPlusPlus2MSDEBT => "dpm++2m_sde_bt",
+                SchedulerType.LMS => "lms",
+                _ => "default"
+            };
+        }
+
+
+        private static string GetSigmaSchedule(SchedulerOptions options)
+        {
+            return options.SigmaScheduleType switch
+            {
+                SigmaScheduleType.Discrete => "discrete",
+                SigmaScheduleType.Normal => "normal",
+                SigmaScheduleType.Karras => "karras",
+                SigmaScheduleType.Exponential => "exponential",
+                SigmaScheduleType.AYS => "ays",
+                SigmaScheduleType.GITS => "gits",
+                SigmaScheduleType.SGMUniform => "sgm_uniform",
+                SigmaScheduleType.Simple => "simple",
+                SigmaScheduleType.Smoothstep => "smoothstep",
+                SigmaScheduleType.KLOptimal => "kl_optimal",
+                SigmaScheduleType.LCM => "lcm",
+                SigmaScheduleType.BongTangent => "bong_tangent",
+                SigmaScheduleType.LTX2 => "ltx2",
+                SigmaScheduleType.LogitNormal => "logit_normal",
+                SigmaScheduleType.Flux => "flux",
+                SigmaScheduleType.Flux2 => "flux2",
+                SigmaScheduleType.Beta => "beta",
+                _ => "default"
+            };
         }
 
 
