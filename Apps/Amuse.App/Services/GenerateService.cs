@@ -179,6 +179,13 @@ namespace Amuse.App.Services
             {
                 return await _backenClient.GenerateImageAsync(options);
             }
+            catch (Exception)
+            {
+                if (_backenClient.StopHostOnException)
+                    await StopAsync();
+
+                throw;
+            }
             finally
             {
                 IsExecuting = false;
@@ -194,6 +201,13 @@ namespace Amuse.App.Services
             try
             {
                 return await _backenClient.GenerateVideoAsync(options);
+            }
+            catch (Exception)
+            {
+                if (_backenClient.StopHostOnException)
+                    await StopAsync();
+
+                throw;
             }
             finally
             {
@@ -211,7 +225,13 @@ namespace Amuse.App.Services
             {
                 return await _backenClient.GenerateAudioAsync(options);
             }
+            catch (Exception)
+            {
+                if (_backenClient.StopHostOnException)
+                    await StopAsync();
 
+                throw;
+            }
             finally
             {
                 IsExecuting = false;
@@ -228,7 +248,13 @@ namespace Amuse.App.Services
             {
                 return await _backenClient.GenerateTextAsync(options);
             }
+            catch (Exception)
+            {
+                if (_backenClient.StopHostOnException)
+                    await StopAsync();
 
+                throw;
+            }
             finally
             {
                 IsExecuting = false;

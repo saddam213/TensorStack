@@ -35,6 +35,7 @@ namespace Amuse.App.Runtime
 
         public PipelineModel Pipeline { get; protected set; }
         public GenerateDefaultOptions DefaultOptions { get; protected set; }
+        public bool StopHostOnException { get; protected set; }
         protected ILogger Logger { get; }
         protected Settings Settings { get; }
         protected IMediaService MediaService { get; }

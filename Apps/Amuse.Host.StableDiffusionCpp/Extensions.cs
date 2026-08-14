@@ -33,7 +33,7 @@ namespace Amuse.Host.StableDiffusionCpp
         }
 
 
-        public static ImageParams ToServerParams(this GenerateImageOptions options, PipelineLoadOptions loadOptions, ImageParams defaultOptions)
+        public static ImageParams ToServerParams(this GenerateImageOptions options, Config.ModelConfig modelConfig, PipelineLoadOptions loadOptions, ImageParams defaultOptions)
         {
             // TODO: input tensors to base64
 
@@ -46,6 +46,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 Height = options.Height,
                 Strength = options.Strength,
                 ControlStrength = options.ControlNetScale,
+                Lora = loadOptions.LoraAdapters.GetLoraOptions(modelConfig.LoraModelDirectory, options.LoraOptions),
                 SampleParams = new SampleParams
                 {
                     SampleSteps = options.Steps,
@@ -55,13 +56,12 @@ namespace Amuse.Host.StableDiffusionCpp
                         TxtCfg = Math.Max(1, options.GuidanceScale),
                         DistilledGuidance = Math.Max(1, options.GuidanceScale2)
                     }
-                },
-                Lora = loadOptions.LoraAdapters.GetLoraOptions(options.LoraOptions)
+                }
             };
         }
 
 
-        public static VideoParams ToServerParams(this GenerateVideoOptions options, PipelineLoadOptions loadOptions, VideoParams defaultOptions)
+        public static VideoParams ToServerParams(this GenerateVideoOptions options, Config.ModelConfig modelConfig, PipelineLoadOptions loadOptions, VideoParams defaultOptions)
         {
             // TODO: input tensors to base64
             return defaultOptions with
@@ -74,6 +74,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 Strength = options.Strength,
                 Frames = options.Frames,
                 FrameRate = (int)options.FrameRate,
+                Lora = loadOptions.LoraAdapters.GetLoraOptions(modelConfig.LoraModelDirectory, options.LoraOptions),
                 SampleParams = new SampleParams
                 {
                     SampleSteps = options.Steps,
@@ -83,38 +84,36 @@ namespace Amuse.Host.StableDiffusionCpp
                         TxtCfg = Math.Max(1, options.GuidanceScale),
                         DistilledGuidance = Math.Max(1, options.GuidanceScale2)
                     }
-                },
-                Lora = loadOptions.LoraAdapters.GetLoraOptions(options.LoraOptions)
+                }
             };
         }
 
 
-        private static List<LoraParams> GetLoraOptions(this List<LoraConfig> loraAdapters, List<LoraOptions> loraAdapterOptions)
+        private static List<LoraParams> GetLoraOptions(this List<LoraConfig> loraAdapters, string loraModelDirectory, List<LoraOptions> loraAdapterOptions)
         {
             if (loraAdapterOptions.IsNullOrEmpty())
                 return [];
 
             var loraParams = new List<LoraParams>();
-            foreach (var config in loraAdapters)
+            foreach (var config in loraAdapters.Where(x => x.Path == loraModelDirectory))
             {
                 var options = loraAdapterOptions.FirstOrDefault(x => x.Name == config.Name);
+                if (options == null)
+                    continue;
+
                 loraParams.Add(new LoraParams
                 {
                     Multiplier = options.Strength,
-                    Path = Path.Combine(config.Path, config.Weights),
+                    Path = config.Weights,
                 });
             }
             return loraParams;
         }
 
 
-
-
-
-
-
         private static Config.ModelConfig GetModelConfig(PipelineLoadOptions options)
         {
+            var loraModelDirectory = options.LoraAdapters?.FirstOrDefault()?.Path;
             if (options.Pipeline == "FluxPipeline")
             {
                 return new Config.ModelConfig
@@ -122,7 +121,8 @@ namespace Amuse.Host.StableDiffusionCpp
                     Vae = options.CheckpointConfig.Vae,
                     ClipL = options.CheckpointConfig.TextEncoder,
                     T5XXL = options.CheckpointConfig.TextEncoder2,
-                    Diffusion = options.CheckpointConfig.Transformer
+                    Diffusion = options.CheckpointConfig.Transformer,
+                    LoraModelDirectory = loraModelDirectory
                 };
             }
             if (options.Pipeline == "AnimaPipeline")
@@ -131,7 +131,8 @@ namespace Amuse.Host.StableDiffusionCpp
                 {
                     Vae = options.CheckpointConfig.Vae,
                     LLM = options.CheckpointConfig.TextEncoder,
-                    Diffusion = options.CheckpointConfig.Transformer
+                    Diffusion = options.CheckpointConfig.Transformer,
+                    LoraModelDirectory = loraModelDirectory
                 };
             }
 

@@ -18,6 +18,7 @@ namespace Amuse.Host.StableDiffusionCpp
         private StableDiffusionServer _pipeline;
         private PipelineCreateOptions _pipelineCreateOptions;
         private PipelineLoadOptions _pipelineLoadOptions;
+        private Config.ServerConfig _serverConfig;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HostServer"/> class.
@@ -83,8 +84,8 @@ namespace Amuse.Host.StableDiffusionCpp
             try
             {
                 _pipelineLoadOptions = request.LoadOptions;
-                var serverConfig = _pipelineLoadOptions.ToServerConfig(_pipelineCreateOptions);
-                _pipeline = new StableDiffusionServer(serverConfig, _progressRelayCallback, Logger);
+                _serverConfig = _pipelineLoadOptions.ToServerConfig(_pipelineCreateOptions);
+                _pipeline = new StableDiffusionServer(_serverConfig, _progressRelayCallback, Logger);
                 await _pipeline.StartAsync(cancellationToken);
                 await SendResponse(cancellationToken);
             }
@@ -106,7 +107,7 @@ namespace Amuse.Host.StableDiffusionCpp
             try
             {
                 var reloadOptions = request.ReloadOptions;
-                // TODO: Reload Pipeline
+                _pipelineLoadOptions.LoraAdapters = reloadOptions.LoraAdapters;
                 await SendResponse(cancellationToken);
             }
             catch (Exception ex)
@@ -147,24 +148,25 @@ namespace Amuse.Host.StableDiffusionCpp
             try
             {
                 request.RunOptions.UnpackTensors(request);
+                var modelConfig = _serverConfig.ModelConfig;
+
                 if (request.RunOptions.ImageOptions != null)
                 {
-                    var defaults = _pipeline.ModelCapabilities.DefaultParams.ImageParams;
-                    var options = request.RunOptions.ImageOptions.ToServerParams(_pipelineLoadOptions, defaults);
-                    var imageResult = await _pipeline.GenerateImageAsync(options, cancellationToken);
-                    var tempFilename = request.RunOptions.ImageOptions.TempFileName;
-                    await File.WriteAllBytesAsync(tempFilename, imageResult, cancellationToken);
-                    await SendMessage(new PipelineResponse(default(Tensor<float>[])), cancellationToken);
+                    var options = request.RunOptions.ImageOptions;
+                    var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.ImageParams;
+                    var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
+                    var result = await _pipeline.GenerateImageAsync(generateParams, cancellationToken);
+                    await File.WriteAllBytesAsync(options.TempFileName, result, cancellationToken);
                 }
                 else if (request.RunOptions.VideoOptions != null)
                 {
-                    var defaults = _pipeline.ModelCapabilities.DefaultParams.VideoParams;
-                    var options = request.RunOptions.VideoOptions.ToServerParams(_pipelineLoadOptions, defaults);
-                    var videoResult = await _pipeline.GenerateVideoAsync(options, cancellationToken);
-                    var tempFilename = request.RunOptions.VideoOptions.TempFileName;
-                    await File.WriteAllBytesAsync(tempFilename, videoResult, cancellationToken);
-                    await SendMessage(new PipelineResponse(default(Tensor<float>[])), cancellationToken);
+                    var options = request.RunOptions.VideoOptions;
+                    var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.VideoParams;
+                    var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
+                    var result = await _pipeline.GenerateVideoAsync(generateParams, cancellationToken);
+                    await File.WriteAllBytesAsync(options.TempFileName, result, cancellationToken);
                 }
+                await SendMessage(new PipelineResponse(default(Tensor<float>[])), cancellationToken);
             }
             catch (OperationCanceledException ex)
             {
