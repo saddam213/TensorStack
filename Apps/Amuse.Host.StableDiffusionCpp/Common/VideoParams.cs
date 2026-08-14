@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Amuse.Host.StableDiffusionCpp.Common
 {
-    public class VideoParams
+    public record VideoParams
     {
         [JsonPropertyName("prompt")]
         public string Prompt { get; set; }

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace Amuse.Common
 {
-    internal sealed class ProcessHandler : IDisposable
+    public sealed class ProcessHandler : IDisposable
     {
         private IntPtr _job;
 

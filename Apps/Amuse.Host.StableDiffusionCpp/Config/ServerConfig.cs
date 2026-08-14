@@ -6,8 +6,9 @@ namespace Amuse.Host.StableDiffusionCpp.Config
 {
     public record ServerConfig
     {
-        public short Port { get; set; } = 1234;
-        public string Address { get; set; } = "127.0.0.1";
+        public string BackendDirectory { get; set; }
+        public short Port { get; set; }
+        public string Address { get; set; }
         public string BaseUrl => $"http://{Address}:{Port}/";
         public Dictionary<string, string> ServerVariables { get; set; }
         public ModelConfig ModelConfig { get; set; }
@@ -17,6 +18,7 @@ namespace Amuse.Host.StableDiffusionCpp.Config
         public BackendType Backend { get; set; }
         public int MemoryReserve { get; set; } = 1;
         public MemoryModeType MemoryMode { get; set; }
+        public QuantizationType QuantizationType { get; set; }
         public bool IsFlashAttentionEnabled { get; set; }
     }
 }

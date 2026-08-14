@@ -4,24 +4,30 @@ using Amuse.Common.Message;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using TensorStack.Common.Pipeline;
+using TensorStack.Common.Tensor;
 
 
 namespace Amuse.Host.StableDiffusionCpp
 {
     public sealed class HostServer : PipelineServer
     {
-        private readonly IProgress<RunProgress> _progressRelayRunCallback;
+        private readonly IProgress<PipelineProgress> _progressRelayCallback;
+        private StableDiffusionServer _pipeline;
+        private PipelineCreateOptions _pipelineCreateOptions;
+        private PipelineLoadOptions _pipelineLoadOptions;
 
-        private IPipeline _pipeline;
-        private PipelineLoadOptions _pipelineOptions;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HostServer"/> class.
+        /// </summary>
+        /// <param name="channelConfig">The channel configuration.</param>
+        /// <param name="logger">The logger.</param>
         public HostServer(ServerConfig channelConfig, ILogger logger)
             : base(channelConfig, logger)
         {
-            _progressRelayRunCallback = new Progress<RunProgress>(async (p) => await UpdateProgress(p));
+            _progressRelayCallback = new Progress<PipelineProgress>(async (p) => await UpdateProgress(p));
         }
 
 
@@ -38,20 +44,24 @@ namespace Amuse.Host.StableDiffusionCpp
         /// <summary>
         /// Called when the Channel is closed.
         /// </summary>
-        protected override Task ChannelClosedAsync()
+        protected override async Task ChannelClosedAsync()
         {
-            _pipeline?.Dispose();
-            return Task.CompletedTask;
+            if (_pipeline != null)
+                await _pipeline.DisposeAsync();
         }
 
 
+        /// <summary>
+        /// Create Pipeline
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         protected override async Task CreatePipelineAsync(PipelineRequest request, CancellationToken cancellationToken)
         {
             try
             {
                 var timestamp = Stopwatch.GetTimestamp();
-                var environmentRequest = request.CreateOptions;
-
+                _pipelineCreateOptions = request.CreateOptions;
                 Logger.LogInformation($"[PipelineServer] [CreatePipeline] Environment created, Elapsed: {Stopwatch.GetElapsedTime(timestamp)}");
                 await SendResponse(cancellationToken);
             }
@@ -63,17 +73,20 @@ namespace Amuse.Host.StableDiffusionCpp
         }
 
 
+        /// <summary>
+        /// Loads the pipeline
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         protected override async Task LoadPipelineAsync(PipelineRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                _pipelineOptions = request.LoadOptions;
-
-                //TODO: Create Pipeline
-
-                await _pipeline.LoadAsync(cancellationToken);
+                _pipelineLoadOptions = request.LoadOptions;
+                var serverConfig = _pipelineLoadOptions.ToServerConfig(_pipelineCreateOptions);
+                _pipeline = new StableDiffusionServer(serverConfig, _progressRelayCallback, Logger);
+                await _pipeline.StartAsync(cancellationToken);
                 await SendResponse(cancellationToken);
-
             }
             catch (Exception ex)
             {
@@ -83,17 +96,17 @@ namespace Amuse.Host.StableDiffusionCpp
         }
 
 
+        /// <summary>
+        /// Reload the pipeline
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         protected override async Task ReloadPipelineAsync(PipelineRequest request, CancellationToken cancellationToken)
         {
             try
             {
                 var reloadOptions = request.ReloadOptions;
-                _pipelineOptions.ProcessType = reloadOptions.ProcessType;
-                _pipelineOptions.ControlNet = reloadOptions.ControlNet;
-                _pipelineOptions.LoraAdapters = reloadOptions.LoraAdapters;
-
                 // TODO: Reload Pipeline
-
                 await SendResponse(cancellationToken);
             }
             catch (Exception ex)
@@ -104,11 +117,16 @@ namespace Amuse.Host.StableDiffusionCpp
         }
 
 
+        /// <summary>
+        /// Unloads the pipeline
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         protected override async Task UnloadPipelineAsync(PipelineRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                await _pipeline.UnloadAsync();
+                await _pipeline.StopAsync();
                 await SendResponse(cancellationToken);
             }
             catch (Exception ex)
@@ -119,14 +137,34 @@ namespace Amuse.Host.StableDiffusionCpp
         }
 
 
+        /// <summary>
+        /// Runs the pipeline
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         protected override async Task RunPipelineAsync(PipelineRequest request, CancellationToken cancellationToken)
         {
             try
             {
                 request.RunOptions.UnpackTensors(request);
-
-                // TODO: Execute Image/Video
-
+                if (request.RunOptions.ImageOptions != null)
+                {
+                    var defaults = _pipeline.ModelCapabilities.DefaultParams.ImageParams;
+                    var options = request.RunOptions.ImageOptions.ToServerParams(_pipelineLoadOptions, defaults);
+                    var imageResult = await _pipeline.GenerateImageAsync(options, cancellationToken);
+                    var tempFilename = request.RunOptions.ImageOptions.TempFileName;
+                    await File.WriteAllBytesAsync(tempFilename, imageResult, cancellationToken);
+                    await SendMessage(new PipelineResponse(default(Tensor<float>[])), cancellationToken);
+                }
+                else if (request.RunOptions.VideoOptions != null)
+                {
+                    var defaults = _pipeline.ModelCapabilities.DefaultParams.VideoParams;
+                    var options = request.RunOptions.VideoOptions.ToServerParams(_pipelineLoadOptions, defaults);
+                    var videoResult = await _pipeline.GenerateVideoAsync(options, cancellationToken);
+                    var tempFilename = request.RunOptions.VideoOptions.TempFileName;
+                    await File.WriteAllBytesAsync(tempFilename, videoResult, cancellationToken);
+                    await SendMessage(new PipelineResponse(default(Tensor<float>[])), cancellationToken);
+                }
             }
             catch (OperationCanceledException ex)
             {
@@ -141,17 +179,13 @@ namespace Amuse.Host.StableDiffusionCpp
         }
 
 
-        private async Task UpdateProgress(RunProgress progress)
+        /// <summary>
+        /// Updates the progress.
+        /// </summary>
+        /// <param name="progress">The progress.</param>
+        private async Task UpdateProgress(PipelineProgress progress)
         {
-            await QueueProgress(new PipelineProgress
-            {
-                Key = "Generate",
-                Subkey = "Step",
-                Value = progress.Value,
-                Maximum = progress.Maximum,
-                Message = progress.Message,
-                Elapsed = (float)progress.Elapsed.TotalMilliseconds
-            });
+            await QueueProgress(progress);
         }
 
     }

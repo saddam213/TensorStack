@@ -43,7 +43,7 @@ namespace Amuse.App.Common
             if (vendor == VendorType.Intel)
                 return [BackendType.OnnxRuntime];
 
-            return [BackendType.PyTorch, BackendType.OnnxRuntime];
+            return [BackendType.PyTorch, BackendType.OnnxRuntime, BackendType.StableDiffusionCpp];
         }
 
 

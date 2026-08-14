@@ -12,5 +12,7 @@ namespace Amuse.Common
         public string[] Requirements { get; set; }
         public Dictionary<string, string> Variables { get; set; }
         public EnvironmentMode Mode { get; set; }
+        public short ServerPort { get; set; } = 2345;
+        public string ServerAddress { get; set; } = "127.0.0.1";
     }
 }
