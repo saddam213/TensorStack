@@ -10330,7 +10330,7 @@
       "ModelType": "Base",
       "BaseType": "bfloat16",
       "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage" ],
+      "ProcessTypes": [ "TextToImage", "ImageToImage" ],
       "Checkpoint": {
         "Vae": {
           "Name": "AutoEncoder",

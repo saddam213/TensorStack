@@ -66,7 +66,7 @@ namespace Amuse.Host.StableDiffusionCpp.Common
         public int OutputCompression { get; set; } = 100;
 
         [JsonPropertyName("auto_resize_ref_image")]
-        public bool AutoResizeRefImage { get; set; }
+        public bool AutoResizeRefImage { get; set; } = true;
 
         [JsonPropertyName("increase_ref_index")]
         public bool IncreaseRefIndex { get; set; }

@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using TensorStack.Common;
+using TensorStack.Common.Tensor;
+using TensorStack.Image;
 
 namespace Amuse.Host.StableDiffusionCpp
 {
@@ -36,18 +38,19 @@ namespace Amuse.Host.StableDiffusionCpp
 
         public static ImageParams ToServerParams(this GenerateImageOptions options, Config.ModelConfig modelConfig, PipelineLoadOptions loadOptions, ImageParams defaultOptions)
         {
-            // TODO: input tensors to base64
-
             return defaultOptions with
             {
                 Seed = options.Seed,
                 Prompt = options.Prompt,
-                NegativePrompt = options.NegativePrompt ?? "",
+                NegativePrompt = options.NegativePrompt,
                 Width = options.Width,
                 Height = options.Height,
                 Strength = options.Strength,
                 ControlStrength = options.ControlNetScale,
                 Lora = loadOptions.LoraAdapters.GetLoraOptions(modelConfig.LoraModelDirectory, options.LoraOptions),
+                InitImage = GetInitImage(options, loadOptions.ProcessType),
+                RefImages = GetReferenceImages(options, loadOptions.ProcessType),
+                ControlImage = GetControlNetImage(options, loadOptions.ProcessType),
                 SampleParams = new SampleParams
                 {
                     SampleSteps = options.Steps,
@@ -65,18 +68,21 @@ namespace Amuse.Host.StableDiffusionCpp
 
         public static VideoParams ToServerParams(this GenerateVideoOptions options, Config.ModelConfig modelConfig, PipelineLoadOptions loadOptions, VideoParams defaultOptions)
         {
-            // TODO: input tensors to base64
             return defaultOptions with
             {
                 Seed = options.Seed,
                 Prompt = options.Prompt,
-                NegativePrompt = options.NegativePrompt ?? "",
+                NegativePrompt = options.NegativePrompt,
                 Width = options.Width,
                 Height = options.Height,
                 Strength = options.Strength,
                 Frames = options.Frames,
                 FrameRate = (int)options.FrameRate,
                 Lora = loadOptions.LoraAdapters.GetLoraOptions(modelConfig.LoraModelDirectory, options.LoraOptions),
+                ImageFirst = GetFirstFrame(options, loadOptions.ProcessType),
+                ImageLast = GetLastFrame(options, loadOptions.ProcessType),
+                ControlFrames = GetControlFrames(options, loadOptions.ProcessType),
+                VaceStrength = options.ControlNetScale,
                 SampleParams = new SampleParams
                 {
                     SampleSteps = options.Steps,
@@ -266,5 +272,111 @@ namespace Amuse.Host.StableDiffusionCpp
             }
             return false;
         }
+
+
+        private static string GetInitImage(GenerateImageOptions options, ProcessType processType)
+        {
+            if (options.InputImages.IsNullOrEmpty())
+                return default;
+
+            if (processType == ProcessType.ImageToImage || processType == ProcessType.ImageToImageControlNet)
+                return GetBase64Image(options.InputImages[0]);
+
+            return default;
+        }
+
+
+        private static string GetControlNetImage(GenerateImageOptions options, ProcessType processType)
+        {
+            if (options.InputControlImages.IsNullOrEmpty())
+                return default;
+
+            if (processType == ProcessType.ImageControlNet || processType == ProcessType.ImageToImageControlNet)
+                return GetBase64Image(options.InputControlImages[0]);
+
+            return default;
+        }
+
+
+        private static List<string> GetReferenceImages(GenerateImageOptions options, ProcessType processType)
+        {
+            if (options.InputImages.IsNullOrEmpty())
+                return default;
+
+            if (processType == ProcessType.ImageEdit)
+                return GetBase64Images(options.InputImages);
+
+            return default;
+        }
+
+
+        private static string GetFirstFrame(GenerateVideoOptions options, ProcessType processType)
+        {
+            if (options.InputImages.IsNullOrEmpty())
+                return default;
+
+            if (options.InputImages.Count > 2)
+                return default;
+
+            if (processType == ProcessType.ImageToVideo)
+                return GetBase64Image(options.InputImages[0]);
+
+            return default;
+        }
+
+
+        private static string GetLastFrame(GenerateVideoOptions options, ProcessType processType)
+        {
+            if (options.InputImages.IsNullOrEmpty())
+                return default;
+
+            if (options.InputImages.Count != 2)
+                return default;
+
+            if (processType == ProcessType.ImageToVideo)
+                return GetBase64Image(options.InputImages.Last());
+
+            return default;
+        }
+
+
+        private static List<string> GetControlFrames(GenerateVideoOptions options, ProcessType processType)
+        {
+            if (options.InputImages.IsNullOrEmpty())
+                return default;
+
+            if (processType == ProcessType.ImageToVideo)
+                return GetBase64Images(options.InputImages);
+
+            return default;
+        }
+
+
+        private static string GetBase64Image(this ImageTensor imageTensor)
+        {
+            if (imageTensor == null)
+                return string.Empty;
+
+            return imageTensor.ToImageBase64();
+        }
+
+
+        private static List<string> GetBase64Images(this List<ImageTensor> imageTensors)
+        {
+            if (imageTensors.IsNullOrEmpty())
+                return default;
+
+            var base64Images = new List<string>();
+            foreach (var imageTensor in imageTensors)
+            {
+                var base64Image = GetBase64Image(imageTensor);
+                if (!string.IsNullOrEmpty(base64Image))
+                    continue;
+
+                base64Images.Add(base64Image);
+            }
+            return base64Images;
+        }
+
     }
 }
