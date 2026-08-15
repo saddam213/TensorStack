@@ -548,6 +548,7 @@ namespace Amuse.App.Runtime
         private PipelineLoadOptions GetPipelineLoadOptions(DiffusionModel model)
         {
             var device = Pipeline.Device;
+            var isFlashAttentionEnabled = model.DefaultOptions.IsFlashAttentionEnabled && device.IsFlashAttentionEnabled;
             return new PipelineLoadOptions
             {
                 Variant = model.Variant,
@@ -564,6 +565,7 @@ namespace Amuse.App.Runtime
                 IsOptimizeDeviceEnabled = Settings.IsOptimizeDeviceEnabled,
                 IsOptimizeChannelsEnabled = Settings.IsOptimizeChannelsEnabled,
                 IsDeviceQuantizationEnabled = Settings.IsDeviceQuantizationEnabled,
+                IsFlashAttentionEnabled = isFlashAttentionEnabled,
                 MemoryMode = GetMemoryMode(model.MemoryProfile),
                 QuantType = GetQuantizationType(),
                 ControlNet = ControlNetConfig(),
@@ -576,6 +578,7 @@ namespace Amuse.App.Runtime
         private PipelineLoadOptions GetPipelineLoadOptions(LanguageModel model)
         {
             var device = Pipeline.Device;
+            var isFlashAttentionEnabled = model.DefaultOptions.IsFlashAttentionEnabled && device.IsFlashAttentionEnabled;
             return new PipelineLoadOptions
             {
                 Variant = model.Variant,
@@ -592,6 +595,7 @@ namespace Amuse.App.Runtime
                 IsOptimizeDeviceEnabled = Settings.IsOptimizeDeviceEnabled,
                 IsOptimizeChannelsEnabled = Settings.IsOptimizeChannelsEnabled,
                 IsDeviceQuantizationEnabled = Settings.IsDeviceQuantizationEnabled,
+                IsFlashAttentionEnabled = isFlashAttentionEnabled,
                 MemoryMode = MemoryModeType.Device,
                 QuantType = GetQuantizationType(),
                 LoraAdapters = GetLoraAdapters(),

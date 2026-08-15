@@ -47,7 +47,7 @@ namespace Amuse.Common
             _ = StartProgressChannelAsync(cancellationToken);
             _ = StartCommandChannelAsync(cancellationToken);
             await StartPipelineChannelAsync(cancellationToken);
-            Logger.LogInformation($"[PipelineServer] [Start] Generate loop stopped.");
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [Start] Generate loop stopped.");
         }
 
 
@@ -57,14 +57,14 @@ namespace Amuse.Common
         /// <param name="cancellationToken">The cancellation token.</param>
         protected async Task WaitForConnectionAsync(CancellationToken cancellationToken)
         {
-            Logger.LogInformation($"[PipelineServer] [WaitForConnection] Waiting for connection...");
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [WaitForConnection] Waiting for connection...");
             await Task.WhenAll
             (
                 _progressChannel.WaitForConnectionAsync(cancellationToken),
                 _commandChannel.WaitForConnectionAsync(cancellationToken),
                 _pipelineChannel.WaitForConnectionAsync(cancellationToken)
             );
-            Logger.LogInformation($"[PipelineServer] [WaitForConnection] Client connected.");
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [WaitForConnection] Client connected.");
         }
 
 
@@ -74,7 +74,7 @@ namespace Amuse.Common
         /// <param name="cancellationToken">The cancellation token.</param>
         protected async Task StartPipelineChannelAsync(CancellationToken cancellationToken)
         {
-            Logger.LogInformation($"[PipelineServer] [PipelineChannel] Start pipeline channel.");
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [PipelineChannel] Start pipeline channel.");
 
             _pipelineState = RequestType.Stop;
             await ChannelOpenedAsync();
@@ -82,10 +82,10 @@ namespace Amuse.Common
             {
                 try
                 {
-                    Logger.LogInformation($"[PipelineServer] [PipelineChannel] Waiting for request.");
+                    Logger.LogInformation($"[AmuseHost] [PipelineServer] [PipelineChannel] Waiting for request.");
                     var request = await _pipelineChannel.ReceiveMessage<PipelineRequest>(cancellationToken);
 
-                    Logger.LogInformation($"[PipelineServer] [PipelineChannel] {request.Type} request received.");
+                    Logger.LogInformation($"[AmuseHost] [PipelineServer] [PipelineChannel] {request.Type} request received.");
                     if (request.Type == RequestType.Stop)
                     {
                         await StopServerAsync(request, cancellationToken);
@@ -133,13 +133,13 @@ namespace Amuse.Common
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError(ex, "[PipelineServer] [PipelineChannel] An unexpected exception occurred");
+                    Logger.LogError(ex, "[AmuseHost] [PipelineServer] [PipelineChannel] An unexpected exception occurred");
                     break;
                 }
             }
 
             await ChannelClosedAsync();
-            Logger.LogInformation($"[PipelineServer] [PipelineChannel] Pipeline channel closed.");
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [PipelineChannel] Pipeline channel closed.");
         }
 
 
@@ -149,31 +149,31 @@ namespace Amuse.Common
         /// <param name="cancellationToken">The cancellation token.</param>
         protected async Task StartCommandChannelAsync(CancellationToken cancellationToken)
         {
-            Logger.LogInformation($"[PipelineServer] [CommandChannel] Start command channel.");
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [CommandChannel] Start command channel.");
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
-                    Logger.LogInformation($"[PipelineServer] [CommandChannel] Waiting for command...");
+                    Logger.LogInformation($"[AmuseHost] [PipelineServer] [CommandChannel] Waiting for command...");
                     var commandMessage = await _commandChannel.ReceiveObject<CommandRequest>(cancellationToken);
                     if (commandMessage == null)
                         continue;
 
-                    Logger.LogInformation("[PipelineServer] [CommandChannel] Received {Type} command.", commandMessage.Type);
+                    Logger.LogInformation("[AmuseHost] [PipelineServer] [CommandChannel] Received {Type} command.", commandMessage.Type);
                     if (commandMessage.Type == CommandRequestType.Cancel)
                         await PipelineCancellation.SafeCancelAsync();
 
                     await _commandChannel.SendObject(new CommandResponse(), cancellationToken);
-                    Logger.LogInformation("[PipelineServer] [CommandChannel] Processed {Type} command.", commandMessage.Type);
+                    Logger.LogInformation("[AmuseHost] [PipelineServer] [CommandChannel] Processed {Type} command.", commandMessage.Type);
                 }
                 catch (OperationCanceledException) { }
                 catch (Exception ex)
                 {
-                    Logger.LogError(ex, $"[PipelineServer] [CommandChannel] - An exception occurred receiving command.");
+                    Logger.LogError(ex, $"[AmuseHost] [PipelineServer] [CommandChannel] - An exception occurred receiving command.");
                     await _commandChannel.SendObject(new CommandResponse(ex), cancellationToken);
                 }
             }
-            Logger.LogInformation($"[PipelineServer] [CommandChannel] Close command channel.");
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [CommandChannel] Close command channel.");
         }
 
 
@@ -183,7 +183,7 @@ namespace Amuse.Common
         /// <param name="progressQueue">The progress queue.</param>
         protected async Task StartProgressChannelAsync(CancellationToken cancellationToken)
         {
-            Logger.LogInformation($"[PipelineServer] [ProgressChannel] Start progress channel.");
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [ProgressChannel] Start progress channel.");
             await foreach (var progressMessage in _progressQueue.Reader.ReadAllAsync(cancellationToken))
             {
                 try
@@ -193,10 +193,10 @@ namespace Amuse.Common
                 catch (OperationCanceledException) { }
                 catch (Exception ex)
                 {
-                    Logger.LogError(ex, $"[PipelineServer] [ProgressChannel] - An exception occurred processing progress.");
+                    Logger.LogError(ex, $"[AmuseHost] [PipelineServer] [ProgressChannel] - An exception occurred processing progress.");
                 }
             }
-            Logger.LogInformation($"[PipelineServer] [ProgressChannel] Close progress channel.");
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [ProgressChannel] Close progress channel.");
         }
 
 
@@ -208,7 +208,7 @@ namespace Amuse.Common
         protected async Task StartServerAsync(PipelineRequest request, CancellationToken cancellationToken)
         {
             await _pipelineChannel.SendResponse(cancellationToken);
-            Logger.LogInformation($"[PipelineServer] [StartServer] Server started.");
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [StartServer] Server started.");
         }
 
 
@@ -220,7 +220,7 @@ namespace Amuse.Common
         protected async Task StopServerAsync(PipelineRequest request, CancellationToken cancellationToken)
         {
             await _pipelineChannel.SendResponse(cancellationToken);
-            Logger.LogInformation($"[PipelineServer] [StopServer] Server stopped.");
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [StopServer] Server stopped.");
         }
 
 

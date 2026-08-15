@@ -42,11 +42,7 @@ namespace Amuse.Host.StableDiffusionCpp
         public async Task<CapabilitiesModel> GetCapabilitiesAsync(CancellationToken cancellationToken = default)
         {
             const string endpoint = "sdcpp/v1/capabilities";
-            using (var response = await _httpClient.GetAsync(endpoint, cancellationToken))
-            {
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<CapabilitiesModel>(_serializerOptions, cancellationToken: cancellationToken);
-            }
+            return await SendRequestAsync<CapabilitiesModel>(() => _httpClient.GetAsync(endpoint, cancellationToken), cancellationToken);
         }
 
 
@@ -58,11 +54,7 @@ namespace Amuse.Host.StableDiffusionCpp
         public async Task<JobModel> GetJobAsync(JobModel job, CancellationToken cancellationToken = default)
         {
             const string endpoint = "sdcpp/v1/jobs/{0}";
-            using (var response = await _httpClient.GetAsync(string.Format(endpoint, job.Id), cancellationToken))
-            {
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<JobModel>(_serializerOptions, cancellationToken: cancellationToken);
-            }
+            return await SendRequestAsync<JobModel>(() => _httpClient.GetAsync(string.Format(endpoint, job.Id), cancellationToken), cancellationToken);
         }
 
 
@@ -74,11 +66,7 @@ namespace Amuse.Host.StableDiffusionCpp
         public async Task<JobModel> CreateJobAsync(ImageParams parameters, CancellationToken cancellationToken = default)
         {
             const string endpoint = "sdcpp/v1/img_gen";
-            using (var response = await _httpClient.PostAsJsonAsync(endpoint, parameters, cancellationToken))
-            {
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<JobModel>(_serializerOptions, cancellationToken: cancellationToken);
-            }
+            return await SendRequestAsync<JobModel>(() => _httpClient.PostAsJsonAsync(endpoint, parameters, _serializerOptions, cancellationToken), cancellationToken);
         }
 
 
@@ -90,12 +78,7 @@ namespace Amuse.Host.StableDiffusionCpp
         public async Task<JobModel> CreateJobAsync(VideoParams parameters, CancellationToken cancellationToken = default)
         {
             const string endpoint = "sdcpp/v1/vid_gen";
-            using (var response = await _httpClient.PostAsJsonAsync(endpoint, parameters, cancellationToken))
-            {
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<JobModel>(_serializerOptions, cancellationToken: cancellationToken);
-
-            }
+            return await SendRequestAsync<JobModel>(() => _httpClient.PostAsJsonAsync(endpoint, parameters, _serializerOptions, cancellationToken), cancellationToken);
         }
 
 
@@ -104,13 +87,23 @@ namespace Amuse.Host.StableDiffusionCpp
         /// </summary>
         /// <param name="job">The job.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public async Task CancelJobAsync(JobModel job, CancellationToken cancellationToken = default)
+        public async Task<bool> CancelJobAsync(JobModel job)
         {
-            const string endpoint = "sdcpp/v1/jobs/{0}/cancel";
-            using (var response = await _httpClient.GetAsync(string.Format(endpoint, job.Id), cancellationToken))
+            try
             {
-                response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadAsStringAsync();
+                const string endpoint = "sdcpp/v1/jobs/{0}/cancel";
+                using (var response = await _httpClient.PostAsync(string.Format(endpoint, job.Id), content: null))
+                {
+                    if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                        return false; // Job cannot be canceled
+
+                    response.EnsureSuccessStatusCode();
+                    return true;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new StableDiffusionApiException($"Failed to communicate with backend to cancel job '{job.Id}'.", ex);
             }
         }
 
@@ -121,6 +114,44 @@ namespace Amuse.Host.StableDiffusionCpp
         public void Dispose()
         {
             _httpClient?.Dispose();
+        }
+
+
+        /// <summary>
+        /// Send API request request
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="requestFunc">The request function.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="Amuse.Host.StableDiffusionCpp.StableDiffusionApiException">The server responded with an empty or invalid payload.</exception>
+        /// <exception cref="Amuse.Host.StableDiffusionCpp.StableDiffusionApiException">Backend API error (Status: {response?.StatusCode}): {ex.Message}</exception>
+        /// <exception cref="Amuse.Host.StableDiffusionCpp.StableDiffusionApiException">Failed to parse the server data model response.</exception>
+        private async Task<T> SendRequestAsync<T>(Func<Task<HttpResponseMessage>> requestFunc, CancellationToken cancellationToken)
+        {
+            HttpResponseMessage response = null;
+            try
+            {
+                response = await requestFunc();
+                response.EnsureSuccessStatusCode();
+
+                var result = await response.Content.ReadFromJsonAsync<T>(_serializerOptions, cancellationToken);
+                if (result == null)
+                    throw new StableDiffusionApiException("The server responded with an empty or invalid payload.");
+
+                return result;
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new StableDiffusionApiException($"Backend API error (Status: {response?.StatusCode}): {ex.Message}", ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new StableDiffusionApiException("Failed to parse the server data model response.", ex);
+            }
+            finally
+            {
+                response?.Dispose();
+            }
         }
 
     }

@@ -7,26 +7,27 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using TensorStack.Common;
 
-
 namespace Amuse.Host.StableDiffusionCpp
 {
     public static class Extensions
     {
-
         public static Config.ServerConfig ToServerConfig(this PipelineLoadOptions options, PipelineCreateOptions createOptions)
         {
+            if (!GetBackend(options, out var backendType, out var backendDirectory))
+                throw new Exception($"{options.DeviceVendor} Backend Not Found.");
+
             var modelConfig = GetModelConfig(options);
             var config = new Config.ServerConfig
             {
                 Address = createOptions.ServerAddress,
                 Port = GetOpenPort(createOptions.ServerPort),
-                BackendDirectory = Path.Combine(AppContext.BaseDirectory, "Backend"),
+                BackendDirectory = backendDirectory,
                 DeviceId = options.DeviceId,
-                Backend = Common.BackendType.CUDA,
+                Backend = backendType,
                 MemoryMode = options.MemoryMode,
                 ModelConfig = modelConfig,
-                IsFlashAttentionEnabled = true,
                 QuantizationType = options.QuantType,
+                IsFlashAttentionEnabled = options.IsFlashAttentionEnabled,
             };
 
             return config;
@@ -227,6 +228,43 @@ namespace Amuse.Host.StableDiffusionCpp
                 return (short)openPort;
 
             throw new Exception("Unable to locate open port");
+        }
+
+
+        private static bool GetBackend(PipelineLoadOptions options, out Common.BackendType backendType, out string backendDirectory)
+        {
+            backendType = Common.BackendType.CPU;
+            backendDirectory = string.Empty;
+            var baseDirectory = Path.Combine(AppContext.BaseDirectory, "Backend");
+            if (options.DeviceVendor == VendorType.AMD)
+            {
+                var rocmBackend = Path.Combine(baseDirectory, $"sd-cpp-{Common.BackendType.ROCM.GetShortName()}");
+                if (Directory.Exists(rocmBackend))
+                {
+                    backendType = Common.BackendType.ROCM;
+                    backendDirectory = rocmBackend;
+                    return true;
+                }
+            }
+            else if (options.DeviceVendor == VendorType.Nvidia)
+            {
+                var cudaBackend = Path.Combine(baseDirectory, $"sd-cpp-{Common.BackendType.CUDA.GetShortName()}");
+                if (Directory.Exists(cudaBackend))
+                {
+                    backendType = Common.BackendType.CUDA;
+                    backendDirectory = cudaBackend;
+                    return true;
+                }
+            }
+
+            var vulkanBackend = Path.Combine(baseDirectory, $"sd-cpp-{Common.BackendType.Vulkan.GetShortName()}");
+            if (Directory.Exists(vulkanBackend))
+            {
+                backendType = Common.BackendType.Vulkan;
+                backendDirectory = vulkanBackend;
+                return true;
+            }
+            return false;
         }
     }
 }

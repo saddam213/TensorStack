@@ -25,5 +25,6 @@ namespace Amuse.Common
         public ControlNetConfig ControlNet { get; set; }
         public MemoryModeType MemoryMode { get; set; }
         public CheckpointConfig CheckpointConfig { get; set; }
+        public bool IsFlashAttentionEnabled { get; set; }
     }
 }

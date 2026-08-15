@@ -58,10 +58,12 @@ namespace Amuse.Host.StableDiffusionCpp
         /// <param name="cancellationToken">The cancellation token.</param>
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
+            _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StartAsync] Starting StableDiffusion.cpp server...");
             _consoleOutputTask = ProcessConsoleOutput(_cancellationTokenSource.Token);
-            var serverPath = Path.Combine(_configuration.BackendDirectory, $"sd-cpp-{_configuration.Backend.GetShortName()}", "sd-server.exe");
+            var serverPath = Path.Combine(_configuration.BackendDirectory, "sd-server.exe");
             var serverArguments = GetServerArguments(_configuration);
-            _logger.LogInformation("Server Arguments: {serverArguments}", serverArguments);
+            _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StartAsync] Server Path: {serverPath}", serverPath);
+            _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StartAsync] Server Arguments: {serverArguments}", serverArguments);
             var processInfo = new ProcessStartInfo
             {
                 FileName = serverPath,
@@ -82,6 +84,7 @@ namespace Amuse.Host.StableDiffusionCpp
             _serverProcess.BeginErrorReadLine();
             _processHandler.AddProcess(_serverProcess);
             _modelCapabilities = await WaitForServerStartup(cancellationToken);
+            _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StartAsync] StableDiffusion.cpp server started.");
         }
 
 
@@ -96,25 +99,27 @@ namespace Amuse.Host.StableDiffusionCpp
 
             try
             {
+                _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StopAsync] Stopping StableDiffusion.cpp server...");
                 _consoleChannel.Writer.TryComplete();
                 _cancellationTokenSource.Cancel();
                 if (_consoleOutputTask is not null)
                     await _consoleOutputTask;
 
-                using (_serverProcess)
+                _serverProcess.Kill(true);
+                using (var cancelation = new CancellationTokenSource(timeout))
                 {
-                    var timeoutDelay = Task.Delay(timeout);
-                    await Task.WhenAny(timeoutDelay, _serverProcess.WaitForExitAsync());
-                    if (!_serverProcess.HasExited)
-                    {
-                        _serverProcess.Kill(true);
-                        await _serverProcess.WaitForExitAsync();
-                    }
+                    await _serverProcess.WaitForExitAsync(cancelation.Token);
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "[AmuseHost] [StableDiffusionServer] [StopAsync] Exception stopping StableDiffusion.cpp server.");
             }
             finally
             {
+                _serverProcess?.Dispose();
                 _serverProcess = null;
+                _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StopAsync] StableDiffusion.cpp server stopped.");
             }
         }
 
@@ -131,7 +136,7 @@ namespace Amuse.Host.StableDiffusionCpp
             {
                 _currentJob = await _stableDiffusionClient.CreateJobAsync(request, cancellationToken);
                 if (_currentJob == null)
-                    throw new Exception("Failed To Create Image Job");
+                    throw new Exception("Failed to create image job");
 
                 var completed = await WaitForCompletionAsync(cancellationToken: cancellationToken);
                 return completed.Result?.GetImageBytes();
@@ -155,7 +160,7 @@ namespace Amuse.Host.StableDiffusionCpp
             {
                 _currentJob = await _stableDiffusionClient.CreateJobAsync(request, cancellationToken);
                 if (_currentJob == null)
-                    throw new Exception("Failed To Create Image Job");
+                    throw new Exception("Failed to create video job");
 
                 var completed = await WaitForCompletionAsync(cancellationToken: cancellationToken);
                 return completed.Result?.GetVideoBytes();
@@ -171,12 +176,12 @@ namespace Amuse.Host.StableDiffusionCpp
         /// Cancel the active generation
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public async Task CancelGenerateAsync(CancellationToken cancellationToken = default)
+        public async Task<bool> CancelGenerateAsync()
         {
             if (_currentJob == null)
-                return;
+                return true;
 
-            await _stableDiffusionClient.CancelJobAsync(_currentJob, cancellationToken);
+            return await _stableDiffusionClient.CancelJobAsync(_currentJob);
         }
 
 
@@ -214,13 +219,13 @@ namespace Amuse.Host.StableDiffusionCpp
                     }
                     catch (Exception)
                     {
-                        _logger.LogInformation("Waiting for server startup...");
+                        _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [WaitForServerStartup] Waiting for server startup...");
                     }
                 }
             }
 
             if (capabilities == null)
-                throw new InvalidOperationException("Stable Diffusion server failed to start.");
+                throw new InvalidOperationException("StableDiffusion.cpp server failed to start");
 
             return capabilities;
         }
@@ -240,18 +245,17 @@ namespace Amuse.Host.StableDiffusionCpp
             {
                 while (await timer.WaitForNextTickAsync(cancellationToken))
                 {
-                    var generationJob = await _stableDiffusionClient.GetJobAsync(_currentJob, cancellationToken);
-                    if (generationJob == null)
-                        throw new InvalidOperationException("Generation Job");
+                    var generationJob = await _stableDiffusionClient.GetJobAsync(_currentJob, cancellationToken)
+                                     ?? throw new InvalidOperationException($"Generation Job not found, Id: {_currentJob?.Id}");
                     if (generationJob.Status == JobStatus.Completed)
                         return generationJob;
                     if (generationJob.Status == JobStatus.Cancelled)
-                        throw new OperationCanceledException(cancellationToken);
+                        throw new OperationCanceledException();
                     if (generationJob.Status == JobStatus.Failed)
                         break;
 
                 }
-                throw new Exception("Generation Failed");
+                throw new Exception($"Generation Job failed, Id: {_currentJob?.Id}");
             }
         }
 
@@ -278,7 +282,7 @@ namespace Amuse.Host.StableDiffusionCpp
         {
             await foreach (var consoleLine in _consoleChannel.Reader.ReadAllAsync(cancellationToken))
             {
-                _logger.LogInformation(consoleLine);
+                LogConsoleOutput(consoleLine);
                 if (TryParseStep(consoleLine, out int step, out int steps, out float elapsed))
                 {
                     _progressCallback?.Report(new PipelineProgress
@@ -295,19 +299,34 @@ namespace Amuse.Host.StableDiffusionCpp
 
 
         /// <summary>
-        /// Adds the server variables.
+        /// Loga the console output
         /// </summary>
-        /// <param name="processInfo">The process information.</param>
-        /// <param name="serverConfig">The server configuration.</param>
-        private static void AddServerVariables(ProcessStartInfo processInfo, ServerConfig serverConfig)
+        /// <param name="consoleLine">The console line.</param>
+        private void LogConsoleOutput(string consoleLine)
         {
-            if (serverConfig.ServerVariables?.Count > 0)
+            if (string.IsNullOrEmpty(consoleLine))
+                return;
+
+            const string logFormat = "[StableDiffusion.Cpp] {LogLine}";
+            if (consoleLine.Length >= 7)
             {
-                foreach (var variable in serverConfig.ServerVariables)
+                if (consoleLine.StartsWith("[INFO ]"))
                 {
-                    processInfo.Environment[variable.Key] = variable.Value;
+                    _logger.LogInformation(logFormat, consoleLine[7..].TrimStart());
+                    return;
+                }
+                if (consoleLine.StartsWith("[DEBUG]"))
+                {
+                    _logger.LogDebug(logFormat, consoleLine[7..].TrimStart());
+                    return;
+                }
+                if (consoleLine.StartsWith("[ERROR]"))
+                {
+                    _logger.LogError(logFormat, consoleLine[7..].TrimStart());
+                    return;
                 }
             }
+            _logger.LogInformation(logFormat, consoleLine);
         }
 
 
@@ -354,6 +373,23 @@ namespace Amuse.Host.StableDiffusionCpp
 
 
         /// <summary>
+        /// Adds the server variables.
+        /// </summary>
+        /// <param name="processInfo">The process information.</param>
+        /// <param name="serverConfig">The server configuration.</param>
+        private static void AddServerVariables(ProcessStartInfo processInfo, ServerConfig serverConfig)
+        {
+            if (serverConfig.ServerVariables?.Count > 0)
+            {
+                foreach (var variable in serverConfig.ServerVariables)
+                {
+                    processInfo.Environment[variable.Key] = variable.Value;
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Gets the server arguments.
         /// </summary>
         /// <param name="serverConfig">The server configuration.</param>
@@ -381,14 +417,9 @@ namespace Amuse.Host.StableDiffusionCpp
 
             if (serverConfig.MemoryMode == MemoryModeType.Device)
             {
-                if (serverConfig.QuantizationType == QuantizationType.Q8Bit)
-                {
-                    argumentBuilder.Append("--type q8_0 ");
-                }
-                if (serverConfig.QuantizationType == QuantizationType.Q4Bit)
-                {
-                    argumentBuilder.Append("--type q4_0 ");
-                }
+                var QuantizationType = GetQuantizationType(serverConfig.QuantizationType);
+                argumentBuilder.Append("--eager-load ");
+                argumentBuilder.Append($"--type {QuantizationType} ");
             }
             else
             {
@@ -460,5 +491,19 @@ namespace Amuse.Host.StableDiffusionCpp
             return argumentBuilder.ToString();
         }
 
+
+        /// <summary>
+        /// Gets the type of the quantization.
+        /// </summary>
+        /// <param name="quantizationType">Type of the quantization.</param>
+        private static string GetQuantizationType(QuantizationType quantizationType)
+        {
+            return quantizationType switch
+            {
+                QuantizationType.Q4Bit => "q4_0",
+                QuantizationType.Q8Bit => "q8_0",
+                _ => "bf16"
+            };
+        }
     }
 }

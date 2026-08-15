@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common.Tensor;
 
-
 namespace Amuse.Host.StableDiffusionCpp
 {
     public sealed class HostServer : PipelineServer
@@ -63,12 +62,12 @@ namespace Amuse.Host.StableDiffusionCpp
             {
                 var timestamp = Stopwatch.GetTimestamp();
                 _pipelineCreateOptions = request.CreateOptions;
-                Logger.LogInformation($"[PipelineServer] [CreatePipeline] Environment created, Elapsed: {Stopwatch.GetElapsedTime(timestamp)}");
+                Logger.LogInformation($"[AmuseHost] [PipelineServer] [CreatePipeline] Environment created, Elapsed: {Stopwatch.GetElapsedTime(timestamp)}");
                 await SendResponse(cancellationToken);
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "[PipelineServer] [CreatePipeline] An exception occurred creating environment.");
+                Logger.LogError(ex, "[AmuseHost] [PipelineServer] [CreatePipeline] An exception occurred creating environment.");
                 await SendException(ex, cancellationToken);
             }
         }
@@ -91,7 +90,7 @@ namespace Amuse.Host.StableDiffusionCpp
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "[PipelineServer] [LoadPipeline] An exception occurred loading pipeline.");
+                Logger.LogError(ex, "[AmuseHost] [PipelineServer] [LoadPipeline] An exception occurred loading pipeline.");
                 await SendException(ex, cancellationToken);
             }
         }
@@ -112,7 +111,7 @@ namespace Amuse.Host.StableDiffusionCpp
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "[PipelineServer] [ReloadPipeline] An exception occurred reloading pipeline.");
+                Logger.LogError(ex, "[AmuseHost] [PipelineServer] [ReloadPipeline] An exception occurred reloading pipeline.");
                 await SendException(ex, cancellationToken);
             }
         }
@@ -132,7 +131,7 @@ namespace Amuse.Host.StableDiffusionCpp
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "[PipelineServer] [UnloadPipeline] An exception occurred unloading pipeline.");
+                Logger.LogError(ex, "[AmuseHost] [PipelineServer] [UnloadPipeline] An exception occurred unloading pipeline.");
                 await SendException(ex, cancellationToken);
             }
         }
@@ -147,37 +146,73 @@ namespace Amuse.Host.StableDiffusionCpp
         {
             try
             {
-                request.RunOptions.UnpackTensors(request);
-                var modelConfig = _serverConfig.ModelConfig;
+                using (PipelineCancellation = new CancellationTokenSource())
+                {
+                    RegisterCancellation(PipelineCancellation.Token);
 
-                if (request.RunOptions.ImageOptions != null)
-                {
-                    var options = request.RunOptions.ImageOptions;
-                    var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.ImageParams;
-                    var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
-                    var result = await _pipeline.GenerateImageAsync(generateParams, cancellationToken);
-                    await File.WriteAllBytesAsync(options.TempFileName, result, cancellationToken);
+                    request.RunOptions.UnpackTensors(request);
+                    var modelConfig = _serverConfig.ModelConfig;
+                    if (request.RunOptions.ImageOptions != null)
+                    {
+                        var options = request.RunOptions.ImageOptions;
+                        var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.ImageParams;
+                        var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
+                        var result = await _pipeline.GenerateImageAsync(generateParams, cancellationToken);
+                        await File.WriteAllBytesAsync(options.TempFileName, result, cancellationToken);
+                    }
+                    else if (request.RunOptions.VideoOptions != null)
+                    {
+                        var options = request.RunOptions.VideoOptions;
+                        var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.VideoParams;
+                        var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
+                        var result = await _pipeline.GenerateVideoAsync(generateParams, cancellationToken);
+                        await File.WriteAllBytesAsync(options.TempFileName, result, cancellationToken);
+                    }
+                    await SendMessage(new PipelineResponse(default(Tensor<float>[])), cancellationToken);
                 }
-                else if (request.RunOptions.VideoOptions != null)
-                {
-                    var options = request.RunOptions.VideoOptions;
-                    var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.VideoParams;
-                    var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
-                    var result = await _pipeline.GenerateVideoAsync(generateParams, cancellationToken);
-                    await File.WriteAllBytesAsync(options.TempFileName, result, cancellationToken);
-                }
-                await SendMessage(new PipelineResponse(default(Tensor<float>[])), cancellationToken);
             }
             catch (OperationCanceledException ex)
             {
-                Logger.LogError("[PipelineServer] [RunPipeline] {Message}", ex.Message);
+                Logger.LogError("[AmuseHost] [PipelineServer] [RunPipeline] {Message}", ex.Message);
                 await SendException(ex, cancellationToken);
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "[PipelineServer] [RunPipeline] An exception occurred running pipeline.");
+                Logger.LogError(ex, "[AmuseHost] [PipelineServer] [RunPipeline] An exception occurred running pipeline.");
                 await SendException(ex, cancellationToken);
             }
+        }
+
+
+        /// <summary>
+        /// Registers the pipeline cancellation.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token to register callback</param>
+        private void RegisterCancellation(CancellationToken cancellationToken)
+        {
+            cancellationToken.Register(() =>
+            {
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        var cancelSuccess = await _pipeline.CancelGenerateAsync();
+                        if (!cancelSuccess)
+                        {
+                            // SD-CPP Server cannot cancel running jobs, so we have to close the server
+                            // Throw a normal exception so the frontend will close the server gracefully
+                            var ex = new Exception("Unable to cancel running task, Closing server");
+                            Logger.LogError(ex, "[AmuseHost] [PipelineServer] [RunPipeline] Unable to cancel running task");
+                            await SendException(ex, CancellationToken.None);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError(ex, "[AmuseHost] [PipelineServer] [RunPipeline] Exception occurred while executing CancelGenerateAsync.");
+                        await SendException(ex, CancellationToken.None);
+                    }
+                });
+            });
         }
 
 

@@ -179,9 +179,13 @@ namespace Amuse.App.Services
             {
                 return await _backenClient.GenerateImageAsync(options);
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception)
             {
-                if (_backenClient.StopHostOnException)
+                if (_backenClient?.StopHostOnException == true)
                     await StopAsync();
 
                 throw;
@@ -202,9 +206,13 @@ namespace Amuse.App.Services
             {
                 return await _backenClient.GenerateVideoAsync(options);
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception)
             {
-                if (_backenClient.StopHostOnException)
+                if (_backenClient?.StopHostOnException == true)
                     await StopAsync();
 
                 throw;
@@ -225,9 +233,13 @@ namespace Amuse.App.Services
             {
                 return await _backenClient.GenerateAudioAsync(options);
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception)
             {
-                if (_backenClient.StopHostOnException)
+                if (_backenClient?.StopHostOnException == true)
                     await StopAsync();
 
                 throw;
@@ -248,9 +260,13 @@ namespace Amuse.App.Services
             {
                 return await _backenClient.GenerateTextAsync(options);
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception)
             {
-                if (_backenClient.StopHostOnException)
+                if (_backenClient?.StopHostOnException == true)
                     await StopAsync();
 
                 throw;

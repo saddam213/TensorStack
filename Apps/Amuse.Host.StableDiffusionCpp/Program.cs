@@ -51,7 +51,7 @@ namespace Amuse.Host.StableDiffusionCpp
         {
             try
             {
-                _logger.LogInformation("[StartAsync] Starting {Name}...", _serverConfig.Name);
+                _logger.LogInformation("[AmuseHost] Starting {Name}...", _serverConfig.Name);
                 using (var cancellationTokenSource = new CancellationTokenSource())
                 {
                     AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) => cancellationTokenSource.SafeCancel();
@@ -62,14 +62,14 @@ namespace Amuse.Host.StableDiffusionCpp
                         await hostServer.StartAsync(cancellationTokenSource.Token);
                     }
                 }
-                _logger.LogInformation("[StartAsync] {Name} stopped.", _serverConfig.Name);
+                _logger.LogInformation("[AmuseHost] {Name} stopped.", _serverConfig.Name);
             }
             catch (EndOfStreamException)
             {
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "[StartAsync] An unhandled exception occurred.");
+                _logger.LogError(ex, "[AmuseHost] An unhandled exception occurred.");
             }
         }
 

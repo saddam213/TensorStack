@@ -17,6 +17,7 @@ namespace Amuse.App.Common
             QualityModes = GetQualityModes(Vendor);
             SupportedBackends = GetSupportedBackends(Vendor, DeviceType);
             DefaultQualityMode = QualityModes.Contains(QualityMode.Standard) ? QualityMode.Standard : QualityMode.Production;
+            IsFlashAttentionEnabled = true;
         }
 
         public int PCIBusId => _baseDevice.PCIBusId;
@@ -25,7 +26,7 @@ namespace Amuse.App.Common
         public QualityMode[] QualityModes { get; init; }
         public QualityMode DefaultQualityMode { get; init; }
         public BackendType[] SupportedBackends { get; init; }
-
+        public bool IsFlashAttentionEnabled { get; init; }
 
         private static QualityMode[] GetQualityModes(VendorType vendor)
         {
