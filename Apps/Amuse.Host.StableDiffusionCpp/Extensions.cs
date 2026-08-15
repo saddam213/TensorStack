@@ -13,23 +13,23 @@ namespace Amuse.Host.StableDiffusionCpp
 {
     public static class Extensions
     {
-        public static Config.ServerConfig ToServerConfig(this PipelineLoadOptions options, PipelineCreateOptions createOptions)
+        public static Config.ServerConfig ToServerConfig(this PipelineLoadOptions loadOptions, PipelineCreateOptions createOptions)
         {
-            if (!GetBackend(options, out var backendType, out var backendDirectory))
-                throw new Exception($"{options.DeviceVendor} Backend Not Found.");
+            if (!GetBackend(createOptions, loadOptions, out var backendType, out var backendDirectory))
+                throw new Exception($"{loadOptions.DeviceVendor} Backend Not Found.");
 
-            var modelConfig = GetModelConfig(options);
+            var modelConfig = GetModelConfig(loadOptions);
             var config = new Config.ServerConfig
             {
                 Address = createOptions.ServerAddress,
                 Port = GetOpenPort(createOptions.ServerPort),
                 BackendDirectory = backendDirectory,
-                DeviceId = options.DeviceId,
+                DeviceId = loadOptions.DeviceId,
                 Backend = backendType,
-                MemoryMode = options.MemoryMode,
+                MemoryMode = loadOptions.MemoryMode,
                 ModelConfig = modelConfig,
-                QuantizationType = options.QuantType,
-                IsFlashAttentionEnabled = options.IsFlashAttentionEnabled,
+                QuantizationType = loadOptions.QuantType,
+                IsFlashAttentionEnabled = loadOptions.IsFlashAttentionEnabled,
             };
 
             return config;
@@ -61,6 +61,10 @@ namespace Amuse.Host.StableDiffusionCpp
                         TxtCfg = Math.Max(1, options.GuidanceScale),
                         DistilledGuidance = Math.Max(1, options.GuidanceScale2)
                     }
+                },
+                VaeTilingParams = new VaeTilingParams
+                {
+                    Enabled = options.EnableVaeTiling
                 }
             };
         }
@@ -93,6 +97,22 @@ namespace Amuse.Host.StableDiffusionCpp
                         TxtCfg = Math.Max(1, options.GuidanceScale),
                         DistilledGuidance = Math.Max(1, options.GuidanceScale2)
                     }
+                },
+                SampleParamsHighNoise = new SampleParams
+                {
+                    SampleSteps = options.Steps2,
+                    SampleMethod = GetSampler(options.SchedulerOptions),
+                    Scheduler = GetSigmaSchedule(options.SchedulerOptions),
+                    Guidance = new GuidanceParams
+                    {
+                        TxtCfg = Math.Max(1, options.GuidanceScale),
+                        DistilledGuidance = Math.Max(1, options.GuidanceScale2)
+                    }
+                },
+                VaeTilingParams = new VaeTilingParams
+                {
+                    Enabled = options.EnableVaeTiling,
+                    TemporalTiling = options.EnableVaeSlicing
                 }
             };
         }
@@ -237,14 +257,13 @@ namespace Amuse.Host.StableDiffusionCpp
         }
 
 
-        private static bool GetBackend(PipelineLoadOptions options, out Common.BackendType backendType, out string backendDirectory)
+        private static bool GetBackend(PipelineCreateOptions createOptions, PipelineLoadOptions loadOptions, out Common.BackendType backendType, out string backendDirectory)
         {
             backendType = Common.BackendType.CPU;
             backendDirectory = string.Empty;
-            var baseDirectory = Path.Combine(AppContext.BaseDirectory, "Backend");
-            if (options.DeviceVendor == VendorType.AMD)
+            if (loadOptions.DeviceVendor == VendorType.AMD)
             {
-                var rocmBackend = Path.Combine(baseDirectory, $"sd-cpp-{Common.BackendType.ROCM.GetShortName()}");
+                var rocmBackend = Path.Combine(createOptions.Directory, $"sd-cpp-{Common.BackendType.ROCM.GetShortName()}");
                 if (Directory.Exists(rocmBackend))
                 {
                     backendType = Common.BackendType.ROCM;
@@ -252,9 +271,9 @@ namespace Amuse.Host.StableDiffusionCpp
                     return true;
                 }
             }
-            else if (options.DeviceVendor == VendorType.Nvidia)
+            else if (loadOptions.DeviceVendor == VendorType.Nvidia)
             {
-                var cudaBackend = Path.Combine(baseDirectory, $"sd-cpp-{Common.BackendType.CUDA.GetShortName()}");
+                var cudaBackend = Path.Combine(createOptions.Directory, $"sd-cpp-{Common.BackendType.CUDA.GetShortName()}");
                 if (Directory.Exists(cudaBackend))
                 {
                     backendType = Common.BackendType.CUDA;
@@ -263,7 +282,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 }
             }
 
-            var vulkanBackend = Path.Combine(baseDirectory, $"sd-cpp-{Common.BackendType.Vulkan.GetShortName()}");
+            var vulkanBackend = Path.Combine(createOptions.Directory, $"sd-cpp-{Common.BackendType.Vulkan.GetShortName()}");
             if (Directory.Exists(vulkanBackend))
             {
                 backendType = Common.BackendType.Vulkan;

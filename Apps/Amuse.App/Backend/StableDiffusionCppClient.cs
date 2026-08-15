@@ -2,6 +2,7 @@
 using Amuse.Common;
 using Amuse.Common.Config;
 using Microsoft.Extensions.Logging;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,7 +35,12 @@ namespace Amuse.App.Runtime
         /// <exception cref="System.OperationCanceledException"></exception>
         protected override async Task<PipelineClient> CreatePipelineClientAsync(CancellationToken cancellationToken = default)
         {
-            var createOptions = new PipelineCreateOptions();
+            var createOptions = new PipelineCreateOptions
+            {
+                ServerPort = 2345,
+                ServerAddress = "127.0.0.1",
+                Directory = Path.Combine(App.DirectoryData, "Backend")
+            };
             var clientConfig = new ClientConfig
             {
                 ServerPath = App.DirectoryServer,

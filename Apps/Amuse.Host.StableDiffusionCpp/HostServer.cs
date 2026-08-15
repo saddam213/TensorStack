@@ -82,6 +82,8 @@ namespace Amuse.Host.StableDiffusionCpp
         {
             try
             {
+                await UpdateProgress(new PipelineProgress { Key = "Load", Subkey = "Pipeline", Message = "Loading Pipeline Components..." });
+
                 _pipelineLoadOptions = request.LoadOptions;
                 _serverConfig = _pipelineLoadOptions.ToServerConfig(_pipelineCreateOptions);
                 _pipeline = new StableDiffusionServer(_serverConfig, _progressRelayCallback, Logger);
@@ -146,6 +148,8 @@ namespace Amuse.Host.StableDiffusionCpp
         {
             try
             {
+                await UpdateProgress(new PipelineProgress { Key = "Load", Subkey = "Pipeline", Message = "Loading Pipeline Components..." });
+
                 using (PipelineCancellation = new CancellationTokenSource())
                 {
                     RegisterCancellation(PipelineCancellation.Token);
