@@ -189,6 +189,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "CLIP-VIT-G",
+        "MainFile": "model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/CLIP-VIT-G/config.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/CLIP-VIT-G/merges.txt",
@@ -210,6 +211,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "CLIP-VIT-L",
+        "MainFile": "model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/CLIP-VIT-L/config.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/CLIP-VIT-L/merges.txt",
@@ -231,6 +233,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "Gemma-3-12B-IT",
+        "MainFile": "model.safetensors.index.json",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Gemma-3-12B-IT/added_tokens.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Gemma-3-12B-IT/chat_template.json",
@@ -262,6 +265,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "Mistral-3-Small",
+        "MainFile": "model.safetensors.index.json",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Mistral-3-Small/SYSTEM_PROMPT.txt",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Mistral-3-Small/config.json",
@@ -293,6 +297,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "Qwen-25-VL-7B",
+        "MainFile": "model.safetensors.index.json",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Qwen-2.5-VL-7B/chat_template.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Qwen-2.5-VL-7B/config.json",
@@ -322,6 +327,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "Qwen-3-4B",
+        "MainFile": "model.safetensors.index.json",
         "DownloadFiles": [
           "https://huggingface.co/Qwen/Qwen3-4B/resolve/main/config.json",
           "https://huggingface.co/Qwen/Qwen3-4B/resolve/main/generation_config.json",
@@ -347,6 +353,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "Qwen-3-8B",
+        "MainFile": "model.safetensors.index.json",
         "DownloadFiles": [
           "https://huggingface.co/Qwen/Qwen3-8B/resolve/main/config.json",
           "https://huggingface.co/Qwen/Qwen3-8B/resolve/main/generation_config.json",
@@ -374,6 +381,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "T5-XXL",
+        "MainFile": "model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/T5-XXL/config.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/T5-XXL/generation_config.json",
@@ -394,6 +402,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "UMT5-XXL",
+        "MainFile": "model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/UMT5-XXL/config.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/UMT5-XXL/generation_config.json",
@@ -416,6 +425,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "Qwen-3-4B-VL-IT",
+        "MainFile": "model.safetensors.index.json",
         "DownloadFiles": [
           "https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct/resolve/main/chat_template.json",
           "https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct/resolve/main/config.json",
@@ -443,6 +453,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "Qwen-3-8B-VL-IT",
+        "MainFile": "model.safetensors.index.json",
         "DownloadFiles": [
           "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct/resolve/main/chat_template.json",
           "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct/resolve/main/config.json",
@@ -472,6 +483,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "Qwen-3-06B",
+        "MainFile": "model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Qwen-3-06B/config.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Qwen-3-06B/generation_config.json",
@@ -494,6 +506,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "Ministral-3-3B-IT",
+        "MainFile": "model.safetensors.index.json",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Ministral-3-3B-IT/chat_template.jinja",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Ministral-3-3B-IT/config.json",
@@ -522,6 +535,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "Flux1",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/Flux1/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/Flux1/diffusion_pytorch_model.safetensors"
@@ -539,6 +553,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "Flux2",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/Flux2/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/Flux2/diffusion_pytorch_model.safetensors"
@@ -556,6 +571,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "CogVideoX",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/CogVideoX/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/CogVideoX/diffusion_pytorch_model.safetensors"
@@ -573,6 +589,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "Kandinsky5Image",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/Kandinsky5Image/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/Kandinsky5Image/diffusion_pytorch_model.safetensors"
@@ -590,6 +607,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "Kandinsky5Image",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/Kandinsky5Video/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/Kandinsky5Video/diffusion_pytorch_model.safetensors"
@@ -607,6 +625,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "QwenImage",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/QwenImage/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/QwenImage/diffusion_pytorch_model.safetensors"
@@ -624,6 +643,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "StableDiffusion3",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/StableDiffusion3/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/StableDiffusion3/diffusion_pytorch_model.safetensors"
@@ -641,6 +661,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "StableDiffusionXL",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/StableDiffusionXL/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/StableDiffusionXL/diffusion_pytorch_model.safetensors"
@@ -658,6 +679,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "Wan21",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/Wan21/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/Wan21/diffusion_pytorch_model.safetensors"
@@ -675,6 +697,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "AceStepXL",
+        "MainFile": "model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/AceStepXL/added_tokens.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/AceStepXL/chat_template.jinja",
@@ -699,6 +722,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "AceStepXL",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/AceStepXL/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/AceStepXL/diffusion_pytorch_model.safetensors"
@@ -716,6 +740,7 @@
         "Type": "OnlineFolder",
         "Folder": "Components",
         "Path": "AceStepXL_ConditionEncoder",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/Components/resolve/main/AceStepXL_ConditionEncoder/config.json",
           "https://huggingface.co/saddam213/Components/resolve/main/AceStepXL_ConditionEncoder/diffusion_pytorch_model.safetensors"
@@ -733,6 +758,7 @@
         "Type": "OnlineFolder",
         "Folder": "Components",
         "Path": "AceStepXL_AudioTokenizer",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/Components/resolve/main/AceStepXL_AudioTokenizer/config.json",
           "https://huggingface.co/saddam213/Components/resolve/main/AceStepXL_AudioTokenizer/diffusion_pytorch_model.safetensors"
@@ -750,6 +776,7 @@
         "Type": "OnlineFolder",
         "Folder": "Components",
         "Path": "AceStepXL_AudioDetokenizer",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/Components/resolve/main/AceStepXL_AudioDetokenizer/config.json",
           "https://huggingface.co/saddam213/Components/resolve/main/AceStepXL_AudioDetokenizer/diffusion_pytorch_model.safetensors"
@@ -767,6 +794,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "LTX",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/LTX/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/LTX/diffusion_pytorch_model.safetensors"
@@ -784,6 +812,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "LTX2",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/LTX2/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/LTX2/diffusion_pytorch_model.safetensors"
@@ -801,6 +830,7 @@
         "Type": "OnlineFolder",
         "Folder": "Components",
         "Path": "LTX20_AudioVae",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/Components/resolve/main/LTX20_AudioVae/config.json",
           "https://huggingface.co/saddam213/Components/resolve/main/LTX20_AudioVae/diffusion_pytorch_model.safetensors"
@@ -818,6 +848,7 @@
         "Type": "OnlineFolder",
         "Folder": "Components",
         "Path": "LTX20_Connectors",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/Components/resolve/main/LTX20_Connectors/config.json",
           "https://huggingface.co/saddam213/Components/resolve/main/LTX20_Connectors/diffusion_pytorch_model.safetensors"
@@ -835,6 +866,7 @@
         "Type": "OnlineFolder",
         "Folder": "Components",
         "Path": "LTX20_Vocoder",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/Components/resolve/main/LTX20_Vocoder/config.json",
           "https://huggingface.co/saddam213/Components/resolve/main/LTX20_Vocoder/diffusion_pytorch_model.safetensors"
@@ -852,6 +884,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "LTX23",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/LTX23/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/LTX23/diffusion_pytorch_model.safetensors"
@@ -869,6 +902,7 @@
         "Type": "OnlineFolder",
         "Folder": "Components",
         "Path": "LTX23_AudioVae",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/Components/resolve/main/LTX23_AudioVae/config.json",
           "https://huggingface.co/saddam213/Components/resolve/main/LTX23_AudioVae/diffusion_pytorch_model.safetensors"
@@ -886,6 +920,7 @@
         "Type": "OnlineFolder",
         "Folder": "Components",
         "Path": "LTX23_Connectors",
+        "MainFile": "diffusion_pytorch_model.safetensors.index.json",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/Components/resolve/main/LTX23_Connectors/config.json",
           "https://huggingface.co/saddam213/Components/resolve/main/LTX23_Connectors/diffusion_pytorch_model.safetensors.index.json",
@@ -905,6 +940,7 @@
         "Type": "OnlineFolder",
         "Folder": "Components",
         "Path": "LTX23_Vocoder",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/Components/resolve/main/LTX23_Vocoder/config.json",
           "https://huggingface.co/saddam213/Components/resolve/main/LTX23_Vocoder/diffusion_pytorch_model.safetensors"
@@ -922,30 +958,10 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "LongCatAudio",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/LongCatAudio/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/LongCatAudio/diffusion_pytorch_model.safetensors"
-        ]
-      }
-    },
-    {
-      "Id": 350,
-      "Backend": "PyTorch",
-      "Name": "Anima Text Conditioner",
-      "Key": "CE_Anima",
-      "Link": "https://huggingface.co/saddam213/Components/tree/main/Anima_TextConditioner",
-      "Checkpoint": {
-        "Name": "Component",
-        "Type": "OnlineFolder",
-        "Folder": "Components",
-        "Path": "Anima_TextConditioner",
-        "DownloadFiles": [
-          "https://huggingface.co/saddam213/Components/resolve/main/Anima_TextConditioner/config.json",
-          "https://huggingface.co/saddam213/Components/resolve/main/Anima_TextConditioner/diffusion_pytorch_model.safetensors",
-          "https://huggingface.co/saddam213/Components/resolve/main/Anima_TextConditioner/special_tokens_map.json",
-          "https://huggingface.co/saddam213/Components/resolve/main/Anima_TextConditioner/spiece.model",
-          "https://huggingface.co/saddam213/Components/resolve/main/Anima_TextConditioner/tokenizer.json",
-          "https://huggingface.co/saddam213/Components/resolve/main/Anima_TextConditioner/tokenizer_config.json"
         ]
       }
     },
@@ -960,6 +976,7 @@
         "Type": "OnlineFolder",
         "Folder": "AutoEncoder",
         "Path": "GLM",
+        "MainFile": "diffusion_pytorch_model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/GLM/config.json",
           "https://huggingface.co/saddam213/AutoEncoder/resolve/main/GLM/diffusion_pytorch_model.safetensors"
@@ -977,6 +994,7 @@
         "Type": "OnlineFolder",
         "Folder": "Components",
         "Path": "GLMImage_VisionEncoder",
+        "MainFile": "model.safetensors.index.json",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/Components/resolve/main/GLMImage_VisionEncoder/chat_template.jinja",
           "https://huggingface.co/saddam213/Components/resolve/main/GLMImage_VisionEncoder/config.json",
@@ -1003,6 +1021,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "Byt5-Small",
+        "MainFile": "model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Byt5-Small/config.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/Byt5-Small/generation_config.json",
@@ -1023,6 +1042,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "UMT5-Base",
+        "MainFile": "model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/UMT5-Base/config.json",
           "https://huggingface.co/saddam213/TextEncoder/resolve/main/UMT5-Base/generation_config.json",
@@ -1045,6 +1065,7 @@
         "Type": "OnlineFolder",
         "Folder": "Components",
         "Path": "PRX_TextEncoder",
+        "MainFile": "model.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/saddam213/Components/resolve/main/PRX_TextEncoder/added_tokens.json",
           "https://huggingface.co/saddam213/Components/resolve/main/PRX_TextEncoder/chat_template.jinja",
@@ -1069,6 +1090,7 @@
         "Type": "OnlineFolder",
         "Folder": "TextEncoder",
         "Path": "T5-Gemma-2-4B",
+        "MainFile": "model.safetensors.index.json",
         "DownloadFiles": [
           "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/config.json",
           "https://huggingface.co/google/t5gemma-2-4b-4b/resolve/main/generation_config.json",
@@ -7560,187 +7582,6 @@
       "Link": "https://huggingface.co/BestWishYsh/Helios-Distilled"
     },
     {
-      "Id": 215,
-      "Backend": "PyTorch",
-      "Name": "Anima",
-      "Template": "Anima",
-      "Pipeline": "AnimaPipeline",
-      "ModelType": "Base",
-      "BaseType": "bfloat16",
-      "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage" ],
-      "Checkpoint": {
-        "Vae": {
-          "Name": "AutoEncoder",
-          "Type": "Component",
-          "Path": "VAE_Qwen_Image"
-        },
-        "TextEncoder": {
-          "Name": "TextEncoder",
-          "Type": "Component",
-          "Path": "TE_Qwen3_06B"
-        },
-        "ConditionEncoder": {
-          "Name": "TextConditioner",
-          "Type": "Component",
-          "Path": "CE_Anima"
-        },
-        "Transformer": {
-          "Name": "Transformer",
-          "Type": "OnlineFolder",
-          "Path": "transformer",
-          "Folder": "Anima-Base-v1.0-Diffusers",
-          "DownloadFiles": [
-            "https://huggingface.co/circlestone-labs/Anima-Base-v1.0-Diffusers/resolve/main/transformer/config.json",
-            "https://huggingface.co/circlestone-labs/Anima-Base-v1.0-Diffusers/resolve/main/transformer/diffusion_pytorch_model.safetensors"
-          ]
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 2, 6, 4 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 2, 5, 6 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 2, 6, 8 ]
-        }
-      ],
-      "DefaultOptions": {
-        "Steps": 20,
-        "Width": 1024,
-        "Height": 1024,
-        "GuidanceScale": 4,
-        "Scheduler": "FlowMatchEuler",
-        "Schedulers": [
-          {
-            "Scheduler": "FlowMatchEuler",
-            "NumTrainTimesteps": 1000,
-            "Shift": 3,
-            "UseDynamicShifting": false,
-            "BaseShift": 0.5,
-            "MaxShift": 1.15,
-            "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 4096,
-            "InvertSigmas": false,
-            "ShiftTerminal": 0,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "TimeShiftType": "Exponential",
-            "StochasticSampling": false
-          },
-          {
-            "Scheduler": "UniPCMultistep",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.0001,
-            "BetaEnd": 0.02,
-            "BetaSchedule": "Linear",
-            "TrainedBetas": null,
-            "SolverOrder": 2,
-            "PredictionType": "FlowPrediction",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "SampleMaxValue": 1,
-            "PredictX0": true,
-            "SolverType": "BH2",
-            "LowerOrderFinal": true,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "UseFlowSigmas": true,
-            "FlowShift": 6,
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "FinalSigmasType": "Zero",
-            "RescaleBetasZeroSNR": false,
-            "UseDynamicShifting": false,
-            "TimeShiftType": "Exponential",
-            "SigmaMin": 0,
-            "SigmaMax": 0,
-            "ShiftTerminal": 0
-          },
-          {
-            "Scheduler": "DPMSolverMultistep",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.0001,
-            "BetaEnd": 0.02,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "SolverOrder": 2,
-            "PredictionType": "FlowPrediction",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "SampleMaxValue": 1,
-            "AlgorithmType": "DPMSolverPlus",
-            "SolverType": "Midpoint",
-            "EulerAtFinal": false,
-            "LowerOrderFinal": true,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "UseFlowSigmas": true,
-            "UseLuLambdas": false,
-            "FlowShift": 6,
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "FinalSigmasType": "Zero",
-            "RescaleBetasZeroSNR": false,
-            "UseDynamicShifting": false,
-            "TimeShiftType": "Exponential"
-          }
-        ]
-      },
-      "Resolutions": [
-        {
-          "Width": 640,
-          "Height": 1536
-        },
-        {
-          "Width": 768,
-          "Height": 1344
-        },
-        {
-          "Width": 832,
-          "Height": 1280
-        },
-        {
-          "Width": 896,
-          "Height": 1152
-        },
-        {
-          "Width": 768,
-          "Height": 768
-        },
-        {
-          "Width": 1024,
-          "Height": 1024,
-          "IsDefault": true
-        },
-        {
-          "Width": 1152,
-          "Height": 896
-        },
-        {
-          "Width": 1280,
-          "Height": 832
-        },
-        {
-          "Width": 1344,
-          "Height": 768
-        },
-        {
-          "Width": 1536,
-          "Height": 640
-        }
-      ],
-      "Link": "https://huggingface.co/circlestone-labs/Anima-Base-v1.0-Diffusers"
-    },
-    {
       "Id": 216,
       "Backend": "PyTorch",
       "Name": "Ernie Image",
@@ -10230,7 +10071,7 @@
       "Link": "https://huggingface.co/saddam213/Amuse/tree/main/Audio/Whisper-Large"
     },
     {
-      "Id": 900,
+      "Id": 500,
       "Backend": "StableDiffusionCpp",
       "Name": "FLUX.1 Schnell",
       "Template": "Flux1_Schnell",
@@ -10238,27 +10079,29 @@
       "ModelType": "Distilled",
       "BaseType": "bfloat16",
       "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "ProcessTypes": [ "TextToImage", "ImageToImage" ],
       "Checkpoint": {
         "Vae": {
           "Name": "AutoEncoder",
-          "Type": "LocalFile",
-          "Path": "E:\\SD_CPP\\Models\\diffusion_pytorch_model.safetensors"
+          "Type": "Component",
+          "Path": "VAE_Flux1"
         },
         "TextEncoder": {
           "Name": "TextEncoder",
-          "Type": "LocalFile",
-          "Path": "E:\\SD_CPP\\Models\\CLIP-VIT-L\\model.safetensors"
+          "Type": "Component",
+          "Path": "TE_CLIP_L"
         },
         "TextEncoder2": {
-          "Name": "TextEncoder",
-          "Type": "LocalFile",
-          "Path": "E:\\SD_CPP\\Models\\model.safetensors"
+          "Name": "TextEncoder2",
+          "Type": "Component",
+          "Path": "TE_T5_XXL"
         },
         "Transformer": {
           "Name": "Transformer",
-          "Type": "LocalFile",
-          "Path": "E:\\SD_CPP\\Models\\flux1-schnell-q8_0.gguf"
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/unsloth/FLUX.1-schnell-GGUF/resolve/main/flux1-schnell-Q8_0.gguf"
+          ]
         }
       },
       "MemoryProfile": [
@@ -10381,7 +10224,7 @@
       "Link": "https://huggingface.co/black-forest-labs/FLUX.1-schnell"
     },
     {
-      "Id": 901,
+      "Id": 510,
       "Backend": "StableDiffusionCpp",
       "Name": "Anima",
       "Template": "Anima",
@@ -10393,18 +10236,20 @@
       "Checkpoint": {
         "Vae": {
           "Name": "AutoEncoder",
-          "Type": "LocalFile",
-          "Path": "E:\\qwen_image_vae.safetensors"
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
         },
         "TextEncoder": {
           "Name": "TextEncoder",
-          "Type": "LocalFile",
-          "Path": "E:\\Qwen3-0.6B-Base.f16.gguf"
+          "Type": "Component",
+          "Path": "TE_Qwen3_06B"
         },
         "Transformer": {
           "Name": "Transformer",
-          "Type": "LocalFile",
-          "Path": "E:\\anima-base-v1.0.safetensors"
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/diffusion_models/anima-base-v1.0.safetensors"
+          ]
         }
       },
       "MemoryProfile": [
@@ -10524,7 +10369,303 @@
           "Height": 640
         }
       ],
-      "Link": "https://huggingface.co/circlestone-labs/Anima-Base-v1.0-Diffusers"
+      "Link": "https://huggingface.co/circlestone-labs/Anima"
+    },
+    {
+      "Id": 511,
+      "Backend": "StableDiffusionCpp",
+      "Name": "Anima Turbo",
+      "Template": "Anima",
+      "Pipeline": "AnimaPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_06B"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/diffusion_models/anima-turbo-v1.0.safetensor"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 6, 4 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 5, 6 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 6, 8 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 8,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "Scheduler": "DDIM",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ],
+      "Link": "https://huggingface.co/circlestone-labs/Anima"
+    },
+    {
+      "Id": 512,
+      "Backend": "StableDiffusionCpp",
+      "Name": "Anima Aesthetic",
+      "Template": "Anima",
+      "Pipeline": "AnimaPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_06B"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/diffusion_models/anima-aesthetic-v1.1.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 6, 4 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 5, 6 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 6, 8 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 20,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4,
+        "Scheduler": "DDIM",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ],
+      "Link": "https://huggingface.co/circlestone-labs/Anima"
     }
   ],
   "LoraAdapterModels": [

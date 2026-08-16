@@ -36,6 +36,7 @@ namespace Amuse.App.Runtime
         public PipelineModel Pipeline { get; protected set; }
         public GenerateDefaultOptions DefaultOptions { get; protected set; }
         public bool StopHostOnException { get; protected set; }
+        public bool ResolveComponentFiles { get; protected set; }
         protected ILogger Logger { get; }
         protected Settings Settings { get; }
         protected IMediaService MediaService { get; }
@@ -606,24 +607,25 @@ namespace Amuse.App.Runtime
 
         private CheckpointConfig GetCheckpoint(DiffusionCheckpointModel checkpoint, string modelDirectory)
         {
+            var resolveFiles = ResolveComponentFiles;
             var checkpointConfig = new CheckpointConfig
             {
-                Compute = checkpoint.Compute?.Resolve(Settings, modelDirectory),
-                TextEncoder = checkpoint.TextEncoder?.Resolve(Settings, modelDirectory),
-                TextEncoder2 = checkpoint.TextEncoder2?.Resolve(Settings, modelDirectory),
-                TextEncoder3 = checkpoint.TextEncoder3?.Resolve(Settings, modelDirectory),
-                Unet = checkpoint.Unet?.Resolve(Settings, modelDirectory),
-                Transformer = checkpoint.Transformer?.Resolve(Settings, modelDirectory),
-                Transformer2 = checkpoint.Transformer2?.Resolve(Settings, modelDirectory),
-                Vae = checkpoint.Vae?.Resolve(Settings, modelDirectory),
-                AudioVae = checkpoint.AudioVae?.Resolve(Settings, modelDirectory),
-                Vocoder = checkpoint.Vocoder?.Resolve(Settings, modelDirectory),
-                Connectors = checkpoint.Connectors?.Resolve(Settings, modelDirectory),
-                LatentUpsampler = checkpoint.LatentUpsampler?.Resolve(Settings, modelDirectory),
-                LatentUpsamplerTemporal = checkpoint.LatentUpsamplerTemporal?.Resolve(Settings, modelDirectory),
-                ConditionEncoder = checkpoint.ConditionEncoder?.Resolve(Settings, modelDirectory),
-                AudioTokenizer = checkpoint.AudioTokenizer?.Resolve(Settings, modelDirectory),
-                AudioDetokenizer = checkpoint.AudioDetokenizer?.Resolve(Settings, modelDirectory),
+                Compute = checkpoint.Compute?.Resolve(Settings, modelDirectory, resolveFiles),
+                TextEncoder = checkpoint.TextEncoder?.Resolve(Settings, modelDirectory, resolveFiles),
+                TextEncoder2 = checkpoint.TextEncoder2?.Resolve(Settings, modelDirectory, resolveFiles),
+                TextEncoder3 = checkpoint.TextEncoder3?.Resolve(Settings, modelDirectory, resolveFiles),
+                Unet = checkpoint.Unet?.Resolve(Settings, modelDirectory, resolveFiles),
+                Transformer = checkpoint.Transformer?.Resolve(Settings, modelDirectory, resolveFiles),
+                Transformer2 = checkpoint.Transformer2?.Resolve(Settings, modelDirectory, resolveFiles),
+                Vae = checkpoint.Vae?.Resolve(Settings, modelDirectory, resolveFiles),
+                AudioVae = checkpoint.AudioVae?.Resolve(Settings, modelDirectory, resolveFiles),
+                Vocoder = checkpoint.Vocoder?.Resolve(Settings, modelDirectory, resolveFiles),
+                Connectors = checkpoint.Connectors?.Resolve(Settings, modelDirectory, resolveFiles),
+                LatentUpsampler = checkpoint.LatentUpsampler?.Resolve(Settings, modelDirectory, resolveFiles),
+                LatentUpsamplerTemporal = checkpoint.LatentUpsamplerTemporal?.Resolve(Settings, modelDirectory, resolveFiles),
+                ConditionEncoder = checkpoint.ConditionEncoder?.Resolve(Settings, modelDirectory, resolveFiles),
+                AudioTokenizer = checkpoint.AudioTokenizer?.Resolve(Settings, modelDirectory, resolveFiles),
+                AudioDetokenizer = checkpoint.AudioDetokenizer?.Resolve(Settings, modelDirectory, resolveFiles),
             };
             return checkpointConfig;
         }

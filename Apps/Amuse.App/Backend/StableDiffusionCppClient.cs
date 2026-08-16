@@ -31,6 +31,7 @@ namespace Amuse.App.Runtime
         {
             _environmentService = environmentService;
             StopHostOnException = true;
+            ResolveComponentFiles = true;
         }
 
 

@@ -13,6 +13,7 @@ namespace Amuse.App.Common
         private CheckpointType _type;
         private string _path;
         private string _folder;
+        private string _mainFile;
         private string[] _downloadFiles;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -52,6 +53,12 @@ namespace Amuse.App.Common
             set { SetProperty(ref _folder, value); }
         }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string MainFile
+        {
+            get { return _mainFile; }
+            set { SetProperty(ref _mainFile, value); }
+        }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string[] DownloadFiles
@@ -120,16 +127,16 @@ namespace Amuse.App.Common
         }
 
 
-        public string Resolve(Settings settings, string modelDirectory)
+        public string Resolve(Settings settings, string modelDirectory, bool isFileMode = false)
         {
             var directory = modelDirectory ?? settings.DirectoryModel;
             if (_type == CheckpointType.OnlineFolder)
             {
-                return GetSafePath(directory, _folder, _path);
+                return GetSafePath(directory, _folder, _path, isFileMode ? _mainFile : null);
             }
             if (_type == CheckpointType.OnlineFile)
             {
-                var path = GetSafePath(directory, _folder, _path);
+                var path = GetSafePath(directory, _folder, _path, isFileMode ? _mainFile : null);
                 var modelFiles = FileHelper.GetFileMapping(DownloadFiles, path);
                 if (modelFiles.IsNullOrEmpty())
                     throw new System.Exception($"Checkpoint could not resolve online file '{_path}'");
@@ -142,7 +149,7 @@ namespace Amuse.App.Common
                 if (component == null)
                     throw new System.Exception($"Checkpoint could not resolve component '{_path}'");
 
-                return component.Checkpoint.Resolve(settings, null);
+                return component.Checkpoint.Resolve(settings, null, isFileMode);
             }
             return _path;
         }
@@ -196,24 +203,31 @@ namespace Amuse.App.Common
                 Type = Type,
                 Folder = Folder,
                 Path = Path,
+                MainFile = MainFile,
                 AutoMap = AutoMap,
                 DownloadFiles = DownloadFiles?.ToArray(),
             };
         }
 
 
-        public static string GetSafePath(string directory, string folder, string path)
+        public static string GetSafePath(string directory, string folder, string path, string mainFile = null)
         {
+            var finalPath = directory;
             if (!string.IsNullOrEmpty(folder))
             {
-                return string.IsNullOrWhiteSpace(path)
-                     ? System.IO.Path.Combine(directory, folder)
-                     : System.IO.Path.Combine(directory, folder, path);
+                finalPath = System.IO.Path.Combine(finalPath, folder);
+
+            }
+            if (!string.IsNullOrEmpty(path))
+            {
+                finalPath = System.IO.Path.Combine(finalPath, path);
+            }
+            if (!string.IsNullOrEmpty(mainFile))
+            {
+                finalPath = System.IO.Path.Combine(finalPath, mainFile);
             }
 
-            return string.IsNullOrWhiteSpace(path)
-                  ? directory
-                  : System.IO.Path.Combine(directory, path);
+            return finalPath;
         }
     }
 }
