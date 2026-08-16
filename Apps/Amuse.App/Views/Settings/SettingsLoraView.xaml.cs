@@ -48,7 +48,6 @@ namespace Amuse.App.Views
             DownloadModelCancelCommand = new AsyncRelayCommand(DownloadModelCancelAsync);
             FilterClearCommand = new AsyncRelayCommand(FilterClearAsync, CanClearFilter);
             ModelCollection = new ListCollectionView(settings.LoraAdapterModels) { Filter = CollectionFilter(), IsLiveSorting = true };
-            ModelCollection.SortDescriptions.Add(new SortDescription(nameof(LoraAdapterModel.Backend), ListSortDirection.Descending));
             ModelCollection.SortDescriptions.Add(new SortDescription(nameof(LoraAdapterModel.Pipeline), ListSortDirection.Ascending));
             ModelCollection.SortDescriptions.Add(new SortDescription(nameof(LoraAdapterModel.Name), ListSortDirection.Ascending));
             ModelCollection.MoveCurrentToFirst();

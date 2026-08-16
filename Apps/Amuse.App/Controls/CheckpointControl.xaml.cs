@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using TensorStack.Common;
 using TensorStack.WPF.Controls;
 
 namespace Amuse.App.Controls
@@ -24,7 +23,6 @@ namespace Amuse.App.Controls
         public static readonly DependencyProperty CheckpointProperty = DependencyProperty.Register(nameof(Checkpoint), typeof(CheckpointComponent), typeof(CheckpointControl));
         public static readonly DependencyProperty IsDiffusionCheckpointProperty = DependencyProperty.Register(nameof(IsDiffusionCheckpoint), typeof(bool), typeof(CheckpointControl));
         public static readonly DependencyProperty SupportedTypesProperty = DependencyProperty.Register(nameof(SupportedTypes), typeof(CheckpointType[]), typeof(CheckpointControl), new PropertyMetadata(Enum.GetValues<CheckpointType>()));
-        public static readonly DependencyProperty BackendProperty = DependencyProperty.Register(nameof(Backend), typeof(BackendType), typeof(CheckpointControl));
 
         public Settings Settings
         {
@@ -48,12 +46,6 @@ namespace Amuse.App.Controls
         {
             get { return (CheckpointType[])GetValue(SupportedTypesProperty); }
             set { SetValue(SupportedTypesProperty, value); }
-        }
-
-        public BackendType Backend
-        {
-            get { return (BackendType)GetValue(BackendProperty); }
-            set { SetValue(BackendProperty, value); }
         }
 
         public IReadOnlyList<string> ComponentNames { get; } =

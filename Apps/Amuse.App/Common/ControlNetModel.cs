@@ -9,7 +9,6 @@ namespace Amuse.App.Common
 {
     public sealed class ControlNetModel : BaseModel, IDownloadModel
     {
-        private BackendType _backend;
         private string _name;
         private PipelineType _pipeline;
         private bool _invert;
@@ -24,12 +23,6 @@ namespace Amuse.App.Common
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Id { get; set; }
-
-        public BackendType Backend
-        {
-            get { return _backend; }
-            set { SetProperty(ref _backend, value); }
-        }
 
         public string Name
         {
@@ -166,7 +159,6 @@ namespace Amuse.App.Common
                 Id = id,
                 Name = Name,
                 Pipeline = Pipeline,
-                Backend = Backend,
                 AccessToken = AccessToken,
                 Link = Link,
                 ViewFilter = ViewFilter?.ToArray(),

@@ -62,7 +62,6 @@ namespace Amuse.App.Dialogs
             LoraModel = new LoraAdapterModel
             {
                 Id = modelId,
-                Backend = BackendType.PyTorch,
                 Pipeline = Settings.DiffusionPipelines.First(),
                 Name = "New Lora",
                 Checkpoint = new CheckpointComponent

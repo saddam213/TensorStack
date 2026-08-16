@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:Amuse.App.Dialogs"
         xmlns:Controls="clr-namespace:Amuse.App.Controls"
         xmlns:CommonControls="clr-namespace:TensorStack.WPF.Controls;assembly=TensorStack.WPF"
-        MinWidth="800"
-        MaxWidth="800"
+        MinWidth="900"
+        MaxWidth="900"
         Title="Component Model"
         Icon="/Images/Icon.ico"
         Style="{StaticResource {x:Type CommonControls:DialogControl}}">
@@ -57,7 +57,7 @@
 
             <!--Checkpoint Settings-->
             <GroupBox Header="Component" Margin="0,10,0,0" Height="160">
-                <Controls:CheckpointControl Settings="{Binding Settings}" Checkpoint="{Binding ComponentModel.Checkpoint}" Backend="{Binding ComponentModel.Backend}" SupportedTypes="{Binding CheckpointTypes, Mode=OneWay}"/>
+                <Controls:CheckpointControl Settings="{Binding Settings}" Checkpoint="{Binding ComponentModel.Checkpoint}" SupportedTypes="{Binding CheckpointTypes, Mode=OneWay}"/>
             </GroupBox>
 
         </StackPanel>

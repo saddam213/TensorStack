@@ -10671,7 +10671,6 @@
   "LoraAdapterModels": [
     {
       "Id": 101,
-      "Backend": "PyTorch",
       "Name": "40s Cyberpunk",
       "RepoName": "zitloras",
       "Pipeline": "ZImagePipeline",
@@ -10689,7 +10688,6 @@
     },
     {
       "Id": 102,
-      "Backend": "PyTorch",
       "Name": "80s Fantasy",
       "RepoName": "zitloras",
       "Pipeline": "ZImagePipeline",
@@ -10706,7 +10704,6 @@
     },
     {
       "Id": 103,
-      "Backend": "PyTorch",
       "Name": "Coloring Book Z",
       "RepoName": "renderartist",
       "Pipeline": "ZImagePipeline",
@@ -10724,7 +10721,6 @@
     },
     {
       "Id": 201,
-      "Backend": "Pytorch",
       "Name": "Camera Dolly-In",
       "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
@@ -10742,7 +10738,6 @@
     },
     {
       "Id": 202,
-      "Backend": "Pytorch",
       "Name": "Camera Dolly-Out",
       "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
@@ -10759,7 +10754,6 @@
     },
     {
       "Id": 203,
-      "Backend": "Pytorch",
       "Name": "Camera Dolly-Left",
       "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
@@ -10776,7 +10770,6 @@
     },
     {
       "Id": 204,
-      "Backend": "Pytorch",
       "Name": "Camera Dolly-Right",
       "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
@@ -10793,7 +10786,6 @@
     },
     {
       "Id": 205,
-      "Backend": "Pytorch",
       "Name": "Camera Jib-Down",
       "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
@@ -10810,7 +10802,6 @@
     },
     {
       "Id": 206,
-      "Backend": "Pytorch",
       "Name": "Camera Jib-Up",
       "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
@@ -10827,7 +10818,6 @@
     },
     {
       "Id": 207,
-      "Backend": "Pytorch",
       "Name": "Camera Static",
       "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
@@ -10844,7 +10834,6 @@
     },
     {
       "Id": 208,
-      "Backend": "Pytorch",
       "Name": "Detailer",
       "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
@@ -10861,7 +10850,6 @@
     },
     {
       "Id": 209,
-      "Backend": "Pytorch",
       "Name": "Hyper-SDXL-8steps-CFG",
       "RepoName": "ByteDance",
       "Pipeline": "StableDiffusionXLPipeline",
@@ -10878,7 +10866,6 @@
     },
     {
       "Id": 210,
-      "Backend": "Pytorch",
       "Name": "Hyper-SD3-8steps-CFG",
       "RepoName": "ByteDance",
       "Pipeline": "StableDiffusion3Pipeline",
@@ -10895,7 +10882,6 @@
     },
     {
       "Id": 211,
-      "Backend": "Pytorch",
       "Name": "Hyper-FLUX.1-dev-8steps",
       "RepoName": "ByteDance",
       "Pipeline": "FluxPipeline",
@@ -10912,7 +10898,6 @@
     },
     {
       "Id": 212,
-      "Backend": "Pytorch",
       "Name": "Sprite Sheet 4B",
       "RepoName": "fal",
       "Pipeline": "Flux2KleinPipeline",
@@ -10930,7 +10915,6 @@
     },
     {
       "Id": 213,
-      "Backend": "Pytorch",
       "Name": "Background Remove 4B",
       "RepoName": "fal",
       "Pipeline": "Flux2KleinPipeline",
@@ -10947,7 +10931,6 @@
     },
     {
       "Id": 214,
-      "Backend": "Pytorch",
       "Name": "Redbox Zoom 4B",
       "RepoName": "fal",
       "Pipeline": "Flux2KleinPipeline",
@@ -10964,7 +10947,6 @@
     },
     {
       "Id": 216,
-      "Backend": "Pytorch",
       "Name": "Outpaint 4B",
       "RepoName": "fal",
       "Pipeline": "Flux2KleinPipeline",
@@ -10981,7 +10963,6 @@
     },
     {
       "Id": 217,
-      "Backend": "Pytorch",
       "Name": "Virtual Try-On 9B",
       "RepoName": "fal",
       "Pipeline": "Flux2KleinPipeline",
@@ -10998,7 +10979,6 @@
     },
     {
       "Id": 218,
-      "Backend": "Pytorch",
       "Name": "Consistency 9B",
       "RepoName": "dx8152",
       "Pipeline": "Flux2KleinPipeline",
@@ -11015,7 +10995,6 @@
     },
     {
       "Id": 219,
-      "Backend": "Pytorch",
       "Name": "Enhanced Details 9B",
       "RepoName": "dx8152",
       "Pipeline": "Flux2KleinPipeline",
@@ -11032,7 +11011,6 @@
     },
     {
       "Id": 220,
-      "Backend": "Pytorch",
       "Name": "Scribbly Doodle 4B",
       "RepoName": "reverentelusarca",
       "Pipeline": "Flux2KleinPipeline",
@@ -11049,7 +11027,6 @@
     },
     {
       "Id": 221,
-      "Backend": "Pytorch",
       "Name": "Scribbly Doodle 9B",
       "RepoName": "reverentelusarca",
       "Pipeline": "Flux2KleinPipeline",
@@ -11066,7 +11043,6 @@
     },
     {
       "Id": 240,
-      "Backend": "Pytorch",
       "Name": "Highres/Aesthetic Boost",
       "RepoName": "circlestone-labs",
       "Pipeline": "AnimaPipeline",
@@ -11083,7 +11059,6 @@
     },
     {
       "Id": 241,
-      "Backend": "Pytorch",
       "Name": "Greg Rutkowski Style",
       "RepoName": "circlestone-labs",
       "Pipeline": "AnimaPipeline",
@@ -11100,7 +11075,6 @@
     },
     {
       "Id": 242,
-      "Backend": "Pytorch",
       "Name": "Turbo (Step:8-12, CFG:1)",
       "RepoName": "circlestone-labs",
       "Pipeline": "AnimaPipeline",
@@ -11117,7 +11091,6 @@
     },
     {
       "Id": 243,
-      "Backend": "Pytorch",
       "Name": "Anima RL",
       "RepoName": "circlestone-labs",
       "Pipeline": "AnimaPipeline",
@@ -11134,7 +11107,6 @@
     },
     {
       "Id": 300,
-      "Backend": "Pytorch",
       "Name": "Retro Anime",
       "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
@@ -11152,7 +11124,6 @@
     },
     {
       "Id": 301,
-      "Backend": "Pytorch",
       "Name": "Soft Watercolor",
       "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
@@ -11170,7 +11141,6 @@
     },
     {
       "Id": 302,
-      "Backend": "Pytorch",
       "Name": "Vintage Tarot",
       "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
@@ -11188,7 +11158,6 @@
     },
     {
       "Id": 303,
-      "Backend": "Pytorch",
       "Name": "Kids Drawing",
       "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
@@ -11206,7 +11175,6 @@
     },
     {
       "Id": 304,
-      "Backend": "Pytorch",
       "Name": "Rainy Window",
       "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
@@ -11224,7 +11192,6 @@
     },
     {
       "Id": 305,
-      "Backend": "Pytorch",
       "Name": "Sunset Blur",
       "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
@@ -11242,7 +11209,6 @@
     },
     {
       "Id": 306,
-      "Backend": "Pytorch",
       "Name": "Dark Brush",
       "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
@@ -11260,7 +11226,6 @@
     },
     {
       "Id": 307,
-      "Backend": "Pytorch",
       "Name": "Dotmatrix",
       "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
@@ -11278,7 +11243,6 @@
     },
     {
       "Id": 308,
-      "Backend": "Pytorch",
       "Name": "Neon Drip",
       "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
@@ -11298,7 +11262,6 @@
   "ControlNetModels": [
     {
       "Id": 101,
-      "Backend": "PyTorch",
       "Name": "Union",
       "RepoName": "InstantX",
       "Pipeline": "QwenImagePipeline",
@@ -11321,7 +11284,6 @@
     },
     {
       "Id": 102,
-      "Backend": "PyTorch",
       "Name": "Canny",
       "RepoName": "InstantX",
       "Pipeline": "FluxPipeline",
@@ -11341,7 +11303,6 @@
     },
     {
       "Id": 104,
-      "Backend": "PyTorch",
       "Name": "Union",
       "RepoName": "xinsir",
       "Pipeline": "StableDiffusionXLPipeline",
@@ -11361,7 +11322,6 @@
     },
     {
       "Id": 105,
-      "Backend": "PyTorch",
       "Name": "Canny",
       "RepoName": "xinsir",
       "Pipeline": "StableDiffusionXLPipeline",
@@ -11380,7 +11340,6 @@
     },
     {
       "Id": 106,
-      "Backend": "PyTorch",
       "Name": "Depth",
       "RepoName": "xinsir",
       "Pipeline": "StableDiffusionXLPipeline",
@@ -11399,7 +11358,6 @@
     },
     {
       "Id": 107,
-      "Backend": "PyTorch",
       "Name": "OpenPose",
       "RepoName": "xinsir",
       "Pipeline": "StableDiffusionXLPipeline",
@@ -11418,7 +11376,6 @@
     },
     {
       "Id": 108,
-      "Backend": "PyTorch",
       "Name": "Scribble",
       "RepoName": "xinsir",
       "Pipeline": "StableDiffusionXLPipeline",
@@ -11437,7 +11394,6 @@
     },
     {
       "Id": 109,
-      "Backend": "PyTorch",
       "Name": "Tile",
       "RepoName": "xinsir",
       "Pipeline": "StableDiffusionXLPipeline",
@@ -11456,7 +11412,6 @@
     },
     {
       "Id": 110,
-      "Backend": "PyTorch",
       "Name": "Union",
       "RepoName": "hlky",
       "Pipeline": "ZImagePipeline",

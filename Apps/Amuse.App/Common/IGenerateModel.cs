@@ -8,6 +8,7 @@ namespace Amuse.App.Common
     public interface IGenerateModel : IDownloadModel
     {
         PipelineType Pipeline { get; set; }
+        BackendType Backend { get; set; }
         string ModelType { get; set; }
         string Template { get; set; }
         DataType BaseType { get; set; }

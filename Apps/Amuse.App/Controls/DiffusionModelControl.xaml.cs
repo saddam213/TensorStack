@@ -480,10 +480,6 @@ namespace Amuse.App.Controls
                 if (_selectedModel is null)
                     return false;
 
-                if (_selectedModel.Backend != viewModel.Backend)
-                    return false;
-
-
                 if (_selectedModel.Pipeline != viewModel.Pipeline)
                 {
                     // LatentConsistency share same controlnets as StableDiffusion

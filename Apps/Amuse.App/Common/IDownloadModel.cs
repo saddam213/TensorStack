@@ -1,11 +1,8 @@
-﻿using TensorStack.Common;
-
-namespace Amuse.App.Common
+﻿namespace Amuse.App.Common
 {
     public interface IDownloadModel
     {
         int Id { get; set; }
-        BackendType Backend { get; set; }
         string Name { get; set; }
         ModelStatusType Status { get; set; }
         string AccessToken { get; set; }

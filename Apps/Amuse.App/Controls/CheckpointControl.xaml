@@ -18,7 +18,7 @@
 
                     <!--OnlineFolder-->
                     <Grid>
-                        <UniformGrid Columns="2">
+                        <UniformGrid Rows="1">
                             <StackPanel>
                                 <TextBlock Text="Folder" Style="{StaticResource FieldTextBlockStyle}"/>
                                 <TextBox Text="{Binding Checkpoint.Folder, UpdateSourceTrigger=PropertyChanged}" Height="25"/>
@@ -55,7 +55,7 @@
                         </Grid.Style>
                     </Grid>
                     <Grid>
-                        <UniformGrid Columns="2">
+                        <UniformGrid Rows="1">
                             <StackPanel>
                                 <TextBlock Text="Folder" Style="{StaticResource FieldTextBlockStyle}"/>
                                 <TextBox Text="{Binding Checkpoint.Folder, UpdateSourceTrigger=PropertyChanged}" Height="25"/>
@@ -102,13 +102,9 @@
 
                     <!--File-->
                     <Grid Visibility="{Binding Checkpoint.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=LocalFile}">
-                        <StackPanel Visibility="{Binding Backend, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=PyTorch}">
+                        <StackPanel >
                             <TextBlock Text="Model File" Style="{StaticResource FieldTextBlockStyle}"/>
                             <CommonControls:FilePickerTextBox FileName="{Binding Checkpoint.Path, Mode=TwoWay}" IsFolderPicker="False" IsRequired="True" Filter="Model Files|*.safetensors;*.gguf;" DefaultExt="safetensors" />
-                        </StackPanel>
-                        <StackPanel Visibility="{Binding Backend, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=OnnxRuntime}">
-                            <TextBlock Text="Model File" Style="{StaticResource FieldTextBlockStyle}"/>
-                            <CommonControls:FilePickerTextBox FileName="{Binding Checkpoint.Path, Mode=TwoWay}" IsFolderPicker="False" IsRequired="True" Filter="Model Files|*.onnx;" DefaultExt="safetensors" />
                         </StackPanel>
                     </Grid>
 
@@ -119,7 +115,6 @@
                             <CommonControls:FilePickerTextBox FileName="{Binding Checkpoint.Path, Mode=TwoWay}" IsFolderPicker="True" IsRequired="True"/>
                         </StackPanel>
                     </Grid>
-
                 </Grid>
 
             </DockPanel>
