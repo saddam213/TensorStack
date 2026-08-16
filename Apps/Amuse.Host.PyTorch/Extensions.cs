@@ -17,7 +17,7 @@ namespace Amuse.Host.PyTorch
                 IsDebug = options.IsDebug,
                 Directory = options.Directory,
                 Environment = options.Environment,
-                PythonVersion = options.PythonVersion,
+                PythonVersion = options.HostVersion,
                 Requirements = options.Requirements?.ToArray(),
                 Variables = options.Variables?.ToDictionary()
             };

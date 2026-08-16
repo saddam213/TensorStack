@@ -24,11 +24,15 @@ namespace Amuse.App.Dialogs
         private VariableModel _selectedVariable;
         private string _requirements;
         private bool _isFixedEnvironment;
+        private readonly string[] _pythonVersions = ["3.12", "3.13", "3.14"];
+        private readonly string[] _stableDiffusionCppVersions = ["Vulkan", "CUDA", "ROCM"];
+        private List<string> _hostVersions;
+        private BackendType _backendType;
+        private bool _isCreate;
 
         public EnvironmentModelDialog(Settings settings)
         {
             Settings = settings;
-            PythonVersions = ["3.12", "3.13", "3.14"];
             SaveCommand = new AsyncRelayCommand(SaveAsync, CanExecuteSave);
             CancelCommand = new AsyncRelayCommand(CancelAsync);
             AddVariableCommand = new AsyncRelayCommand(AddVariableAsync, CanAddVariable);
@@ -46,7 +50,6 @@ namespace Amuse.App.Dialogs
         public AsyncRelayCommand AddVariableCommand { get; }
         public AsyncRelayCommand<VariableModel> RemoveVariableCommand { get; }
         public ObservableCollection<VariableModel> Variables { get; }
-        public List<string> PythonVersions { get; }
         public bool IsUpdateMode => _originalEnvironmentModel is not null;
 
         public EnvironmentModel EnvironmentModel
@@ -81,6 +84,21 @@ namespace Amuse.App.Dialogs
             }
         }
 
+        public BackendType BackendType
+        {
+            get { return _backendType; }
+            set
+            {
+                SetProperty(ref _backendType, value);
+                if (_backendType == BackendType.PyTorch)
+                    HostVersions = [.. _pythonVersions];
+                else if (_backendType == BackendType.StableDiffusionCpp)
+                    HostVersions = [.. _stableDiffusionCppVersions];
+                else
+                    HostVersions = [];
+            }
+        }
+
         public bool IsFixedEnvironment
         {
             get { return _isFixedEnvironment; }
@@ -88,17 +106,31 @@ namespace Amuse.App.Dialogs
         }
 
 
+        public List<string> HostVersions
+        {
+            get { return _hostVersions; }
+            set { SetProperty(ref _hostVersions, value); }
+        }
+
+        public bool IsCreate
+        {
+            get { return _isCreate; }
+            set { SetProperty(ref _isCreate, value); }
+        }
+
+
         public Task<bool> AddAsync()
         {
+            IsCreate = true;
             var environmentId = Settings.Environments.NextId(x => x.Id);
             EnvironmentModel = new EnvironmentModel
             {
                 Id = environmentId,
                 Name = "My Environment",
                 Environment = "environment-new",
-                PythonVersion = PythonVersions.Last(),
                 Vendor = Settings.Vendors.FirstOrDefault(),
-                Type = EnvironmentType.Vendor
+                Type = EnvironmentType.Vendor,
+                Backend = BackendType.PyTorch
             };
             Populate();
             return base.ShowDialogAsync();
@@ -213,6 +245,7 @@ namespace Amuse.App.Dialogs
                 EnvironmentModel.Device = 0;
             }
 
+            EnvironmentModel.Backend = _backendType;
             EnvironmentModel.Variables = Variables.Count > 0 ? Variables.ToDictionary(k => k.Name, k => k.Value) : null;
             EnvironmentModel.Requirements = Requirements.Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
@@ -262,6 +295,9 @@ namespace Amuse.App.Dialogs
                     Variables.Add(new VariableModel { Name = variable.Key, Value = variable.Value });
                 }
             }
+
+            BackendType = EnvironmentModel.Backend;
+            EnvironmentModel.HostVersion = EnvironmentModel.HostVersion;
         }
 
 

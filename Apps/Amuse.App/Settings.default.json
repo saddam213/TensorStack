@@ -15,11 +15,12 @@
   "Environments": [
     {
       "Id": 2,
-      "Name": "CUDA (13.0)",
+      "Name": "PyTorch CUDA (13.0)",
       "Type": "Vendor",
       "Vendor": "Nvidia",
+      "Backend": "PyTorch",
       "Environment": "cuda-130",
-      "PythonVersion": "3.14",
+      "HostVersion": "3.14",
       "Version": 14,
       "IsDefault": true,
       "Status": "Create",
@@ -52,12 +53,13 @@
       ]
     },
     {
-      "Id": 2000,
-      "Name": "ROCM (7.2.1)",
+      "Id": 10,
+      "Name": "PyTorch ROCM (7.2.1)",
       "Type": "Vendor",
       "Vendor": "AMD",
+      "Backend": "PyTorch",
       "Environment": "rocm-721",
-      "PythonVersion": "3.12",
+      "HostVersion": "3.12",
       "Version": 14,
       "Status": "Create",
       "IsDefault": true,
@@ -90,6 +92,88 @@
         "soundfile==0.14.0",
         "optimum-quanto==0.2.7",
         "bitsandbytes==0.50.0"
+      ]
+    },
+    {
+      "Id": 100,
+      "Name": "StableDiffusion.cpp Vulkan",
+      "Type": "Vendor",
+      "Vendor": "Nvidia",
+      "Backend": "StableDiffusionCpp",
+      "Environment": "vulkan",
+      "HostVersion": "Vulkan",
+      "Version": 0,
+      "Status": "Create",
+      "IsDefault": false,
+      "Variables": {},
+      "Requirements": [
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/sd-master-de298c2-bin-win-vulkan-x64.zip"
+      ]
+    },
+    {
+      "Id": 101,
+      "Name": "StableDiffusion.cpp Vulkan",
+      "Type": "Vendor",
+      "Vendor": "AMD",
+      "Backend": "StableDiffusionCpp",
+      "Environment": "vulkan",
+      "HostVersion": "Vulkan",
+      "Version": 0,
+      "Status": "Create",
+      "IsDefault": true,
+      "Variables": {},
+      "Requirements": [
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/sd-master-de298c2-bin-win-vulkan-x64.zip"
+      ]
+    },
+    {
+      "Id": 102,
+      "Name": "StableDiffusion.cpp Vulkan",
+      "Type": "Vendor",
+      "Vendor": "Intel",
+      "Backend": "StableDiffusionCpp",
+      "Environment": "vulkan",
+      "HostVersion": "Vulkan",
+      "Version": 0,
+      "Status": "Create",
+      "IsDefault": true,
+      "Variables": {},
+      "Requirements": [
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/sd-master-de298c2-bin-win-vulkan-x64.zip"
+      ]
+    },
+    {
+      "Id": 103,
+      "Name": "StableDiffusion.cpp CUDA",
+      "Type": "Vendor",
+      "Vendor": "Nvidia",
+      "Backend": "StableDiffusionCpp",
+      "Environment": "cuda",
+      "HostVersion": "CUDA",
+      "Version": 0,
+      "Status": "Create",
+      "IsDefault": true,
+      "Variables": {},
+      "Requirements": [
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/cudart-sd-bin-win-cu12-x64.zip",
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/sd-master-de298c2-bin-win-cuda12-x64.zip"
+      ]
+    },
+
+    {
+      "Id": 104,
+      "Name": "StableDiffusion.cpp ROCM",
+      "Type": "Vendor",
+      "Vendor": "AMD",
+      "Backend": "StableDiffusionCpp",
+      "Environment": "rocm",
+      "HostVersion": "ROCM",
+      "Version": 0,
+      "Status": "Create",
+      "Variables": {},
+      "Requirements": [
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/sd-master-de298c2-bin-win-rocm-7.14.0-x64.zip",
+        "https://repo.amd.com/rocm/tarball-multi-arch/therock-dist-windows-multiarch-7.14.0.tar.gz"
       ]
     }
   ],
@@ -10196,83 +10280,58 @@
         "Width": 1024,
         "Height": 1024,
         "GuidanceScale": 0,
-        "Scheduler": "FlowMatchEuler",
+        "Scheduler": "EulerAncestral",
         "Schedulers": [
           {
-            "Scheduler": "FlowMatchEuler",
-            "NumTrainTimesteps": 1000,
-            "Shift": 3,
-            "UseDynamicShifting": true,
-            "BaseShift": 0.5,
-            "MaxShift": 1.15,
-            "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 4096,
-            "InvertSigmas": false,
-            "ShiftTerminal": 0,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "TimeShiftType": "Exponential",
-            "StochasticSampling": false
+            "Scheduler": "Euler"
           },
           {
-            "Scheduler": "UniPCMultistep",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.0001,
-            "BetaEnd": 0.02,
-            "BetaSchedule": "Linear",
-            "TrainedBetas": null,
-            "SolverOrder": 2,
-            "PredictionType": "FlowPrediction",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "SampleMaxValue": 1,
-            "PredictX0": true,
-            "SolverType": "BH2",
-            "LowerOrderFinal": true,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "UseFlowSigmas": true,
-            "FlowShift": 3,
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "FinalSigmasType": "Zero",
-            "RescaleBetasZeroSNR": false,
-            "UseDynamicShifting": true,
-            "TimeShiftType": "Exponential",
-            "SigmaMin": 0,
-            "SigmaMax": 0,
-            "ShiftTerminal": 0
+            "Scheduler": "EulerAncestral"
           },
           {
-            "Scheduler": "DPMSolverMultistep",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.0001,
-            "BetaEnd": 0.02,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "SolverOrder": 2,
-            "PredictionType": "FlowPrediction",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "SampleMaxValue": 1,
-            "AlgorithmType": "DPMSolverPlus",
-            "SolverType": "Midpoint",
-            "EulerAtFinal": false,
-            "LowerOrderFinal": true,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "UseFlowSigmas": true,
-            "UseLuLambdas": false,
-            "FlowShift": 3,
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "FinalSigmasType": "Zero",
-            "RescaleBetasZeroSNR": false,
-            "UseDynamicShifting": true,
-            "TimeShiftType": "Exponential"
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
           }
         ]
       },
@@ -10366,84 +10425,59 @@
         "Steps": 20,
         "Width": 1024,
         "Height": 1024,
-        "GuidanceScale": 4,
-        "Scheduler": "FlowMatchEuler",
+        "GuidanceScale": 6,
+        "Scheduler": "DDIM",
         "Schedulers": [
           {
-            "Scheduler": "FlowMatchEuler",
-            "NumTrainTimesteps": 1000,
-            "Shift": 3,
-            "UseDynamicShifting": false,
-            "BaseShift": 0.5,
-            "MaxShift": 1.15,
-            "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 4096,
-            "InvertSigmas": false,
-            "ShiftTerminal": 0,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "TimeShiftType": "Exponential",
-            "StochasticSampling": false
+            "Scheduler": "Euler"
           },
           {
-            "Scheduler": "UniPCMultistep",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.0001,
-            "BetaEnd": 0.02,
-            "BetaSchedule": "Linear",
-            "TrainedBetas": null,
-            "SolverOrder": 2,
-            "PredictionType": "FlowPrediction",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "SampleMaxValue": 1,
-            "PredictX0": true,
-            "SolverType": "BH2",
-            "LowerOrderFinal": true,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "UseFlowSigmas": true,
-            "FlowShift": 6,
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "FinalSigmasType": "Zero",
-            "RescaleBetasZeroSNR": false,
-            "UseDynamicShifting": false,
-            "TimeShiftType": "Exponential",
-            "SigmaMin": 0,
-            "SigmaMax": 0,
-            "ShiftTerminal": 0
+            "Scheduler": "EulerAncestral"
           },
           {
-            "Scheduler": "DPMSolverMultistep",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.0001,
-            "BetaEnd": 0.02,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "SolverOrder": 2,
-            "PredictionType": "FlowPrediction",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "SampleMaxValue": 1,
-            "AlgorithmType": "DPMSolverPlus",
-            "SolverType": "Midpoint",
-            "EulerAtFinal": false,
-            "LowerOrderFinal": true,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "UseFlowSigmas": true,
-            "UseLuLambdas": false,
-            "FlowShift": 6,
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "FinalSigmasType": "Zero",
-            "RescaleBetasZeroSNR": false,
-            "UseDynamicShifting": false,
-            "TimeShiftType": "Exponential"
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
           }
         ]
       },

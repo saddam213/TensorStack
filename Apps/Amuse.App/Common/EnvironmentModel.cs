@@ -16,12 +16,13 @@ namespace Amuse.App.Common
         private PipelineType? _pipeline;
         private bool _isDefault;
         private string _environment;
-        private string _pythonVersion;
+        private string _hostVersion;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Id { get; set; }
         public int Version { get; set; }
         public EnvironmentMode Status { get; set; }
+        public BackendType Backend { get; set; }
 
         public string Name
         {
@@ -65,10 +66,10 @@ namespace Amuse.App.Common
             set { SetProperty(ref _environment, value); }
         }
 
-        public string PythonVersion
+        public string HostVersion
         {
-            get { return _pythonVersion; }
-            set { SetProperty(ref _pythonVersion, value); }
+            get { return _hostVersion; }
+            set { SetProperty(ref _hostVersion, value); }
         }
 
         public string[] Requirements { get; set; }
@@ -83,34 +84,16 @@ namespace Amuse.App.Common
                 Name = Name,
                 IsDefault = IsDefault,
                 Environment = Environment,
-                PythonVersion = PythonVersion,
+                HostVersion = HostVersion,
                 Vendor = Vendor,
                 Variables = Variables?.ToDictionary() ?? new Dictionary<string, string>(),
                 Requirements = Requirements.ToArray(),
                 Pipeline = Pipeline,
                 Device = Device,
-                Type = Type
+                Type = Type,
+                Backend = Backend,
+                Version = Version,
             };
-        }
-
-
-
-        public PipelineCreateOptions GetPipelineCreateOptions(Settings settings, EnvironmentMode environmentMode)
-        {
-            var environmentConfig = new PipelineCreateOptions
-            {
-                IsDebug = settings.IsServerDebugEnabled,
-                Directory = App.DirectoryPython,
-                Environment = Environment,
-                PythonVersion = PythonVersion,
-                Requirements = Requirements.ToArray(),
-                Variables = Variables?.ToDictionary() ?? new Dictionary<string, string>(),
-                Mode = environmentMode
-            };
-
-            environmentConfig.Variables.Add("HF_HUB_OFFLINE", "1");
-            environmentConfig.Variables.Add("HF_HUB_CACHE", settings.DirectoryDiffusion);
-            return environmentConfig;
         }
     }
 }

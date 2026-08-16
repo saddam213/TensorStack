@@ -42,7 +42,7 @@ namespace Amuse.App.Common
         private static BackendType[] GetSupportedBackends(VendorType vendor, string deviceType)
         {
             if (vendor == VendorType.Intel)
-                return [BackendType.OnnxRuntime];
+                return [BackendType.OnnxRuntime, BackendType.StableDiffusionCpp];
 
             return [BackendType.PyTorch, BackendType.OnnxRuntime, BackendType.StableDiffusionCpp];
         }

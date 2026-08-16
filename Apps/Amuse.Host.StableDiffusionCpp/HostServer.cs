@@ -61,6 +61,9 @@ namespace Amuse.Host.StableDiffusionCpp
             try
             {
                 var timestamp = Stopwatch.GetTimestamp();
+                if (!await EnvironmentManager.InitializeAsync(request.CreateOptions, _progressRelayCallback))
+                    throw new Exception($"Failed to Install StableDiffusion.Cpp {request.CreateOptions.HostVersion}");
+
                 _pipelineCreateOptions = request.CreateOptions;
                 Logger.LogInformation($"[AmuseHost] [PipelineServer] [CreatePipeline] Environment created, Elapsed: {Stopwatch.GetElapsedTime(timestamp)}");
                 await SendResponse(cancellationToken);

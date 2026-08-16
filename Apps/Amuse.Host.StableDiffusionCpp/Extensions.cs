@@ -15,7 +15,7 @@ namespace Amuse.Host.StableDiffusionCpp
     {
         public static Config.ServerConfig ToServerConfig(this PipelineLoadOptions loadOptions, PipelineCreateOptions createOptions)
         {
-            if (!GetBackend(createOptions, loadOptions, out var backendType, out var backendDirectory))
+            if (!GetBackend(createOptions, out var backendType))
                 throw new Exception($"{loadOptions.DeviceVendor} Backend Not Found.");
 
             var modelConfig = GetModelConfig(loadOptions);
@@ -23,7 +23,7 @@ namespace Amuse.Host.StableDiffusionCpp
             {
                 Address = createOptions.ServerAddress,
                 Port = GetOpenPort(createOptions.ServerPort),
-                BackendDirectory = backendDirectory,
+                Directory = Path.Combine(createOptions.Directory, createOptions.Environment),
                 DeviceId = loadOptions.DeviceId,
                 Backend = backendType,
                 MemoryMode = loadOptions.MemoryMode,
@@ -257,39 +257,9 @@ namespace Amuse.Host.StableDiffusionCpp
         }
 
 
-        private static bool GetBackend(PipelineCreateOptions createOptions, PipelineLoadOptions loadOptions, out Common.BackendType backendType, out string backendDirectory)
+        private static bool GetBackend(PipelineCreateOptions createOptions, out Common.BackendType backendType)
         {
-            backendType = Common.BackendType.CPU;
-            backendDirectory = string.Empty;
-            if (loadOptions.DeviceVendor == VendorType.AMD)
-            {
-                var rocmBackend = Path.Combine(createOptions.Directory, $"sd-cpp-{Common.BackendType.ROCM.GetShortName()}");
-                if (Directory.Exists(rocmBackend))
-                {
-                    backendType = Common.BackendType.ROCM;
-                    backendDirectory = rocmBackend;
-                    return true;
-                }
-            }
-            else if (loadOptions.DeviceVendor == VendorType.Nvidia)
-            {
-                var cudaBackend = Path.Combine(createOptions.Directory, $"sd-cpp-{Common.BackendType.CUDA.GetShortName()}");
-                if (Directory.Exists(cudaBackend))
-                {
-                    backendType = Common.BackendType.CUDA;
-                    backendDirectory = cudaBackend;
-                    return true;
-                }
-            }
-
-            var vulkanBackend = Path.Combine(createOptions.Directory, $"sd-cpp-{Common.BackendType.Vulkan.GetShortName()}");
-            if (Directory.Exists(vulkanBackend))
-            {
-                backendType = Common.BackendType.Vulkan;
-                backendDirectory = vulkanBackend;
-                return true;
-            }
-            return false;
+            return Enum.TryParse<Common.BackendType>(createOptions.HostVersion, true, out backendType);
         }
 
 
@@ -397,5 +367,14 @@ namespace Amuse.Host.StableDiffusionCpp
             return base64Images;
         }
 
+
+        public static void SendMessage(this IProgress<PipelineProgress> progressCallback, string message)
+        {
+            progressCallback?.Report(new PipelineProgress
+            {
+                Message = message,
+                Key = "Initialize"
+            });
+        }
     }
 }

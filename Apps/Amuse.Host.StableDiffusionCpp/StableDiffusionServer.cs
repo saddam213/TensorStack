@@ -60,7 +60,7 @@ namespace Amuse.Host.StableDiffusionCpp
         {
             _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StartAsync] Starting StableDiffusion.cpp server...");
             _consoleOutputTask = ProcessConsoleOutput(_cancellationTokenSource.Token);
-            var serverPath = Path.Combine(_configuration.BackendDirectory, "sd-server.exe");
+            var serverPath = Path.Combine(_configuration.Directory, "sd-server.exe");
             var serverArguments = GetServerArguments(_configuration);
             _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StartAsync] Server Path: {serverPath}", serverPath);
             _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StartAsync] Server Arguments: {serverArguments}", serverArguments);

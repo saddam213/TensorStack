@@ -9,7 +9,7 @@
         MinWidth="480"
         MaxWidth="480"
         x:Name="UI"
-        Title="Python Environment"
+        Title="Environment Setup"
         Icon="/Images/Icon.ico"
         Style="{StaticResource {x:Type CommonControls:DialogControl}}">
     <DockPanel DataContext="{Binding ElementName=UI}" Margin="15, 15, 15, 10">
@@ -31,35 +31,24 @@
             <StackPanel>
                 <CommonControls:ProgressElement Progress="{Binding Progress}" Height="20" FontSize="10" />
                 <Grid TextBlock.FontStyle="Italic" TextBlock.FontSize="11" Opacity=".8">
-                    <TextBlock Text="(This may take few minutes)" FontSize="11" TextWrapping="Wrap" FontStyle="Italic" HorizontalAlignment="Center" Visibility="{Binding IsUpdate, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <TextBlock Text="(This may take several minutes)" FontSize="11" TextWrapping="Wrap" FontStyle="Italic" HorizontalAlignment="Center" Visibility="{Binding IsCreate, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <TextBlock Text="(This may take several minutes)" FontSize="11" TextWrapping="Wrap" FontStyle="Italic" HorizontalAlignment="Center" Visibility="{Binding IsRebuild, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <TextBlock Text="{Binding WaitMessage}" FontSize="11" TextWrapping="Wrap" FontStyle="Italic" HorizontalAlignment="Center" />
                 </Grid>
             </StackPanel>
         </Grid>
 
-      
         <DockPanel>
             <CommonControls:FontAwesome DockPanel.Dock="Left" Size="50" Margin="0,5,0,20" Icon="f059" IconStyle="Light" Color="{StaticResource InfoColour}" />
             <StackPanel Margin="20,2,0,0" >
 
                 <!--Title-->
                 <Grid HorizontalAlignment="Left" TextBlock.FontSize="16">
-                    <TextBlock Text="Create Python Virtual Environment?" Visibility="{Binding IsCreate, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <TextBlock Text="Update Python Virtual Environment?" Visibility="{Binding IsUpdate, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <TextBlock Text="Rebuild Python Virtual Environment?" Visibility="{Binding IsRebuild, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <TextBlock Text="{Binding Message}" />
                 </Grid>
 
                 <!--Message-->
                 <Grid HorizontalAlignment="Left" Margin="0,3,0,0" TextBlock.FontStyle="Italic" TextBlock.FontSize="11" Opacity=".8">
-                    <TextBlock TextWrapping="Wrap" Visibility="{Binding IsCreate, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <Run Text="This will create the required Python Virtual Environment on your machine for running local models, this is a one-time setup."/>
-                    </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Visibility="{Binding IsUpdate, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <Run Text="This will update your Python Virtual Environment with the latest required packages, This is a one-off process."/>
-                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Visibility="{Binding IsRebuild, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <Run Text="This will completely wipe and reinstall your Python Virtual Environment to fix any broken dependencies or corrupted files"/>
+                    <TextBlock TextWrapping="Wrap">
+                        <Run Text="{Binding SubMessage, Mode=OneWay}"/>
                     </TextBlock>
                 </Grid>
 

@@ -103,8 +103,8 @@
                                     <TextBlock Text="UI Scale" Style="{StaticResource FieldTextBlockStyle}"/>
                                     <ComboBox ItemsSource="{Binding ScaleOptions}" SelectedValue="{Binding Settings.UIScale, Mode=TwoWay}" SelectedValuePath="Value" DisplayMemberPath="Label" />
                                 </StackPanel>
+                                <TextBlock/>
                                 <CheckBox Content="Check For Updates" IsChecked="{Binding Settings.IsAutoUpdateEnabled}" Margin="5,20,0,0"/>
-                                <CommonControls:HyperlinkControl Label="Python Directory" Link="{x:Static app:App.DirectoryPython}" IsButtonType="True" VerticalAlignment="Stretch" Margin="0,8,0,0" />
                                 <CommonControls:HyperlinkControl Label="Log Directory" Link="{x:Static app:App.DirectoryLogs}" IsButtonType="True" VerticalAlignment="Stretch" Margin="0,8,0,0" />
                             </UniformGrid>
 

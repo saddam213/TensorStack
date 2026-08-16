@@ -112,7 +112,7 @@ namespace Amuse.App.Services
                 {
                     BackendType.PyTorch => new PyTorchBackendClient(_settings, _mediaService, _environmentService, _logger),
                     BackendType.OnnxRuntime => new OnnxBackendClient(_settings, _mediaService, _logger),
-                    BackendType.StableDiffusionCpp => new StableDiffusionCppClient(_settings, _mediaService, _logger),
+                    BackendType.StableDiffusionCpp => new StableDiffusionCppClient(_settings, _mediaService, _environmentService, _logger),
                     _ => throw new NotImplementedException()
                 };
 

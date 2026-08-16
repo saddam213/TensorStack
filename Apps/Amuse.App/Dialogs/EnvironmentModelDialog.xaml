@@ -14,7 +14,6 @@
         Style="{StaticResource {x:Type CommonControls:DialogControl}}">
     <DockPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:EnvironmentModelDialog}}}" Margin="15, 15, 15, 10">
 
-
         <!--Environment Settings-->
         <UniformGrid DockPanel.Dock="Top" Columns="4" >
             <StackPanel Margin="0,0,2,0" IsEnabled="{Binding IsFixedEnvironment, Converter={StaticResource InverseBoolConverter}}">
@@ -25,13 +24,18 @@
                 <TextBlock Text="Environment" Style="{StaticResource FieldTextBlockStyle}"/>
                 <TextBox Text="{Binding EnvironmentModel.Environment, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
+            <StackPanel Margin="0,0,2,0" IsEnabled="{Binding IsFixedEnvironment, Converter={StaticResource InverseBoolConverter}}" Visibility="{Binding IsCreate, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Text="Backend" Style="{StaticResource FieldTextBlockStyle}"/>
+                <ComboBox ItemsSource="{Binding Source={StaticResource BackendType}}" SelectedItem="{Binding BackendType}" SelectedIndex="0" Style="{StaticResource EnumComboBox}"/>
+            </StackPanel>
             <StackPanel Margin="2,0,2,0" IsEnabled="{Binding IsFixedEnvironment, Converter={StaticResource InverseBoolConverter}}">
-                <TextBlock Text="Python" Style="{StaticResource FieldTextBlockStyle}"/>
-                <ComboBox SelectedItem="{Binding EnvironmentModel.PythonVersion}" ItemsSource="{Binding PythonVersions}" />
+                <TextBlock Text="Version" Style="{StaticResource FieldTextBlockStyle}"/>
+                <ComboBox SelectedItem="{Binding EnvironmentModel.HostVersion}" ItemsSource="{Binding HostVersions}" />
             </StackPanel>
-            <StackPanel Margin="2,0,0,0" VerticalAlignment="Bottom" >
-                <CheckBox Content="Default" IsChecked="{Binding EnvironmentModel.IsDefault}" Margin="10,0,0,2"/>
-            </StackPanel>
+        </UniformGrid>
+
+
+        <UniformGrid DockPanel.Dock="Top" Columns="4" >
             <StackPanel Margin="0,0,2,0" IsEnabled="{Binding IsFixedEnvironment, Converter={StaticResource InverseBoolConverter}}">
                 <TextBlock Text="Vendor" Style="{StaticResource FieldTextBlockStyle}"/>
                 <ComboBox ItemsSource="{Binding Source={StaticResource VendorType}}" SelectedItem="{Binding EnvironmentModel.Vendor}" SelectedIndex="0" Style="{StaticResource EnumComboBox}"/>
@@ -41,15 +45,18 @@
                 <ComboBox ItemsSource="{Binding Source={StaticResource EnvironmentType}}" SelectedItem="{Binding EnvironmentModel.Type}" SelectedIndex="0" Style="{StaticResource EnumComboBox}"/>
             </StackPanel>
             <Grid Margin="2,0,0,0" IsEnabled="{Binding IsFixedEnvironment, Converter={StaticResource InverseBoolConverter}}">
-                <StackPanel Visibility="{Binding  EnvironmentModel.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Device}">
+                <StackPanel Visibility="{Binding EnvironmentModel.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Device}">
                     <TextBlock Text="Device" Style="{StaticResource FieldTextBlockStyle}"/>
                     <ComboBox ItemsSource="{Binding Settings.Devices}" SelectedValue="{Binding EnvironmentModel.Device}" DisplayMemberPath="Name" SelectedValuePath="HardwareID" SelectedIndex="0"/>
                 </StackPanel>
-                <StackPanel Visibility="{Binding  EnvironmentModel.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pipeline}">
+                <StackPanel Visibility="{Binding EnvironmentModel.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pipeline}">
                     <TextBlock Text="Pipeline" Style="{StaticResource FieldTextBlockStyle}"/>
                     <ComboBox ItemsSource="{Binding Settings.DiffusionPipelines}" SelectedItem="{Binding EnvironmentModel.Pipeline}" SelectedIndex="0" Style="{StaticResource EnumComboBox}"/>
                 </StackPanel>
             </Grid>
+            <StackPanel Margin="2,0,0,0" VerticalAlignment="Bottom" >
+                <CheckBox Content="Default" IsChecked="{Binding EnvironmentModel.IsDefault}" Margin="10,0,0,2"/>
+            </StackPanel>
         </UniformGrid>
 
 

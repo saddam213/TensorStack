@@ -6,7 +6,7 @@ namespace Amuse.Host.StableDiffusionCpp.Config
 {
     public record ServerConfig
     {
-        public string BackendDirectory { get; set; }
+        public string Directory { get; set; }
         public short Port { get; set; }
         public string Address { get; set; }
         public string BaseUrl => $"http://{Address}:{Port}/";
