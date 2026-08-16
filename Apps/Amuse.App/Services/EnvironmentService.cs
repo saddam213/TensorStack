@@ -205,7 +205,7 @@ namespace Amuse.App.Services
         {
             var backendPath = GetBackendPath(environment);
             return environment.Backend == BackendType.PyTorch
-                ? Path.Combine(backendPath, $".{environment.Environment}")
+                ? Path.Combine(backendPath, "Pipelines", $".{environment.Environment}")
                 : Path.Combine(backendPath, environment.Environment);
         }
 
@@ -213,7 +213,7 @@ namespace Amuse.App.Services
         private static string GetBackendPath(EnvironmentModel environment)
         {
             return environment.Backend == BackendType.PyTorch
-                ? Path.Combine(App.DirectoryData, "PythonRuntime", "Pipelines")
+                ? Path.Combine(App.DirectoryData, "PythonRuntime")
                 : Path.Combine(App.DirectoryData, "StableDiffusionCppRuntime");
         }
 

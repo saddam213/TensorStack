@@ -56,6 +56,8 @@ namespace Amuse.Host.StableDiffusionCpp
                     SampleSteps = options.Steps,
                     SampleMethod = GetSampler(options.SchedulerOptions),
                     Scheduler = GetSigmaSchedule(options.SchedulerOptions),
+                    Eta = options.SchedulerOptions.Eta > 0 ? options.SchedulerOptions.Eta : null,
+                    FlowShift = options.SchedulerOptions.FlowShift > 0 ? options.SchedulerOptions.FlowShift : null,
                     Guidance = new GuidanceParams
                     {
                         TxtCfg = Math.Max(1, options.GuidanceScale),
@@ -92,6 +94,8 @@ namespace Amuse.Host.StableDiffusionCpp
                     SampleSteps = options.Steps,
                     SampleMethod = GetSampler(options.SchedulerOptions),
                     Scheduler = GetSigmaSchedule(options.SchedulerOptions),
+                    Eta = options.SchedulerOptions.Eta > 0 ? options.SchedulerOptions.Eta : null,
+                    FlowShift = options.SchedulerOptions.FlowShift > 0 ? options.SchedulerOptions.FlowShift : null,
                     Guidance = new GuidanceParams
                     {
                         TxtCfg = Math.Max(1, options.GuidanceScale),
@@ -103,6 +107,8 @@ namespace Amuse.Host.StableDiffusionCpp
                     SampleSteps = options.Steps2,
                     SampleMethod = GetSampler(options.SchedulerOptions),
                     Scheduler = GetSigmaSchedule(options.SchedulerOptions),
+                    Eta = options.SchedulerOptions.Eta > 0 ? options.SchedulerOptions.Eta : null,
+                    FlowShift = options.SchedulerOptions.FlowShift > 0 ? options.SchedulerOptions.FlowShift : null,
                     Guidance = new GuidanceParams
                     {
                         TxtCfg = Math.Max(1, options.GuidanceScale),

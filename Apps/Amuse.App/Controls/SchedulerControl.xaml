@@ -18,7 +18,7 @@
 
 
         <DataTemplate DataType="{x:Type Common:SchedulerInputOptions}" x:Key="DefaultLayout" >
-            <TextBlock Text="{Binding Scheduler}" />
+            <TextBlock />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type Common:SchedulerInputOptions}" x:Key="LMSLayout">
@@ -1656,116 +1656,146 @@
         </DataTemplate>
     </CommonControls:BaseControl.Resources>
 
-    <DockPanel  DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:SchedulerControl}}}">
+    <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:SchedulerControl}}}">
+
+        <DockPanel Visibility="{Binding BackendType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=PyTorch}">
+
+            <!--Scheduler Type-->
+            <StackPanel DockPanel.Dock="Top">
+                <TextBlock Text="Scheduler" Style="{StaticResource FieldTextBlockStyle}" />
+                <ComboBox SelectedItem="{Binding SelectedOptions}" ItemsSource="{Binding Options}"/>
+            </StackPanel>
 
 
-        <!--Scheduler Type-->
-        <StackPanel DockPanel.Dock="Top">
-            <TextBlock Text="Scheduler" Style="{StaticResource FieldTextBlockStyle}" />
-            <ComboBox SelectedItem="{Binding SelectedOptions}" ItemsSource="{Binding Options}"/>
-        </StackPanel>
+            <!--Scheduler Options-->
+            <ContentControl Content="{Binding SelectedOptions}" Visibility="{Binding IsSelectorOnly, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="ContentTemplate" Value="{StaticResource DefaultLayout}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="LMS">
+                                <Setter Property="ContentTemplate" Value="{StaticResource LMSLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="Euler">
+                                <Setter Property="ContentTemplate" Value="{StaticResource EulerLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="EulerAncestral">
+                                <Setter Property="ContentTemplate" Value="{StaticResource EulerAncestralLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DDPM">
+                                <Setter Property="ContentTemplate" Value="{StaticResource DDPMLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DDIM">
+                                <Setter Property="ContentTemplate" Value="{StaticResource DDIMLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="KDPM2">
+                                <Setter Property="ContentTemplate" Value="{StaticResource LMSLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="KDPM2Ancestral">
+                                <Setter Property="ContentTemplate" Value="{StaticResource LMSLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DDPMWuerstchen">
+                                <Setter Property="ContentTemplate" Value="{StaticResource DDPMWuerstchenLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="LCM">
+                                <Setter Property="ContentTemplate" Value="{StaticResource LCMLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="FlowMatchEuler">
+                                <Setter Property="ContentTemplate" Value="{StaticResource FlowMatchEulerLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="FlowMatchHeun">
+                                <Setter Property="ContentTemplate" Value="{StaticResource FlowMatchHeunLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="PNDM">
+                                <Setter Property="ContentTemplate" Value="{StaticResource PNDMLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="Heun">
+                                <Setter Property="ContentTemplate" Value="{StaticResource HeunLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="UniPCMultistep">
+                                <Setter Property="ContentTemplate" Value="{StaticResource UniPCMultistepLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DPMSolverMultistep">
+                                <Setter Property="ContentTemplate" Value="{StaticResource DPMSolverMultistepLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DPMSolverSinglestep">
+                                <Setter Property="ContentTemplate" Value="{StaticResource DPMSolverSinglestepLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DPMSolverSDE">
+                                <Setter Property="ContentTemplate" Value="{StaticResource DPMSolverSDELayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DEISMultistep">
+                                <Setter Property="ContentTemplate" Value="{StaticResource DEISMultistepLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="EDMEuler">
+                                <Setter Property="ContentTemplate" Value="{StaticResource EDMEulerLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="EDMDPMSolverMultistep">
+                                <Setter Property="ContentTemplate" Value="{StaticResource EDMDPMSolverMultistepLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="FlowMatchLCM">
+                                <Setter Property="ContentTemplate" Value="{StaticResource FlowMatchLCMLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="IPNDM">
+                                <Setter Property="ContentTemplate" Value="{StaticResource IPNDMLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="CogVideoXDDIM">
+                                <Setter Property="ContentTemplate" Value="{StaticResource CogVideoXDDIMLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="CogVideoXDPM">
+                                <Setter Property="ContentTemplate" Value="{StaticResource CogVideoXDPMLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="Helios">
+                                <Setter Property="ContentTemplate" Value="{StaticResource HeliosLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="HeliosDMD">
+                                <Setter Property="ContentTemplate" Value="{StaticResource HeliosDMDLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="TCD">
+                                <Setter Property="ContentTemplate" Value="{StaticResource TCDLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="SCM">
+                                <Setter Property="ContentTemplate" Value="{StaticResource SCMLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="SASolver">
+                                <Setter Property="ContentTemplate" Value="{StaticResource SASolverLayout}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="LTXEulerAncestral">
+                                <Setter Property="ContentTemplate" Value="{StaticResource LTXEulerAncestralLayout}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+        </DockPanel>
 
 
-        <!--Scheduler Options-->
-        <ContentControl Content="{Binding SelectedOptions}" Visibility="{Binding IsSelectorOnly, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-            <ContentControl.Style>
-                <Style TargetType="ContentControl">
-                    <Setter Property="ContentTemplate" Value="{StaticResource DefaultLayout}" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="LMS">
-                            <Setter Property="ContentTemplate" Value="{StaticResource LMSLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="Euler">
-                            <Setter Property="ContentTemplate" Value="{StaticResource EulerLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="EulerAncestral">
-                            <Setter Property="ContentTemplate" Value="{StaticResource EulerAncestralLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DDPM">
-                            <Setter Property="ContentTemplate" Value="{StaticResource DDPMLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DDIM">
-                            <Setter Property="ContentTemplate" Value="{StaticResource DDIMLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="KDPM2">
-                            <Setter Property="ContentTemplate" Value="{StaticResource LMSLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="KDPM2Ancestral">
-                            <Setter Property="ContentTemplate" Value="{StaticResource LMSLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DDPMWuerstchen">
-                            <Setter Property="ContentTemplate" Value="{StaticResource DDPMWuerstchenLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="LCM">
-                            <Setter Property="ContentTemplate" Value="{StaticResource LCMLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="FlowMatchEuler">
-                            <Setter Property="ContentTemplate" Value="{StaticResource FlowMatchEulerLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="FlowMatchHeun">
-                            <Setter Property="ContentTemplate" Value="{StaticResource FlowMatchHeunLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="PNDM">
-                            <Setter Property="ContentTemplate" Value="{StaticResource PNDMLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="Heun">
-                            <Setter Property="ContentTemplate" Value="{StaticResource HeunLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="UniPCMultistep">
-                            <Setter Property="ContentTemplate" Value="{StaticResource UniPCMultistepLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DPMSolverMultistep">
-                            <Setter Property="ContentTemplate" Value="{StaticResource DPMSolverMultistepLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DPMSolverSinglestep">
-                            <Setter Property="ContentTemplate" Value="{StaticResource DPMSolverSinglestepLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DPMSolverSDE">
-                            <Setter Property="ContentTemplate" Value="{StaticResource DPMSolverSDELayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="DEISMultistep">
-                            <Setter Property="ContentTemplate" Value="{StaticResource DEISMultistepLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="EDMEuler">
-                            <Setter Property="ContentTemplate" Value="{StaticResource EDMEulerLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="EDMDPMSolverMultistep">
-                            <Setter Property="ContentTemplate" Value="{StaticResource EDMDPMSolverMultistepLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="FlowMatchLCM">
-                            <Setter Property="ContentTemplate" Value="{StaticResource FlowMatchLCMLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="IPNDM">
-                            <Setter Property="ContentTemplate" Value="{StaticResource IPNDMLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="CogVideoXDDIM">
-                            <Setter Property="ContentTemplate" Value="{StaticResource CogVideoXDDIMLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="CogVideoXDPM">
-                            <Setter Property="ContentTemplate" Value="{StaticResource CogVideoXDPMLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="Helios">
-                            <Setter Property="ContentTemplate" Value="{StaticResource HeliosLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="HeliosDMD">
-                            <Setter Property="ContentTemplate" Value="{StaticResource HeliosDMDLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="TCD">
-                            <Setter Property="ContentTemplate" Value="{StaticResource TCDLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="SCM">
-                            <Setter Property="ContentTemplate" Value="{StaticResource SCMLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="SASolver">
-                            <Setter Property="ContentTemplate" Value="{StaticResource SASolverLayout}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding SelectedOptions.Scheduler}" Value="LTXEulerAncestral">
-                            <Setter Property="ContentTemplate" Value="{StaticResource LTXEulerAncestralLayout}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ContentControl.Style>
-        </ContentControl>
+        <DockPanel Visibility="{Binding BackendType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=StableDiffusionCpp}">
 
-    </DockPanel>
+            <UniformGrid Columns="2">
+
+                <!--Scheduler Type-->
+                <StackPanel>
+                    <TextBlock Text="Scheduler" Style="{StaticResource FieldTextBlockStyle}" />
+                    <ComboBox SelectedValuePath="Scheduler" SelectedValue="{Binding SelectedOptions.Scheduler}" ItemsSource="{Binding Options}"/>
+                </StackPanel>
+
+                <!--Scheduler Type-->
+                <StackPanel Visibility="{Binding IsSelectorOnly, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    <TextBlock Text="Sigma Schedule" Style="{StaticResource FieldTextBlockStyle}" />
+                    <ComboBox SelectedItem="{Binding SelectedOptions.SigmaScheduleType}" ItemsSource="{Binding Source={StaticResource SigmaScheduleType}}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,0,0,0">
+                    <TextBlock Text="Flow Shift" Style="{StaticResource FieldTextBlockStyle}" />
+                    <CommonControls:FloatBox FloatValue="{Binding SelectedOptions.FlowShift, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Margin="4,0,4,0">
+                    <TextBlock Text="Eta" Style="{StaticResource FieldTextBlockStyle}" />
+                    <CommonControls:FloatBox FloatValue="{Binding SelectedOptions.Eta, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </UniformGrid>
+
+        </DockPanel>
+    </Grid>
 </CommonControls:BaseControl>
