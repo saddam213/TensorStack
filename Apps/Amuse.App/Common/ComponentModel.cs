@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using TensorStack.Common;
 using TensorStack.Common.Common;
 using TensorStack.WPF;
 
@@ -7,7 +6,6 @@ namespace Amuse.App.Common
 {
     public sealed class ComponentModel : BaseModel, IDownloadModel
     {
-        private BackendType _backend;
         private string _name;
         private string _key;
         private string _link;
@@ -16,12 +14,6 @@ namespace Amuse.App.Common
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Id { get; set; }
-
-        public BackendType Backend
-        {
-            get { return _backend; }
-            set { SetProperty(ref _backend, value); }
-        }
 
         public string Name
         {
@@ -113,7 +105,6 @@ namespace Amuse.App.Common
             return new ComponentModel
             {
                 Id = id,
-                Backend = Backend,
                 Name = Name,
                 Key = Key,
                 Link = Link,

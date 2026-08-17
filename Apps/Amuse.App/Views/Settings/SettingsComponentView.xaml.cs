@@ -39,7 +39,6 @@ namespace Amuse.App.Views
             DownloadModelCancelCommand = new AsyncRelayCommand(DownloadModelCancelAsync);
             FilterClearCommand = new AsyncRelayCommand(FilterClearAsync, CanClearFilter);
             ModelCollection = new ListCollectionView(settings.Components) { Filter = CollectionFilter(), IsLiveSorting = true };
-            ModelCollection.SortDescriptions.Add(new SortDescription(nameof(ComponentModel.Backend), ListSortDirection.Ascending));
             ModelCollection.SortDescriptions.Add(new SortDescription(nameof(ComponentModel.Name), ListSortDirection.Ascending));
             ModelCollection.MoveCurrentToFirst();
             SelectedModel = ModelCollection.CurrentItem as ComponentModel;
