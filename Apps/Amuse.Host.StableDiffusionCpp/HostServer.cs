@@ -2,12 +2,14 @@
 using Amuse.Common.Config;
 using Amuse.Common.Message;
 using Microsoft.Extensions.Logging;
+using SkiaSharp;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common.Tensor;
+using TensorStack.Image;
 
 namespace Amuse.Host.StableDiffusionCpp
 {
@@ -162,7 +164,7 @@ namespace Amuse.Host.StableDiffusionCpp
                         var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.ImageParams;
                         var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
                         var result = await _pipeline.GenerateImageAsync(generateParams, PipelineCancellation.Token);
-                        await File.WriteAllBytesAsync(options.TempFileName, result, PipelineCancellation.Token);
+                        await SendMessage(new PipelineResponse(GetImageTensor(result)), cancellationToken);
                     }
                     else if (request.RunOptions.VideoOptions != null)
                     {
@@ -170,9 +172,9 @@ namespace Amuse.Host.StableDiffusionCpp
                         var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.VideoParams;
                         var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
                         var result = await _pipeline.GenerateVideoAsync(generateParams, PipelineCancellation.Token);
-                        await File.WriteAllBytesAsync(options.TempFileName, result, PipelineCancellation.Token);
+                        await SaveVideoAsync(result, options.TempFileName, PipelineCancellation.Token);
+                        await SendMessage(new PipelineResponse(default(Tensor<float>[])), cancellationToken);
                     }
-                    await SendMessage(new PipelineResponse(default(Tensor<float>[])), cancellationToken);
                 }
             }
             catch (OperationCanceledException ex)
@@ -220,5 +222,81 @@ namespace Amuse.Host.StableDiffusionCpp
             await QueueProgress(progress);
         }
 
+
+        /// <summary>
+        /// Save video converted from WEBM to MP4
+        /// </summary>
+        /// <param name="webmBytes">The webm bytes.</param>
+        /// <param name="outputFile">The output file.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        private async Task SaveVideoAsync(byte[] webmBytes, string outputFile, CancellationToken cancellationToken = default)
+        {
+            var encoders = new[] { "h264_nvenc", "h264_amf", "h264_qsv" };
+            foreach (var encoder in encoders)
+            {
+                try
+                {
+                    Logger.LogInformation("[AmuseHost] [PipelineServer] [SaveVideoAsync] Saving output video, Format: MP4, Codec: {encoder}...", encoder);
+                    if (await EncodeVideoAsync(webmBytes, outputFile, encoder, cancellationToken))
+                    {
+                        Logger.LogInformation($"[AmuseHost] [PipelineServer] [SaveVideoAsync] Successfully saved output video.");
+                        return;
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception)
+                {
+                    Logger.LogWarning("[AmuseHost] [PipelineServer] [SaveVideoAsync] Codec not found, Codec: {encoder}", encoder);
+                }
+            }
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [SaveVideoAsync] Saved output video using fallback method, Format: WEBM, Codec: default");
+            await File.WriteAllBytesAsync(outputFile, webmBytes, cancellationToken);
+        }
+
+
+        /// <summary>
+        /// Encode video
+        /// </summary>
+        /// <param name="webmBytes">The webm bytes.</param>
+        /// <param name="outputFile">The output file.</param>
+        /// <param name="encoder">The encoder.</param>
+        /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A Task&lt;System.Boolean&gt; representing the asynchronous operation.</returns>
+        private static async Task<bool> EncodeVideoAsync(byte[] webmBytes, string outputFile, string encoder, CancellationToken cancellationToken = default)
+        {
+            var arguments = $"-hide_banner -f webm -i pipe:0 -c:v {encoder} -c:a aac -b:a 192k -movflags +faststart -y \"{outputFile}\"";
+            using (var process = new Process())
+            {
+                process.StartInfo.FileName = "ffmpeg.exe";
+                process.StartInfo.Arguments = arguments;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.RedirectStandardInput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.Start();
+                var errorTask = process.StandardError.ReadToEndAsync();
+                await process.StandardInput.BaseStream.WriteAsync(webmBytes, cancellationToken);
+                process.StandardInput.Close();
+                await process.WaitForExitAsync(cancellationToken);
+                var error = await errorTask;
+                return process.ExitCode == 0;
+            }
+        }
+
+
+        /// <summary>
+        /// Gets the image tensor.
+        /// </summary>
+        /// <param name="imageBytes">The image bytes.</param>
+        private static ImageTensor GetImageTensor(byte[] imageBytes)
+        {
+            using (var bitmap = SKBitmap.Decode(imageBytes))
+            {
+                return bitmap.ToTensor();
+            }
+        }
     }
 }

@@ -179,6 +179,9 @@ namespace Amuse.App
                         {
                             if (diffusionModel.Id > 1000)
                             {
+                                if (diffusionModel.Backend == TensorStack.Common.BackendType.OnnxRuntime)
+                                    continue;
+
                                 if (!defaultSettings.DiffusionModels.Any(x => x.Id == diffusionModel.Id))
                                     defaultSettings.DiffusionModels.Add(diffusionModel);
                             }

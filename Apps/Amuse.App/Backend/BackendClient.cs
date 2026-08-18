@@ -554,6 +554,7 @@ namespace Amuse.App.Runtime
             {
                 Variant = model.Variant,
                 ModelPath = Path.GetFullPath(Settings.DirectoryDiffusion),
+                LoraAdapterPath = Path.GetFullPath(Settings.DirectoryLoraAdapter),
                 Template = model.Template,
                 Pipeline = model.Pipeline.ToString(),
                 ModelType = model.ModelType,
@@ -585,6 +586,7 @@ namespace Amuse.App.Runtime
             {
                 Variant = model.Variant,
                 ModelPath = Path.GetFullPath(Settings.DirectoryLangaugeModel),
+                LoraAdapterPath = Path.GetFullPath(Settings.DirectoryLoraAdapter),
                 Template = model.Template,
                 Pipeline = model.Pipeline.ToString(),
                 ModelType = model.ModelType,

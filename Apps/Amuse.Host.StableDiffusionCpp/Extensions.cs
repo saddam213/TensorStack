@@ -18,8 +18,8 @@ namespace Amuse.Host.StableDiffusionCpp
             if (!GetBackend(createOptions, out var backendType))
                 throw new Exception($"{loadOptions.DeviceVendor} Backend Not Found.");
 
-            var deviceId = backendType == Common.BackendType.Vulkan 
-                ? loadOptions.DeviceId 
+            var deviceId = backendType == Common.BackendType.Vulkan
+                ? loadOptions.DeviceId
                 : loadOptions.DeviceVendorIndex;
             var modelConfig = GetModelConfig(loadOptions);
             var config = new Config.ServerConfig
@@ -153,7 +153,6 @@ namespace Amuse.Host.StableDiffusionCpp
 
         private static Config.ModelConfig GetModelConfig(PipelineLoadOptions options)
         {
-            var loraModelDirectory = options.LoraAdapters?.FirstOrDefault()?.Path;
             if (options.Pipeline == "FluxPipeline")
             {
                 return new Config.ModelConfig
@@ -162,7 +161,7 @@ namespace Amuse.Host.StableDiffusionCpp
                     ClipL = options.CheckpointConfig.TextEncoder,
                     T5XXL = options.CheckpointConfig.TextEncoder2,
                     Diffusion = options.CheckpointConfig.Transformer,
-                    LoraModelDirectory = loraModelDirectory
+                    LoraModelDirectory = options.LoraAdapterPath
                 };
             }
             if (options.Pipeline == "IdeogramPipeline")
@@ -173,7 +172,7 @@ namespace Amuse.Host.StableDiffusionCpp
                     LLM = options.CheckpointConfig.TextEncoder,
                     Diffusion = options.CheckpointConfig.Transformer,
                     DiffusionUncond = options.CheckpointConfig.Transformer2,
-                    LoraModelDirectory = loraModelDirectory
+                    LoraModelDirectory = options.LoraAdapterPath
                 };
             }
             if (options.Pipeline == "LTX20Pipeline")
@@ -185,7 +184,7 @@ namespace Amuse.Host.StableDiffusionCpp
                     LLM = options.CheckpointConfig.TextEncoder,
                     Connectors = options.CheckpointConfig.Connectors,
                     Diffusion = options.CheckpointConfig.Transformer,
-                    LoraModelDirectory = loraModelDirectory
+                    LoraModelDirectory = options.LoraAdapterPath
                 };
             }
             if (options.Pipeline == "QwenImagePipeline")
@@ -195,7 +194,7 @@ namespace Amuse.Host.StableDiffusionCpp
                     Vae = options.CheckpointConfig.Vae,
                     LLM = options.CheckpointConfig.TextEncoder,
                     Diffusion = options.CheckpointConfig.Transformer,
-                    LoraModelDirectory = loraModelDirectory, 
+                    LoraModelDirectory = options.LoraAdapterPath,
                     ExtraModelArgs = "qwen_image_zero_cond_t=true" // TODO: should be optional
                 };
             }
@@ -210,7 +209,7 @@ namespace Amuse.Host.StableDiffusionCpp
                     Vae = options.CheckpointConfig.Vae,
                     LLM = options.CheckpointConfig.TextEncoder,
                     Diffusion = options.CheckpointConfig.Transformer,
-                    LoraModelDirectory = loraModelDirectory
+                    LoraModelDirectory = options.LoraAdapterPath
                 };
             }
             throw new NotImplementedException(options.Pipeline);

@@ -9977,7 +9977,7 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 2, 6, 4 ]
+          "MemoryModes": [ 2, 3, 4 ]
         },
         {
           "QualityMode": "Standard",
@@ -10121,7 +10121,7 @@
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 2, 6, 4 ]
+          "MemoryModes": [ 2, 3, 4 ]
         },
         {
           "QualityMode": "Standard",

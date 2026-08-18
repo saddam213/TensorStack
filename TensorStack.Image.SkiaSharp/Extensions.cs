@@ -78,7 +78,7 @@ namespace TensorStack.Image
         /// </summary>
         /// <param name="bitmap">The SKBitmap.</param>
         /// <returns>Tensor&lt;System.Single&gt;.</returns>
-        internal static ImageTensor ToTensor(this SKBitmap bitmap)
+        public static ImageTensor ToTensor(this SKBitmap bitmap)
         {
             int width = bitmap.Width;
             int height = bitmap.Height;

@@ -22,6 +22,7 @@ namespace Amuse.Common
         public bool IsOptimizeDeviceEnabled { get; set; } = false;
         public bool IsOptimizeChannelsEnabled { get; set; } = false;
         public bool IsDeviceQuantizationEnabled { get; set; } = false;
+        public string LoraAdapterPath { get; set; }
         public List<LoraConfig> LoraAdapters { get; set; }
         public ControlNetConfig ControlNet { get; set; }
         public MemoryModeType MemoryMode { get; set; }

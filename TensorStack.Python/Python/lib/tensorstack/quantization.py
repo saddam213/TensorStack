@@ -19,6 +19,7 @@ try:
     from transformers import (TorchAoConfig as TransformersTorchAoConfig)
     from diffusers import (TorchAoConfig as DiffusersTorchAoConfig)
 except ImportError:
+    quantize_ = None
     Int8WeightOnlyConfig = None
     Int4WeightOnlyConfig = None
     TransformersTorchAoConfig = None
@@ -36,24 +37,30 @@ def quantize_model(config: DataObjects.PipelineConfig, model: Any, is_gguf: bool
 
     data_type = config.data_type
     quant_type = config.quant_type
+    device_vendor = config.device_vendor
     if quant_type == QuantType.Q16Bit:
         print(f"[Quantize] {quant_type} not supported")
         return
-    elif quant_type == QuantType.Q8Bit:
-        print(f"[Quantize] {QuantBackend.TORCHAO}, {data_type} -> {quant_type}")
-        quantize_(model, Int8WeightOnlyConfig())
-    elif quant_type == QuantType.Q4Bit:
-        print(f"[Quantize] {QuantBackend.TORCHAO}, {data_type} -> {quant_type}")
-        quantize_(model, Int4WeightOnlyConfig())
 
-    # elif quant_type == QuantType.Q8Bit:
-    #     print(f"[Quantize] {QuantBackend.QUANTO}, {data_type} -> {quant_type}")
-    #     quantize(model, weights=qint8)
-    #     freeze(model)
-    # elif quant_type == QuantType.Q4Bit:
-    #     print(f"[Quantize] {QuantBackend.QUANTO}, {data_type} -> {quant_type}")
-    #     quantize(model, weights=qint4)
-    #     freeze(model)
+    # AMD
+    if device_vendor == VendorType.AMD:
+        if quant_type == QuantType.Q8Bit:
+            print(f"[Quantize] {QuantBackend.QUANTO}, {data_type} -> {quant_type}")
+            quantize(model, weights=qint8)
+            freeze(model)
+        elif quant_type == QuantType.Q4Bit:
+            print(f"[Quantize] {QuantBackend.QUANTO}, {data_type} -> {quant_type}")
+            quantize(model, weights=qint4)
+            freeze(model)
+
+    # Nvidia
+    elif device_vendor == VendorType.Nvidia:
+        if quant_type == QuantType.Q8Bit:
+            print(f"[Quantize] {QuantBackend.TORCHAO}, {data_type} -> {quant_type}")
+            quantize_(model, Int8WeightOnlyConfig())
+        elif quant_type == QuantType.Q4Bit:
+            print(f"[Quantize] {QuantBackend.TORCHAO}, {data_type} -> {quant_type}")
+            quantize_(model, Int4WeightOnlyConfig())
 
 
 #------------------------------------------------

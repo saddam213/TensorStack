@@ -18,8 +18,6 @@ namespace Amuse.App.Common
         private ProcessType _processType;
         private View _viewType;
         private QualityMode _qualityMode;
-        private View viewType;
-
         public DeviceModel Device
         {
             get { return _device; }
