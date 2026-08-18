@@ -47,9 +47,6 @@ namespace Amuse.App.Common
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public SchedulerType Scheduler { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public SigmaScheduleType SigmaScheduleType { get; set; }
-
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public SchedulerInputOptions[] Schedulers { get; set; }
 
@@ -180,7 +177,6 @@ namespace Amuse.App.Common
                 NoiseCondition = NoiseCondition,
                 Scheduler = Scheduler,
                 Schedulers = Schedulers.Copy(),
-                SigmaScheduleType = SigmaScheduleType,
                 Strength = Strength,
                 IsVaeSlicingEnabled = IsVaeSlicingEnabled,
                 IsVaeTilingEnabled = IsVaeTilingEnabled,

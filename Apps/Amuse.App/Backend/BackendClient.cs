@@ -562,6 +562,7 @@ namespace Amuse.App.Runtime
                 DeviceId = device.DeviceId,
                 DeviceBusId = device.PCIBusId,
                 DeviceVendor = device.Vendor,
+                DeviceVendorIndex = device.VendorIndex,
                 DataType = model.BaseType,
                 IsOptimizeDeviceEnabled = Settings.IsOptimizeDeviceEnabled,
                 IsOptimizeChannelsEnabled = Settings.IsOptimizeChannelsEnabled,

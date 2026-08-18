@@ -262,6 +262,11 @@ namespace Amuse.App.Services
                     if (!checkpoint.IsInstalled(directory, components))
                     {
                         var output = CheckpointComponent.GetSafePath(directory, checkpoint.Folder, checkpoint.Path);
+                        if (checkpointFiles.TryGetValue(output, out string[] value))
+                        {
+                            checkpointFiles[output] = [.. value, .. checkpoint.DownloadFiles];
+                            continue;
+                        }
                         checkpointFiles.Add(output, checkpoint.DownloadFiles);
                     }
                 }
@@ -269,8 +274,6 @@ namespace Amuse.App.Services
 
             await _downloadService.DownloadAsync(checkpointFiles, queueItem.ProgressCallback, queueItem.CancellationToken);
         }
-
-
 
 
         private async Task UpdateStatus(DownloadQueueItem queueItem, ModelStatusType status)

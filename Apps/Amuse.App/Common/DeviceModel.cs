@@ -27,6 +27,7 @@ namespace Amuse.App.Common
         public QualityMode DefaultQualityMode { get; init; }
         public BackendType[] SupportedBackends { get; init; }
         public bool IsFlashAttentionEnabled { get; init; }
+        public int VendorIndex { get; set; }
 
         private static QualityMode[] GetQualityModes(VendorType vendor)
         {

@@ -103,7 +103,7 @@ namespace Amuse.Host.StableDiffusionCpp
             }
             catch (HttpRequestException ex)
             {
-                throw new StableDiffusionApiException($"Failed to communicate with backend to cancel job '{job.Id}'.", ex);
+                throw new StableDiffusionApiException($"Failed to communicate with StableDiffusion.cpp to cancel job '{job.Id}'.", ex);
             }
         }
 
@@ -123,9 +123,9 @@ namespace Amuse.Host.StableDiffusionCpp
         /// <typeparam name="T"></typeparam>
         /// <param name="requestFunc">The request function.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <exception cref="Amuse.Host.StableDiffusionCpp.StableDiffusionApiException">The server responded with an empty or invalid payload.</exception>
-        /// <exception cref="Amuse.Host.StableDiffusionCpp.StableDiffusionApiException">Backend API error (Status: {response?.StatusCode}): {ex.Message}</exception>
-        /// <exception cref="Amuse.Host.StableDiffusionCpp.StableDiffusionApiException">Failed to parse the server data model response.</exception>
+        /// <exception cref="Amuse.Host.StableDiffusionCpp.StableDiffusionApiException">StableDiffusion.cpp responded with an empty or invalid payload.</exception>
+        /// <exception cref="Amuse.Host.StableDiffusionCpp.StableDiffusionApiException">StableDiffusion.cpp responded with error: {ex.Message}</exception>
+        /// <exception cref="Amuse.Host.StableDiffusionCpp.StableDiffusionApiException">Failed to parse StableDiffusion.cpp response.</exception>
         private async Task<T> SendRequestAsync<T>(Func<Task<HttpResponseMessage>> requestFunc, CancellationToken cancellationToken)
         {
             HttpResponseMessage response = null;
@@ -133,20 +133,19 @@ namespace Amuse.Host.StableDiffusionCpp
             {
                 response = await requestFunc();
                 response.EnsureSuccessStatusCode();
-
                 var result = await response.Content.ReadFromJsonAsync<T>(_serializerOptions, cancellationToken);
                 if (result == null)
-                    throw new StableDiffusionApiException("The server responded with an empty or invalid payload.");
+                    throw new StableDiffusionApiException("StableDiffusion.cpp responded with an invalid payload.");
 
                 return result;
             }
             catch (HttpRequestException ex)
             {
-                throw new StableDiffusionApiException($"Backend API error (Status: {response?.StatusCode}): {ex.Message}", ex);
+                throw new StableDiffusionApiException($"StableDiffusion.cpp responded with error: {ex.Message}", ex);
             }
             catch (JsonException ex)
             {
-                throw new StableDiffusionApiException("Failed to parse the server data model response.", ex);
+                throw new StableDiffusionApiException("Failed to parse StableDiffusion.cpp response.", ex);
             }
             finally
             {

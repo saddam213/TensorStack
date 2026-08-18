@@ -88,9 +88,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 await UpdateProgress(new PipelineProgress { Key = "Load", Subkey = "Pipeline", Message = "Loading Pipeline Components..." });
 
                 _pipelineLoadOptions = request.LoadOptions;
-                _serverConfig = _pipelineLoadOptions.ToServerConfig(_pipelineCreateOptions);
-                _pipeline = new StableDiffusionServer(_serverConfig, _progressRelayCallback, Logger);
-                await _pipeline.StartAsync(cancellationToken);
+                await StartStableDiffusionServerAsync(cancellationToken);
                 await SendResponse(cancellationToken);
             }
             catch (Exception ex)
@@ -112,6 +110,8 @@ namespace Amuse.Host.StableDiffusionCpp
             {
                 var reloadOptions = request.ReloadOptions;
                 _pipelineLoadOptions.LoraAdapters = reloadOptions.LoraAdapters;
+                _pipelineLoadOptions.ProcessType = reloadOptions.ProcessType;
+                _pipelineLoadOptions.ControlNet = reloadOptions.ControlNet;
                 await SendResponse(cancellationToken);
             }
             catch (Exception ex)
@@ -152,11 +152,8 @@ namespace Amuse.Host.StableDiffusionCpp
             try
             {
                 await UpdateProgress(new PipelineProgress { Key = "Load", Subkey = "Pipeline", Message = "Loading Pipeline Components..." });
-
                 using (PipelineCancellation = new CancellationTokenSource())
                 {
-                    RegisterCancellation(PipelineCancellation.Token);
-
                     request.RunOptions.UnpackTensors(request);
                     var modelConfig = _serverConfig.ModelConfig;
                     if (request.RunOptions.ImageOptions != null)
@@ -164,22 +161,23 @@ namespace Amuse.Host.StableDiffusionCpp
                         var options = request.RunOptions.ImageOptions;
                         var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.ImageParams;
                         var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
-                        var result = await _pipeline.GenerateImageAsync(generateParams, cancellationToken);
-                        await File.WriteAllBytesAsync(options.TempFileName, result, cancellationToken);
+                        var result = await _pipeline.GenerateImageAsync(generateParams, PipelineCancellation.Token);
+                        await File.WriteAllBytesAsync(options.TempFileName, result, PipelineCancellation.Token);
                     }
                     else if (request.RunOptions.VideoOptions != null)
                     {
                         var options = request.RunOptions.VideoOptions;
                         var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.VideoParams;
                         var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
-                        var result = await _pipeline.GenerateVideoAsync(generateParams, cancellationToken);
-                        await File.WriteAllBytesAsync(options.TempFileName, result, cancellationToken);
+                        var result = await _pipeline.GenerateVideoAsync(generateParams, PipelineCancellation.Token);
+                        await File.WriteAllBytesAsync(options.TempFileName, result, PipelineCancellation.Token);
                     }
                     await SendMessage(new PipelineResponse(default(Tensor<float>[])), cancellationToken);
                 }
             }
             catch (OperationCanceledException ex)
             {
+                await RestartStableDiffusionServerAsync();
                 Logger.LogError("[AmuseHost] [PipelineServer] [RunPipeline] {Message}", ex.Message);
                 await SendException(ex, cancellationToken);
             }
@@ -192,34 +190,24 @@ namespace Amuse.Host.StableDiffusionCpp
 
 
         /// <summary>
-        /// Registers the pipeline cancellation.
+        /// Start StableDiffusion.cpp server 
         /// </summary>
-        /// <param name="cancellationToken">The cancellation token to register callback</param>
-        private void RegisterCancellation(CancellationToken cancellationToken)
+        /// <param name="cancellationToken">The cancellation token.</param>
+        private async Task StartStableDiffusionServerAsync(CancellationToken cancellationToken = default)
         {
-            cancellationToken.Register(() =>
-            {
-                _ = Task.Run(async () =>
-                {
-                    try
-                    {
-                        var cancelSuccess = await _pipeline.CancelGenerateAsync();
-                        if (!cancelSuccess)
-                        {
-                            // SD-CPP Server cannot cancel running jobs, so we have to close the server
-                            // Throw a normal exception so the frontend will close the server gracefully
-                            var ex = new Exception("Unable to cancel running task, Closing server");
-                            Logger.LogError(ex, "[AmuseHost] [PipelineServer] [RunPipeline] Unable to cancel running task");
-                            await SendException(ex, CancellationToken.None);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.LogError(ex, "[AmuseHost] [PipelineServer] [RunPipeline] Exception occurred while executing CancelGenerateAsync.");
-                        await SendException(ex, CancellationToken.None);
-                    }
-                });
-            });
+            _serverConfig = _pipelineLoadOptions.ToServerConfig(_pipelineCreateOptions);
+            _pipeline = new StableDiffusionServer(_serverConfig, _progressRelayCallback, Logger);
+            await _pipeline.StartAsync(cancellationToken);
+        }
+
+
+        /// <summary>
+        /// Restart StableDiffusion.cpp server 
+        /// </summary>
+        private async Task RestartStableDiffusionServerAsync()
+        {
+            await _pipeline.StopAsync();
+            await StartStableDiffusionServerAsync();
         }
 
 

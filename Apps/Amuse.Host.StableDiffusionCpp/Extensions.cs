@@ -18,13 +18,17 @@ namespace Amuse.Host.StableDiffusionCpp
             if (!GetBackend(createOptions, out var backendType))
                 throw new Exception($"{loadOptions.DeviceVendor} Backend Not Found.");
 
+            var deviceId = backendType == Common.BackendType.Vulkan 
+                ? loadOptions.DeviceId 
+                : loadOptions.DeviceVendorIndex;
             var modelConfig = GetModelConfig(loadOptions);
             var config = new Config.ServerConfig
             {
+                IsDebug = createOptions.IsDebug,
                 Address = createOptions.ServerAddress,
                 Port = GetOpenPort(createOptions.ServerPort),
                 Directory = Path.Combine(createOptions.Directory, createOptions.Environment),
-                DeviceId = loadOptions.DeviceId,
+                DeviceId = deviceId,
                 Backend = backendType,
                 MemoryMode = loadOptions.MemoryMode,
                 ModelConfig = modelConfig,
@@ -42,7 +46,7 @@ namespace Amuse.Host.StableDiffusionCpp
             {
                 Seed = options.Seed,
                 Prompt = options.Prompt,
-                NegativePrompt = options.NegativePrompt,
+                NegativePrompt = options.NegativePrompt ?? "",
                 Width = options.Width,
                 Height = options.Height,
                 Strength = options.Strength,
@@ -51,6 +55,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 InitImage = GetInitImage(options, loadOptions.ProcessType),
                 RefImages = GetReferenceImages(options, loadOptions.ProcessType),
                 ControlImage = GetControlNetImage(options, loadOptions.ProcessType),
+                MaskImage = GetMaskImage(options, loadOptions.ProcessType),
                 SampleParams = new SampleParams
                 {
                     SampleSteps = options.Steps,
@@ -78,7 +83,7 @@ namespace Amuse.Host.StableDiffusionCpp
             {
                 Seed = options.Seed,
                 Prompt = options.Prompt,
-                NegativePrompt = options.NegativePrompt,
+                NegativePrompt = options.NegativePrompt ?? "",
                 Width = options.Width,
                 Height = options.Height,
                 Strength = options.Strength,
@@ -160,7 +165,45 @@ namespace Amuse.Host.StableDiffusionCpp
                     LoraModelDirectory = loraModelDirectory
                 };
             }
-            if (options.Pipeline == "AnimaPipeline")
+            if (options.Pipeline == "IdeogramPipeline")
+            {
+                return new Config.ModelConfig
+                {
+                    Vae = options.CheckpointConfig.Vae,
+                    LLM = options.CheckpointConfig.TextEncoder,
+                    Diffusion = options.CheckpointConfig.Transformer,
+                    DiffusionUncond = options.CheckpointConfig.Transformer2,
+                    LoraModelDirectory = loraModelDirectory
+                };
+            }
+            if (options.Pipeline == "LTX20Pipeline")
+            {
+                return new Config.ModelConfig
+                {
+                    Vae = options.CheckpointConfig.Vae,
+                    VaeAudio = options.CheckpointConfig.AudioVae,
+                    LLM = options.CheckpointConfig.TextEncoder,
+                    Connectors = options.CheckpointConfig.Connectors,
+                    Diffusion = options.CheckpointConfig.Transformer,
+                    LoraModelDirectory = loraModelDirectory
+                };
+            }
+            if (options.Pipeline == "QwenImagePipeline")
+            {
+                return new Config.ModelConfig
+                {
+                    Vae = options.CheckpointConfig.Vae,
+                    LLM = options.CheckpointConfig.TextEncoder,
+                    Diffusion = options.CheckpointConfig.Transformer,
+                    LoraModelDirectory = loraModelDirectory, 
+                    ExtraModelArgs = "qwen_image_zero_cond_t=true" // TODO: should be optional
+                };
+            }
+            if (options.Pipeline == "AnimaPipeline"
+             || options.Pipeline == "ErniePipeline"
+             || options.Pipeline == "Flux2KleinPipeline"
+             || options.Pipeline == "Krea2Pipeline"
+             || options.Pipeline == "ZImagePipeline")
             {
                 return new Config.ModelConfig
                 {
@@ -170,7 +213,6 @@ namespace Amuse.Host.StableDiffusionCpp
                     LoraModelDirectory = loraModelDirectory
                 };
             }
-
             throw new NotImplementedException(options.Pipeline);
         }
 
@@ -274,7 +316,7 @@ namespace Amuse.Host.StableDiffusionCpp
             if (options.InputImages.IsNullOrEmpty())
                 return default;
 
-            if (processType == ProcessType.ImageToImage || processType == ProcessType.ImageToImageControlNet)
+            if (processType == ProcessType.ImageToImage || processType == ProcessType.ImageToImageControlNet || processType == ProcessType.ImageInpaint)
                 return GetBase64Image(options.InputImages[0]);
 
             return default;
@@ -300,6 +342,21 @@ namespace Amuse.Host.StableDiffusionCpp
 
             if (processType == ProcessType.ImageEdit)
                 return GetBase64Images(options.InputImages);
+
+            return default;
+        }
+
+
+        private static string GetMaskImage(GenerateImageOptions options, ProcessType processType)
+        {
+            if (options.InputImages.IsNullOrEmpty())
+                return default;
+
+            if (options.InputImages.Count < 2)
+                return default;
+
+            if (processType == ProcessType.ImageInpaint)
+                return GetBase64Image(options.InputImages[1]);
 
             return default;
         }
@@ -365,7 +422,7 @@ namespace Amuse.Host.StableDiffusionCpp
             foreach (var imageTensor in imageTensors)
             {
                 var base64Image = GetBase64Image(imageTensor);
-                if (!string.IsNullOrEmpty(base64Image))
+                if (string.IsNullOrEmpty(base64Image))
                     continue;
 
                 base64Images.Add(base64Image);

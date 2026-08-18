@@ -72,7 +72,7 @@ namespace Amuse.App.Services
 
         public IReadOnlyList<DeviceModel> GetGPUDevices()
         {
-            var outputDevices = new List<DeviceModel>();
+            var outputDevices = new Dictionary<VendorType, List<DeviceModel>>();
             var providerDevices = Provider.GetDevices();
             foreach (var providerDevice in providerDevices)
             {
@@ -80,9 +80,17 @@ namespace Amuse.App.Services
                 if (gpuDevice == null || gpuDevice.HardwareLUID == 0 || gpuDevice.HardwareLUID >= uint.MaxValue)
                     continue;
 
-                outputDevices.Add(new DeviceModel(providerDevice, gpuDevice));
+                if (!outputDevices.ContainsKey(providerDevice.Vendor))
+                    outputDevices[providerDevice.Vendor] = new List<DeviceModel>();
+
+                outputDevices[providerDevice.Vendor].Add(new DeviceModel(providerDevice, gpuDevice));
             }
-            return outputDevices;
+
+            foreach (var vendorDevices in outputDevices.Values)
+                foreach (var (index, vendorDevice) in vendorDevices.Index())
+                    vendorDevice.VendorIndex = index;
+
+            return [.. outputDevices.SelectMany(x => x.Value).OrderBy(x => x.Id)];
         }
 
 

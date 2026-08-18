@@ -18,9 +18,9 @@ namespace Amuse.Host.StableDiffusionCpp
         private readonly ServerConfig _configuration;
         private readonly ProcessHandler _processHandler;
         private readonly Channel<string> _consoleChannel = Channel.CreateUnbounded<string>();
-        private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly StableDiffusionClient _stableDiffusionClient;
         private readonly IProgress<PipelineProgress> _progressCallback;
+        private CancellationTokenSource _cancellationTokenSource;
         private Process _serverProcess;
         private Task _consoleOutputTask;
         private JobModel _currentJob;
@@ -36,9 +36,7 @@ namespace Amuse.Host.StableDiffusionCpp
             _configuration = configuration;
             _progressCallback = progressCallback;
             _processHandler = new ProcessHandler();
-            _cancellationTokenSource = new CancellationTokenSource();
             _stableDiffusionClient = new StableDiffusionClient(configuration);
-
         }
 
         /// <summary>
@@ -58,6 +56,7 @@ namespace Amuse.Host.StableDiffusionCpp
         /// <param name="cancellationToken">The cancellation token.</param>
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
+            _cancellationTokenSource = new CancellationTokenSource();
             _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StartAsync] Starting StableDiffusion.cpp server...");
             _consoleOutputTask = ProcessConsoleOutput(_cancellationTokenSource.Token);
             var serverPath = Path.Combine(_configuration.Directory, "sd-server.exe");
@@ -141,6 +140,11 @@ namespace Amuse.Host.StableDiffusionCpp
                 var completed = await WaitForCompletionAsync(cancellationToken: cancellationToken);
                 return completed.Result?.GetImageBytes();
             }
+            catch (OperationCanceledException)
+            {
+                await CancelGenerateAsync();
+                throw;
+            }
             finally
             {
                 _currentJob = null;
@@ -164,6 +168,11 @@ namespace Amuse.Host.StableDiffusionCpp
 
                 var completed = await WaitForCompletionAsync(cancellationToken: cancellationToken);
                 return completed.Result?.GetVideoBytes();
+            }
+            catch (OperationCanceledException)
+            {
+                await CancelGenerateAsync();
+                throw;
             }
             finally
             {
@@ -208,6 +217,9 @@ namespace Amuse.Host.StableDiffusionCpp
             {
                 while (await timer.WaitForNextTickAsync(cancellationToken))
                 {
+                    if (_serverProcess.HasExited)
+                        break;
+
                     if (cancellationToken.IsCancellationRequested)
                         break;
 
@@ -224,10 +236,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 }
             }
 
-            if (capabilities == null)
-                throw new InvalidOperationException("StableDiffusion.cpp server failed to start");
-
-            return capabilities;
+            return capabilities ?? throw new InvalidOperationException("StableDiffusion.cpp server failed to start");
         }
 
 
@@ -255,6 +264,7 @@ namespace Amuse.Host.StableDiffusionCpp
                         break;
 
                 }
+                cancellationToken.ThrowIfCancellationRequested();
                 throw new Exception($"Generation Job failed, Id: {_currentJob?.Id}");
             }
         }
@@ -438,7 +448,8 @@ namespace Amuse.Host.StableDiffusionCpp
 
             argumentBuilder.Append("--rng cpu ");
             argumentBuilder.Append("--lora-apply-mode at_runtime ");
-            argumentBuilder.Append("-v ");
+            if (serverConfig.IsDebug)
+                argumentBuilder.Append("-v ");
             return argumentBuilder.ToString();
         }
 
@@ -489,6 +500,9 @@ namespace Amuse.Host.StableDiffusionCpp
                 argumentBuilder.Append($"--lora-model-dir {modelConfig.LoraModelDirectory} ");
             if (!string.IsNullOrEmpty(modelConfig.EmbeddingsDirectory))
                 argumentBuilder.Append($"--embd-dir {modelConfig.EmbeddingsDirectory} ");
+            if (!string.IsNullOrEmpty(modelConfig.ExtraModelArgs))
+                argumentBuilder.Append($"--model-args {modelConfig.ExtraModelArgs} ");
+
             return argumentBuilder.ToString();
         }
 

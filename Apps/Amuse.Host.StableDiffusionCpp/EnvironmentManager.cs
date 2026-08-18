@@ -19,6 +19,7 @@ namespace Amuse.Host.StableDiffusionCpp
         public static async Task<bool> InitializeAsync(PipelineCreateOptions options, IProgress<PipelineProgress> progressCallback)
         {
             var workingDirectory = options.Directory;
+            Directory.CreateDirectory(workingDirectory);
             var environmentDirectory = Path.Combine(workingDirectory, options.Environment);
             var applicationPath = Path.Combine(environmentDirectory, "sd-server.exe");
             if (options.Mode == EnvironmentMode.Update || options.Mode == EnvironmentMode.Reinstall || options.Mode == EnvironmentMode.Rebuild)

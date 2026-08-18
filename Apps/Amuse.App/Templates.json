@@ -9949,14 +9949,14 @@
       }
     },
     {
-      "Backend": "PyTorch",
+      "Backend": "StableDiffusionCpp",
       "Name": "Anima_Base",
       "Template": "Anima",
       "Pipeline": "AnimaPipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
       "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage" ],
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
       "Checkpoint": {
         "Vae": {
           "Name": "AutoEncoder",
@@ -9966,12 +9966,7 @@
         "TextEncoder": {
           "Name": "TextEncoder",
           "Type": "Component",
-          "Path": "TE_Qwen3_06B"
-        },
-        "ConditionEncoder": {
-          "Name": "TextConditioner",
-          "Type": "Component",
-          "Path": "CE_Anima"
+          "Path": "TE_Qwen3_06B_GGUF"
         },
         "Transformer": {
           "Name": "Transformer",
@@ -9994,87 +9989,62 @@
         }
       ],
       "DefaultOptions": {
-        "Steps": 30,
+        "Steps": 20,
         "Width": 1024,
         "Height": 1024,
-        "GuidanceScale": 4,
-        "Scheduler": "FlowMatchEuler",
+        "GuidanceScale": 5,
+        "Scheduler": "DDIM",
         "Schedulers": [
           {
-            "Scheduler": "FlowMatchEuler",
-            "NumTrainTimesteps": 1000,
-            "Shift": 3,
-            "UseDynamicShifting": false,
-            "BaseShift": 0.5,
-            "MaxShift": 1.15,
-            "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 4096,
-            "InvertSigmas": false,
-            "ShiftTerminal": 0,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "TimeShiftType": "Exponential",
-            "StochasticSampling": false
+            "Scheduler": "Euler"
           },
           {
-            "Scheduler": "UniPCMultistep",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.0001,
-            "BetaEnd": 0.02,
-            "BetaSchedule": "Linear",
-            "TrainedBetas": null,
-            "SolverOrder": 2,
-            "PredictionType": "FlowPrediction",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "SampleMaxValue": 1,
-            "PredictX0": true,
-            "SolverType": "BH2",
-            "LowerOrderFinal": true,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "UseFlowSigmas": true,
-            "FlowShift": 6,
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "FinalSigmasType": "Zero",
-            "RescaleBetasZeroSNR": false,
-            "UseDynamicShifting": false,
-            "TimeShiftType": "Exponential",
-            "SigmaMin": 0,
-            "SigmaMax": 0,
-            "ShiftTerminal": 0
+            "Scheduler": "EulerAncestral"
           },
           {
-            "Scheduler": "DPMSolverMultistep",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.0001,
-            "BetaEnd": 0.02,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "SolverOrder": 2,
-            "PredictionType": "FlowPrediction",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "SampleMaxValue": 1,
-            "AlgorithmType": "DPMSolverPlus",
-            "SolverType": "Midpoint",
-            "EulerAtFinal": false,
-            "LowerOrderFinal": true,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "UseFlowSigmas": true,
-            "UseLuLambdas": false,
-            "FlowShift": 6,
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "FinalSigmasType": "Zero",
-            "RescaleBetasZeroSNR": false,
-            "UseDynamicShifting": false,
-            "TimeShiftType": "Exponential"
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
           }
         ]
       },
@@ -10123,18 +10093,938 @@
       ]
     },
     {
-      "Backend": "OnnxRuntime",
-      "Name": "LCM_Onnx",
-      "Template": null,
-      "Pipeline": "LatentConsistencyPipeline",
+      "Backend": "StableDiffusionCpp",
+      "Name": "Anima_Turbo",
+      "Template": "Anima",
+      "Pipeline": "AnimaPipeline",
+      "ModelType": "Base",
       "BaseType": "bfloat16",
       "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint", "ImageControlNet", "ImageToImageControlNet" ],
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
       "Checkpoint": {
-        "Compute": {
-          "AutoMap": true,
-          "Name": "Diffusion Model",
-          "Type": "OnlineFolder"
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_06B_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 6, 4 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 5, 6 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 6, 8 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 8,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "Scheduler": "DDIM",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Ernie_Image_CPP",
+      "Template": "Ernie",
+      "Pipeline": "ErniePipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux2"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Ministral3_3B_IT_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 10, 12 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 14, 16 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 22, 26 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "EulerAncestral",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPM2",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "ResidualMultistep",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "Residual2S",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "Heun",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "IPNDM",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "LCM",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DDIM",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "TCD",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "LMS",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "ERSDE",
+            "SigmaScheduleType": "Flux2"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Ernie_Image_Turbo_CPP",
+      "Template": "Ernie",
+      "Pipeline": "ErniePipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux2"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Ministral3_3B_IT_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 10, 12 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 14, 18 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 22, 26 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 8,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "EulerAncestral",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPM2",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "ResidualMultistep",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "Residual2S",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "Heun",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "IPNDM",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "LCM",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "DDIM",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "TCD",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "LMS",
+            "SigmaScheduleType": "Flux2"
+          },
+          {
+            "Scheduler": "ERSDE",
+            "SigmaScheduleType": "Flux2"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Flux1_Schnell_CPP",
+      "Template": "Flux1_Schnell",
+      "Pipeline": "FluxPipeline",
+      "ModelType": "Distilled",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux1"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_CLIP_L"
+        },
+        "TextEncoder2": {
+          "Name": "TextEncoder2",
+          "Type": "Component",
+          "Path": "TE_T5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 8, 14 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 13, 20 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 23, 32 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 4,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Flux1_Dev_CPP",
+      "Template": "Flux1_Dev",
+      "Pipeline": "FluxPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux1"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_CLIP_L"
+        },
+        "TextEncoder2": {
+          "Name": "TextEncoder2",
+          "Type": "Component",
+          "Path": "TE_T5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 8, 14 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 13, 20 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 23, 32 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "GuidanceScale2": 3.5,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Flux1_Kontext_CPP",
+      "Template": "Flux1_Kontext",
+      "Pipeline": "FluxPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "ImageEdit" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux1"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_CLIP_L"
+        },
+        "TextEncoder2": {
+          "Name": "TextEncoder2",
+          "Type": "Component",
+          "Path": "TE_T5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 8, 14 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 13, 20 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 23, 32 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "GuidanceScale2": 3.5,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Flux2_Klein_4B_CPP",
+      "Template": "Flux2_Klein_4B",
+      "Pipeline": "Flux2KleinPipeline",
+      "ModelType": "Distilled",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageEdit", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux2"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
         }
       },
       "MemoryProfile": [
@@ -10144,43 +11034,1101 @@
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 2, 4, 6 ]
+          "MemoryModes": [ 2, 6, 10 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 2, 4, 6 ]
+          "MemoryModes": [ 2, 10, 16 ]
         }
       ],
       "DefaultOptions": {
         "Steps": 4,
-        "Width": 512,
-        "Height": 512,
+        "Width": 1024,
+        "Height": 1024,
         "GuidanceScale": 0,
-        "Scheduler": "LCM",
+        "Scheduler": "EulerAncestral",
         "Schedulers": [
           {
-            "Scheduler": "LCM",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "OriginalInferenceSteps": 50,
-            "SetAlphaToOne": true,
-            "PredictionType": "Epsilon",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "ClipSample": false,
-            "ClipSampleRange": 1,
-            "SampleMaxValue": 1,
-            "TimestepSpacing": "Leading",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false,
-            "TimestepScaling": 10
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
           }
         ]
       },
       "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Flux2_Klein_4B_Base_CPP",
+      "Template": "Flux2_Klein_4B_Base",
+      "Pipeline": "Flux2KleinPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageEdit", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux2"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 4, 6 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 6, 10 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 10, 16 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Flux2_Klein_9B_CPP",
+      "Template": "Flux2_Klein_9B",
+      "Pipeline": "Flux2KleinPipeline",
+      "ModelType": "Distilled",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageEdit", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux2"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_8B_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 6, 12 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 10, 20 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 20, 35 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 4,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Flux2_Klein_9B_Base_CPP",
+      "Template": "Flux2_Klein_9B_Base",
+      "Pipeline": "Flux2KleinPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageEdit", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux2"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_8B_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 4, 6, 12 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 4, 10, 20 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 4, 20, 35 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Ideogram_Base_CPP",
+      "Template": "Ideogram",
+      "Pipeline": "IdeogramPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux2"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_8B_VL_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        },
+        "Transformer2": {
+          "Name": "Transformer2",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 10, 16 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 14, 26 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 14, 52 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 48,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "GuidanceScale2": 7,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1024,
+          "Height": 1792
+        },
+        {
+          "Width": 1024,
+          "Height": 1536
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1536,
+          "Height": 1024
+        },
+        {
+          "Width": 1920,
+          "Height": 1088
+        },
+        {
+          "Width": 2048,
+          "Height": 768
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Krea2_Base_CPP",
+      "Template": "Krea2",
+      "Pipeline": "Krea2Pipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B_VL_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 12, 12 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 14, 20 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 16, 36 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 28,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4.5,
+        "GuidanceScale2": 0,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Krea2_Turbo_CPP",
+      "Template": "Krea2_Turbo",
+      "Pipeline": "Krea2Pipeline",
+      "ModelType": "Turbo",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B_VL_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 12, 12 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 14, 20 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 16, 36 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 8,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "GuidanceScale2": 0,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "LTX23_Base_CPP",
+      "Template": "LTX_23",
+      "Pipeline": "LTX20Pipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo", "ImageToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_LTX23_DEV"
+        },
+        "AudioVae": {
+          "Name": "Audio AutoEncoder",
+          "Type": "Component",
+          "Path": "AVAE_LTX23_DEV"
+        },
+        "Connectors": {
+          "Name": "Connectors",
+          "Type": "Component",
+          "Path": "CON_LTX23_DEV"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Gemma3_12B_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 12, 20, 48 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 12, 23, 64 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 12, 46, 92 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 40,
+        "Width": 768,
+        "Height": 512,
+        "Frames": 121,
+        "FrameRate": 24,
+        "GuidanceScale": 6,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "IsFirstFrameLastFrameEnabled": true,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "FrameOptions": [
+          65,
+          97,
+          121,
+          137,
+          161,
+          257
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 2176,
+          "Height": 3840
+        },
+        {
+          "Width": 864,
+          "Height": 2048
+        },
+        {
+          "Width": 1088,
+          "Height": 1920
+        },
         {
           "Width": 736,
           "Height": 1280
@@ -10202,17 +12150,8 @@
           "Height": 736
         },
         {
-          "Width": 384,
-          "Height": 640
-        },
-        {
-          "Width": 512,
-          "Height": 512,
-          "IsDefault": true
-        },
-        {
           "Width": 640,
-          "Height": 384
+          "Height": 640
         },
         {
           "Width": 736,
@@ -10220,7 +12159,8 @@
         },
         {
           "Width": 768,
-          "Height": 512
+          "Height": 512,
+          "IsDefault": true
         },
         {
           "Width": 960,
@@ -10233,1327 +12173,742 @@
         {
           "Width": 1280,
           "Height": 736
+        },
+        {
+          "Width": 1920,
+          "Height": 1088
+        },
+        {
+          "Width": 2048,
+          "Height": 864
+        },
+        {
+          "Width": 3840,
+          "Height": 2176
         }
       ]
     },
     {
-      "Backend": "OnnxRuntime",
-      "Name": "SD_Onnx",
-      "Template": null,
-      "Pipeline": "StableDiffusionPipeline",
+      "Backend": "StableDiffusionCpp",
+      "Name": "LTX23_Distilled_CPP",
+      "Template": "LTX_23",
+      "Pipeline": "LTX20Pipeline",
+      "ModelType": "Distilled",
       "BaseType": "bfloat16",
-      "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint", "ImageControlNet", "ImageToImageControlNet" ],
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo", "ImageToVideo" ],
       "Checkpoint": {
-        "Compute": {
-          "AutoMap": true,
-          "Name": "Diffusion Model",
-          "Type": "OnlineFolder"
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_LTX23_DISTILLED"
+        },
+        "AudioVae": {
+          "Name": "Audio AutoEncoder",
+          "Type": "Component",
+          "Path": "AVAE_LTX23_DISTILLED"
+        },
+        "Connectors": {
+          "Name": "Connectors",
+          "Type": "Component",
+          "Path": "CON_LTX23_DISTILLED"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Gemma3_12B_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
         }
       },
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 2, 4, 6 ]
+          "MemoryModes": [ 12, 20, 48 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 2, 4, 6 ]
+          "MemoryModes": [ 12, 23, 64 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 2, 4, 6 ]
-        }
-      ],
-      "DefaultOptions": {
-        "Steps": 30,
-        "Width": 512,
-        "Height": 512,
-        "GuidanceScale": 7.5,
-        "Scheduler": "EulerAncestral",
-        "Schedulers": [
-          {
-            "Scheduler": "LMS",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0
-          },
-          {
-            "Scheduler": "Euler",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "InterpolationType": "Linear",
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "SigmaMin": 0,
-            "SigmaMax": 0,
-            "TimestepSpacing": "Linspace",
-            "TimestepType": "Discrete",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false,
-            "FinalSigmasType": "Zero"
-          },
-          {
-            "Scheduler": "EulerAncestral",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "DDPM",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "VarianceType": "FixedSmall",
-            "PredictionType": "Epsilon",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "ClipSample": false,
-            "ClipSampleRange": 1,
-            "SampleMaxValue": 1,
-            "TimestepSpacing": "Leading",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "DDIM",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "SetAlphaToOne": true,
-            "PredictionType": "Epsilon",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "ClipSample": false,
-            "ClipSampleRange": 1,
-            "SampleMaxValue": 1,
-            "TimestepSpacing": "Leading",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "KDPM2",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Trailing",
-            "StepsOffset": 0
-          },
-          {
-            "Scheduler": "KDPM2Ancestral",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Trailing",
-            "StepsOffset": 0
-          }
-        ]
-      },
-      "Resolutions": [
-        {
-          "Width": 640,
-          "Height": 1536
-        },
-        {
-          "Width": 768,
-          "Height": 1344
-        },
-        {
-          "Width": 832,
-          "Height": 1280
-        },
-        {
-          "Width": 896,
-          "Height": 1152
-        },
-        {
-          "Width": 768,
-          "Height": 768
-        },
-        {
-          "Width": 512,
-          "Height": 512,
-          "IsDefault": true
-        },
-        {
-          "Width": 1152,
-          "Height": 896
-        },
-        {
-          "Width": 1280,
-          "Height": 832
-        },
-        {
-          "Width": 1344,
-          "Height": 768
-        },
-        {
-          "Width": 1536,
-          "Height": 640
-        }
-      ]
-    },
-    {
-      "Backend": "OnnxRuntime",
-      "Name": "SDXL_Onnx",
-      "Template": null,
-      "Pipeline": "StableDiffusionXLPipeline",
-      "BaseType": "bfloat16",
-      "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint", "ImageControlNet", "ImageToImageControlNet" ],
-      "Checkpoint": {
-        "Compute": {
-          "AutoMap": true,
-          "Name": "Diffusion Model",
-          "Type": "OnlineFolder"
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 8, 8, 10 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8, 8, 10 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 8, 8, 10 ]
-        }
-      ],
-      "DefaultOptions": {
-        "Steps": 30,
-        "Width": 1024,
-        "Height": 1024,
-        "GuidanceScale": 7.5,
-        "Scheduler": "EulerAncestral",
-        "Schedulers": [
-          {
-            "Scheduler": "LMS",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0
-          },
-          {
-            "Scheduler": "Euler",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "InterpolationType": "Linear",
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "SigmaMin": 0,
-            "SigmaMax": 0,
-            "TimestepSpacing": "Linspace",
-            "TimestepType": "Discrete",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false,
-            "FinalSigmasType": "Zero"
-          },
-          {
-            "Scheduler": "EulerAncestral",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "DDPM",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "VarianceType": "FixedSmall",
-            "PredictionType": "Epsilon",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "ClipSample": false,
-            "ClipSampleRange": 1,
-            "SampleMaxValue": 1,
-            "TimestepSpacing": "Leading",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "DDIM",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "SetAlphaToOne": true,
-            "PredictionType": "Epsilon",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "ClipSample": false,
-            "ClipSampleRange": 1,
-            "SampleMaxValue": 1,
-            "TimestepSpacing": "Leading",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "KDPM2",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Trailing",
-            "StepsOffset": 0
-          },
-          {
-            "Scheduler": "KDPM2Ancestral",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Trailing",
-            "StepsOffset": 0
-          }
-        ]
-      },
-      "Resolutions": [
-        {
-          "Width": 640,
-          "Height": 1536
-        },
-        {
-          "Width": 768,
-          "Height": 1344
-        },
-        {
-          "Width": 832,
-          "Height": 1280
-        },
-        {
-          "Width": 896,
-          "Height": 1152
-        },
-        {
-          "Width": 768,
-          "Height": 768
-        },
-        {
-          "Width": 1024,
-          "Height": 1024,
-          "IsDefault": true
-        },
-        {
-          "Width": 1152,
-          "Height": 896
-        },
-        {
-          "Width": 1280,
-          "Height": 832
-        },
-        {
-          "Width": 1344,
-          "Height": 768
-        },
-        {
-          "Width": 1536,
-          "Height": 640
-        }
-      ]
-    },
-    {
-      "Backend": "OnnxRuntime",
-      "Name": "SDXL_Turbo_Onnx",
-      "Template": null,
-      "Pipeline": "StableDiffusionXLPipeline",
-      "BaseType": "bfloat16",
-      "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage" ],
-      "Checkpoint": {
-        "Compute": {
-          "AutoMap": true,
-          "Name": "Diffusion Model",
-          "Type": "OnlineFolder"
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 8, 8, 10 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8, 8, 10 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 8, 8, 10 ]
-        }
-      ],
-      "DefaultOptions": {
-        "Steps": 4,
-        "Width": 512,
-        "Height": 512,
-        "GuidanceScale": 0,
-        "Scheduler": "EulerAncestral",
-        "Schedulers": [
-          {
-            "Scheduler": "LMS",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0
-          },
-          {
-            "Scheduler": "Euler",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "InterpolationType": "Linear",
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "SigmaMin": 0,
-            "SigmaMax": 0,
-            "TimestepSpacing": "Linspace",
-            "TimestepType": "Discrete",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false,
-            "FinalSigmasType": "Zero"
-          },
-          {
-            "Scheduler": "EulerAncestral",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "DDPM",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "VarianceType": "FixedSmall",
-            "PredictionType": "Epsilon",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "ClipSample": false,
-            "ClipSampleRange": 1,
-            "SampleMaxValue": 1,
-            "TimestepSpacing": "Leading",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "DDIM",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "SetAlphaToOne": true,
-            "PredictionType": "Epsilon",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "ClipSample": false,
-            "ClipSampleRange": 1,
-            "SampleMaxValue": 1,
-            "TimestepSpacing": "Leading",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "KDPM2",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Trailing",
-            "StepsOffset": 0
-          },
-          {
-            "Scheduler": "KDPM2Ancestral",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Trailing",
-            "StepsOffset": 0
-          }
-        ]
-      },
-      "Resolutions": [
-        {
-          "Width": 640,
-          "Height": 1536
-        },
-        {
-          "Width": 768,
-          "Height": 1344
-        },
-        {
-          "Width": 832,
-          "Height": 1280
-        },
-        {
-          "Width": 896,
-          "Height": 1152
-        },
-        {
-          "Width": 768,
-          "Height": 768
-        },
-        {
-          "Width": 512,
-          "Height": 512,
-          "IsDefault": true
-        },
-        {
-          "Width": 1152,
-          "Height": 896
-        },
-        {
-          "Width": 1280,
-          "Height": 832
-        },
-        {
-          "Width": 1344,
-          "Height": 768
-        },
-        {
-          "Width": 1536,
-          "Height": 640
-        }
-      ]
-    },
-    {
-      "Backend": "OnnxRuntime",
-      "Name": "SDXL_Lightning_Onnx",
-      "Template": null,
-      "Pipeline": "StableDiffusionXLPipeline",
-      "BaseType": "bfloat16",
-      "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint", "ImageControlNet", "ImageToImageControlNet" ],
-      "Checkpoint": {
-        "Compute": {
-          "AutoMap": true,
-          "Name": "Diffusion Model",
-          "Type": "OnlineFolder"
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 8, 8, 10 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8, 8, 10 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 8, 8, 10 ]
+          "MemoryModes": [ 12, 46, 92 ]
         }
       ],
       "DefaultOptions": {
         "Steps": 8,
-        "Width": 1024,
-        "Height": 1024,
-        "GuidanceScale": 2,
-        "Scheduler": "EulerAncestral",
-        "Schedulers": [
-          {
-            "Scheduler": "LMS",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0
-          },
-          {
-            "Scheduler": "Euler",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "InterpolationType": "Linear",
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "SigmaMin": 0,
-            "SigmaMax": 0,
-            "TimestepSpacing": "Linspace",
-            "TimestepType": "Discrete",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false,
-            "FinalSigmasType": "Zero"
-          },
-          {
-            "Scheduler": "EulerAncestral",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Linspace",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "DDPM",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "VarianceType": "FixedSmall",
-            "PredictionType": "Epsilon",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "ClipSample": false,
-            "ClipSampleRange": 1,
-            "SampleMaxValue": 1,
-            "TimestepSpacing": "Leading",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "DDIM",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "SetAlphaToOne": true,
-            "PredictionType": "Epsilon",
-            "Thresholding": false,
-            "DynamicThresholdingRatio": 0.995,
-            "ClipSample": false,
-            "ClipSampleRange": 1,
-            "SampleMaxValue": 1,
-            "TimestepSpacing": "Leading",
-            "StepsOffset": 0,
-            "RescaleBetasZeroSNR": false
-          },
-          {
-            "Scheduler": "KDPM2",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Trailing",
-            "StepsOffset": 0
-          },
-          {
-            "Scheduler": "KDPM2Ancestral",
-            "NumTrainTimesteps": 1000,
-            "BetaStart": 0.00085,
-            "BetaEnd": 0.012,
-            "BetaSchedule": "ScaledLinear",
-            "TrainedBetas": null,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "PredictionType": "Epsilon",
-            "TimestepSpacing": "Trailing",
-            "StepsOffset": 0
-          }
-        ]
-      },
-      "Resolutions": [
-        {
-          "Width": 640,
-          "Height": 1536
-        },
-        {
-          "Width": 768,
-          "Height": 1344
-        },
-        {
-          "Width": 832,
-          "Height": 1280
-        },
-        {
-          "Width": 896,
-          "Height": 1152
-        },
-        {
-          "Width": 768,
-          "Height": 768
-        },
-        {
-          "Width": 1024,
-          "Height": 1024,
-          "IsDefault": true
-        },
-        {
-          "Width": 1152,
-          "Height": 896
-        },
-        {
-          "Width": 1280,
-          "Height": 832
-        },
-        {
-          "Width": 1344,
-          "Height": 768
-        },
-        {
-          "Width": 1536,
-          "Height": 640
-        }
-      ]
-    },
-    {
-      "Backend": "OnnxRuntime",
-      "Name": "SD3_Medium_Onnx",
-      "Template": null,
-      "Pipeline": "StableDiffusion3Pipeline",
-      "BaseType": "bfloat16",
-      "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage" ],
-      "Checkpoint": {
-        "Compute": {
-          "AutoMap": true,
-          "Name": "Diffusion Model",
-          "Type": "OnlineFolder"
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 2, 8, 16 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 2, 8, 16 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 2, 8, 16 ]
-        }
-      ],
-      "DefaultOptions": {
-        "Steps": 30,
-        "Width": 1024,
-        "Height": 1024,
-        "GuidanceScale": 4.5,
-        "Scheduler": "FlowMatchEuler",
-        "Schedulers": [
-          {
-            "Scheduler": "FlowMatchEuler",
-            "NumTrainTimesteps": 1000,
-            "Shift": 3,
-            "UseDynamicShifting": false,
-            "BaseShift": 0.5,
-            "MaxShift": 1.15,
-            "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 4096,
-            "InvertSigmas": false,
-            "ShiftTerminal": 0,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "TimeShiftType": "Exponential",
-            "StochasticSampling": false
-          }
-        ]
-      },
-      "Resolutions": [
-        {
-          "Width": 640,
-          "Height": 1536
-        },
-        {
-          "Width": 768,
-          "Height": 1344
-        },
-        {
-          "Width": 832,
-          "Height": 1280
-        },
-        {
-          "Width": 896,
-          "Height": 1152
-        },
-        {
-          "Width": 768,
-          "Height": 768
-        },
-        {
-          "Width": 1024,
-          "Height": 1024,
-          "IsDefault": true
-        },
-        {
-          "Width": 1152,
-          "Height": 896
-        },
-        {
-          "Width": 1280,
-          "Height": 832
-        },
-        {
-          "Width": 1344,
-          "Height": 768
-        },
-        {
-          "Width": 1536,
-          "Height": 640
-        }
-      ]
-    },
-    {
-      "Backend": "OnnxRuntime",
-      "Name": "SD35_Medium_Onnx",
-      "Template": null,
-      "Pipeline": "StableDiffusion3Pipeline",
-      "BaseType": "bfloat16",
-      "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage" ],
-      "Checkpoint": {
-        "Compute": {
-          "AutoMap": true,
-          "Name": "Diffusion Model",
-          "Type": "OnlineFolder"
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 8, 8, 16 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 8, 8, 16 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 8, 8, 16 ]
-        }
-      ],
-      "DefaultOptions": {
-        "Steps": 30,
-        "Width": 1024,
-        "Height": 1024,
-        "GuidanceScale": 4.5,
-        "Scheduler": "FlowMatchEuler",
-        "Schedulers": [
-          {
-            "Scheduler": "FlowMatchEuler",
-            "NumTrainTimesteps": 1000,
-            "Shift": 3,
-            "UseDynamicShifting": false,
-            "BaseShift": 0.5,
-            "MaxShift": 1.15,
-            "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 4096,
-            "InvertSigmas": false,
-            "ShiftTerminal": 0,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "TimeShiftType": "Exponential",
-            "StochasticSampling": false
-          }
-        ]
-      },
-      "Resolutions": [
-        {
-          "Width": 640,
-          "Height": 1536
-        },
-        {
-          "Width": 768,
-          "Height": 1344
-        },
-        {
-          "Width": 832,
-          "Height": 1280
-        },
-        {
-          "Width": 896,
-          "Height": 1152
-        },
-        {
-          "Width": 768,
-          "Height": 768
-        },
-        {
-          "Width": 1024,
-          "Height": 1024,
-          "IsDefault": true
-        },
-        {
-          "Width": 1152,
-          "Height": 896
-        },
-        {
-          "Width": 1280,
-          "Height": 832
-        },
-        {
-          "Width": 1344,
-          "Height": 768
-        },
-        {
-          "Width": 1536,
-          "Height": 640
-        }
-      ]
-    },
-    {
-      "Backend": "OnnxRuntime",
-      "Name": "SD35_Large_Onnx",
-      "Template": null,
-      "Pipeline": "StableDiffusion3Pipeline",
-      "BaseType": "bfloat16",
-      "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage" ],
-      "Checkpoint": {
-        "Compute": {
-          "AutoMap": true,
-          "Name": "Diffusion Model",
-          "Type": "OnlineFolder"
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 23, 23, 32 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 23, 23, 32 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 23, 23, 32 ]
-        }
-      ],
-      "DefaultOptions": {
-        "Steps": 30,
-        "Width": 1024,
-        "Height": 1024,
-        "GuidanceScale": 4.5,
-        "Scheduler": "FlowMatchEuler",
-        "Schedulers": [
-          {
-            "Scheduler": "FlowMatchEuler",
-            "NumTrainTimesteps": 1000,
-            "Shift": 3,
-            "UseDynamicShifting": false,
-            "BaseShift": 0.5,
-            "MaxShift": 1.15,
-            "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 4096,
-            "InvertSigmas": false,
-            "ShiftTerminal": 0,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "TimeShiftType": "Exponential",
-            "StochasticSampling": false
-          }
-        ]
-      },
-      "Resolutions": [
-        {
-          "Width": 640,
-          "Height": 1536
-        },
-        {
-          "Width": 768,
-          "Height": 1344
-        },
-        {
-          "Width": 832,
-          "Height": 1280
-        },
-        {
-          "Width": 896,
-          "Height": 1152
-        },
-        {
-          "Width": 768,
-          "Height": 768
-        },
-        {
-          "Width": 1024,
-          "Height": 1024,
-          "IsDefault": true
-        },
-        {
-          "Width": 1152,
-          "Height": 896
-        },
-        {
-          "Width": 1280,
-          "Height": 832
-        },
-        {
-          "Width": 1344,
-          "Height": 768
-        },
-        {
-          "Width": 1536,
-          "Height": 640
-        }
-      ]
-    },
-    {
-      "Backend": "OnnxRuntime",
-      "Name": "SD35_Large_Turbo_Onnx",
-      "Template": null,
-      "Pipeline": "StableDiffusion3Pipeline",
-      "ModelType": "Turbo",
-      "BaseType": "bfloat16",
-      "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage" ],
-      "Checkpoint": {
-        "Compute": {
-          "AutoMap": true,
-          "Name": "Diffusion Model",
-          "Type": "OnlineFolder"
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 23, 23, 32 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 23, 23, 32 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 23, 23, 32 ]
-        }
-      ],
-      "DefaultOptions": {
-        "Steps": 4,
-        "Width": 1024,
-        "Height": 1024,
+        "Width": 768,
+        "Height": 512,
+        "Frames": 121,
+        "FrameRate": 24,
         "GuidanceScale": 0,
-        "Scheduler": "FlowMatchEuler",
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "IsFirstFrameLastFrameEnabled": true,
+        "Scheduler": "Euler",
         "Schedulers": [
           {
-            "Scheduler": "FlowMatchEuler",
-            "NumTrainTimesteps": 1000,
-            "Shift": 3,
-            "UseDynamicShifting": false,
-            "BaseShift": 0.5,
-            "MaxShift": 1.15,
-            "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 4096,
-            "InvertSigmas": false,
-            "ShiftTerminal": 0,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "TimeShiftType": "Exponential",
-            "StochasticSampling": false
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
           }
+        ],
+        "FrameOptions": [
+          65,
+          97,
+          121,
+          137,
+          161,
+          257
         ]
       },
       "Resolutions": [
         {
-          "Width": 640,
-          "Height": 1536
+          "Width": 2176,
+          "Height": 3840
         },
         {
-          "Width": 768,
-          "Height": 1344
+          "Width": 864,
+          "Height": 2048
         },
         {
-          "Width": 832,
+          "Width": 1088,
+          "Height": 1920
+        },
+        {
+          "Width": 736,
           "Height": 1280
         },
         {
-          "Width": 896,
+          "Width": 768,
           "Height": 1152
         },
         {
-          "Width": 768,
+          "Width": 544,
+          "Height": 960
+        },
+        {
+          "Width": 512,
           "Height": 768
         },
         {
-          "Width": 1024,
-          "Height": 1024,
+          "Width": 480,
+          "Height": 736
+        },
+        {
+          "Width": 640,
+          "Height": 640
+        },
+        {
+          "Width": 736,
+          "Height": 480
+        },
+        {
+          "Width": 768,
+          "Height": 512,
           "IsDefault": true
         },
         {
+          "Width": 960,
+          "Height": 544
+        },
+        {
           "Width": 1152,
-          "Height": 896
-        },
-        {
-          "Width": 1280,
-          "Height": 832
-        },
-        {
-          "Width": 1344,
           "Height": 768
         },
         {
-          "Width": 1536,
-          "Height": 640
+          "Width": 1280,
+          "Height": 736
+        },
+        {
+          "Width": 1920,
+          "Height": 1088
+        },
+        {
+          "Width": 2048,
+          "Height": 864
+        },
+        {
+          "Width": 3840,
+          "Height": 2176
         }
       ]
     },
     {
-      "Backend": "OnnxRuntime",
-      "Name": "Flux1_Schenll_Onnx",
-      "Template": null,
-      "Pipeline": "FluxPipeline",
-      "ModelType": "Distilled",
-      "BaseType": "bfloat16",
-      "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage" ],
-      "Checkpoint": {
-        "Compute": {
-          "AutoMap": true,
-          "Name": "Diffusion Model",
-          "Type": "OnlineFolder"
-        }
-      },
-      "MemoryProfile": [
-        {
-          "QualityMode": "Draft",
-          "MemoryModes": [ 26, 26, 36 ]
-        },
-        {
-          "QualityMode": "Standard",
-          "MemoryModes": [ 26, 26, 36 ]
-        },
-        {
-          "QualityMode": "Production",
-          "MemoryModes": [ 26, 26, 36 ]
-        }
-      ],
-      "DefaultOptions": {
-        "Steps": 4,
-        "Width": 1024,
-        "Height": 1024,
-        "GuidanceScale": 0,
-        "Scheduler": "FlowMatchEuler",
-        "Schedulers": [
-          {
-            "Scheduler": "FlowMatchEuler",
-            "NumTrainTimesteps": 1000,
-            "Shift": 3,
-            "UseDynamicShifting": false,
-            "BaseShift": 0.5,
-            "MaxShift": 1.15,
-            "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 4096,
-            "InvertSigmas": false,
-            "ShiftTerminal": 0,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "TimeShiftType": "Exponential",
-            "StochasticSampling": false
-          }
-        ]
-      },
-      "Resolutions": [
-        {
-          "Width": 640,
-          "Height": 1536
-        },
-        {
-          "Width": 768,
-          "Height": 1344
-        },
-        {
-          "Width": 832,
-          "Height": 1280
-        },
-        {
-          "Width": 896,
-          "Height": 1152
-        },
-        {
-          "Width": 768,
-          "Height": 768
-        },
-        {
-          "Width": 1024,
-          "Height": 1024,
-          "IsDefault": true
-        },
-        {
-          "Width": 1152,
-          "Height": 896
-        },
-        {
-          "Width": 1280,
-          "Height": 832
-        },
-        {
-          "Width": 1344,
-          "Height": 768
-        },
-        {
-          "Width": 1536,
-          "Height": 640
-        }
-      ]
-    },
-    {
-      "Backend": "OnnxRuntime",
-      "Name": "Flux1_Dev_Onnx",
-      "Template": null,
-      "Pipeline": "FluxPipeline",
+      "Backend": "StableDiffusionCpp",
+      "Name": "QwenImage_Base_CPP",
+      "Template": "QwenImage",
+      "Pipeline": "QwenImagePipeline",
       "ModelType": "Base",
       "BaseType": "bfloat16",
       "MediaType": "Image",
-      "ProcessTypes": [ "TextToImage", "ImageToImage" ],
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
       "Checkpoint": {
-        "Compute": {
-          "AutoMap": true,
-          "Name": "Diffusion Model",
-          "Type": "OnlineFolder"
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen25_7B_VL_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
         }
       },
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 26, 26, 36 ]
+          "MemoryModes": [ 2, 12, 18 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 26, 26, 36 ]
+          "MemoryModes": [ 2, 22, 32 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 26, 26, 36 ]
+          "MemoryModes": [ 2, 40, 60 ]
         }
       ],
       "DefaultOptions": {
         "Steps": 30,
         "Width": 1024,
         "Height": 1024,
-        "GuidanceScale2": 3.5,
-        "Scheduler": "FlowMatchEuler",
+        "GuidanceScale": 1,
+        "GuidanceScale2": 1,
+        "Scheduler": "EulerAncestral",
         "Schedulers": [
           {
-            "Scheduler": "FlowMatchEuler",
-            "NumTrainTimesteps": 1000,
-            "Shift": 3,
-            "UseDynamicShifting": false,
-            "BaseShift": 0.5,
-            "MaxShift": 1.15,
-            "BaseImageSeqLen": 256,
-            "MaxImageSeqLen": 4096,
-            "InvertSigmas": false,
-            "ShiftTerminal": 0,
-            "UseKarrasSigmas": false,
-            "UseExponentialSigmas": false,
-            "UseBetaSigmas": false,
-            "TimeShiftType": "Exponential",
-            "StochasticSampling": false
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "QwenImage_Edit_CPP",
+      "Template": "QwenImage_Edit",
+      "Pipeline": "QwenImagePipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "ImageEdit" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Qwen_Image"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen25_7B_VL_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 12, 18 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 22, 32 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 40, 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 1,
+        "GuidanceScale2": 1,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "ZImage_Base_CPP",
+      "Template": "ZImage",
+      "Pipeline": "ZImagePipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux1"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 6, 8 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 9, 14 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 14, 24 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "ZImage_Turbo_CPP",
+      "Template": "ZImage",
+      "Pipeline": "ZImagePipeline",
+      "ModelType": "Turbo",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux1"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_4B_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 6, 8 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 9, 14 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 14, 24 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 9,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
           }
         ]
       },
@@ -11622,16 +12977,6 @@
         {
           "Name": "XL Turbo",
           "Template": "AceStepXL_Turbo"
-        }
-      ]
-    },
-    {
-      "Name": "Anima",
-      "Backend": "PyTorch",
-      "Options": [
-        {
-          "Name": "Base",
-          "Template": "Anima_Base"
         }
       ]
     },
@@ -12036,76 +13381,136 @@
       ]
     },
     {
-      "Name": "StableDiffusion",
-      "Backend": "OnnxRuntime",
+      "Name": "Anima",
+      "Backend": "StableDiffusionCpp",
       "Options": [
         {
           "Name": "Base",
-          "Template": "SD_Onnx"
-        }
-      ]
-    },
-    {
-      "Name": "StableDiffusionXL",
-      "Backend": "OnnxRuntime",
-      "Options": [
-        {
-          "Name": "Base",
-          "Template": "SDXL_Onnx"
+          "Template": "Anima_Base"
         },
         {
           "Name": "Turbo",
-          "Template": "SDXL_Turbo_Onnx"
-        },
-        {
-          "Name": "Lightning",
-          "Template": "SDXL_Lightning_Onnx"
+          "Template": "Anima_Turbo"
         }
       ]
     },
     {
-      "Name": "StableDiffusion3",
-      "Backend": "OnnxRuntime",
-      "Options": [
-        {
-          "Name": "3.0 Medium",
-          "Template": "SD3_Medium_Onnx"
-        },
-        {
-          "Name": "3.5 Medium",
-          "Template": "SD35_Medium_Onnx"
-        },
-        {
-          "Name": "3.5 Large",
-          "Template": "SD35_Large_Onnx"
-        },
-        {
-          "Name": "3.5 Large Turbo",
-          "Template": "SD35_Large_Turbo_Onnx"
-        }
-      ]
-    },
-    {
-      "Name": "LatentConsistency",
-      "Backend": "OnnxRuntime",
+      "Name": "Ernie Image",
+      "Backend": "StableDiffusionCpp",
       "Options": [
         {
           "Name": "Base",
-          "Template": "LCM_Onnx"
+          "Template": "Ernie_Image_CPP"
+        },
+        {
+          "Name": "Turbo",
+          "Template": "Ernie_Image_Turbo_CPP"
         }
       ]
     },
     {
       "Name": "FLUX.1",
-      "Backend": "OnnxRuntime",
+      "Backend": "StableDiffusionCpp",
       "Options": [
         {
           "Name": "Dev",
-          "Template": "Flux1_Dev_Onnx"
+          "Template": "Flux1_Dev_CPP"
         },
         {
-          "Name": "Schenll",
-          "Template": "Flux1_Schenll_Onnx"
+          "Name": "Schnell",
+          "Template": "Flux1_Schnell_CPP"
+        },
+        {
+          "Name": "Kontext",
+          "Template": "Flux1_Kontext_CPP"
+        }
+      ]
+    },
+    {
+      "Name": "FLUX.2",
+      "Backend": "StableDiffusionCpp",
+      "Options": [
+        {
+          "Name": "Klein 4B",
+          "Template": "Flux2_Klein_4B_CPP"
+        },
+        {
+          "Name": "Klein 4B Base",
+          "Template": "Flux2_Klein_4B_Base_CPP"
+        },
+        {
+          "Name": "Klein 9B",
+          "Template": "Flux2_Klein_9B_CPP"
+        },
+        {
+          "Name": "Klein 9B Base",
+          "Template": "Flux2_Klein_9B_Base_CPP"
+        }
+      ]
+    },
+    {
+      "Name": "Ideogram4",
+      "Backend": "StableDiffusionCpp",
+      "Options": [
+        {
+          "Name": "Base",
+          "Template": "Ideogram_Base_CPP"
+        }
+      ]
+    },
+    {
+      "Name": "Krea2",
+      "Backend": "StableDiffusionCpp",
+      "Options": [
+        {
+          "Name": "Base",
+          "Template": "Krea2_Base_CPP"
+        },
+        {
+          "Name": "Turbo",
+          "Template": "Krea2_Turbo_CPP"
+        }
+      ]
+    },
+    {
+      "Name": "LTX-2",
+      "Backend": "StableDiffusionCpp",
+      "Options": [
+        {
+          "Name": "2.3 Base",
+          "Template": "LTX23_Base_CPP"
+        },
+        {
+          "Name": "2.3 Distilled",
+          "Template": "LTX23_Distilled_CPP"
+        }
+      ]
+    },
+    {
+      "Name": "Qwen Image",
+      "Backend": "StableDiffusionCpp",
+      "Options": [
+        {
+          "Name": "Base",
+          "Template": "QwenImage_Base_CPP"
+        },
+        {
+          "Name": "Edit",
+          "Template": "QwenImage_Edit_CPP"
+        }
+      ]
+    },
+    {
+      "Name": "Z-Image",
+      "Backend": "StableDiffusionCpp",
+      "Options": [
+        {
+          "Name": "Base",
+          "Template": "ZImage_Base_CPP"
+        },
+        {
+          "Name": "Turbo",
+          "Template": "ZImage_Turbo_CPP"
         }
       ]
     }
