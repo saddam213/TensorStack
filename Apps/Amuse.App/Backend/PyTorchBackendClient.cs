@@ -41,13 +41,13 @@ namespace Amuse.App.Runtime
         /// <exception cref="System.OperationCanceledException"></exception>
         protected override async Task<PipelineClient> CreatePipelineClientAsync(CancellationToken cancellationToken = default)
         {
-            var environment = await InitializePythonEnvironmentAsync() ?? throw new OperationCanceledException();
+            var environment = await InitializeEnvironmentAsync() ?? throw new OperationCanceledException();
             var createOptions = _environmentService.CreatePipelineOptions(environment);
             var clientConfig = new ClientConfig
             {
-                ServerType = ServerType.PyTorch,
                 ServerPath = App.DirectoryServer,
-                IsDebugMode = createOptions.IsDebug,
+                ServerType = ServerType.PyTorch,
+                IsDebugMode = Settings.IsServerDebugEnabled,
                 ServerVariables = createOptions.Variables
             };
             return await CreatePipelineClientAsync(clientConfig, createOptions, cancellationToken);
@@ -57,9 +57,9 @@ namespace Amuse.App.Runtime
         /// <summary>
         /// Initialize python environment, Load, Update Create.
         /// </summary>
-        private async Task<EnvironmentModel> InitializePythonEnvironmentAsync()
+        private async Task<EnvironmentModel> InitializeEnvironmentAsync()
         {
-            var environment = _environmentService.GetEnvironment(Pipeline.Device, Pipeline.GenerateModel.Pipeline);
+            var environment = _environmentService.GetEnvironment(Pipeline.Device, Pipeline.GenerateModel.Backend, Pipeline.GenerateModel.Pipeline);
             if ((environment.Status == EnvironmentMode.Create || environment.Status == EnvironmentMode.Load) && _environmentService.Exists(environment))
                 return environment;
 

@@ -48,7 +48,6 @@ namespace Amuse.App.Views
             DownloadModelCancelCommand = new AsyncRelayCommand(DownloadModelCancelAsync);
             FilterClearCommand = new AsyncRelayCommand(FilterClearAsync, CanClearFilter);
             ModelCollection = new ListCollectionView(settings.LoraAdapterModels) { Filter = CollectionFilter(), IsLiveSorting = true };
-            ModelCollection.SortDescriptions.Add(new SortDescription(nameof(LoraAdapterModel.Backend), ListSortDirection.Descending));
             ModelCollection.SortDescriptions.Add(new SortDescription(nameof(LoraAdapterModel.Pipeline), ListSortDirection.Ascending));
             ModelCollection.SortDescriptions.Add(new SortDescription(nameof(LoraAdapterModel.Name), ListSortDirection.Ascending));
             ModelCollection.MoveCurrentToFirst();
@@ -119,13 +118,6 @@ namespace Amuse.App.Views
                     return false;
 
                 var isvalid = true;
-                if (!string.IsNullOrEmpty(_filterBackend))
-                {
-                    if (Enum.TryParse<BackendType>(_filterBackend, out var backendType))
-                    {
-                        isvalid = isvalid && model.Backend == backendType;
-                    }
-                }
                 if (!string.IsNullOrEmpty(_filterStatus))
                 {
                     if (Enum.TryParse<ModelStatusType>(_filterStatus, out var statusType))

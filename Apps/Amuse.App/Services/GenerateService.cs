@@ -112,6 +112,7 @@ namespace Amuse.App.Services
                 {
                     BackendType.PyTorch => new PyTorchBackendClient(_settings, _mediaService, _environmentService, _logger),
                     BackendType.OnnxRuntime => new OnnxBackendClient(_settings, _mediaService, _logger),
+                    BackendType.StableDiffusionCpp => new StableDiffusionCppClient(_settings, _mediaService, _environmentService, _logger),
                     _ => throw new NotImplementedException()
                 };
 
@@ -178,6 +179,17 @@ namespace Amuse.App.Services
             {
                 return await _backenClient.GenerateImageAsync(options);
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                if (_backenClient?.StopHostOnException == true)
+                    await StopAsync();
+
+                throw;
+            }
             finally
             {
                 IsExecuting = false;
@@ -193,6 +205,17 @@ namespace Amuse.App.Services
             try
             {
                 return await _backenClient.GenerateVideoAsync(options);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                if (_backenClient?.StopHostOnException == true)
+                    await StopAsync();
+
+                throw;
             }
             finally
             {
@@ -210,7 +233,17 @@ namespace Amuse.App.Services
             {
                 return await _backenClient.GenerateAudioAsync(options);
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                if (_backenClient?.StopHostOnException == true)
+                    await StopAsync();
 
+                throw;
+            }
             finally
             {
                 IsExecuting = false;
@@ -227,7 +260,17 @@ namespace Amuse.App.Services
             {
                 return await _backenClient.GenerateTextAsync(options);
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                if (_backenClient?.StopHostOnException == true)
+                    await StopAsync();
 
+                throw;
+            }
             finally
             {
                 IsExecuting = false;

@@ -155,6 +155,9 @@ namespace Amuse.App.Common
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int InputVideoMaxCount { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public bool IsFlashAttentionEnabled { get; set; } = true;
+
         public GenerateDefaultOptions DeepClone()
         {
             return new GenerateDefaultOptions
@@ -208,6 +211,7 @@ namespace Amuse.App.Common
                 InputAudioMaxCount = InputAudioMaxCount,
                 InputImageMaxCount = InputImageMaxCount,
                 InputVideoMaxCount = InputVideoMaxCount,
+                IsFlashAttentionEnabled = IsFlashAttentionEnabled
             };
         }
 

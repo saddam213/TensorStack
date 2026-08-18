@@ -22,6 +22,7 @@ namespace Amuse.App.Dialogs
         private WizardItemModel _selectedPipelineOption;
         private WizardOptionModel _selectedTemplateOption;
         private DiffusionModel _selectedTemplate;
+        private ModelSourceType[] _modelSources;
         private ModelSourceType _selectedSource;
         private string _selectedFile;
         private string _selectedPath;
@@ -34,20 +35,20 @@ namespace Amuse.App.Dialogs
             Settings = settings;
             PipelineOptions = new ObservableCollection<WizardItemModel>();
             SelectedBackend = BackendType.PyTorch;
+            Backends = [BackendType.PyTorch, BackendType.StableDiffusionCpp];
             Errors = new ObservableCollection<string>();
             CancelCommand = new AsyncRelayCommand(CancelAsync);
             SaveCommand = new AsyncRelayCommand(SaveAsync, CanExecuteSave);
             SelectedSource = ModelSourceType.LocalFile;
-            ModelSources = [ModelSourceType.LocalFile, ModelSourceType.LocalFolder, ModelSourceType.Checkpoint];
             InitializeComponent();
-        }
+        }   
 
         public Settings Settings { get; }
         public AsyncRelayCommand SaveCommand { get; }
         public AsyncRelayCommand CancelCommand { get; }
         public ObservableCollection<string> Errors { get; }
-        public ModelSourceType[] ModelSources { get; }
         public ObservableCollection<WizardItemModel> PipelineOptions { get; }
+        public BackendType[] Backends { get; }
 
         public BackendType SelectedBackend
         {
@@ -80,6 +81,12 @@ namespace Amuse.App.Dialogs
         {
             get { return _selectedTemplate; }
             set { SetProperty(ref _selectedTemplate, value); }
+        }
+
+        public ModelSourceType[] ModelSources
+        {
+            get { return _modelSources; }
+            set { SetProperty(ref _modelSources, value); }
         }
 
         public ModelSourceType SelectedSource
@@ -124,61 +131,46 @@ namespace Amuse.App.Dialogs
             _selectedTemplate.Name = _selectedName;
             _selectedTemplate.Variant = _selectedVariant;
 
-            if (_selectedBackend == BackendType.OnnxRuntime)
+            if (_selectedSource == ModelSourceType.LocalFile)
             {
-                if (_selectedSource == ModelSourceType.LocalFolder)
+                if (_selectedTemplate.Checkpoint.Unet != null)
                 {
-                    _selectedTemplate.Checkpoint.Compute = new CheckpointComponent
+                    _selectedTemplate.Checkpoint.Unet = new CheckpointComponent
                     {
-                        Name = "Compute",
+                        Name = "Unet",
+                        Path = _selectedFile,
+                        Type = CheckpointType.LocalFile,
+                    };
+                }
+                else if (_selectedTemplate.Checkpoint.Transformer != null)
+                {
+                    _selectedTemplate.Checkpoint.Transformer = new CheckpointComponent
+                    {
+                        Name = "Transformer",
+                        Path = _selectedFile,
+                        Type = CheckpointType.LocalFile,
+                    };
+                }
+            }
+            else if (_selectedSource == ModelSourceType.LocalFolder)
+            {
+                if (_selectedTemplate.Checkpoint.Unet != null)
+                {
+                    _selectedTemplate.Checkpoint.Unet = new CheckpointComponent
+                    {
+                        Name = "Unet",
                         Path = _selectedPath,
                         Type = CheckpointType.LocalFolder,
                     };
                 }
-            }
-            else
-            {
-                if (_selectedSource == ModelSourceType.LocalFile)
+                else if (_selectedTemplate.Checkpoint.Transformer != null)
                 {
-                    if (_selectedTemplate.Checkpoint.Unet != null)
+                    _selectedTemplate.Checkpoint.Transformer = new CheckpointComponent
                     {
-                        _selectedTemplate.Checkpoint.Unet = new CheckpointComponent
-                        {
-                            Name = "Unet",
-                            Path = _selectedFile,
-                            Type = CheckpointType.LocalFile,
-                        };
-                    }
-                    else if (_selectedTemplate.Checkpoint.Transformer != null)
-                    {
-                        _selectedTemplate.Checkpoint.Transformer = new CheckpointComponent
-                        {
-                            Name = "Transformer",
-                            Path = _selectedFile,
-                            Type = CheckpointType.LocalFile,
-                        };
-                    }
-                }
-                else if (_selectedSource == ModelSourceType.LocalFolder)
-                {
-                    if (_selectedTemplate.Checkpoint.Unet != null)
-                    {
-                        _selectedTemplate.Checkpoint.Unet = new CheckpointComponent
-                        {
-                            Name = "Unet",
-                            Path = _selectedPath,
-                            Type = CheckpointType.LocalFolder,
-                        };
-                    }
-                    else if (_selectedTemplate.Checkpoint.Transformer != null)
-                    {
-                        _selectedTemplate.Checkpoint.Transformer = new CheckpointComponent
-                        {
-                            Name = "Transformer",
-                            Path = _selectedPath,
-                            Type = CheckpointType.LocalFolder,
-                        };
-                    }
+                        Name = "Transformer",
+                        Path = _selectedPath,
+                        Type = CheckpointType.LocalFolder,
+                    };
                 }
             }
 
@@ -256,6 +248,10 @@ namespace Amuse.App.Dialogs
 
         private void FilterPipelineOptions()
         {
+            ModelSources = SelectedBackend == BackendType.PyTorch
+                ? [ModelSourceType.LocalFile, ModelSourceType.LocalFolder, ModelSourceType.Checkpoint]
+                : [ModelSourceType.LocalFile, ModelSourceType.Checkpoint];
+
             PipelineOptions.Clear();
             foreach (var pipelineOption in Settings.Templates.DiffusionTemplateMap.Where(x => x.Backend == _selectedBackend))
             {

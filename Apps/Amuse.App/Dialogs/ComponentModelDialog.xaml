@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:Amuse.App.Dialogs"
         xmlns:Controls="clr-namespace:Amuse.App.Controls"
         xmlns:CommonControls="clr-namespace:TensorStack.WPF.Controls;assembly=TensorStack.WPF"
-        MinWidth="800"
-        MaxWidth="800"
+        MinWidth="900"
+        MaxWidth="900"
         Title="Component Model"
         Icon="/Images/Icon.ico"
         Style="{StaticResource {x:Type CommonControls:DialogControl}}">
@@ -35,10 +35,6 @@
             <GroupBox Header="Settings" Padding="4">
                 <StackPanel>
                     <UniformGrid Rows="1">
-                        <StackPanel Margin="0,0,2,0">
-                            <TextBlock Text="Backend" Style="{StaticResource FieldTextBlockStyle}"/>
-                            <ComboBox ItemsSource="{Binding Source={StaticResource BackendType}}" SelectedItem="{Binding ComponentModel.Backend, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource EnumComboBox}"/>
-                        </StackPanel>
                         <StackPanel Margin="2,0,2,0">
                             <TextBlock Text="Name" Style="{StaticResource FieldTextBlockStyle}"/>
                             <TextBox Text="{Binding ComponentModel.Name, UpdateSourceTrigger=PropertyChanged}" />
@@ -52,14 +48,34 @@
                         <TextBlock Text="Link" Style="{StaticResource FieldTextBlockStyle}"/>
                         <TextBox Text="{Binding ComponentModel.Link, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
+
+                    <DockPanel>
+                        <UniformGrid DockPanel.Dock="Top" Columns="2">
+                            <StackPanel Margin="0,0,2,0">
+                                <TextBlock Text="Type" Style="{StaticResource FieldTextBlockStyle}"/>
+                                <ComboBox SelectedItem="{Binding ComponentModel.Checkpoint.Type, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding CheckpointTypes}" />
+                            </StackPanel>
+                            <StackPanel Margin="2,0,0,0">
+                                <TextBlock Text="Folder" Style="{StaticResource FieldTextBlockStyle}"/>
+                                <TextBox Text="{Binding ComponentModel.Checkpoint.Folder, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,2,0">
+                                <TextBlock Text="Path" Style="{StaticResource FieldTextBlockStyle}"/>
+                                <TextBox Text="{Binding ComponentModel.Checkpoint.Path, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Margin="2,0,0,0">
+                                <TextBlock Text="MainFile" Style="{StaticResource FieldTextBlockStyle}"/>
+                                <TextBox Text="{Binding ComponentModel.Checkpoint.MainFile, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </UniformGrid>
+                        <DockPanel Visibility="{Binding ComponentModel.Checkpoint.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=OnlineFolder|OnlineFile, UpdateSourceTrigger=PropertyChanged}" MinHeight="120">
+                            <TextBlock DockPanel.Dock="Top" Text="Download Flies" Style="{StaticResource FieldTextBlockStyle}"/>
+                            <TextBox Text="{Binding ComponentModel.Checkpoint.DownloadFiles, Converter={StaticResource StringArrayConverter}}" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" />
+                        </DockPanel>
+                    </DockPanel>
+
                 </StackPanel>
             </GroupBox>
-
-            <!--Checkpoint Settings-->
-            <GroupBox Header="Component" Margin="0,10,0,0" Height="160">
-                <Controls:CheckpointControl Settings="{Binding Settings}" Checkpoint="{Binding ComponentModel.Checkpoint}" Backend="{Binding ComponentModel.Backend}" SupportedTypes="{Binding CheckpointTypes, Mode=OneWay}"/>
-            </GroupBox>
-
         </StackPanel>
     </DockPanel>
 </CommonControls:DialogControl>

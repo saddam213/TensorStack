@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using TensorStack.Common;
 using TensorStack.WPF;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
@@ -50,7 +49,6 @@ namespace Amuse.App.Dialogs
             ControlNetModel = new ControlNetModel
             {
                 Id = modelId,
-                Backend = BackendType.PyTorch,
                 Pipeline = Settings.DiffusionPipelines.First(),
                 Name = "New ControlNet",
                 Checkpoint = new CheckpointComponent
@@ -96,7 +94,7 @@ namespace Amuse.App.Dialogs
                 var imported = 0;
                 foreach (var modelImport in modelImports)
                 {
-                    if (Settings.ControlNetModels.Any(x => x.Backend == modelImport.Backend && x.Name == modelImport.Name && x.Pipeline == modelImport.Pipeline))
+                    if (Settings.ControlNetModels.Any(x => x.Name == modelImport.Name && x.Pipeline == modelImport.Pipeline))
                         continue;
 
                     imported++;

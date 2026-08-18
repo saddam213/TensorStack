@@ -93,7 +93,7 @@
 
             <!--Checkpoint Settings-->
             <GroupBox Header="{Binding UpscaleModel.Checkpoint.Name}" Margin="0,10,0,0" Height="160">
-                <Controls:CheckpointControl Settings="{Binding Settings}" Checkpoint="{Binding UpscaleModel.Checkpoint}" Backend="{Binding UpscaleModel.Backend}" SupportedTypes="{Binding CheckpointTypes, Mode=OneWay}"/>
+                <Controls:CheckpointControl Settings="{Binding Settings}" Checkpoint="{Binding UpscaleModel.Checkpoint}" SupportedTypes="{Binding CheckpointTypes, Mode=OneWay}"/>
             </GroupBox>
 
         </StackPanel>

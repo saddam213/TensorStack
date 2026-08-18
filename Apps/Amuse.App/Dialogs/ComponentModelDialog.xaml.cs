@@ -50,7 +50,6 @@ namespace Amuse.App.Dialogs
             ComponentModel = new ComponentModel
             {
                 Id = modelId,
-                Backend = BackendType.PyTorch,
                 Name = "New Component",
                 Key = "NEW_COMP",
                 Checkpoint = new CheckpointComponent
@@ -97,7 +96,7 @@ namespace Amuse.App.Dialogs
                 var imported = 0;
                 foreach (var modelImport in modelImports)
                 {
-                    if (Settings.Components.Any(x => x.Backend == modelImport.Backend && x.Name == modelImport.Name))
+                    if (Settings.Components.Any(x => x.Name == modelImport.Name))
                         continue;
 
                     imported++;
@@ -160,6 +159,11 @@ namespace Amuse.App.Dialogs
             {
                 if (Settings.Components.Any(x => x.Name.Equals(ComponentModel.Name, StringComparison.OrdinalIgnoreCase)))
                     yield return $"Model with Name '{ComponentModel.Name}' already exists";
+            }
+
+            if (string.IsNullOrEmpty(ComponentModel.Checkpoint.MainFile))
+            {
+                yield return "MainFile cannot be empty";
             }
 
             // Checkpoint

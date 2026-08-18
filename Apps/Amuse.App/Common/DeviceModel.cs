@@ -17,6 +17,7 @@ namespace Amuse.App.Common
             QualityModes = GetQualityModes(Vendor);
             SupportedBackends = GetSupportedBackends(Vendor, DeviceType);
             DefaultQualityMode = QualityModes.Contains(QualityMode.Standard) ? QualityMode.Standard : QualityMode.Production;
+            IsFlashAttentionEnabled = true;
         }
 
         public int PCIBusId => _baseDevice.PCIBusId;
@@ -25,7 +26,8 @@ namespace Amuse.App.Common
         public QualityMode[] QualityModes { get; init; }
         public QualityMode DefaultQualityMode { get; init; }
         public BackendType[] SupportedBackends { get; init; }
-
+        public bool IsFlashAttentionEnabled { get; init; }
+        public int VendorIndex { get; set; }
 
         private static QualityMode[] GetQualityModes(VendorType vendor)
         {
@@ -41,9 +43,9 @@ namespace Amuse.App.Common
         private static BackendType[] GetSupportedBackends(VendorType vendor, string deviceType)
         {
             if (vendor == VendorType.Intel)
-                return [BackendType.OnnxRuntime];
+                return [BackendType.OnnxRuntime, BackendType.StableDiffusionCpp];
 
-            return [BackendType.PyTorch, BackendType.OnnxRuntime];
+            return [BackendType.PyTorch, BackendType.OnnxRuntime, BackendType.StableDiffusionCpp];
         }
 
 

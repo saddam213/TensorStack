@@ -16,7 +16,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextModel}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="False" SupportedTypes="{Binding CheckpointTypes}"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextModel}" Settings="{Binding Settings}" IsDiffusionCheckpoint="False" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -28,7 +28,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextModel2}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="False" SupportedTypes="{Binding CheckpointTypes}"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextModel2}" Settings="{Binding Settings}" IsDiffusionCheckpoint="False" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 

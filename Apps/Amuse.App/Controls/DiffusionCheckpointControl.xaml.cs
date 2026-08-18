@@ -14,6 +14,9 @@ namespace Amuse.App.Controls
     public partial class DiffusionCheckpointControl : BaseControl
     {
         private int _selectedIndex;
+        private CheckpointType[] _checkpointTypes;
+        private CheckpointType[] _textEncodedCheckpointTypes;
+        private bool _isOnlineCheckpointsEnabled;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DiffusionCheckpointControl"/> class.
@@ -21,6 +24,7 @@ namespace Amuse.App.Controls
         public DiffusionCheckpointControl()
         {
             Components = new ObservableCollection<CheckpointComponent>();
+            CheckpointTypes = [CheckpointType.LocalFile, CheckpointType.LocalFolder, CheckpointType.Component, CheckpointType.OnlineFile, CheckpointType.OnlineFolder];
             ComputeCheckpointTypes = [CheckpointType.LocalFolder, CheckpointType.OnlineFolder];
             TextEncodedCheckpointTypes = [CheckpointType.LocalFolder, CheckpointType.OnlineFolder, CheckpointType.Component];
             InitializeComponent();
@@ -28,10 +32,9 @@ namespace Amuse.App.Controls
 
         public static readonly DependencyProperty SettingsProperty = DependencyProperty.Register(nameof(Settings), typeof(Settings), typeof(DiffusionCheckpointControl));
         public static readonly DependencyProperty CheckpointProperty = DependencyProperty.Register(nameof(Checkpoint), typeof(DiffusionCheckpointModel), typeof(DiffusionCheckpointControl), new PropertyMetadata<DiffusionCheckpointControl, DiffusionCheckpointModel>((c, o, n) => c.OnCheckpointChanged(o, n)));
-        public static readonly DependencyProperty BackendProperty = DependencyProperty.Register(nameof(Backend), typeof(BackendType), typeof(DiffusionCheckpointControl));
+        public static readonly DependencyProperty BackendProperty = DependencyProperty.Register(nameof(Backend), typeof(BackendType), typeof(DiffusionCheckpointControl), new PropertyMetadata(BackendType.OnnxRuntime, OnBackendPropertyChanged));
         public ObservableCollection<CheckpointComponent> Components { get; }
         public CheckpointType[] ComputeCheckpointTypes { get; }
-        public CheckpointType[] TextEncodedCheckpointTypes { get; }
 
         public Settings Settings
         {
@@ -49,6 +52,24 @@ namespace Amuse.App.Controls
         {
             get { return (BackendType)GetValue(BackendProperty); }
             set { SetValue(BackendProperty, value); }
+        }
+
+        public CheckpointType[] CheckpointTypes
+        {
+            get { return _checkpointTypes; }
+            set { SetProperty(ref _checkpointTypes, value); }
+        }
+
+        public CheckpointType[] TextEncodedCheckpointTypes
+        {
+            get { return _textEncodedCheckpointTypes; }
+            set { SetProperty(ref _textEncodedCheckpointTypes, value); }
+        }
+
+        public bool IsOnlineCheckpointsEnabled
+        {
+            get { return _isOnlineCheckpointsEnabled; }
+            set { SetProperty(ref _isOnlineCheckpointsEnabled, value); OnBackendChanged(); }
         }
 
         public int SelectedIndex
@@ -72,12 +93,44 @@ namespace Amuse.App.Controls
                     SelectedIndex = 0;
                 else if (checkpoint.Unet != null)
                     SelectedIndex = 4;
-                else  if (checkpoint.Transformer != null)
+                else if (checkpoint.Transformer != null)
                     SelectedIndex = 5;
                 else if (checkpoint.TextEncoder != null)
                     SelectedIndex = 1;
             }
             return Task.CompletedTask;
+        }
+
+
+        private void OnBackendChanged()
+        {
+            if (Backend == BackendType.PyTorch)
+            {
+                TextEncodedCheckpointTypes = IsOnlineCheckpointsEnabled
+                    ? [CheckpointType.LocalFolder, CheckpointType.OnlineFolder, CheckpointType.Component]
+                    : [CheckpointType.LocalFolder, CheckpointType.Component];
+                CheckpointTypes = IsOnlineCheckpointsEnabled
+                   ? [CheckpointType.LocalFile, CheckpointType.LocalFolder, CheckpointType.Component, CheckpointType.OnlineFile, CheckpointType.OnlineFolder]
+                   : [CheckpointType.LocalFile, CheckpointType.LocalFolder, CheckpointType.Component];
+            }
+            if (Backend == BackendType.StableDiffusionCpp)
+            {
+                TextEncodedCheckpointTypes = IsOnlineCheckpointsEnabled
+                    ? [CheckpointType.LocalFile, CheckpointType.OnlineFile, CheckpointType.OnlineFolder, CheckpointType.Component]
+                    : [CheckpointType.LocalFile, CheckpointType.Component];
+                CheckpointTypes = IsOnlineCheckpointsEnabled
+                   ? [CheckpointType.LocalFile, CheckpointType.Component, CheckpointType.OnlineFile, CheckpointType.OnlineFolder]
+                   : [CheckpointType.LocalFile, CheckpointType.Component];
+            }
+        }
+
+
+        private static void OnBackendPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is DiffusionCheckpointControl control)
+            {
+                control.OnBackendChanged();
+            }
         }
 
     }

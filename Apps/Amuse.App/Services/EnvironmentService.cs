@@ -3,7 +3,6 @@ using Amuse.Common;
 using Amuse.Common.Config;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -89,81 +88,133 @@ namespace Amuse.App.Services
 
         public EnvironmentModel GetEnvironment(PipelineModel pipeline)
         {
-            return GetEnvironment(pipeline.Device, pipeline.GenerateModel.Pipeline);
+            return GetEnvironment(pipeline.Device, pipeline.GenerateModel.Backend, pipeline.GenerateModel.Pipeline);
         }
 
 
-        public EnvironmentModel GetEnvironment(Device device, PipelineType pipelineType)
+        public EnvironmentModel GetEnvironment(Device device, BackendType backendType, PipelineType pipelineType)
         {
             var pipelineEnvironment = _settings.Environments
-                .Where(x => x.Vendor == device.Vendor && x.Type == EnvironmentType.Pipeline && x.Pipeline == pipelineType)
+                .Where(x => x.Backend == backendType && x.Vendor == device.Vendor && x.Type == EnvironmentType.Pipeline && x.Pipeline == pipelineType)
                 .OrderByDescending(x => x.IsDefault)
                 .FirstOrDefault();
             if (pipelineEnvironment != null)
                 return pipelineEnvironment;
 
             var deviceEnvironment = _settings.Environments
-                .Where(x => x.Vendor == device.Vendor && x.Type == EnvironmentType.Device && x.Device == device.HardwareID)
+                .Where(x => x.Backend == backendType && x.Vendor == device.Vendor && x.Type == EnvironmentType.Device && x.Device == device.HardwareID)
                 .OrderByDescending(x => x.IsDefault)
                 .FirstOrDefault();
             if (deviceEnvironment != null)
                 return deviceEnvironment;
 
             var vendorEnvironment = _settings.Environments
-                .Where(x => x.Vendor == device.Vendor && x.Type == EnvironmentType.Vendor)
+                .Where(x => x.Backend == backendType && x.Vendor == device.Vendor && x.Type == EnvironmentType.Vendor)
                 .OrderByDescending(x => x.IsDefault)
                 .FirstOrDefault();
             if (vendorEnvironment != null)
                 return vendorEnvironment;
 
-            return _settings.Environments.First();
+            return _settings.Environments.FirstOrDefault(x => x.Backend == backendType);
         }
 
 
         public PipelineCreateOptions CreatePipelineOptions(EnvironmentModel environment, EnvironmentMode environmentMode = EnvironmentMode.Create)
         {
-            var environmentConfig = new PipelineCreateOptions
+            var backendPath = GetBackendPath(environment);
+            if (environment.Backend == BackendType.PyTorch)
             {
-                IsDebug = _settings.IsServerDebugEnabled,
-                Directory = App.DirectoryPython,
-                Environment = environment.Environment,
-                PythonVersion = environment.PythonVersion,
-                Requirements = environment.Requirements.ToArray(),
-                Variables = environment.Variables?.ToDictionary() ?? new Dictionary<string, string>(),
-                Mode = environmentMode
-            };
+                var environmentConfig = new PipelineCreateOptions
+                {
+                    IsDebug = _settings.IsServerDebugEnabled,
+                    Directory = backendPath,
+                    Environment = environment.Environment,
+                    HostVersion = environment.HostVersion,
+                    Requirements = [.. environment.Requirements],
+                    Variables = environment.Variables?.ToDictionary() ?? [],
+                    Mode = environmentMode
+                };
 
-            environmentConfig.Variables.Add("HF_HUB_OFFLINE", "1");
-            environmentConfig.Variables.Add("HF_HUB_CACHE", _settings.DirectoryDiffusion);
-            return environmentConfig;
+                environmentConfig.Variables.Add("HF_HUB_OFFLINE", "1");
+                environmentConfig.Variables.Add("HF_HUB_CACHE", _settings.DirectoryDiffusion);
+                return environmentConfig;
+            }
+            else if (environment.Backend == BackendType.StableDiffusionCpp)
+            {
+                var environmentConfig = new PipelineCreateOptions
+                {
+                    IsDebug = _settings.IsServerDebugEnabled,
+                    ServerPort = 2345,
+                    ServerAddress = "127.0.0.1",
+                    Directory = backendPath,
+                    Environment = environment.Environment,
+                    HostVersion = environment.HostVersion,
+                    Requirements = [.. environment.Requirements],
+                    Variables = environment.Variables?.ToDictionary() ?? [],
+                    Mode = environmentMode
+                };
+                return environmentConfig;
+            }
+            throw new NotImplementedException();
         }
 
 
         private async Task CreateInternalAsync(EnvironmentModel environment, EnvironmentMode mode, IProgress<PipelineProgress> progressCallback, CancellationToken cancellationToken = default)
         {
             var createOptions = CreatePipelineOptions(environment, mode);
-            var clientConfig = new ClientConfig
+            if (environment.Backend == BackendType.PyTorch)
             {
-                IsDebugMode = createOptions.IsDebug,
-                ServerPath = App.DirectoryServer,
-                ServerType = ServerType.PyTorch,
-                ServerVariables = createOptions.Variables
-            };
+                var clientConfig = new ClientConfig
+                {
+                    IsDebugMode = createOptions.IsDebug,
+                    ServerPath = App.DirectoryServer,
+                    ServerType = ServerType.PyTorch,
+                    ServerVariables = createOptions.Variables
+                };
 
-            using (var pipelineClient = new PipelineClient(clientConfig, progressCallback, _logger))
+                using (var pipelineClient = new PipelineClient(clientConfig, progressCallback, _logger))
+                {
+                    await pipelineClient.CreateAsync(createOptions, cancellationToken);
+                    await SaveEnvironmentStatusAsync(environment);
+                }
+            }
+            else if (environment.Backend == BackendType.StableDiffusionCpp)
             {
-                await pipelineClient.CreateAsync(createOptions, cancellationToken);
-                await SaveEnvironmentStatusAsync(environment);
+                var clientConfig = new ClientConfig
+                {
+                    IsDebugMode = createOptions.IsDebug,
+                    ServerPath = App.DirectoryServer,
+                    ServerType = ServerType.StableDiffusionCpp,
+                    ServerVariables = createOptions.Variables
+                };
+
+                using (var pipelineClient = new PipelineClient(clientConfig, progressCallback, _logger))
+                {
+                    await pipelineClient.CreateAsync(createOptions, cancellationToken);
+                    await SaveEnvironmentStatusAsync(environment);
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
         }
 
 
-
-
-
         private static string GetPath(EnvironmentModel environment)
         {
-            return Path.Combine(App.DirectoryPython, "Pipelines", $".{environment.Environment}");
+            var backendPath = GetBackendPath(environment);
+            return environment.Backend == BackendType.PyTorch
+                ? Path.Combine(backendPath, "Pipelines", $".{environment.Environment}")
+                : Path.Combine(backendPath, environment.Environment);
+        }
+
+
+        private static string GetBackendPath(EnvironmentModel environment)
+        {
+            return environment.Backend == BackendType.PyTorch
+                ? Path.Combine(App.DirectoryData, "PythonRuntime")
+                : Path.Combine(App.DirectoryData, "StableDiffusionCppRuntime");
         }
 
 
@@ -191,8 +242,7 @@ namespace Amuse.App.Services
         EnvironmentMode GetStatus(EnvironmentModel environment);
 
         EnvironmentModel GetEnvironment(PipelineModel pipeline);
-        EnvironmentModel GetEnvironment(Device device, PipelineType pipelineType);
-
+        EnvironmentModel GetEnvironment(Device device, BackendType backendType, PipelineType pipelineType);
 
         PipelineCreateOptions CreatePipelineOptions(EnvironmentModel environment, EnvironmentMode environmentMode = EnvironmentMode.Create);
     }

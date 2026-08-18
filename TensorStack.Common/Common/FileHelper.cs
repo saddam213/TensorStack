@@ -128,6 +128,22 @@ namespace TensorStack.Common.Common
 
 
         /// <summary>
+        /// Finds the first directory in the tree
+        /// </summary>
+        /// <param name="directoryStart">The directory start.</param>
+        /// <param name="directoryname">The directoryname.</param>
+        /// <param name="searchOption">The search option.</param>
+        public static DirectoryInfo FindDirectory(string directoryStart, string directoryname, SearchOption searchOption = SearchOption.AllDirectories)
+        {
+            var directory = Directory.EnumerateDirectories(directoryStart, directoryname, searchOption).FirstOrDefault();
+            if (string.IsNullOrEmpty(directory))
+                return default;
+
+            return new DirectoryInfo(directory);
+        }
+
+
+        /// <summary>
         /// Determines whether the directory empty
         /// </summary>
         /// <param name="directory">The directory.</param>

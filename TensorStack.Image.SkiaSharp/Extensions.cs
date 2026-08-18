@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
 using SkiaSharp;
+using System;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
@@ -28,6 +29,17 @@ namespace TensorStack.Image
         public static ImageInput ToImageInput(this ImageTensor imageTensor)
         {
             return new ImageInput(imageTensor);
+        }
+
+
+        /// <summary>
+        /// Converts to ImageTensor to base64.
+        /// </summary>
+        /// <param name="imageTensor">The image tensor.</param>
+        /// <param name="isDataString">if set to <c>true</c> is data string type.</param>
+        public static string ToImageBase64(this ImageTensor imageTensor, bool isDataString = false)
+        {
+            return imageTensor.ToBase64(isDataString);
         }
 
 
@@ -131,5 +143,36 @@ namespace TensorStack.Image
             return bitmap;
         }
 
+
+        internal static string ToBase64(this ImageTensor tensor, bool isDataString = false)
+        {
+            var height = tensor.Dimensions[2];
+            var width = tensor.Dimensions[3];
+            using (var bitmap = new SKBitmap(new SKImageInfo(width, height, SKColorType.Rgb888x, SKAlphaType.Opaque)))
+            {
+                unsafe
+                {
+                    byte* ptr = (byte*)bitmap.GetPixels();
+                    for (int y = 0; y < height; y++)
+                    {
+                        byte* row = ptr + y * bitmap.RowBytes;
+
+                        for (int x = 0; x < width; x++)
+                        {
+                            row[x * 4 + 0] = tensor[0, 0, y, x].DenormalizeToByte(); // R
+                            row[x * 4 + 1] = tensor[0, 1, y, x].DenormalizeToByte(); // G
+                            row[x * 4 + 2] = tensor[0, 2, y, x].DenormalizeToByte(); // B
+                            row[x * 4 + 3] = 0; // unused padding, NOT alpha
+                        }
+                    }
+                }
+
+                using (var data = bitmap.Encode(SKEncodedImageFormat.Png, 100))
+                {
+                    var base64Image = Convert.ToBase64String(data.ToArray());
+                    return isDataString ? $"data:image/png;base64,{base64Image}" : base64Image;
+                }
+            }
+        }
     }
 }

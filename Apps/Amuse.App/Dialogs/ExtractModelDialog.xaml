@@ -169,7 +169,7 @@
 
             <!--Checkpoint Settings-->
             <GroupBox Header="{Binding ExtractModel.Checkpoint.Name}" Margin="0,10,0,0" Height="160">
-                <Controls:CheckpointControl Settings="{Binding Settings}" Checkpoint="{Binding ExtractModel.Checkpoint}" Backend="{Binding ExtractModel.Backend}" SupportedTypes="{Binding CheckpointTypes, Mode=OneWay}"/>
+                <Controls:CheckpointControl Settings="{Binding Settings}" Checkpoint="{Binding ExtractModel.Checkpoint}" SupportedTypes="{Binding CheckpointTypes, Mode=OneWay}"/>
             </GroupBox>
 
         </StackPanel>

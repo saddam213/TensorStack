@@ -351,6 +351,7 @@ namespace Amuse.App.Views
         /// </summary>
         protected override async Task CancelAsync()
         {
+            Progress.Indeterminate("Cancelling Generation...");
             await base.CancelAsync();
 
             var timestamp = Stopwatch.GetTimestamp();

@@ -480,10 +480,6 @@ namespace Amuse.App.Controls
                 if (_selectedModel is null)
                     return false;
 
-                if (_selectedModel.Backend != viewModel.Backend)
-                    return false;
-
-
                 if (_selectedModel.Pipeline != viewModel.Pipeline)
                 {
                     // LatentConsistency share same controlnets as StableDiffusion
@@ -602,7 +598,7 @@ namespace Amuse.App.Controls
             if (_selectedModel is null)
                 return;
 
-            IsLoraSupported = IsLoraAvailable && _selectedModel.Backend == BackendType.PyTorch;
+            IsLoraSupported = IsLoraAvailable && _selectedModel.Backend != BackendType.OnnxRuntime;
             SelectedQualityMode = _selectedModel.UserQualityMode is null
                 ? _selectedDevice?.DefaultQualityMode ?? QualityMode.Standard
                 : _selectedModel.UserQualityMode.Value;

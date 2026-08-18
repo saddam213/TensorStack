@@ -16,6 +16,7 @@ namespace Amuse.Common
         public int DeviceId { get; set; }
         public int DeviceBusId { get; set; }
         public VendorType DeviceVendor { get; set; }
+        public int DeviceVendorIndex { get; set; }
         public DataType DataType { get; set; }
         public QuantizationType QuantType { get; set; }
         public bool IsOptimizeDeviceEnabled { get; set; } = false;
@@ -25,5 +26,6 @@ namespace Amuse.Common
         public ControlNetConfig ControlNet { get; set; }
         public MemoryModeType MemoryMode { get; set; }
         public CheckpointConfig CheckpointConfig { get; set; }
+        public bool IsFlashAttentionEnabled { get; set; }
     }
 }

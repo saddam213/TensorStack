@@ -81,8 +81,8 @@
                             <TextBox Text="{Binding SelectedEnvironment.Environment}" IsReadOnly="True"/>
                         </StackPanel>
                         <StackPanel Margin="2,0,2,0">
-                            <TextBlock Text="Python" Style="{StaticResource FieldTextBlockStyle}" />
-                            <TextBox Text="{Binding SelectedEnvironment.PythonVersion}" IsReadOnly="True"/>
+                            <TextBlock Text="Version" Style="{StaticResource FieldTextBlockStyle}" />
+                            <TextBox Text="{Binding SelectedEnvironment.HostVersion}" IsReadOnly="True"/>
                         </StackPanel>
                         <StackPanel Margin="2,0,0,0">
                             <CheckBox Content="Default" IsChecked="{Binding SelectedEnvironment.IsDefault}" Margin="10,18,0,2" IsHitTestVisible="False"/>

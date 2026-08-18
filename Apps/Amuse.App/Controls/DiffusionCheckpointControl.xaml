@@ -16,7 +16,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Compute}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="False" SupportedTypes="{Binding ComputeCheckpointTypes}"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Compute}" Settings="{Binding Settings}" IsDiffusionCheckpoint="False" SupportedTypes="{Binding ComputeCheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -28,7 +28,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextEncoder}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding TextEncodedCheckpointTypes}"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextEncoder}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding TextEncodedCheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -40,7 +40,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextEncoder2}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding TextEncodedCheckpointTypes}"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextEncoder2}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding TextEncodedCheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -52,7 +52,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextEncoder3}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding TextEncodedCheckpointTypes}"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.TextEncoder3}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding TextEncodedCheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -64,7 +64,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Unet}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Unet}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -76,7 +76,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Transformer}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Transformer}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -88,7 +88,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Transformer2}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Transformer2}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -100,7 +100,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Vae}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Vae}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -112,7 +112,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.AudioVae}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.AudioVae}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -124,7 +124,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Vocoder}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Vocoder}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -136,7 +136,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Connectors}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.Connectors}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -148,7 +148,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.LatentUpsampler}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.LatentUpsampler}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -160,7 +160,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.LatentUpsamplerTemporal}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.LatentUpsamplerTemporal}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -172,7 +172,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.ConditionEncoder}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.ConditionEncoder}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -184,7 +184,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.AudioTokenizer}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.AudioTokenizer}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 
@@ -196,7 +196,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Border BorderThickness="1" BorderBrush="{StaticResource ContainerBorder}" Padding="4">
-                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.AudioDetokenizer}" Settings="{Binding Settings}" Backend="{Binding Backend}" IsDiffusionCheckpoint="True"/>
+                    <local:CheckpointControl Checkpoint="{Binding Checkpoint.AudioDetokenizer}" Settings="{Binding Settings}" IsDiffusionCheckpoint="True" SupportedTypes="{Binding CheckpointTypes}"/>
                 </Border>
             </TabItem>
 

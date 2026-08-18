@@ -5,7 +5,8 @@ namespace Amuse.Common
     public enum ServerType
     {
         OnnxRuntime = 0,
-        PyTorch = 10
+        PyTorch = 10,
+        StableDiffusionCpp = 20
     }
 
     public enum ProcessType
@@ -93,36 +94,180 @@ namespace Amuse.Common
 
     public enum SchedulerType
     {
+        [Display(Name = "LMS")]
         LMS = 0,
+
+        [Display(Name = "Euler")]
         Euler = 1,
+
+        [Display(Name = "Euler Ancestral")]
         EulerAncestral = 2,
+
+        [Display(Name = "DDPM")]
         DDPM = 3,
+
+        [Display(Name = "DDIM")]
         DDIM = 4,
+
+        [Display(Name = "KDPM2")]
         KDPM2 = 5,
+
+        [Display(Name = "KDPM2-Ancestral")]
         KDPM2Ancestral = 6,
+
+        [Display(Name = "DDPM-Wuerstchen")]
         DDPMWuerstchen = 10,
+
+        [Display(Name = "LCM")]
         LCM = 20,
+
+        [Display(Name = "FlowMatch-Euler")]
         FlowMatchEuler = 30,
+
+        [Display(Name = "FlowMatch-Heun")]
         FlowMatchHeun = 31,
+
+        [Display(Name = "PNDM")]
         PNDM = 40,
+
+        [Display(Name = "Heun")]
         Heun = 41,
+
+        [Display(Name = "UniPC Multistep")]
         UniPCMultistep = 42,
+
+        [Display(Name = "DPM Solver Multistep")]
         DPMSolverMultistep = 43,
+
+        [Display(Name = "DPM Single Step")]
         DPMSolverSinglestep = 45,
+
+        [Display(Name = "DPM Solver SDE")]
         DPMSolverSDE = 46,
+
+        [Display(Name = "DEIS Multistep")]
         DEISMultistep = 47,
+
+        [Display(Name = "EDM Euler")]
         EDMEuler = 48,
+
+        [Display(Name = "EDM DPM Solver Multistep")]
         EDMDPMSolverMultistep = 49,
+
+        [Display(Name = "FlowMatch-LCM")]
         FlowMatchLCM = 50,
+
+        [Display(Name = "IPNDM")]
         IPNDM = 51,
+
+        [Display(Name = "CogVideoX DDIM")]
         CogVideoXDDIM = 52,
+
+        [Display(Name = "CogVideoX DPM")]
         CogVideoXDPM = 53,
+
+        [Display(Name = "Helios")]
         Helios = 54,
+
+        [Display(Name = "Helios DMD")]
         HeliosDMD = 55,
+
+        [Display(Name = "TCD")]
         TCD = 56,
+
+        [Display(Name = "SCM")]
         SCM = 57,
+
+        [Display(Name = "SA Solver")]
         SASolver = 58,
+
+        [Display(Name = "LTX Euler Ancestral")]
         LTXEulerAncestral = 59,
+
+        [Display(Name = "DPM2")]
+        DPM2 = 60,
+
+        [Display(Name = "DPM++ 2S Ancestral")]
+        DPMPlusPlus2SAncestral = 61,
+
+        [Display(Name = "DPM++ 2M")]
+        DPMPlusPlus2M = 62,
+
+        [Display(Name = "DPM++ 2M v2")]
+        DPMPlusPlus2Mv2 = 63,
+
+        [Display(Name = "DPM++ 2M SDE")]
+        DPMPlusPlus2MSDE = 64,
+
+        [Display(Name = "DPM++ 2M SDE BT")]
+        DPMPlusPlus2MSDEBT = 65,
+
+        [Display(Name = "Residual Multistep")]
+        ResidualMultistep = 66,
+
+        [Display(Name = "Residual 2S")]
+        Residual2S = 67,
+
+        [Display(Name = "ER-SDE")]
+        ERSDE = 68,
+    }
+
+
+    public enum SigmaScheduleType
+    {
+        [Display(Name = "Default")]
+        Default = 0,
+
+        [Display(Name = "Discrete")]
+        Discrete = 1,
+
+        [Display(Name = "Normal")]
+        Normal = 2,
+
+        [Display(Name = "Karras")]
+        Karras = 3,
+
+        [Display(Name = "Exponential")]
+        Exponential = 4,
+
+        [Display(Name = "AYS")]
+        AYS = 5,
+
+        [Display(Name = "GITS")]
+        GITS = 6,
+
+        [Display(Name = "SGMUniform")]
+        SGMUniform = 7,
+
+        [Display(Name = "Simple")]
+        Simple = 8,
+
+        [Display(Name = "Smoothstep")]
+        Smoothstep = 9,
+
+        [Display(Name = "KLOptimal")]
+        KLOptimal = 10,
+
+        [Display(Name = "LCM")]
+        LCM = 11,
+
+        [Display(Name = "BongTangent")]
+        BongTangent = 12,
+
+        [Display(Name = "LTX2")]
+        LTX2 = 13,
+
+        [Display(Name = "LogitNormal")]
+        LogitNormal = 14,
+
+        [Display(Name = "Flux")]
+        Flux = 15,
+
+        [Display(Name = "Flux2")]
+        Flux2 = 16,
+
+        [Display(Name = "Beta")]
+        Beta = 17,
     }
 
     public enum TimestepSpacingType
@@ -211,12 +356,6 @@ namespace Amuse.Common
     {
         Discrete = 0,
         Continuous = 1
-    }
-
-    public enum SigmaScheduleType
-    {
-        Karras = 0,
-        Exponential = 1
     }
 
     public enum UpscaleModeType

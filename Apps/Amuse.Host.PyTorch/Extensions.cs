@@ -17,7 +17,7 @@ namespace Amuse.Host.PyTorch
                 IsDebug = options.IsDebug,
                 Directory = options.Directory,
                 Environment = options.Environment,
-                PythonVersion = options.PythonVersion,
+                PythonVersion = options.HostVersion,
                 Requirements = options.Requirements?.ToArray(),
                 Variables = options.Variables?.ToDictionary()
             };
@@ -585,7 +585,7 @@ namespace Amuse.Host.PyTorch
                     FinalSigmasType = options.FinalSigmasType.Cast<Amuse.Common.FinalSigmasType, TensorStack.Python.Scheduler.FinalSigmasType>(),
                     Rho = options.Rho,
                     SigmaData = options.SigmaData,
-                    SigmaScheduleType = options.SigmaScheduleType.Cast<Amuse.Common.SigmaScheduleType, TensorStack.Python.Scheduler.SigmaScheduleType>(),
+                    SigmaScheduleType = options.SigmaScheduleType.AsPythonType(),
                 },
                 Amuse.Common.SchedulerType.EDMDPMSolverMultistep => new EDMDPMSolverMultistepOptions
                 {
@@ -598,7 +598,7 @@ namespace Amuse.Host.PyTorch
                     FinalSigmasType = options.FinalSigmasType.Cast<Amuse.Common.FinalSigmasType, TensorStack.Python.Scheduler.FinalSigmasType>(),
                     Rho = options.Rho,
                     SigmaData = options.SigmaData,
-                    SigmaScheduleType = options.SigmaScheduleType.Cast<Amuse.Common.SigmaScheduleType, TensorStack.Python.Scheduler.SigmaScheduleType>(),
+                    SigmaScheduleType = options.SigmaScheduleType.AsPythonType(),
                     Thresholding = options.Thresholding,
                     DynamicThresholdingRatio = options.DynamicThresholdingRatio,
                     SampleMaxValue = options.SampleMaxValue,
@@ -1343,6 +1343,15 @@ namespace Amuse.Host.PyTorch
             return messages.Select(x => new TensorStack.Python.Common.ConversationMessage(x.Role.Cast<Common.ConversationRole, TensorStack.Python.Common.ConversationRole>(), x.Content, x.ImageIndex, x.AudioIndex)).ToArray();
         }
 
+
+        private static TensorStack.Python.Scheduler.SigmaScheduleType AsPythonType(this Common.SigmaScheduleType sigmaSchedule)
+        {
+            return sigmaSchedule switch
+            {
+                Common.SigmaScheduleType.Exponential => TensorStack.Python.Scheduler.SigmaScheduleType.Exponential,
+                _ => TensorStack.Python.Scheduler.SigmaScheduleType.Karras
+            };
+        }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

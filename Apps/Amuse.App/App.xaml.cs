@@ -40,7 +40,6 @@ namespace Amuse.App
         private static string _directoryBase;
         private static string _directoryData;
         private static string _directoryLogs;
-        private static string _directoryPython;
         private static IHttpService _httpService;
         private readonly Settings _settings;
 
@@ -61,7 +60,6 @@ namespace Amuse.App
             _directoryBase = AppDomain.CurrentDomain.BaseDirectory;
             _directoryData = GetApplicationDataDirectory();
             _directoryLogs = Path.Combine(_directoryData, "Logs");
-            _directoryPython = Path.Combine(_directoryData, "PythonRuntime");
 
             // Host
             var builder = Host.CreateApplicationBuilder();
@@ -102,7 +100,6 @@ namespace Amuse.App
         public static string DirectoryBase => _directoryBase;
         public static string DirectoryData => _directoryData;
         public static string DirectoryLogs => _directoryLogs;
-        public static string DirectoryPython => _directoryPython;
         public static string DirectoryServer => _directoryBase;
         public AsyncRelayCommand UpdateCommand { get; set; }
 

@@ -62,7 +62,6 @@ namespace Amuse.App.Dialogs
             LoraModel = new LoraAdapterModel
             {
                 Id = modelId,
-                Backend = BackendType.PyTorch,
                 Pipeline = Settings.DiffusionPipelines.First(),
                 Name = "New Lora",
                 Checkpoint = new CheckpointComponent
@@ -111,7 +110,7 @@ namespace Amuse.App.Dialogs
                 var imported = 0;
                 foreach (var modelImport in modelImports)
                 {
-                    if (Settings.LoraAdapterModels.Any(x => x.Backend == modelImport.Backend && x.Name == modelImport.Name && x.Pipeline == modelImport.Pipeline))
+                    if (Settings.LoraAdapterModels.Any(x => x.Name == modelImport.Name && x.Pipeline == modelImport.Pipeline))
                         continue;
 
                     imported++;

@@ -9,7 +9,6 @@ namespace Amuse.App.Common
 {
     public sealed class LoraAdapterModel : BaseModel, IDownloadModel
     {
-        private BackendType _backend;
         private string _name;
         private PipelineType _pipeline;
         private string _key;
@@ -23,12 +22,6 @@ namespace Amuse.App.Common
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Id { get; set; }
-
-        public BackendType Backend
-        {
-            get { return _backend; }
-            set { SetProperty(ref _backend, value); }
-        }
 
         public string Name
         {
@@ -155,7 +148,6 @@ namespace Amuse.App.Common
             return new LoraAdapterModel
             {
                 Id = id,
-                Backend = Backend,
                 Name = Name,
                 Pipeline = Pipeline,
                 Key = Key,

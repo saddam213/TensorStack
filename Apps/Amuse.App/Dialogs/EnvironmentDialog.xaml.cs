@@ -6,6 +6,7 @@ using Amuse.Common;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TensorStack.Common;
 using TensorStack.WPF;
 using TensorStack.WPF.Controls;
 
@@ -23,6 +24,9 @@ namespace Amuse.App.Dialogs
         private PipelineModel _pipeline;
         private EnvironmentModel _environment;
         private readonly CancellationTokenSource _cancellation;
+        private string _message;
+        private string _subMessage;
+        private string _waitMessage;
 
         public EnvironmentDialog(IEnvironmentService environmentService, IGenerateService generateService)
         {
@@ -53,12 +57,67 @@ namespace Amuse.App.Dialogs
             set { SetProperty(ref _isExecuting, value); }
         }
 
+        public string Message
+        {
+            get { return _message; }
+            set { SetProperty(ref _message, value); }
+        }
+
+        public string SubMessage
+        {
+            get { return _subMessage; }
+            set { SetProperty(ref _subMessage, value); }
+        }
+
+        public string WaitMessage
+        {
+            get { return _waitMessage; }
+            set { SetProperty(ref _waitMessage, value); }
+        }
+
+
+        private void SetMessages(BackendType backendType)
+        {
+            var backendName = GetBackendName(backendType);
+            if (IsCreate)
+            {
+                Message = $"Create {backendName} Environment?";
+                SubMessage = $"This will create the required {backendName} Environment on your machine for running local models, this is a one-time setup.";
+                WaitMessage = "(This may take several minutes)";
+            }
+            if (IsUpdate)
+            {
+                Message = $"Update {backendName} Environment?";
+                SubMessage = $"This will update your {backendName} Environment with the latest required packages, This is a one-off process.";
+                WaitMessage = "(This may take few minutes)";
+            }
+            if (IsRebuild)
+            {
+                Message = $"Rebuild {backendName} Environment?";
+                SubMessage = $"This will completely wipe and reinstall your {backendName} Environment to fix any broken dependencies or corrupted files";
+                WaitMessage = "(This may take several minutes)";
+            }
+        }
+
+
+        private string GetBackendName(BackendType backendType)
+        {
+            return backendType switch
+            {
+                BackendType.PyTorch => "Python Virtual",
+                BackendType.StableDiffusionCpp => "StableDiffusion.cpp",
+                BackendType.OnnxRuntime => "OnnxRuntime",
+                _ => "Virtual"
+            };
+        }
+
 
         public Task<bool> CreateAsync(PipelineModel pipeline)
         {
             IsCreate = true;
             _pipeline = pipeline;
             NotifyPropertyChanged(nameof(IsCreate));
+            SetMessages(pipeline.GenerateModel.Backend);
             return base.ShowDialogAsync();
         }
 
@@ -68,6 +127,7 @@ namespace Amuse.App.Dialogs
             IsCreate = true;
             _environment = environment;
             NotifyPropertyChanged(nameof(IsCreate));
+            SetMessages(environment.Backend);
             return base.ShowDialogAsync();
         }
 
@@ -77,6 +137,7 @@ namespace Amuse.App.Dialogs
             IsUpdate = true;
             _environment = environment;
             NotifyPropertyChanged(nameof(IsUpdate));
+            SetMessages(environment.Backend);
             return base.ShowDialogAsync();
         }
 
@@ -86,6 +147,7 @@ namespace Amuse.App.Dialogs
             IsRebuild = true;
             _environment = environment;
             NotifyPropertyChanged(nameof(IsRebuild));
+            SetMessages(environment.Backend);
             return base.ShowDialogAsync();
         }
 
