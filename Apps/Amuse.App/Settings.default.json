@@ -15755,6 +15755,85 @@
       "Link": "https://huggingface.co/Qwen/Qwen3.6-27B"
     },
     {
+      "Id": 810,
+      "Backend": "PyTorch",
+      "Name": "Qwen 3.8 27B",
+      "Template": "Qwen38_IT",
+      "Pipeline": "AutoTextPipeline",
+      "ModelType": "Vision",
+      "ModelSize": 56,
+      "ModelParams": 27,
+      "BaseType": "bfloat16",
+      "MediaType": "Text",
+      "ProcessTypes": [ "TextToText", "ImageToText" ],
+      "Checkpoint": {
+        "TextModel": {
+          "Name": "TextEncoder",
+          "Type": "OnlineFolder",
+          "Folder": "Qwen3.8-27B",
+          "DownloadFiles": [
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/chat_template.jinja",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/config.json",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/generation_config.json",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/merges.txt",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00001-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00002-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00003-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00004-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00005-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00006-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00007-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00008-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00009-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00010-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00011-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00012-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00013-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00014-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00015-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00016-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00017-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model-00018-of-00018.safetensors",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/model.safetensors.index.json",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/preprocessor_config.json",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/tokenizer.json",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/tokenizer_config.json",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/video_preprocessor_config.json",
+            "https://huggingface.co/Qwen/Qwen3.8-27B/resolve/main/vocab.json"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 18 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 30 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 60 ]
+        }
+      ],
+      "DefaultOptions": {
+        "MaxLength": 262144,
+        "Beams": 1,
+        "TopK": 20,
+        "TopP": 0.95,
+        "TopH": 1,
+        "TypicalP": 1,
+        "LengthPenalty": 0,
+        "RepetitionPenalty": 1,
+        "Temperature": 1,
+        "IsSamplingEnabled": false,
+        "NoRepeatNgramSize": 0,
+        "InputImageMaxCount": 32
+      },
+      "Link": "https://huggingface.co/Qwen/Qwen3.8-27B"
+    },
+    {
       "Id": 820,
       "Backend": "PyTorch",
       "Name": "Gemma4 E2B IT",
