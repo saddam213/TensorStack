@@ -11,10 +11,8 @@ using TensorStack.Common;
 using TensorStack.Common.Pipeline;
 using TensorStack.Common.Tensor;
 using TensorStack.Common.Video;
-using TensorStack.Video.Common;
-using TensorStack.Video.Models;
 
-namespace TensorStack.Video.Pipelines
+namespace TensorStack.Media.Video
 {
     /// <summary>
     /// Video Interpolation Pipeline.

@@ -23,7 +23,6 @@
     <ProjectReference Include="..\..\TensorStack.Extractors\TensorStack.Extractors.csproj" />
     <ProjectReference Include="..\..\TensorStack.Upscaler\TensorStack.Upscaler.csproj" />
     <ProjectReference Include="..\..\TensorStack.Video.Windows\TensorStack.Video.Windows.csproj" />
-    <ProjectReference Include="..\..\TensorStack.Video\TensorStack.Video.csproj" />
     <ProjectReference Include="..\..\TensorStack.Python\TensorStack.Python.csproj" />
     <ProjectReference Include="..\..\TensorStack.Image.SkiaSharp\TensorStack.Image.SkiaSharp.csproj" />
  

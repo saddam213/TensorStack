@@ -3,7 +3,7 @@ using TensorStack.Common.Pipeline;
 using TensorStack.Common.Tensor;
 using TensorStack.Common.Video;
 
-namespace TensorStack.Video.Common
+namespace TensorStack.Media.Video
 {
     /// <summary>
     /// Base Interpolation Options.

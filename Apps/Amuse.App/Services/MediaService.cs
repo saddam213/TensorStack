@@ -7,6 +7,8 @@ using TensorStack.Audio.Windows;
 using TensorStack.Common;
 using TensorStack.Common.Common;
 using TensorStack.Common.Video;
+using TensorStack.Media.Audio;
+using TensorStack.Media.Video;
 using TensorStack.Video;
 
 namespace Amuse.App.Services

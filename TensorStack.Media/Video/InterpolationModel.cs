@@ -3,7 +3,7 @@
 using System.IO;
 using TensorStack.Common;
 
-namespace TensorStack.Video.Models
+namespace TensorStack.Media.Video
 {
     public class InterpolationModel : ModelSession<ModelConfig>
     {

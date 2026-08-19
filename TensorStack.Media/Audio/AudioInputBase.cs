@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common.Tensor;
 
-namespace TensorStack.Audio
+namespace TensorStack.Media.Audio
 {
     public abstract class AudioInputBase : AudioTensor
     {

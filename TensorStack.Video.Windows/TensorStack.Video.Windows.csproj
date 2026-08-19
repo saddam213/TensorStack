@@ -9,12 +9,12 @@
   <!--Projects-->
   <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\TensorStack.Common\TensorStack.Common.csproj" />
-    <ProjectReference Include="..\TensorStack.Video\TensorStack.Video.csproj" />
+    <ProjectReference Include="..\TensorStack.Media\TensorStack.Media.csproj" />
   </ItemGroup>
 
   <!--Packages-->
   <ItemGroup Condition=" '$(Configuration)' == 'Release'">
-    <PackageReference Include="TensorStack.Video" Version="$(Version)" />
+    <PackageReference Include="TensorStack.Media" Version="$(Version)" />
   </ItemGroup>
 
   <!--Common Packages-->

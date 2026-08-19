@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Audio.Windows;
 using TensorStack.Common.Tensor;
+using TensorStack.Media.Audio;
 
 namespace TensorStack.Audio
 {

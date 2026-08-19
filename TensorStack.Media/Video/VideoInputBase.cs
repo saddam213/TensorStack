@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common.Tensor;
 
-namespace TensorStack.Video
+namespace TensorStack.Media.Video
 {
     /// <summary>
     /// Class to handle processing of a video.

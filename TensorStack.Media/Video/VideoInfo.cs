@@ -3,7 +3,7 @@
 using System;
 using TensorStack.Common.Tensor;
 
-namespace TensorStack.Video
+namespace TensorStack.Media.Video
 {
     public record VideoInfo
     {

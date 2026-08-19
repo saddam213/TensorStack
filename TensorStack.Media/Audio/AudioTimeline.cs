@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TensorStack.Audio
+namespace TensorStack.Media.Audio
 {
     public class AudioTimeline
     {

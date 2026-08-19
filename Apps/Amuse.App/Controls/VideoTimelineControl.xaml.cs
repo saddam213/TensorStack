@@ -16,6 +16,7 @@ using TensorStack.Common;
 using TensorStack.Common.Tensor;
 using TensorStack.Common.Video;
 using TensorStack.Image;
+using TensorStack.Media.Audio;
 using TensorStack.Video;
 using TensorStack.WPF;
 using TensorStack.WPF.Controls;

@@ -8,12 +8,12 @@
 
   <!--Projects-->
   <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
-    <ProjectReference Include="..\TensorStack.Audio\TensorStack.Audio.csproj" />
+    <ProjectReference Include="..\TensorStack.Media\TensorStack.Media.csproj" />
   </ItemGroup>
 
   <!--Packages-->
   <ItemGroup Condition=" '$(Configuration)' == 'Release'">
-    <PackageReference Include="TensorStack.Audio" Version="$(Version)" />
+    <PackageReference Include="TensorStack.Media" Version="$(Version)" />
   </ItemGroup>
 
   <!--Binaries-->
