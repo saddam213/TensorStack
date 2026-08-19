@@ -60,9 +60,9 @@
                 <DockPanel DockPanel.Dock="Top">
 
                     <!--Actions-->
-                    <DockPanel DockPanel.Dock="Right"  >
+                    <DockPanel DockPanel.Dock="Right" Width="174">
                         <TextBlock DockPanel.Dock="Top" Text="Actions" Style="{StaticResource FieldTextBlockStyle}" />
-                        <UniformGrid  Columns="2" VerticalAlignment="Top" Width="174">
+                        <UniformGrid  Columns="2" VerticalAlignment="Top"  Visibility="{Binding SelectedEnvironment, Converter={StaticResource NullVisibilityConverter}}" >
                             <CommonControls:IconButton Text="Create" FontSize="13" Icon="f0ed" IconSize="14" IconStyle="Light" IconOpacity=".8" IconColor="{StaticResource InfoColour}" Command="{Binding EnvironmentServiceCreateCommand}" Height="40" Alignment="Left" IconMargin="11,0,1,0" />
                             <CommonControls:IconButton Text="Delete" FontSize="13" Icon="f2ed" IconSize="14" IconStyle="Light" IconOpacity=".8" IconColor="{StaticResource DangerColour}" Command="{Binding EnvironmentServiceDeleteCommand}" Height="40" Alignment="Left" IconMargin="13,0,1,0" />
                             <CommonControls:IconButton Text="Update" FontSize="13" Icon="f01e" IconSize="14" IconStyle="Light" IconOpacity=".8" IconColor="{StaticResource WarningColour}" Command="{Binding EnvironmentServiceUpdateCommand}" Height="40" Alignment="Left" IconMargin="10,0,1,0" />
@@ -71,41 +71,59 @@
                     </DockPanel>
 
                     <!--Environment-->
-                    <UniformGrid Columns="4" Margin="0,0,100,0">
-                        <StackPanel Margin="0,0,2,0">
+                    <DockPanel Margin="0,0,100,0">
+                        <StackPanel DockPanel.Dock="Top">
                             <TextBlock Text="Name" Style="{StaticResource FieldTextBlockStyle}" />
                             <TextBox Text="{Binding SelectedEnvironment.Name}" IsReadOnly="True"/>
                         </StackPanel>
-                        <StackPanel Margin="2,0,2,0">
-                            <TextBlock Text="Environment" Style="{StaticResource FieldTextBlockStyle}" />
-                            <TextBox Text="{Binding SelectedEnvironment.Environment}" IsReadOnly="True"/>
-                        </StackPanel>
-                        <StackPanel Margin="2,0,2,0">
-                            <TextBlock Text="Version" Style="{StaticResource FieldTextBlockStyle}" />
-                            <TextBox Text="{Binding SelectedEnvironment.HostVersion}" IsReadOnly="True"/>
-                        </StackPanel>
-                        <StackPanel Margin="2,0,0,0">
-                            <CheckBox Content="Default" IsChecked="{Binding SelectedEnvironment.IsDefault}" Margin="10,18,0,2" IsHitTestVisible="False"/>
-                        </StackPanel>
-                        <StackPanel Margin="2,0,2,0">
-                            <TextBlock Text="Vendor" Style="{StaticResource FieldTextBlockStyle}" />
-                            <TextBox Text="{Binding SelectedEnvironment.Vendor}" IsReadOnly="True"/>
-                        </StackPanel>
-                        <StackPanel Margin="2,0,2,0">
-                            <TextBlock Text="Type" Style="{StaticResource FieldTextBlockStyle}" />
-                            <TextBox Text="{Binding SelectedEnvironment.Type}" IsReadOnly="True"/>
-                        </StackPanel>
-                        <Grid Margin="2,0,0,0" IsHitTestVisible="False">
-                            <StackPanel Visibility="{Binding  SelectedEnvironment.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Device}">
-                                <TextBlock Text="Device" Style="{StaticResource FieldTextBlockStyle}"/>
-                                <ComboBox ItemsSource="{Binding Settings.Devices}" SelectedValue="{Binding SelectedEnvironment.Device}" DisplayMemberPath="Name" SelectedValuePath="HardwareID"/>
+
+                        <DockPanel DockPanel.Dock="Bottom" Margin="0,10,4,0">
+                            <Grid DockPanel.Dock="Left"  Height="28" Width="200">
+                                <Button Command="{Binding EnvironmentDefaultCommand}" >
+                                    <TextBlock Text="Set Default Environment"/>
+                                </Button>
+                                <Button IsEnabled="False" Visibility="{Binding SelectedEnvironment.IsDefault, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <DockPanel>
+                                        <CommonControls:FontAwesome DockPanel.Dock="Left" Icon="f00c" Size="13" Color="{StaticResource SuccessColour}" Margin="0,0,5,0"/>
+                                        <TextBlock Text="Default Environment" Foreground="{StaticResource SuccessColour}"/>
+                                    </DockPanel>
+                                </Button>
+                            </Grid>
+                            <Grid></Grid>
+                        </DockPanel>
+
+                        <UniformGrid Rows="1">
+                            <StackPanel Margin="0,0,2,0">
+                                <TextBlock Text="Type" Style="{StaticResource FieldTextBlockStyle}" />
+                                <TextBox Text="{Binding SelectedEnvironment.Type}" IsReadOnly="True"/>
                             </StackPanel>
-                            <StackPanel Visibility="{Binding  SelectedEnvironment.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pipeline}">
-                                <TextBlock Text="Pipeline" Style="{StaticResource FieldTextBlockStyle}"/>
-                                <TextBox Text="{Binding SelectedEnvironment.Pipeline}" IsReadOnly="True" />
+                            <StackPanel Margin="2,0,2,0">
+                                <TextBlock Text="Vendor" Style="{StaticResource FieldTextBlockStyle}" />
+                                <TextBox Text="{Binding SelectedEnvironment.Vendor}" IsReadOnly="True"/>
                             </StackPanel>
-                        </Grid>
-                    </UniformGrid>
+                            <Grid Margin="2,0,0,0" IsHitTestVisible="False" Visibility="{Binding  SelectedEnvironment.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Device|Pipeline}">
+                                <StackPanel Visibility="{Binding  SelectedEnvironment.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Device}">
+                                    <TextBlock Text="Device" Style="{StaticResource FieldTextBlockStyle}"/>
+                                    <ComboBox ItemsSource="{Binding Settings.Devices}" SelectedValue="{Binding SelectedEnvironment.Device}" DisplayMemberPath="Name" SelectedValuePath="HardwareID"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{Binding  SelectedEnvironment.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Pipeline}">
+                                    <TextBlock Text="Pipeline" Style="{StaticResource FieldTextBlockStyle}"/>
+                                    <TextBox Text="{Binding SelectedEnvironment.Pipeline}" IsReadOnly="True" />
+                                </StackPanel>
+                            </Grid>
+                            <StackPanel Margin="2,0,2,0">
+                                <TextBlock Text="Environment" Style="{StaticResource FieldTextBlockStyle}" />
+                                <TextBox Text="{Binding SelectedEnvironment.Environment}" IsReadOnly="True"/>
+                            </StackPanel>
+                            <StackPanel Margin="2,0,2,0">
+                                <TextBlock Text="Version" Style="{StaticResource FieldTextBlockStyle}" />
+                                <TextBox Text="{Binding SelectedEnvironment.HostVersion}" IsReadOnly="True"/>
+                            </StackPanel>
+                        </UniformGrid>
+
+                    </DockPanel>
+
+
                 </DockPanel>
                 <StackPanel DockPanel.Dock="Bottom">
                     <TextBlock Text="Environment Variables" Style="{StaticResource FieldTextBlockStyle}" />

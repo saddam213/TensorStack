@@ -308,9 +308,9 @@ namespace Amuse.App.Dialogs
                 var isDefault = environment.IsDefault;
                 var environments = environment.Type switch
                 {
-                    EnvironmentType.Vendor => Settings.Environments.Where(x => x.Type == EnvironmentType.Vendor && x.Vendor == environment.Vendor),
-                    EnvironmentType.Device => Settings.Environments.Where(x => x.Type == EnvironmentType.Device && x.Device == environment.Device),
-                    _ => Settings.Environments.Where(x => x.Type == EnvironmentType.Pipeline && x.Pipeline == environment.Pipeline),
+                    EnvironmentType.Vendor => Settings.Environments.Where(x => x.Backend == environment.Backend && x.Type == EnvironmentType.Vendor && x.Vendor == environment.Vendor),
+                    EnvironmentType.Device => Settings.Environments.Where(x => x.Backend == environment.Backend && x.Type == EnvironmentType.Device && x.Device == environment.Device),
+                    _ => Settings.Environments.Where(x => x.Backend == environment.Backend && x.Type == EnvironmentType.Pipeline && x.Pipeline == environment.Pipeline),
                 };
 
                 foreach (var env in environments)

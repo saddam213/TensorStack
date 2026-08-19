@@ -231,15 +231,22 @@ namespace Amuse.Host.StableDiffusionCpp
         /// <param name="cancellationToken">The cancellation token.</param>
         private async Task SaveVideoAsync(byte[] webmBytes, string outputFile, CancellationToken cancellationToken = default)
         {
-            var encoders = new[] { "h264_nvenc", "h264_amf", "h264_qsv" };
+            var encoders = new[]
+            {
+                "h264_nvenc",      // NVIDIA
+                "h264_amf",        // AMD
+                "h264_qsv",        // Intel
+                "h264_d3d12va",    // Windows D3D12
+                "libopenh264",     // CPU fallback
+            };
+            Logger.LogInformation("[AmuseHost] [PipelineServer] [SaveVideoAsync] Saving output video...");
             foreach (var encoder in encoders)
             {
                 try
                 {
-                    Logger.LogInformation("[AmuseHost] [PipelineServer] [SaveVideoAsync] Saving output video, Format: MP4, Codec: {encoder}...", encoder);
                     if (await EncodeVideoAsync(webmBytes, outputFile, encoder, cancellationToken))
                     {
-                        Logger.LogInformation($"[AmuseHost] [PipelineServer] [SaveVideoAsync] Successfully saved output video.");
+                        Logger.LogInformation($"[AmuseHost] [PipelineServer] [SaveVideoAsync] Successfully saved output video, Codec: {encoder}...", encoder);
                         return;
                     }
                 }
@@ -247,12 +254,10 @@ namespace Amuse.Host.StableDiffusionCpp
                 {
                     throw;
                 }
-                catch (Exception)
-                {
-                    Logger.LogWarning("[AmuseHost] [PipelineServer] [SaveVideoAsync] Codec not found, Codec: {encoder}", encoder);
-                }
+                catch (Exception) { /* Codec not avaliable */ }
             }
-            Logger.LogInformation($"[AmuseHost] [PipelineServer] [SaveVideoAsync] Saved output video using fallback method, Format: WEBM, Codec: default");
+
+            Logger.LogInformation($"[AmuseHost] [PipelineServer] [SaveVideoAsync] Successfully saved output video using fallback");
             await File.WriteAllBytesAsync(outputFile, webmBytes, cancellationToken);
         }
 
@@ -267,7 +272,7 @@ namespace Amuse.Host.StableDiffusionCpp
         /// <returns>A Task&lt;System.Boolean&gt; representing the asynchronous operation.</returns>
         private static async Task<bool> EncodeVideoAsync(byte[] webmBytes, string outputFile, string encoder, CancellationToken cancellationToken = default)
         {
-            var arguments = $"-hide_banner -f webm -i pipe:0 -c:v {encoder} -c:a aac -b:a 192k -movflags +faststart -y \"{outputFile}\"";
+            var arguments = $"-hide_banner -f webm -i pipe:0 -c:v {encoder} -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart -y \"{outputFile}\"";
             using (var process = new Process())
             {
                 process.StartInfo.FileName = "ffmpeg.exe";

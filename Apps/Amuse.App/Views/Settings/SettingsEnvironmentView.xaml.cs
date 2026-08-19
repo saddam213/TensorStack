@@ -38,6 +38,7 @@ namespace Amuse.App.Views
             EnvironmentServiceUpdateCommand = new AsyncRelayCommand(EnvironmentUpdateAsync, CanEnvironmentUpdate);
             EnvironmentServiceRebuildCommand = new AsyncRelayCommand(EnvironmentRebuildAsync, CanEnvironmentUpdate);
             EnvironmentServiceDeleteCommand = new AsyncRelayCommand(EnvironmentDeleteAsync, CanEnvironmentUpdate);
+            EnvironmentDefaultCommand = new AsyncRelayCommand(EnvironmentDefaultAsync, CanEnvironmentDefault);
             FilterClearCommand = new AsyncRelayCommand(FilterClearAsync, CanClearFilter);
             ModelCollection = new ListCollectionView(settings.Environments) { Filter = CollectionFilter(), IsLiveSorting = true, IsLiveFiltering = true };
             ModelCollection.SortDescriptions.Add(new SortDescription(nameof(EnvironmentModel.Backend), ListSortDirection.Ascending));
@@ -62,6 +63,7 @@ namespace Amuse.App.Views
         public AsyncRelayCommand EnvironmentServiceUpdateCommand { get; }
         public AsyncRelayCommand EnvironmentServiceRebuildCommand { get; }
         public AsyncRelayCommand EnvironmentServiceDeleteCommand { get; }
+        public AsyncRelayCommand EnvironmentDefaultCommand { get; }
         public AsyncRelayCommand FilterClearCommand { get; }
         public ListCollectionView ModelCollection { get; }
 
@@ -245,6 +247,33 @@ namespace Amuse.App.Views
                 await EnvironmentService.DeleteAsync(SelectedEnvironment);
             }
         }
+
+
+        private async Task EnvironmentDefaultAsync()
+        {
+            if (SelectedEnvironment is null)
+                return;
+
+            var environments = SelectedEnvironment.Type switch
+            {
+                EnvironmentType.Vendor => Settings.Environments.Where(x => x.Backend == SelectedEnvironment.Backend && x.Type == EnvironmentType.Vendor && x.Vendor == SelectedEnvironment.Vendor),
+                EnvironmentType.Device => Settings.Environments.Where(x => x.Backend == SelectedEnvironment.Backend && x.Type == EnvironmentType.Device && x.Device == SelectedEnvironment.Device),
+                _ => Settings.Environments.Where(x => x.Backend == SelectedEnvironment.Backend && x.Type == EnvironmentType.Pipeline && x.Pipeline == SelectedEnvironment.Pipeline),
+            };
+
+            foreach (var env in environments)
+                env.IsDefault = false;
+
+            SelectedEnvironment.IsDefault = true;
+            await SettingsManager.SaveAsync(Settings);
+        }
+
+
+        private bool CanEnvironmentDefault()
+        {
+            return SelectedEnvironment is not null && !SelectedEnvironment.IsDefault;
+        }
+
 
 
         private async Task SaveAsync()
