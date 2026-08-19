@@ -85,4 +85,6 @@ Built for performance and flexibility, TensorStack powers all applications devel
 - `SkiaSharp` https://github.com/mono/SkiaSharp
 - `ZstdSharp` https://github.com/oleg-st/ZstdSharp
 - `OpenCvSharp4` https://github.com/shimat/opencvsharp
-- `HtmlAgilityPack` https://github.com/zzzprojects/html-agility-pack
+- `Diffusers` https://github.com/huggingface/diffusers
+- `Transformers` https://github.com/huggingface/transformers
+- `StableDiffusion.cpp` https://github.com/leejet/stable-diffusion.cpp
