@@ -139,7 +139,7 @@ namespace Amuse.App.Dialogs
 
         public Task<bool> UpdateAsync(EnvironmentModel environmentModel)
         {
-            var environmentId = Settings.Environments.NextId(x => x.Id);
+            var environmentId = environmentModel.Id;
             _originalEnvironmentModel = environmentModel;
             EnvironmentModel = environmentModel.DeepClone(environmentId);
             IsFixedEnvironment = environmentId <= Utils.FixedIdRange;
