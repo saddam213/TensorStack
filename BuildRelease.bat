@@ -4,20 +4,17 @@ dotnet pack TensorStack.Common/TensorStack.Common.csproj -c Release
 dotnet build TensorStack.Media/TensorStack.Media.csproj -c Release
 dotnet pack TensorStack.Media/TensorStack.Media.csproj -c Release
 
-dotnet build TensorStack.Image.Bitmap/TensorStack.Image.Bitmap.csproj -c Release
-dotnet pack TensorStack.Image.Bitmap/TensorStack.Image.Bitmap.csproj -c Release
+dotnet build TensorStack.Media.Windows/TensorStack.Media.Windows.csproj -c Release
+dotnet pack TensorStack.Media.Windows/TensorStack.Media.Windows.csproj -c Release
 
-dotnet build TensorStack.Image.BitmapImage/TensorStack.Image.BitmapImage.csproj -c Release
-dotnet pack TensorStack.Image.BitmapImage/TensorStack.Image.BitmapImage.csproj -c Release
+dotnet build TensorStack.Media.Bitmap/TensorStack.Media.Bitmap.csproj -c Release
+dotnet pack TensorStack.Media.Bitmap/TensorStack.Media.Bitmap.csproj -c Release
 
-dotnet build TensorStack.Image.SkiaSharp/TensorStack.Image.SkiaSharp.csproj -c Release
-dotnet pack TensorStack.Image.SkiaSharp/TensorStack.Image.SkiaSharp.csproj -c Release
+dotnet build TensorStack.Media.BitmapImage/TensorStack.Media.BitmapImage.csproj -c Release
+dotnet pack TensorStack.Media.BitmapImage/TensorStack.Media.BitmapImage.csproj -c Release
 
-dotnet build TensorStack.Audio.Windows/TensorStack.Audio.Windows.csproj -c Release
-dotnet pack TensorStack.Audio.Windows/TensorStack.Audio.Windows.csproj -c Release
-
-dotnet build TensorStack.Video.Windows/TensorStack.Video.Windows.csproj -c Release
-dotnet pack TensorStack.Video.Windows/TensorStack.Video.Windows.csproj -c Release
+dotnet build TensorStack.Media.SkiaSharp/TensorStack.Media.SkiaSharp.csproj -c Release
+dotnet pack TensorStack.Media.SkiaSharp/TensorStack.Media.SkiaSharp.csproj -c Release
 
 dotnet build TensorStack.Providers.CPU/TensorStack.Providers.CPU.csproj -c Release
 dotnet pack TensorStack.Providers.CPU/TensorStack.Providers.CPU.csproj -c Release

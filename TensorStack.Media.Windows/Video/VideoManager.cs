@@ -11,9 +11,8 @@ using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
 using TensorStack.Common.Video;
-using TensorStack.Media.Video;
 
-namespace TensorStack.Video
+namespace TensorStack.Media.Video
 {
     public static class VideoManager
     {

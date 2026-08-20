@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
-using TensorStack.Image;
+using TensorStack.Media.Image;
 
 namespace Amuse.Host.StableDiffusionCpp
 {

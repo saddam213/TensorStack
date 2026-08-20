@@ -22,16 +22,9 @@
     <ProjectReference Include="..\..\TensorStack.Common\TensorStack.Common.csproj" />
     <ProjectReference Include="..\..\TensorStack.Extractors\TensorStack.Extractors.csproj" />
     <ProjectReference Include="..\..\TensorStack.Upscaler\TensorStack.Upscaler.csproj" />
-    <ProjectReference Include="..\..\TensorStack.Video.Windows\TensorStack.Video.Windows.csproj" />
     <ProjectReference Include="..\..\TensorStack.Python\TensorStack.Python.csproj" />
-    <ProjectReference Include="..\..\TensorStack.Image.SkiaSharp\TensorStack.Image.SkiaSharp.csproj" />
- 
-    <!--<ProjectReference Include="..\..\TensorStack.TextGeneration\TensorStack.TextGeneration.csproj" />
-    <ProjectReference Include="..\..\TensorStack.Audio\TensorStack.Audio.csproj" />
-    <ProjectReference Include="..\..\TensorStack.Audio.Windows\TensorStack.Audio.Windows.csproj" />-->
-    <!--<ProjectReference Include="..\..\TensorStack.Providers.CPU\TensorStack.Providers.CPU.csproj" />-->
+    <ProjectReference Include="..\..\TensorStack.Media.SkiaSharp\TensorStack.Media.SkiaSharp.csproj" />
     <ProjectReference Include="..\..\TensorStack.Providers.DML\TensorStack.Providers.DML.csproj" />
-    <!--<ProjectReference Include="..\..\TensorStack.Providers.CUDA\TensorStack.Providers.CUDA.csproj" />-->
   </ItemGroup>
 
   <!--Nuget Packages-->
@@ -41,7 +34,6 @@
     <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.4.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
     <PackageReference Include="ZstdSharp.Port" Version="0.8.8" />
-    <!--<PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu.Windows" Version="1.23.0" />-->
   </ItemGroup>
 
   <!--Binaries-->

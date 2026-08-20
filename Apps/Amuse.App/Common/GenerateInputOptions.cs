@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
-using TensorStack.Audio;
 using TensorStack.Common.Tensor;
+using TensorStack.Media.Audio;
 using TensorStack.TextGeneration.Common;
 using TensorStack.WPF;
 

@@ -31,12 +31,12 @@
 
   <!--Debug-->
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <ProjectReference Include="..\..\TensorStack.Image.SkiaSharp\TensorStack.Image.SkiaSharp.csproj" />
+    <ProjectReference Include="..\..\TensorStack.Media.SkiaSharp\TensorStack.Media.SkiaSharp.csproj" />
   </ItemGroup>
 
   <!--Release-->
   <ItemGroup Condition="'$(Configuration)' == 'Release' OR '$(Configuration)' == 'Release_Installer'">
-    <PackageReference Include="TensorStack.Image.SkiaSharp" Version="$(PackageVersion)" />
+    <PackageReference Include="TensorStack.Media.SkiaSharp" Version="$(PackageVersion)" />
   </ItemGroup>
 
   <!--Images-->

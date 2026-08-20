@@ -6,10 +6,10 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using TensorStack.Audio;
 using TensorStack.Common;
-using TensorStack.Image;
-using TensorStack.Video;
+using TensorStack.Media.Image;
+using TensorStack.Media.Audio;
+using TensorStack.Media.Video;
 using TensorStack.WPF;
 using TensorStack.WPF.Controls;
 

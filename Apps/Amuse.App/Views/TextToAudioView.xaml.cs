@@ -6,8 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TensorStack.Audio;
 using TensorStack.Common;
+using TensorStack.Media.Audio;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
 

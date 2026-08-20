@@ -1,41 +1,50 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
-using SkiaSharp;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
-using TensorStack.Media.Image;
 
-namespace TensorStack.Image
+namespace TensorStack.Media.Image
 {
     /// <summary>
-    /// ImageInput implementation with SkiaSharp.SKBitmap.
+    /// ImageInput implementation with System.Windows.Media.Imaging.WriteableBitmap.
     /// </summary>
     public class ImageInput : ImageInputBase
     {
         private readonly string _sourceFile;
-        private SKBitmap _image;
+        private WriteableBitmap _image;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageInput"/> class.
         /// </summary>
         /// <param name="tensor">The tensor.</param>
-        public ImageInput(ImageTensor tensor) : base(tensor)
+        public ImageInput(ImageTensor tensor, string filename = default) : base(tensor)
         {
-            _image = tensor.ToBitmap();
+            _image = tensor.ToBitmapImage();
+            _sourceFile = filename;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageInput"/> class.
         /// </summary>
         /// <param name="image">The image.</param>
-        public ImageInput(SKBitmap image)
+        public ImageInput(WriteableBitmap image, string filename = default)
             : base(image.ToTensor())
         {
             _image = image;
+            _sourceFile = filename;
+            if (!_image.IsFrozen)
+                _image.Freeze();
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImageInput"/> class.
+        /// </summary>
+        /// <param name="image">The image.</param>
+        public ImageInput(BitmapSource image, string filename = default)
+            : this(new WriteableBitmap(image), filename) { }
 
 
         /// <summary>
@@ -43,10 +52,7 @@ namespace TensorStack.Image
         /// </summary>
         /// <param name="filename">The filename.</param>
         public ImageInput(string filename)
-            : this(SKBitmap.Decode(filename))
-        {
-            _sourceFile = filename;
-        }
+            : this(ImageService.Load(filename), filename) { }
 
 
         /// <summary>
@@ -56,7 +62,8 @@ namespace TensorStack.Image
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
         /// <param name="resizeMode">The resize mode.</param>
-        public ImageInput(string filename, int width, int height, ResizeMode resizeMode = ResizeMode.Stretch) : this(filename)
+        public ImageInput(string filename, int width, int height, ResizeMode resizeMode = ResizeMode.Stretch)
+            : this(ImageService.Load(filename))
         {
             Resize(width, height, resizeMode);
         }
@@ -65,10 +72,10 @@ namespace TensorStack.Image
         /// <summary>
         /// Gets the image.
         /// </summary>
-        public SKBitmap Image => _image;
+        public WriteableBitmap Image => _image;
 
         /// <summary>
-        /// Gets the source filename.
+        /// Gets the source Image filename.
         /// </summary>
         public override string SourceFile => _sourceFile;
 
@@ -79,11 +86,7 @@ namespace TensorStack.Image
         /// <param name="filename">The filename.</param>
         public override void Save(string filename)
         {
-            using (var image = SKImage.FromBitmap(Image))
-            using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-            {
-                File.WriteAllBytes(filename, data.ToArray());
-            }
+            _image.Save(filename);
         }
 
 
@@ -92,14 +95,9 @@ namespace TensorStack.Image
         /// </summary>
         /// <param name="filename">The filename.</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns>Task.</returns>
-        public override async Task SaveAsync(string filename, CancellationToken cancellationToken = default)
+        public override Task SaveAsync(string filename, CancellationToken cancellationToken = default)
         {
-            using (var image = SKImage.FromBitmap(Image))
-            using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
-            {
-                await File.WriteAllBytesAsync(filename, data.ToArray(), cancellationToken);
-            }
+            return Task.Run(() => Save(filename), cancellationToken);
         }
 
 
@@ -109,7 +107,7 @@ namespace TensorStack.Image
         protected override void OnTensorDataChanged()
         {
             base.OnTensorDataChanged();
-            _image = this.ToBitmap();
+            _image = this.ToBitmapImage();
         }
 
 
@@ -118,10 +116,19 @@ namespace TensorStack.Image
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            _image?.Dispose();
             _image = null;
             base.Dispose(disposing);
         }
 
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImageInput"/> class.
+        /// </summary>
+        /// <param name="filename">The filename.</param>
+        public static async Task<ImageInput> CreateAsync(string filename)
+        {
+            var bitmap = await ImageService.LoadFromFileAsync(filename);
+            return await Task.Run(() => new ImageInput(bitmap, filename));
+        }
     }
 }

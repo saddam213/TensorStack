@@ -8,7 +8,6 @@ using System.Windows.Input;
 using TensorStack.Common;
 using TensorStack.Common.Common;
 using TensorStack.Media.Video;
-using TensorStack.Video;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
 

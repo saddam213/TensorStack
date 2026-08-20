@@ -2,11 +2,9 @@
 // Licensed under the Apache 2.0 License.
 using System.Threading;
 using System.Threading.Tasks;
-using TensorStack.Audio.Windows;
 using TensorStack.Common.Tensor;
-using TensorStack.Media.Audio;
 
-namespace TensorStack.Audio
+namespace TensorStack.Media.Audio
 {
     /// <summary>
     /// Class to handle processing of a audio from file.

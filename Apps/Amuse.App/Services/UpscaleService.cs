@@ -9,7 +9,7 @@ using Amuse.App.Common;
 using TensorStack.Providers;
 using TensorStack.Upscaler.Common;
 using TensorStack.Upscaler.Pipelines;
-using TensorStack.Video;
+using TensorStack.Media.Video;
 
 namespace Amuse.App.Services
 {

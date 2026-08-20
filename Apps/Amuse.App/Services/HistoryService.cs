@@ -5,11 +5,11 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using TensorStack.Audio;
 using TensorStack.Common;
 using TensorStack.Common.Common;
-using TensorStack.Image;
-using TensorStack.Video;
+using TensorStack.Media.Image;
+using TensorStack.Media.Audio;
+using TensorStack.Media.Video;
 using TensorStack.WPF.Controls;
 
 namespace Amuse.App.Services

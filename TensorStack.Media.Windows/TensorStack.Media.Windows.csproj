@@ -16,21 +16,20 @@
     <PackageReference Include="TensorStack.Media" Version="$(Version)" />
   </ItemGroup>
 
+  <!--Common Packages-->
+  <ItemGroup>
+    <PackageReference Include="System.Linq.Async" Version="7.0.1" />
+    <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260627" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260627" />
+  </ItemGroup>
+
   <!--Binaries-->
   <ItemGroup>
-    <Content Include="ffmpeg.exe"
-             Pack="true"
-             PackagePath="contentFiles\any\any\"
-             CopyToOutputDirectory="Always"
-             PackageCopyToOutput="true" />
+    <Content Include="ffmpeg.exe" Pack="true" PackagePath="contentFiles\any\any\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
     <None Include="ffmpeg.exe" Pack="false" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ffprobe.exe"
-             Pack="true"
-             PackagePath="contentFiles\any\any\"
-             CopyToOutputDirectory="Always"
-             PackageCopyToOutput="true" />
+    <Content Include="ffprobe.exe" Pack="true" PackagePath="contentFiles\any\any\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
     <None Include="ffprobe.exe" Pack="false" />
   </ItemGroup>
 
@@ -58,9 +57,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="TensorStack.Audio.Windows.targets"
-          Pack="true"
-          PackagePath="buildTransitive\" />
+    <None Include="TensorStack.Media.Windows.targets" Pack="true" PackagePath="buildTransitive\" />
   </ItemGroup>
 
 </Project>

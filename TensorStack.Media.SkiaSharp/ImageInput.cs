@@ -1,21 +1,21 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
-using System.Drawing;
+using SkiaSharp;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
-using TensorStack.Media.Image;
 
-namespace TensorStack.Image
+namespace TensorStack.Media.Image
 {
     /// <summary>
-    /// ImageInput implementation with System.Drawing.Bitmap.
+    /// ImageInput implementation with SkiaSharp.SKBitmap.
     /// </summary>
     public class ImageInput : ImageInputBase
     {
         private readonly string _sourceFile;
-        private Bitmap _image;
+        private SKBitmap _image;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageInput"/> class.
@@ -23,14 +23,14 @@ namespace TensorStack.Image
         /// <param name="tensor">The tensor.</param>
         public ImageInput(ImageTensor tensor) : base(tensor)
         {
-            _image = tensor.ToBitmapImage();
+            _image = tensor.ToBitmap();
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageInput"/> class.
         /// </summary>
         /// <param name="image">The image.</param>
-        public ImageInput(Bitmap image)
+        public ImageInput(SKBitmap image)
             : base(image.ToTensor())
         {
             _image = image;
@@ -42,7 +42,7 @@ namespace TensorStack.Image
         /// </summary>
         /// <param name="filename">The filename.</param>
         public ImageInput(string filename)
-            : this(new Bitmap(filename))
+            : this(SKBitmap.Decode(filename))
         {
             _sourceFile = filename;
         }
@@ -55,7 +55,7 @@ namespace TensorStack.Image
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
         /// <param name="resizeMode">The resize mode.</param>
-        public ImageInput(string filename, int width, int height, ResizeMode resizeMode = ResizeMode.Stretch) : this(new Bitmap(filename))
+        public ImageInput(string filename, int width, int height, ResizeMode resizeMode = ResizeMode.Stretch) : this(filename)
         {
             Resize(width, height, resizeMode);
         }
@@ -64,7 +64,7 @@ namespace TensorStack.Image
         /// <summary>
         /// Gets the image.
         /// </summary>
-        public Bitmap Image => _image;
+        public SKBitmap Image => _image;
 
         /// <summary>
         /// Gets the source filename.
@@ -78,7 +78,11 @@ namespace TensorStack.Image
         /// <param name="filename">The filename.</param>
         public override void Save(string filename)
         {
-            _image.Save(filename);
+            using (var image = SKImage.FromBitmap(Image))
+            using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+            {
+                File.WriteAllBytes(filename, data.ToArray());
+            }
         }
 
 
@@ -88,9 +92,13 @@ namespace TensorStack.Image
         /// <param name="filename">The filename.</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>Task.</returns>
-        public override Task SaveAsync(string filename, CancellationToken cancellationToken = default)
+        public override async Task SaveAsync(string filename, CancellationToken cancellationToken = default)
         {
-            return Task.Run(() => Save(filename), cancellationToken);
+            using (var image = SKImage.FromBitmap(Image))
+            using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+            {
+                await File.WriteAllBytesAsync(filename, data.ToArray(), cancellationToken);
+            }
         }
 
 
@@ -100,7 +108,7 @@ namespace TensorStack.Image
         protected override void OnTensorDataChanged()
         {
             base.OnTensorDataChanged();
-            _image = this.ToBitmapImage();
+            _image = this.ToBitmap();
         }
 
 

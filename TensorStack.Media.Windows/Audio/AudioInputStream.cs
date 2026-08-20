@@ -4,10 +4,8 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using TensorStack.Audio.Windows;
-using TensorStack.Media.Audio;
 
-namespace TensorStack.Audio
+namespace TensorStack.Media.Audio
 {
     public class AudioInputStream : AudioInputStreamBase
     {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using TensorStack.Audio;
 using TensorStack.Common;
-using TensorStack.Image;
-using TensorStack.Video;
+using TensorStack.Media.Image;
+using TensorStack.Media.Audio;
+using TensorStack.Media.Video;
 
 namespace Amuse.App.Common
 {

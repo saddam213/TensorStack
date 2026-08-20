@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace TensorStack.Image
+namespace TensorStack.Media.Image
 {
     public static class ImageService
     {

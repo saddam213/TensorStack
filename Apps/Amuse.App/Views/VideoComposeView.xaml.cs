@@ -1,8 +1,8 @@
 ﻿using Amuse.App.Common;
 using Amuse.App.Services;
 using Microsoft.Extensions.Logging;
-using TensorStack.Image;
-using TensorStack.Video;
+using TensorStack.Media.Image;
+using TensorStack.Media.Video;
 using TensorStack.WPF.Services;
 
 namespace Amuse.App.Views

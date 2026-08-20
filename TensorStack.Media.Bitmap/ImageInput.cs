@@ -1,51 +1,39 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
-using TensorStack.Media.Image;
 
-namespace TensorStack.Image
+namespace TensorStack.Media.Image
 {
     /// <summary>
-    /// ImageInput implementation with System.Windows.Media.Imaging.WriteableBitmap.
+    /// ImageInput implementation with System.Drawing.Bitmap.
     /// </summary>
     public class ImageInput : ImageInputBase
     {
         private readonly string _sourceFile;
-        private WriteableBitmap _image;
+        private Bitmap _image;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageInput"/> class.
         /// </summary>
         /// <param name="tensor">The tensor.</param>
-        public ImageInput(ImageTensor tensor, string filename = default) : base(tensor)
+        public ImageInput(ImageTensor tensor) : base(tensor)
         {
             _image = tensor.ToBitmapImage();
-            _sourceFile = filename;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageInput"/> class.
         /// </summary>
         /// <param name="image">The image.</param>
-        public ImageInput(WriteableBitmap image, string filename = default)
+        public ImageInput(Bitmap image)
             : base(image.ToTensor())
         {
             _image = image;
-            _sourceFile = filename;
-            if (!_image.IsFrozen)
-                _image.Freeze();
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ImageInput"/> class.
-        /// </summary>
-        /// <param name="image">The image.</param>
-        public ImageInput(BitmapSource image, string filename = default)
-            : this(new WriteableBitmap(image), filename) { }
 
 
         /// <summary>
@@ -53,7 +41,10 @@ namespace TensorStack.Image
         /// </summary>
         /// <param name="filename">The filename.</param>
         public ImageInput(string filename)
-            : this(ImageService.Load(filename), filename) { }
+            : this(new Bitmap(filename))
+        {
+            _sourceFile = filename;
+        }
 
 
         /// <summary>
@@ -63,8 +54,7 @@ namespace TensorStack.Image
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
         /// <param name="resizeMode">The resize mode.</param>
-        public ImageInput(string filename, int width, int height, ResizeMode resizeMode = ResizeMode.Stretch)
-            : this(ImageService.Load(filename))
+        public ImageInput(string filename, int width, int height, ResizeMode resizeMode = ResizeMode.Stretch) : this(new Bitmap(filename))
         {
             Resize(width, height, resizeMode);
         }
@@ -73,10 +63,10 @@ namespace TensorStack.Image
         /// <summary>
         /// Gets the image.
         /// </summary>
-        public WriteableBitmap Image => _image;
+        public Bitmap Image => _image;
 
         /// <summary>
-        /// Gets the source Image filename.
+        /// Gets the source filename.
         /// </summary>
         public override string SourceFile => _sourceFile;
 
@@ -96,6 +86,7 @@ namespace TensorStack.Image
         /// </summary>
         /// <param name="filename">The filename.</param>
         /// <param name="cancellationToken">The cancellation token</param>
+        /// <returns>Task.</returns>
         public override Task SaveAsync(string filename, CancellationToken cancellationToken = default)
         {
             return Task.Run(() => Save(filename), cancellationToken);
@@ -117,19 +108,10 @@ namespace TensorStack.Image
         /// </summary>
         protected override void Dispose(bool disposing)
         {
+            _image?.Dispose();
             _image = null;
             base.Dispose(disposing);
         }
 
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ImageInput"/> class.
-        /// </summary>
-        /// <param name="filename">The filename.</param>
-        public static async Task<ImageInput> CreateAsync(string filename)
-        {
-            var bitmap = await ImageService.LoadFromFileAsync(filename);
-            return await Task.Run(() => new ImageInput(bitmap, filename));
-        }
     }
 }

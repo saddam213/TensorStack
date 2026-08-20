@@ -8,9 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Video;
-using TensorStack.Media.Video;
 
-namespace TensorStack.Video
+namespace TensorStack.Media.Video
 {
     public class VideoInputStream : VideoInputStreamBase
     {

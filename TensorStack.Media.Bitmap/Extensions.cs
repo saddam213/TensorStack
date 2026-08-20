@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
 
-namespace TensorStack.Image
+namespace TensorStack.Media.Image
 {
     public static class Extensions
     {

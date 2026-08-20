@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using TensorStack.Common.Tensor;
 using TensorStack.Common.Video;
 
-namespace TensorStack.Video
+namespace TensorStack.Media.Video
 {
     public static class Extensions
     {

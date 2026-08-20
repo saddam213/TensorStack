@@ -1,8 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using TensorStack.Audio.Windows;
 
-namespace TensorStack.Audio
+namespace TensorStack.Media.Audio
 {
     public static class Extensions
     {

@@ -5,15 +5,11 @@ VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Common", "TensorStack.Common\TensorStack.Common.csproj", "{5B6FD5FC-8D38-4453-A17A-7038FC717328}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Image.Bitmap", "TensorStack.Image.Bitmap\TensorStack.Image.Bitmap.csproj", "{7BB55960-DD82-4A5C-A488-788BCDFF601C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Media.Bitmap", "TensorStack.Media.Bitmap\TensorStack.Media.Bitmap.csproj", "{7BB55960-DD82-4A5C-A488-788BCDFF601C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Image.BitmapImage", "TensorStack.Image.BitmapImage\TensorStack.Image.BitmapImage.csproj", "{D7F2DCDD-D68E-4C23-8FA4-380577C47C34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Media.BitmapImage", "TensorStack.Media.BitmapImage\TensorStack.Media.BitmapImage.csproj", "{D7F2DCDD-D68E-4C23-8FA4-380577C47C34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Image.SkiaSharp", "TensorStack.Image.SkiaSharp\TensorStack.Image.SkiaSharp.csproj", "{444A9A3A-CA3B-4539-9456-83ADA25038C2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Video.Windows", "TensorStack.Video.Windows\TensorStack.Video.Windows.csproj", "{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Audio.Windows", "TensorStack.Audio.Windows\TensorStack.Audio.Windows.csproj", "{A6B58356-864A-4401-BC5B-50A3A5DA96A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Media.SkiaSharp", "TensorStack.Media.SkiaSharp\TensorStack.Media.SkiaSharp.csproj", "{444A9A3A-CA3B-4539-9456-83ADA25038C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Providers.DML", "TensorStack.Providers.DML\TensorStack.Providers.DML.csproj", "{B2768F02-6BF6-48B4-8332-076F659A26D0}"
 EndProject
@@ -56,6 +52,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugApp", "Apps\DebugApp\D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Media", "TensorStack.Media\TensorStack.Media.csproj", "{1CB4A90F-24D8-43F3-A7C4-91DE6354F709}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Media.Windows", "TensorStack.Media.Windows\TensorStack.Media.Windows.csproj", "{CB6067EA-3564-4DA5-8B88-CF9B71B62F32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,18 +85,6 @@ Global
 		{444A9A3A-CA3B-4539-9456-83ADA25038C2}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
 		{444A9A3A-CA3B-4539-9456-83ADA25038C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{444A9A3A-CA3B-4539-9456-83ADA25038C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
-		{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
-		{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1FC413EC-CAF0-4B54-B206-1D27D2CD820C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A6B58356-864A-4401-BC5B-50A3A5DA96A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6B58356-864A-4401-BC5B-50A3A5DA96A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6B58356-864A-4401-BC5B-50A3A5DA96A9}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
-		{A6B58356-864A-4401-BC5B-50A3A5DA96A9}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
-		{A6B58356-864A-4401-BC5B-50A3A5DA96A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6B58356-864A-4401-BC5B-50A3A5DA96A9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B2768F02-6BF6-48B4-8332-076F659A26D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B2768F02-6BF6-48B4-8332-076F659A26D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2768F02-6BF6-48B4-8332-076F659A26D0}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
@@ -189,6 +175,12 @@ Global
 		{1CB4A90F-24D8-43F3-A7C4-91DE6354F709}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
 		{1CB4A90F-24D8-43F3-A7C4-91DE6354F709}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CB4A90F-24D8-43F3-A7C4-91DE6354F709}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB6067EA-3564-4DA5-8B88-CF9B71B62F32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB6067EA-3564-4DA5-8B88-CF9B71B62F32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB6067EA-3564-4DA5-8B88-CF9B71B62F32}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
+		{CB6067EA-3564-4DA5-8B88-CF9B71B62F32}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
+		{CB6067EA-3564-4DA5-8B88-CF9B71B62F32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB6067EA-3564-4DA5-8B88-CF9B71B62F32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

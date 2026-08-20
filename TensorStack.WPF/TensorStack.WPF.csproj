@@ -11,17 +11,15 @@
   <!--Projects-->
   <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\TensorStack.Common\TensorStack.Common.csproj" />
-    <ProjectReference Include="..\TensorStack.Image.BitmapImage\TensorStack.Image.BitmapImage.csproj" />
-    <ProjectReference Include="..\TensorStack.Video.Windows\TensorStack.Video.Windows.csproj" />
-    <ProjectReference Include="..\TensorStack.Audio.Windows\TensorStack.Audio.Windows.csproj" />
+    <ProjectReference Include="..\TensorStack.Media.Windows\TensorStack.Media.Windows.csproj" />
+    <ProjectReference Include="..\TensorStack.Media.BitmapImage\TensorStack.Media.BitmapImage.csproj" />
   </ItemGroup>
 
   <!--Packages-->
   <ItemGroup Condition=" '$(Configuration)' == 'Release'">
     <PackageReference Include="TensorStack.Common" Version="$(Version)" />
-    <PackageReference Include="TensorStack.Image.BitmapImage" Version="$(Version)" />
-    <PackageReference Include="TensorStack.Video.Windows" Version="$(Version)" />
-    <PackageReference Include="TensorStack.Audio.Windows" Version="$(Version)" />
+    <PackageReference Include="TensorStack.Media.Windows" Version="$(Version)" />
+    <PackageReference Include="TensorStack.Media.BitmapImage" Version="$(Version)" />
   </ItemGroup>
 
   <!--Common Packages-->

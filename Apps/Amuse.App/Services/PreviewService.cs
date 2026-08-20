@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
-using TensorStack.Image;
+using TensorStack.Media.Image;
 using TensorStack.Providers;
 
 namespace Amuse.App.Services
