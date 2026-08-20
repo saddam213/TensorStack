@@ -50,28 +50,15 @@ Built for performance and flexibility, TensorStack powers all applications devel
 
 ### Media Processing
 
-#### Image
-
 | Package | Description | Docs | Package |
 |---------|-------------|------|---------|
-| TensorStack.Image | Shared image utilities | [README](TensorStack.Image/README.md) | [![Image Badge](https://img.shields.io/nuget/v/TensorStack.Image?color=4bc51e&label=TensorStack.Image)](https://www.nuget.org/packages/TensorStack.Image) |
-| TensorStack.Image.Bitmap | Windows Forms `Bitmap` ↔ Tensor conversion | [README](TensorStack.Image.Bitmap/README.md) | [![Bitmap Badge](https://img.shields.io/nuget/v/TensorStack.Image.Bitmap?color=4bc51e&label=TensorStack.Image.Bitmap)](https://www.nuget.org/packages/TensorStack.Image.Bitmap) |
-| TensorStack.Image.BitmapImage |  WPF `BitmapImage` ↔ Tensor conversion | [README](TensorStack.Image.BitmapImage/README.md) | [![BitmapImage Badge](https://img.shields.io/nuget/v/TensorStack.Image.BitmapImage?color=4bc51e&label=TensorStack.Image.BitmapImage)](https://www.nuget.org/packages/TensorStack.Image.BitmapImage) |
-| TensorStack.Image.SkiaSharp |  SkiaSharp `SKBitmap` ↔ Tensor conversion | [README](TensorStack.Image.SkiaSharp/README.md) | [![BitmapImage Badge](https://img.shields.io/nuget/v/TensorStack.Image.SkiaSharp?color=4bc51e&label=TensorStack.Image.SkiaSharp)](https://www.nuget.org/packages/TensorStack.Image.SkiaSharp) |
+| TensorStack.Media | Shared Image/Audio/Video utilities | [README](TensorStack.Media/README.md) | [![Image Badge](https://img.shields.io/nuget/v/TensorStack.Media?color=4bc51e&label=TensorStack.Media)](https://www.nuget.org/packages/TensorStack.Media) |
+| TensorStack.Media.Bitmap | Image ↔ Tensor (`Bitmap`) | [README](TensorStack.Media.Bitmap/README.md) | [![Bitmap Badge](https://img.shields.io/nuget/v/TensorStack.Media.Bitmap?color=4bc51e&label=TensorStack.Media.Bitmap)](https://www.nuget.org/packages/TensorStack.Media.Bitmap) |
+| TensorStack.Media.BitmapImage |  Image ↔ Tensor (`BitmapImage`) | [README](TensorStack.Media.BitmapImage/README.md) | [![BitmapImage Badge](https://img.shields.io/nuget/v/TensorStack.Media.BitmapImage?color=4bc51e&label=TensorStack.Media.BitmapImage)](https://www.nuget.org/packages/TensorStack.Media.BitmapImage) |
+| TensorStack.Media.SkiaSharp |  Image ↔ Tensor (`SkiaSharp`) | [README](TensorStack.Media.SkiaSharp/README.md) | [![BitmapImage Badge](https://img.shields.io/nuget/v/TensorStack.Media.SkiaSharp?color=4bc51e&label=TensorStack.Media.SkiaSharp)](https://www.nuget.org/packages/TensorStack.Media.SkiaSharp) |
+| TensorStack.Media.Windows | Audio/Video ↔ Tensor (`OpenCvSharp4`, `FFMPEG`) | [README](TensorStack.Media.Windows/README.md) | [![Media.Windows Badge](https://img.shields.io/nuget/v/TensorStack.Media.Windows?color=4bc51e&label=TensorStack.Media.Windows)](https://www.nuget.org/packages/TensorStack.Media.Windows) |
 
-#### Video
 
-| Package | Description | Docs | Package |
-|---------|-------------|------|---------|
-| TensorStack.Video | Shared video utilities | [README](TensorStack.Video/README.md) | [![Video Badge](https://img.shields.io/nuget/v/TensorStack.Video?color=4bc51e&label=TensorStack.Video)](https://www.nuget.org/packages/TensorStack.Video) |
-| TensorStack.Video.Windows | Windows implementation using OpenCvSharp4 | [README](TensorStack.Video.Windows/README.md) | [![Video.Windows Badge](https://img.shields.io/nuget/v/TensorStack.Video.Windows?color=4bc51e&label=TensorStack.Video.Windows)](https://www.nuget.org/packages/TensorStack.Video.Windows) |
-
-#### Audio
-
-| Package | Description | Docs | Package |
-|---------|-------------|------|---------|
-| TensorStack.Audio | Shared audio utilities | [README](TensorStack.Audio/README.md) | [![Audio Badge](https://img.shields.io/nuget/v/TensorStack.Audio?color=4bc51e&label=TensorStack.Audio)](https://www.nuget.org/packages/TensorStack.Audio) |
-| TensorStack.Audio.Windows | Windows implementation using FFMPEG | [README](TensorStack.Audio.Windows/README.md) | [![Audio.Windows Badge](https://img.shields.io/nuget/v/TensorStack.Audio.Windows?color=4bc51e&label=TensorStack.Audio.Windows)](https://www.nuget.org/packages/TensorStack.Audio.Windows) |
 
 ---
 

@@ -1,1 +1,1 @@
-# TensorStack.Image.Bitmap
+# TensorStack.Media.Bitmap

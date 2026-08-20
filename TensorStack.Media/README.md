@@ -1,1 +1,1 @@
-# TensorStack.Image
+# TensorStack.Media

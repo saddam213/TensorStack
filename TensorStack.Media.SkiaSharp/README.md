@@ -1,1 +1,1 @@
-# TensorStack.Image.SkiaSharp
+# TensorStack.Media.SkiaSharp
