@@ -19,6 +19,7 @@
         public string ControlNet { get; set; }
         public string EmbeddingsDirectory { get; set; }
         public string LoraModelDirectory { get; set; }
+        public string UpscaleModelDirectory { get; set; }
         public string ExtraModelArgs { get; set; }
 
     }

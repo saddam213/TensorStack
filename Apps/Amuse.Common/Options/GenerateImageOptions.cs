@@ -29,6 +29,10 @@ namespace Amuse.Common
         public string Task { get; set; }
         public int MaxLength { get; set; }
         public int MaxLength2 { get; set; }
+        public LatentUpscale LatentUpscale { get; set; }
+        public int LatentUpscaleSteps { get; set; }
+        public float LatentUpscaleStrength { get; set; }
+        public int LatentUpscaleTileSize { get; set; }
         public SchedulerOptions SchedulerOptions { get; set; }
         public List<LoraOptions> LoraOptions { get; set; }
 

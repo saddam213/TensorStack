@@ -31,6 +31,7 @@ namespace Amuse.App.Controls
         public DiffusionInputControl()
         {
             FrameRates = [8f, 12f, 16f, 24f, 25f, 30f, 60f];
+            LatentTileSizes = [16, 32, 64, 96, 128, 160, 192, 224, 256];
             SeedCommand = new RelayCommand<bool>(GenerateSeed);
             AddTriggerWordCommand = new AsyncRelayCommand<string>(AddTriggerWordAsync);
             InitializeComponent();
@@ -50,6 +51,7 @@ namespace Amuse.App.Controls
         public RelayCommand<bool> SeedCommand { get; }
         public AsyncRelayCommand<string> AddTriggerWordCommand { get; }
         public List<float> FrameRates { get; }
+        public List<int> LatentTileSizes { get; }
 
         public PipelineModel Pipeline
         {
@@ -223,7 +225,12 @@ namespace Amuse.App.Controls
                 FrameChunkOverlap = newOptions.FrameChunkOverlap,
                 NoiseCondition = newOptions.NoiseCondition,
                 IsVaeTilingEnabled = newOptions.IsVaeTilingEnabled,
-                IsVaeSlicingEnabled = newOptions.IsVaeSlicingEnabled
+                IsVaeSlicingEnabled = newOptions.IsVaeSlicingEnabled,
+
+                LatentUpscale = LatentUpscale.None,
+                LatentUpscaleSteps = newOptions.LatentUpscaleSteps,
+                LatentUpscaleTileSize = newOptions.LatentUpscaleTileSize,
+                LatentUpscaleStrength = newOptions.LatentUpscaleStrength,
             };
 
             //Resolution

@@ -65,6 +65,10 @@ namespace Amuse.App.Common
         private bool _isSamplingEnabled;
         private bool _isThinkingEnabled;
         private CacheType _cacheType;
+        private LatentUpscale _latentUpscale;
+        private int _latentUpscaleSteps = 4;
+        private float _latentUpscaleStrength = 0.7f;
+        private int _latentUpscaleTileSize = 128;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int Width
@@ -334,7 +338,7 @@ namespace Amuse.App.Common
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool IsSamplingEnabled
         {
-            get { return  _isSamplingEnabled; }
+            get { return _isSamplingEnabled; }
             set { SetProperty(ref _isSamplingEnabled, value); }
         }
 
@@ -415,6 +419,33 @@ namespace Amuse.App.Common
             set { SetProperty(ref _chunkSize, value); }
         }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public LatentUpscale LatentUpscale
+        {
+            get { return _latentUpscale; }
+            set { SetProperty(ref _latentUpscale, value); }
+        }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int LatentUpscaleSteps
+        {
+            get { return _latentUpscaleSteps; }
+            set { SetProperty(ref _latentUpscaleSteps, value); }
+        }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public float LatentUpscaleStrength
+        {
+            get { return _latentUpscaleStrength; }
+            set { SetProperty(ref _latentUpscaleStrength, value); }
+        }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int LatentUpscaleTileSize
+        {
+            get { return _latentUpscaleTileSize; }
+            set { SetProperty(ref _latentUpscaleTileSize, value); }
+        }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public ObservableCollection<ConversationModel> Conversation

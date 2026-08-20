@@ -72,7 +72,8 @@ namespace Amuse.Host.StableDiffusionCpp
                 VaeTilingParams = new VaeTilingParams
                 {
                     Enabled = options.EnableVaeTiling
-                }
+                },
+                HiresParams = GetHiresParams(loadOptions, options)
             };
         }
 
@@ -124,7 +125,8 @@ namespace Amuse.Host.StableDiffusionCpp
                 {
                     Enabled = options.EnableVaeTiling,
                     TemporalTiling = options.EnableVaeSlicing
-                }
+                },
+                HiresParams = GetHiresParams(loadOptions, options)
             };
         }
 
@@ -184,7 +186,8 @@ namespace Amuse.Host.StableDiffusionCpp
                     LLM = options.CheckpointConfig.TextEncoder,
                     Connectors = options.CheckpointConfig.Connectors,
                     Diffusion = options.CheckpointConfig.Transformer,
-                    LoraModelDirectory = options.LoraAdapterPath
+                    LoraModelDirectory = options.LoraAdapterPath,
+                    UpscaleModelDirectory = GetHiresModelPath(options)
                 };
             }
             if (options.Pipeline == "QwenImagePipeline")
@@ -396,7 +399,7 @@ namespace Amuse.Host.StableDiffusionCpp
             if (options.InputImages.IsNullOrEmpty())
                 return default;
 
-            if (processType == ProcessType.ImageToVideo)
+            if (options.InputImages.Count > 2 && processType == ProcessType.ImageToVideo)
                 return GetBase64Images(options.InputImages);
 
             return default;
@@ -437,6 +440,61 @@ namespace Amuse.Host.StableDiffusionCpp
                 Message = message,
                 Key = "Initialize"
             });
+        }
+
+
+        private static HiresParams GetHiresParams(PipelineLoadOptions loadOptions, GenerateImageOptions generateOptions)
+        {
+            if (generateOptions.LatentUpscale == LatentUpscale.Model || generateOptions.LatentUpscale == LatentUpscale.None)
+                return default;
+
+            var tileSize = generateOptions.LatentUpscaleTileSize <= 0 ? 64 : generateOptions.LatentUpscaleTileSize;
+            var steps = generateOptions.LatentUpscaleSteps <= 0 ? generateOptions.Steps / 2 : generateOptions.LatentUpscaleSteps;
+            return new HiresParams
+            {
+                Steps = steps,
+                Enabled = true,
+                UpscaleTileSize= tileSize,
+                Upscaler = generateOptions.LatentUpscale.GetName(),
+                DenoisingStrength = generateOptions.LatentUpscaleStrength,
+            };
+        }
+
+
+        private static HiresParams GetHiresParams(PipelineLoadOptions loadOptions, GenerateVideoOptions generateOptions)
+        {
+            if (generateOptions.LatentUpscale == LatentUpscale.None)
+                return default;
+
+            var upscaleName = generateOptions.LatentUpscale.GetName();
+            if (generateOptions.LatentUpscale == LatentUpscale.Model)
+            {
+                if (!File.Exists(loadOptions.CheckpointConfig.LatentUpsampler))
+                    return default;
+
+                upscaleName = Path.GetFileNameWithoutExtension(loadOptions.CheckpointConfig.LatentUpsampler);
+            }
+
+            var tileSize = generateOptions.LatentUpscaleTileSize <= 0 ? 64 : generateOptions.LatentUpscaleTileSize;
+            var steps = generateOptions.LatentUpscaleSteps <= 0 ? generateOptions.Steps / 2 : generateOptions.LatentUpscaleSteps;
+            return new HiresParams
+            {
+                Steps = steps,
+                Enabled = true,
+                Upscaler = upscaleName,
+                UpscaleTileSize = tileSize,
+                CustomSigmas = [0.85f, 0.725f, 0.421875f, 0.0f], // TODO: optional
+                DenoisingStrength = generateOptions.LatentUpscaleStrength,
+            };
+        }
+
+
+        private static string GetHiresModelPath(PipelineLoadOptions loadOptions)
+        {
+            if (!File.Exists(loadOptions.CheckpointConfig.LatentUpsampler))
+                return default;
+
+            return Path.GetDirectoryName(loadOptions.CheckpointConfig.LatentUpsampler);
         }
     }
 }

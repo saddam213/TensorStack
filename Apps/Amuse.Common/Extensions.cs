@@ -191,6 +191,22 @@ namespace Amuse.Common
         }
 
 
+        public static string GetName(this Enum enumObj)
+        {
+            var fieldInfo = enumObj.GetType().GetField(enumObj.ToString());
+            var attribArray = fieldInfo.GetCustomAttributes(false);
+            if (attribArray.Length > 0)
+            {
+                foreach (var att in attribArray)
+                {
+                    if (att is DisplayAttribute display)
+                        return display.Name ?? enumObj.ToString();
+                }
+            }
+            return enumObj.ToString();
+        }
+
+
         public static string GetShortName(this Enum enumObj)
         {
             var fieldInfo = enumObj.GetType().GetField(enumObj.ToString());

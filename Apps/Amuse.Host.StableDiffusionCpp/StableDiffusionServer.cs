@@ -498,6 +498,8 @@ namespace Amuse.Host.StableDiffusionCpp
                 argumentBuilder.Append($"--control-net {modelConfig.ControlNet} ");
             if (!string.IsNullOrEmpty(modelConfig.LoraModelDirectory))
                 argumentBuilder.Append($"--lora-model-dir {modelConfig.LoraModelDirectory} ");
+            if (!string.IsNullOrEmpty(modelConfig.UpscaleModelDirectory))
+                argumentBuilder.Append($"--hires-upscalers-dir {modelConfig.UpscaleModelDirectory} ");
             if (!string.IsNullOrEmpty(modelConfig.EmbeddingsDirectory))
                 argumentBuilder.Append($"--embd-dir {modelConfig.EmbeddingsDirectory} ");
             if (!string.IsNullOrEmpty(modelConfig.ExtraModelArgs))

@@ -691,4 +691,38 @@ namespace Amuse.Common
         Quantized = 4,
         Disabled = 100,
     }
+
+
+    public enum LatentUpscale
+    {
+        [Display(Name = "None")]
+        None,
+
+        [Display(Name = "Model")]
+        Model,
+
+        [Display(Name = "Latent")]
+        Latent,
+
+        [Display(Name = "Latent (nearest)")]
+        LatentNearest,
+
+        [Display(Name = "Latent (nearest-exact)")]
+        LatentNearestExact,
+
+        [Display(Name = "Latent (antialiased)")]
+        LatentAntialiased,
+
+        [Display(Name = "Latent (bicubic)")]
+        LatentBicubic,
+
+        [Display(Name = "Latent (bicubic antialiased)")]
+        LatentBicubicAntialiased,
+
+        [Display(Name = "Lanczos")]
+        Lanczos,
+
+        [Display(Name = "Nearest")]
+        Nearest
+    }
 }

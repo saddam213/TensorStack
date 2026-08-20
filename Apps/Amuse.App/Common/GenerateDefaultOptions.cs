@@ -158,6 +158,15 @@ namespace Amuse.App.Common
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool IsFlashAttentionEnabled { get; set; } = true;
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int LatentUpscaleSteps { get; set; } = 4;
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public float LatentUpscaleStrength { get; set; } = 0.7f;
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int LatentUpscaleTileSize { get; set; } = 128;
+
         public GenerateDefaultOptions DeepClone()
         {
             return new GenerateDefaultOptions

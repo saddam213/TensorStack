@@ -204,6 +204,12 @@
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
 
+            <ObjectDataProvider x:Key="LatentUpscale" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="AmuseCommon:LatentUpscale"/>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+
             <ObjectDataProvider x:Key="BackgroundMode" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                 <ObjectDataProvider.MethodParameters>
                     <x:Type TypeName="Extractors:BackgroundMode"/>

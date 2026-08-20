@@ -67,5 +67,8 @@ namespace Amuse.Host.StableDiffusionCpp.Common
 
         [JsonPropertyName("increase_ref_index")]
         public bool IncreaseRefIndex { get; set; }
+
+        [JsonPropertyName("hires")]
+        public HiresParams HiresParams { get; set; }
     }
 }

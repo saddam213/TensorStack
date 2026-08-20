@@ -393,26 +393,42 @@
                 </TabItem.Header>
                 <StackPanel VerticalAlignment="Top" Margin="0,4,0,0">
 
-                    <!--ExtractOptions-->
-                    <GroupBox Header="Extract Options" Margin="0,0,0,10" Visibility="{Binding Pipeline.ExtractModel, Converter={StaticResource NullVisibilityConverter}, FallbackValue=Collapsed}">
-                        <Controls:ExtractInputControl Pipeline="{Binding Pipeline, Mode=OneWay}" Options="{Binding ExtractOptions, Mode=OneWayToSource}" />
-                    </GroupBox>
-
                     <!--SchedulerOptions-->
-                    <GroupBox Header="Scheduler Options" Margin="0,0,0,10">
+                    <GroupBox Header="Scheduler Options" Margin="0,0,0,10" Padding="0,4">
                         <Controls:SchedulerControl Options="{Binding Schedulers}" SelectedOptions="{Binding Options.SchedulerOptions, Mode=TwoWay}" BackendType="{Binding Pipeline.GenerateModel.Backend}" IsSelectorOnly="False"/>
                     </GroupBox>
 
+                    <!--LatentUpscale-->
+                    <GroupBox Header="Latent Upscale" Margin="0,0,0,10" Padding="0,4" Visibility="{Binding Pipeline.DiffusionModel.Backend, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=StableDiffusionCpp}">
+                        <UniformGrid Columns="2">
+                            <StackPanel Margin="0,0,0,2">
+                                <TextBlock Text="Mode" Style="{StaticResource FieldTextBlockStyle}" />
+                                <ComboBox ItemsSource="{Binding Source={StaticResource LatentUpscale}}" SelectedItem="{Binding Options.LatentUpscale, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Style="{StaticResource EnumComboBox}" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,2" IsEnabled="{Binding Options.LatentUpscale, Converter={StaticResource InverseEnumToBooleanConverter}, ConverterParameter=None}">
+                                <TextBlock Text="Tile Size" Style="{StaticResource FieldTextBlockStyle}" />
+                                <ComboBox ItemsSource="{Binding LatentTileSizes}" SelectedItem="{Binding Options.LatentUpscaleTileSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                            </StackPanel>
+                            <CommonControls:SliderControl Text="Steps" Minimum="1" Maximum="{Binding Options.Steps}" TickFrequency="1" Value="{Binding Options.LatentUpscaleSteps, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding Options.LatentUpscale, Converter={StaticResource InverseEnumToBooleanConverter}, ConverterParameter=None}"/>
+                            <CommonControls:SliderControl Text="Denoise Strength"  IsPercent="True" Minimum="0.01" Maximum="1" TickFrequency="0.01" Value="{Binding Options.LatentUpscaleStrength, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding Options.LatentUpscale, Converter={StaticResource InverseEnumToBooleanConverter}, ConverterParameter=None}"/>
+                        </UniformGrid>
+                    </GroupBox>
+
                     <!--AutoEncoder-->
-                    <GroupBox Header="Auto Encoder" Margin="0,0,0,10" >
+                    <GroupBox Header="Auto Encoder" Margin="0,0,0,10" Padding="0,4">
                         <UniformGrid Columns="2" Margin="0,6,0,4">
                             <CheckBox Content="Enable Tiling" IsChecked="{Binding Options.IsVaeTilingEnabled}" />
                             <CheckBox Content="Enable Slicing" IsChecked="{Binding Options.IsVaeSlicingEnabled}" />
                         </UniformGrid>
                     </GroupBox>
 
+                    <!--ExtractOptions-->
+                    <GroupBox Header="Extract Options" Margin="0,0,0,10" Padding="0,4" Visibility="{Binding Pipeline.ExtractModel, Converter={StaticResource NullVisibilityConverter}, FallbackValue=Collapsed}">
+                        <Controls:ExtractInputControl Pipeline="{Binding Pipeline, Mode=OneWay}" Options="{Binding ExtractOptions, Mode=OneWayToSource}" />
+                    </GroupBox>
+
                     <!--UpscaleOptions-->
-                    <GroupBox Header="Upscale Options" Margin="0,0,0,10" Visibility="{Binding Pipeline.UpscaleModel, Converter={StaticResource NullVisibilityConverter}, FallbackValue=Collapsed}">
+                    <GroupBox Header="Upscale Options" Margin="0,0,0,10" Padding="0,4" Visibility="{Binding Pipeline.UpscaleModel, Converter={StaticResource NullVisibilityConverter}, FallbackValue=Collapsed}">
                         <Controls:UpscaleInputControl Pipeline="{Binding Pipeline, Mode=OneWay}" Options="{Binding UpscaleOptions, Mode=OneWayToSource}" />
                     </GroupBox>
 

@@ -13157,6 +13157,13 @@
           "DownloadFiles": [
             "https://huggingface.co/unsloth/LTX-2.3-GGUF/resolve/main/ltx-2.3-22b-dev-Q8_0.gguf"
           ]
+        },
+        "LatentUpsampler": {
+          "Name": "LatentUpsampler",
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-spatial-upscaler-x2-1.1.safetensors"
+          ]
         }
       },
       "MemoryProfile": [
@@ -13361,6 +13368,13 @@
           "Type": "OnlineFile",
           "DownloadFiles": [
             "https://huggingface.co/unsloth/LTX-2.3-GGUF/resolve/main/distilled/ltx-2.3-22b-distilled-Q8_0.gguf"
+          ]
+        },
+        "LatentUpsampler": {
+          "Name": "LatentUpsampler",
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-spatial-upscaler-x2-1.1.safetensors"
           ]
         }
       },
