@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Pipeline;
 using TensorStack.Common.Tensor;
-using TensorStack.Providers;
+using TensorStack.OnnxRuntime;
 using TensorStack.TextGeneration.Common;
 using TensorStack.TextGeneration.Pipelines.Supertonic;
 using TensorStack.TextGeneration.Pipelines.Whisper;

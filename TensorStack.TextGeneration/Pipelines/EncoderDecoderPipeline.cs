@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
+using TensorStack.OnnxRuntime;
 using TensorStack.TextGeneration.Cache;
 using TensorStack.TextGeneration.Common;
 

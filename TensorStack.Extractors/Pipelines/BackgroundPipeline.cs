@@ -8,6 +8,7 @@ using TensorStack.Common.Pipeline;
 using TensorStack.Common.Tensor;
 using TensorStack.Extractors.Common;
 using TensorStack.Extractors.Models;
+using TensorStack.OnnxRuntime;
 
 namespace TensorStack.Extractors.Pipelines
 {

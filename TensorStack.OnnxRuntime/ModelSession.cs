@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
 
-namespace TensorStack.Common
+namespace TensorStack.OnnxRuntime
 {
     /// <summary>
     /// ModelSession class to manage lifetime of an InferenceSession ans its SessionOptions.

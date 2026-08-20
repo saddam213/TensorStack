@@ -3,7 +3,7 @@
 using Microsoft.ML.OnnxRuntime;
 using System;
 
-namespace TensorStack.Common
+namespace TensorStack.OnnxRuntime
 {
     public class ExecutionProvider
     {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using TensorStack.Common;
-using TensorStack.Providers;
+using TensorStack.OnnxRuntime;
 using TensorStack.WPF;
 
 namespace Amuse.App.Controls

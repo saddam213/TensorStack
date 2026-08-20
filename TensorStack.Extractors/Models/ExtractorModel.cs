@@ -3,6 +3,7 @@
 using System.IO;
 using TensorStack.Common;
 using TensorStack.Extractors.Common;
+using TensorStack.OnnxRuntime;
 
 namespace TensorStack.Extractors.Models
 {

@@ -4,7 +4,7 @@ using Microsoft.ML.OnnxRuntime;
 using System;
 using System.Collections.Generic;
 
-namespace TensorStack.Common
+namespace TensorStack.OnnxRuntime
 {
     public sealed class ParameterCollection : IDisposable
     {

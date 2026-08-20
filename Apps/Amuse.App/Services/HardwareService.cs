@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using TensorStack.Common;
-using TensorStack.Providers;
+using TensorStack.OnnxRuntime;
 
 namespace Amuse.App.Services
 {

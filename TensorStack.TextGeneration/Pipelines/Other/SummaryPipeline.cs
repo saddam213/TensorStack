@@ -4,8 +4,8 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using TensorStack.Common;
 using TensorStack.Common.Pipeline;
+using TensorStack.OnnxRuntime;
 using TensorStack.TextGeneration.Common;
 using TensorStack.TextGeneration.Tokenizers;
 

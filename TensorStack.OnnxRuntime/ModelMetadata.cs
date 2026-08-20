@@ -5,7 +5,7 @@ using Microsoft.ML.OnnxRuntime.Tensors;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TensorStack.Common
+namespace TensorStack.OnnxRuntime
 {
     public sealed record ModelMetadata
     {

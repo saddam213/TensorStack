@@ -11,11 +11,13 @@
   <!--Projects-->
   <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\TensorStack.Common\TensorStack.Common.csproj" />
+    <ProjectReference Include="..\TensorStack.OnnxRuntime\TensorStack.OnnxRuntime.csproj" />
   </ItemGroup>
 
   <!--Packages-->
   <ItemGroup Condition=" '$(Configuration)' == 'Release'">
     <PackageReference Include="TensorStack.Common" Version="$(Version)" />
+    <PackageReference Include="TensorStack.OnnxRuntime" Version="$(Version)" />
   </ItemGroup>
 
   <!--Common Packages-->

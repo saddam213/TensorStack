@@ -1,23 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net9.0-windows10.0.17763.0;net10.0-windows10.0.17763.0</TargetFrameworks>
+    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <!--Projects-->
   <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\TensorStack.Common\TensorStack.Common.csproj" />
+    <ProjectReference Include="..\TensorStack.OnnxRuntime\TensorStack.OnnxRuntime.csproj" />
   </ItemGroup>
 
   <!--Packages-->
   <ItemGroup Condition=" '$(Configuration)' == 'Release'">
     <PackageReference Include="TensorStack.Common" Version="$(Version)" />
+    <PackageReference Include="TensorStack.OnnxRuntime" Version="$(Version)" />
   </ItemGroup>
 
   <!--Common Packages-->
   <ItemGroup>
-    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu.Windows" Version="1.28.0" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.29.0" />
   </ItemGroup>
 
   <!--Nuget Settings-->
@@ -27,7 +29,7 @@
     <Product>$(AssemblyName)</Product>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>CUDA GPU backend for ONNX tensor computation.</Description>
+    <Description>CPU backend for ONNX tensor computation.</Description>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <None Remove="README.md" />

@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 License.
 using System.IO;
 using TensorStack.Common;
+using TensorStack.OnnxRuntime;
 using TensorStack.Upscaler.Common;
 
 namespace TensorStack.Upscaler.Models

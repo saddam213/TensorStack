@@ -1,27 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net9.0-windows10.0.17763.0;net10.0-windows10.0.17763.0</TargetFrameworks>
     <PlatformTarget>x64</PlatformTarget>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+
+    <!--DirectML.dll content warning-->
+    <NoWarn>$(NoWarn);NU5100</NoWarn> 
   </PropertyGroup>
 
   <!--Projects-->
-  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\TensorStack.Common\TensorStack.Common.csproj" />
     <ProjectReference Include="..\TensorStack.OnnxRuntime\TensorStack.OnnxRuntime.csproj" />
   </ItemGroup>
 
   <!--Packages-->
-  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+  <ItemGroup Condition=" '$(Configuration)' == 'Release'">
     <PackageReference Include="TensorStack.Common" Version="$(Version)" />
     <PackageReference Include="TensorStack.OnnxRuntime" Version="$(Version)" />
   </ItemGroup>
 
   <!--Common Packages-->
   <ItemGroup>
-    <PackageReference Include="SkiaSharp" Version="4.151.1" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.24.4" />
   </ItemGroup>
+
+  <PropertyGroup Label="Globals">
+    <Microsoft_AI_DirectML_SkipLibraryCopy>True</Microsoft_AI_DirectML_SkipLibraryCopy>
+    <Microsoft_AI_DirectML_SkipDebugLayerCopy>True</Microsoft_AI_DirectML_SkipDebugLayerCopy>
+  </PropertyGroup>
+
+  <!--Binaries-->
+  <ItemGroup>
+    <Content Include="DirectML.dll" Pack="true" PackagePath="contentFiles\any\any\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
+    <None Include="DirectML.dll" Pack="false" />
+  </ItemGroup>
+
 
   <!--Nuget Settings-->
   <PropertyGroup>
@@ -30,7 +44,7 @@
     <Product>$(AssemblyName)</Product>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>Media extraction tools for .NET (depth, background, masking) using ONNX Runtime.</Description>
+    <Description>DirectML GPU backend for ONNX tensor computation.</Description>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <None Remove="README.md" />

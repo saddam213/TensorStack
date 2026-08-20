@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace TensorStack.Common
+namespace TensorStack.OnnxRuntime
 {
     public record ModelConfig
     {

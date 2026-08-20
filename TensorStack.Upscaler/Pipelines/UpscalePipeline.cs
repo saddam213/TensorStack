@@ -12,6 +12,7 @@ using TensorStack.Common.Image;
 using TensorStack.Common.Pipeline;
 using TensorStack.Common.Tensor;
 using TensorStack.Common.Video;
+using TensorStack.OnnxRuntime;
 using TensorStack.Upscaler.Common;
 using TensorStack.Upscaler.Models;
 

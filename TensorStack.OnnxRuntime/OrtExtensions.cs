@@ -4,10 +4,11 @@ using Microsoft.ML.OnnxRuntime;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using TensorStack.Common;
 using TensorStack.Common.Tensor;
 using OrtType = Microsoft.ML.OnnxRuntime.Tensors.TensorElementType;
 
-namespace TensorStack.Common
+namespace TensorStack.OnnxRuntime
 {
     /// <summary>
     /// Helper extensions for conversion from OrtValue to Tensor, TensorSpan

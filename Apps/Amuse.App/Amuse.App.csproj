@@ -21,8 +21,8 @@
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.5.1" />
     <PackageReference Include="PdfPig" Version="0.1.15" />
     <PackageReference Include="System.Linq.Async" Version="7.0.1" />
-    <PackageReference Include="System.Management" Version="10.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+    <PackageReference Include="System.Management" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="Markdig" Version="1.3.2" />
@@ -37,10 +37,11 @@
     <ProjectReference Include="..\..\TensorStack.Upscaler\TensorStack.Upscaler.csproj" />
     <ProjectReference Include="..\..\TensorStack.Extractors\TensorStack.Extractors.csproj" />
     <ProjectReference Include="..\..\TensorStack.TextGeneration\TensorStack.TextGeneration.csproj" />
-    <ProjectReference Include="..\..\TensorStack.Providers.DML\TensorStack.Providers.DML.csproj" />
     <ProjectReference Include="..\..\TensorStack.Media\TensorStack.Media.csproj" />
     <ProjectReference Include="..\..\TensorStack.Media.Windows\TensorStack.Media.Windows.csproj" />
     <ProjectReference Include="..\..\TensorStack.Media.BitmapImage\TensorStack.Media.BitmapImage.csproj" />
+    <ProjectReference Include="..\..\TensorStack.OnnxRuntime\TensorStack.OnnxRuntime.csproj" />
+    <ProjectReference Include="..\..\TensorStack.OnnxRuntime.DML\TensorStack.OnnxRuntime.DML.csproj" />
   </ItemGroup>
 
   <!--Release-->
@@ -49,7 +50,8 @@
     <PackageReference Include="TensorStack.Upscaler" Version="$(PackageVersion)" />
     <PackageReference Include="TensorStack.Extractors" Version="$(PackageVersion)" />
     <PackageReference Include="TensorStack.TextGeneration" Version="$(PackageVersion)" />
-    <PackageReference Include="TensorStack.Providers.DML" Version="$(PackageVersion)" />
+    <PackageReference Include="TensorStack.OnnxRuntime" Version="$(Version)" />
+    <PackageReference Include="TensorStack.OnnxRuntime.DML" Version="$(PackageVersion)" />
   </ItemGroup>
 
   <!--Binaries-->

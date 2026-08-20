@@ -15,6 +15,7 @@ using TensorStack.Common.Video;
 using TensorStack.Common.Vision;
 using TensorStack.Extractors.Common;
 using TensorStack.Extractors.Models;
+using TensorStack.OnnxRuntime;
 
 namespace TensorStack.Extractors.Pipelines
 {

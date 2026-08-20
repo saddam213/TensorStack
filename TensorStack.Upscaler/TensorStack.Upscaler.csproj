@@ -9,11 +9,23 @@
   <!--Projects-->
   <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\TensorStack.Common\TensorStack.Common.csproj" />
+    <ProjectReference Include="..\TensorStack.OnnxRuntime\TensorStack.OnnxRuntime.csproj" />
   </ItemGroup>
 
   <!--Packages-->
   <ItemGroup Condition=" '$(Configuration)' == 'Release'">
     <PackageReference Include="TensorStack.Common" Version="$(Version)" />
+    <PackageReference Include="TensorStack.OnnxRuntime" Version="$(Version)" />
+  </ItemGroup>
+
+    <!--Binaries-->
+  <ItemGroup>
+    <Content Include="Interpolation.onnx" Pack="true" PackagePath="contentFiles\any\any\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
+    <None Include="Interpolation.onnx" Pack="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="TensorStack.Upscaler.targets" Pack="true" PackagePath="buildTransitive\" />
   </ItemGroup>
 
   <!--Nuget Settings-->

@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Amuse.App.Common;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Pipeline;
 using TensorStack.Common.Tensor;
 using TensorStack.Common.Video;
-using Amuse.App.Common;
-using TensorStack.Providers;
+using TensorStack.Media.Video;
+using TensorStack.OnnxRuntime;
 using TensorStack.Upscaler.Common;
 using TensorStack.Upscaler.Pipelines;
-using TensorStack.Media.Video;
 
 namespace Amuse.App.Services
 {

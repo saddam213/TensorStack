@@ -1,4 +1,4 @@
-﻿using TensorStack.Common;
+﻿using TensorStack.OnnxRuntime;
 
 namespace TensorStack.TextGeneration.Pipelines.Supertonic
 {

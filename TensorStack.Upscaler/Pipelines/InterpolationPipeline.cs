@@ -11,8 +11,11 @@ using TensorStack.Common;
 using TensorStack.Common.Pipeline;
 using TensorStack.Common.Tensor;
 using TensorStack.Common.Video;
+using TensorStack.OnnxRuntime;
+using TensorStack.Upscaler.Common;
+using TensorStack.Upscaler.Models;
 
-namespace TensorStack.Media.Video
+namespace TensorStack.Upscaler.Pipelines
 {
     /// <summary>
     /// Video Interpolation Pipeline.

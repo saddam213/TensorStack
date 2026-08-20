@@ -5,16 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using TensorStack.Common;
 
-namespace TensorStack.Providers
+namespace TensorStack.OnnxRuntime
 {
     public static class Provider
     {
-        private const string _providerName = "CUDAExecutionProvider";
-        private const string _libraryName = "onnxruntime_providers_cuda.dll";
         private static bool _isInitialized;
 
         /// <summary>
-        /// Initializes this Provider.
+        /// Initializes the Provider 
         /// </summary>
         public static void Initialize()
         {
@@ -22,8 +20,9 @@ namespace TensorStack.Providers
                 return;
 
             _isInitialized = true;
-            DeviceManager.Initialize(_providerName, SessionValidator, _libraryName);
+            DeviceManager.Initialize(ProviderName, SessionValidator);
         }
+
 
         /// <summary>
         /// Initializes the Provider with the specified environment options.
@@ -35,14 +34,14 @@ namespace TensorStack.Providers
                 return;
 
             _isInitialized = true;
-            DeviceManager.Initialize(environmentOptions, _providerName, SessionValidator, _libraryName);
+            DeviceManager.Initialize(environmentOptions, ProviderName, SessionValidator);
         }
 
 
         /// <summary>
         /// Gets the name of the provider.
         /// </summary>
-        public static string ProviderName => _providerName;
+        public static string ProviderName => DeviceManager.CPUProviderName;
 
 
         /// <summary>
@@ -54,20 +53,21 @@ namespace TensorStack.Providers
             return DeviceManager.Devices;
         }
 
+
         /// <summary>
         /// Gets the best device.
         /// </summary>
         /// <param name="deviceType">Type of the device.</param>
         public static Device GetDevice()
         {
-            return GetDevice(DeviceType.GPU);
+            return GetDevice(DeviceType.CPU);
         }
+
 
         /// <summary>
         /// Gets the best device.
         /// </summary>
         /// <param name="deviceType">Type of the device.</param>
-        /// <returns>Device.</returns>
         public static Device GetDevice(DeviceType deviceType)
         {
             return GetDevices().FirstOrDefault(x => x.Type == deviceType);
@@ -86,8 +86,9 @@ namespace TensorStack.Providers
 
 
         /// <summary>
-        /// Gets the CUDA provider this DeviceType.
+        /// Gets the CPU provider this DeviceType.
         /// </summary>
+        /// <param name="deviceType">Type of the device.</param>
         /// <param name="optimizationLevel">The optimization level.</param>
         public static ExecutionProvider GetProvider(GraphOptimizationLevel optimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL)
         {
@@ -96,7 +97,7 @@ namespace TensorStack.Providers
 
 
         /// <summary>
-        /// Gets the CUDA provider this DeviceType, DeviceId.
+        /// Gets the CPU provider this DeviceType.
         /// </summary>
         /// <param name="deviceType">Type of the device.</param>
         /// <param name="optimizationLevel">The optimization level.</param>
@@ -107,7 +108,7 @@ namespace TensorStack.Providers
 
 
         /// <summary>
-        /// Gets the CUDA provider this DeviceType, DeviceId.
+        /// Gets the CPU provider this DeviceType, DeviceId.
         /// </summary>
         /// <param name="deviceType">Type of the device.</param>
         /// <param name="deviceId">The device identifier.</param>
@@ -119,7 +120,7 @@ namespace TensorStack.Providers
 
 
         /// <summary>
-        /// Gets the CUDA provider for this Device.
+        /// Gets the CPU provider for this Device.
         /// </summary>
         /// <param name="device">The device.</param>
         /// <param name="optimizationLevel">The optimization level.</param>
@@ -129,33 +130,10 @@ namespace TensorStack.Providers
                 return default;
             else if (device.Type == DeviceType.NPU)
                 return default;
-            else if (device.Type == DeviceType.CPU)
-                return CreateProvider(optimizationLevel);
+            else if (device.Type == DeviceType.GPU)
+                return default;
 
-            return CreateProvider(device.DeviceId, optimizationLevel);
-        }
-
-
-        /// <summary>
-        /// Gets the CUDA provider for this DeviceId.
-        /// </summary>
-        /// <param name="deviceId">The device identifier.</param>
-        /// <param name="optimizationLevel">The optimization level.</param>
-        private static ExecutionProvider CreateProvider(int deviceId, GraphOptimizationLevel optimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL)
-        {
-            var memoryInfo = new OrtMemoryInfo(OrtMemoryInfo.allocatorCUDA_PINNED, OrtAllocatorType.DeviceAllocator, deviceId, OrtMemType.Default);
-            return new ExecutionProvider(_providerName, memoryInfo, configuration =>
-            {
-                var sessionOptions = new SessionOptions
-                {
-                    GraphOptimizationLevel = optimizationLevel
-                };
-
-                sessionOptions.AddSessionConfigEntries(configuration.SessionOptions);
-                sessionOptions.AppendExecutionProvider_CUDA(deviceId);
-                sessionOptions.AppendExecutionProvider_CPU();
-                return sessionOptions;
-            });
+            return CreateProvider(optimizationLevel);
         }
 
 
@@ -166,7 +144,7 @@ namespace TensorStack.Providers
         /// <returns>ExecutionProvider.</returns>
         private static ExecutionProvider CreateProvider(GraphOptimizationLevel optimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL)
         {
-            return new ExecutionProvider(DeviceManager.CPUProviderName, OrtMemoryInfo.DefaultInstance, configuration =>
+            return new ExecutionProvider(ProviderName, OrtMemoryInfo.DefaultInstance, configuration =>
             {
                 var sessionOptions = new SessionOptions
                 {
@@ -188,13 +166,14 @@ namespace TensorStack.Providers
         /// <param name="device">The device.</param>
         private static SessionOptions SessionValidator(Device device)
         {
-            if (device.Type != DeviceType.GPU)
+            if (device.Type != DeviceType.CPU)
                 return null;
 
             var session = new SessionOptions();
-            session.AppendExecutionProvider_CUDA(device.Id);
+            session.AppendExecutionProvider_CPU();
             session.LogSeverityLevel = OrtLoggingLevel.ORT_LOGGING_LEVEL_ERROR;
             return session;
         }
     }
+
 }

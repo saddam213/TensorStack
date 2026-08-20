@@ -10,7 +10,7 @@ using TensorStack.Common.Video;
 using TensorStack.Extractors.Common;
 using TensorStack.Extractors.Pipelines;
 using TensorStack.Media.Video;
-using TensorStack.Providers;
+using TensorStack.OnnxRuntime;
 
 namespace Amuse.App.Services
 {

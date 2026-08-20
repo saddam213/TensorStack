@@ -42,9 +42,9 @@ Built for performance and flexibility, TensorStack powers all applications devel
 
 | Package | Description | Docs | Package |
 |---------|-------------|------|---------|
-| TensorStack.Providers.CPU | CPU execution provider | [README](TensorStack.Providers.CPU/README.md) | [![CPU Badge](https://img.shields.io/nuget/v/TensorStack.Providers.CPU?color=4bc51e&label=TensorStack.Providers.CPU)](https://www.nuget.org/packages/TensorStack.Providers.CPU) |
-| TensorStack.Providers.CUDA | NVIDIA CUDA execution provider | [README](TensorStack.Providers.CUDA/README.md) | [![CUDA Badge](https://img.shields.io/nuget/v/TensorStack.Providers.CUDA?color=4bc51e&label=TensorStack.Providers.CUDA)](https://www.nuget.org/packages/TensorStack.Providers.CUDA) |
-| TensorStack.Providers.DML | DirectML execution provider | [README](TensorStack.Providers.DML/README.md) | [![DML Badge](https://img.shields.io/nuget/v/TensorStack.Providers.DML?color=4bc51e&label=TensorStack.Providers.DML)](https://www.nuget.org/packages/TensorStack.Providers.DML) |
+| TensorStack.OnnxRuntime.CPU | CPU execution provider | [README](TensorStack.OnnxRuntime.CPU/README.md) | [![CPU Badge](https://img.shields.io/nuget/v/TensorStack.OnnxRuntime.CPU?color=4bc51e&label=TensorStack.OnnxRuntime.CPU)](https://www.nuget.org/packages/TensorStack.OnnxRuntime.CPU) |
+| TensorStack.OnnxRuntime.CUDA | NVIDIA CUDA execution provider | [README](TensorStack.OnnxRuntime.CUDA/README.md) | [![CUDA Badge](https://img.shields.io/nuget/v/TensorStack.OnnxRuntime.CUDA?color=4bc51e&label=TensorStack.OnnxRuntime.CUDA)](https://www.nuget.org/packages/TensorStack.OnnxRuntime.CUDA) |
+| TensorStack.OnnxRuntime.DML | DirectML execution provider | [README](TensorStack.OnnxRuntime.DML/README.md) | [![DML Badge](https://img.shields.io/nuget/v/TensorStack.OnnxRuntime.DML?color=4bc51e&label=TensorStack.OnnxRuntime.DML)](https://www.nuget.org/packages/TensorStack.OnnxRuntime.DML) |
 
 ---
 

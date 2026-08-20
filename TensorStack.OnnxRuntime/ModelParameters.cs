@@ -5,9 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
+using TensorStack.Common;
 using TensorStack.Common.Tensor;
 
-namespace TensorStack.Common
+namespace TensorStack.OnnxRuntime
 {
     /// <summary>
     /// ModelParameters class to manage model input and output parameters

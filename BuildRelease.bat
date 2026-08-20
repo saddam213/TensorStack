@@ -16,14 +16,17 @@ dotnet pack TensorStack.Media.BitmapImage/TensorStack.Media.BitmapImage.csproj -
 dotnet build TensorStack.Media.SkiaSharp/TensorStack.Media.SkiaSharp.csproj -c Release
 dotnet pack TensorStack.Media.SkiaSharp/TensorStack.Media.SkiaSharp.csproj -c Release
 
-dotnet build TensorStack.Providers.CPU/TensorStack.Providers.CPU.csproj -c Release
-dotnet pack TensorStack.Providers.CPU/TensorStack.Providers.CPU.csproj -c Release
+dotnet build TensorStack.OnnxRuntime/TensorStack.OnnxRuntime.csproj -c Release
+dotnet pack TensorStack.OnnxRuntime/TensorStack.OnnxRuntime.csproj -c Release
 
-dotnet build TensorStack.Providers.CUDA/TensorStack.Providers.CUDA.csproj -c Release
-dotnet pack TensorStack.Providers.CUDA/TensorStack.Providers.CUDA.csproj -c Release
+dotnet build TensorStack.OnnxRuntime.CPU/TensorStack.OnnxRuntime.CPU.csproj -c Release
+dotnet pack TensorStack.OnnxRuntime.CPU/TensorStack.OnnxRuntime.CPU.csproj -c Release
 
-dotnet build TensorStack.Providers.DML/TensorStack.Providers.DML.csproj -c Release
-dotnet pack TensorStack.Providers.DML/TensorStack.Providers.DML.csproj -c Release
+dotnet build TensorStack.OnnxRuntime.CUDA/TensorStack.OnnxRuntime.CUDA.csproj -c Release
+dotnet pack TensorStack.OnnxRuntime.CUDA/TensorStack.OnnxRuntime.CUDA.csproj -c Release
+
+dotnet build TensorStack.OnnxRuntime.DML/TensorStack.OnnxRuntime.DML.csproj -c Release
+dotnet pack TensorStack.OnnxRuntime.DML/TensorStack.OnnxRuntime.DML.csproj -c Release
 
 dotnet build TensorStack.Extractors/TensorStack.Extractors.csproj -c Release
 dotnet pack TensorStack.Extractors/TensorStack.Extractors.csproj -c Release

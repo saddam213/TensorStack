@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
-using TensorStack.Common;
+using TensorStack.OnnxRuntime;
 using TensorStack.TextGeneration.Common;
 
 namespace TensorStack.TextGeneration.Pipelines.Florence

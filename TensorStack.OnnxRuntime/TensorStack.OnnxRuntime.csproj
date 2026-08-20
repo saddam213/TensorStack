@@ -6,18 +6,19 @@
   </PropertyGroup>
 
   <!--Projects-->
-  <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\TensorStack.Common\TensorStack.Common.csproj" />
   </ItemGroup>
 
   <!--Packages-->
-  <ItemGroup Condition=" '$(Configuration)' == 'Release'">
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <PackageReference Include="TensorStack.Common" Version="$(Version)" />
   </ItemGroup>
 
+
   <!--Common Packages-->
   <ItemGroup>
-    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.28.0" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.Managed" Version="1.29.0" />
   </ItemGroup>
 
   <!--Nuget Settings-->
@@ -25,9 +26,10 @@
     <Title>$(AssemblyName)</Title>
     <PackageId>$(AssemblyName)</PackageId>
     <Product>$(AssemblyName)</Product>
+    <Description></Description>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>CPU backend for ONNX tensor computation.</Description>
+    <Description>Core library for ONNX model/session management.</Description>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <None Remove="README.md" />
@@ -36,11 +38,11 @@
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <None Include="README.md">
       <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
+      <PackagePath>/</PackagePath>
     </None>
     <None Include="..\Assets\Icon.png">
       <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
+      <PackagePath>/</PackagePath>
     </None>
   </ItemGroup>
 

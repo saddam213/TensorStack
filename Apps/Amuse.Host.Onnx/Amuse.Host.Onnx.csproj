@@ -30,14 +30,15 @@
 
   <!--Debug-->
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <ProjectReference Include="..\..\TensorStack.Providers.DML\TensorStack.Providers.DML.csproj" />
     <ProjectReference Include="..\..\TensorStack.TextGeneration\TensorStack.TextGeneration.csproj" />
+    <ProjectReference Include="..\..\TensorStack.OnnxRuntime\TensorStack.OnnxRuntime.csproj" />
+    <ProjectReference Include="..\..\TensorStack.OnnxRuntime.DML\TensorStack.OnnxRuntime.DML.csproj" />
   </ItemGroup>
 
   <!--Release-->
   <ItemGroup Condition="'$(Configuration)' == 'Release' OR '$(Configuration)' == 'Release_Installer'">
     <PackageReference Include="TensorStack.TextGeneration" Version="$(PackageVersion)" />
-    <PackageReference Include="TensorStack.Providers.DML" Version="$(PackageVersion)" />
+    <PackageReference Include="TensorStack.OnnxRuntime.DML" Version="$(PackageVersion)" />
   </ItemGroup>
 
   <!--Images-->

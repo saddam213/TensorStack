@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using TensorStack.Common;
 
-namespace TensorStack.Providers
+namespace TensorStack.OnnxRuntime
 {
     public static class Provider
     {
         private static bool _isInitialized;
+        private const string _providerName = "DMLExecutionProvider";
+
 
         /// <summary>
         /// Initializes the Provider 
@@ -20,7 +22,7 @@ namespace TensorStack.Providers
                 return;
 
             _isInitialized = true;
-            DeviceManager.Initialize(ProviderName, SessionValidator);
+            DeviceManager.Initialize(_providerName, SessionValidator);
         }
 
 
@@ -34,14 +36,14 @@ namespace TensorStack.Providers
                 return;
 
             _isInitialized = true;
-            DeviceManager.Initialize(environmentOptions, ProviderName, SessionValidator);
+            DeviceManager.Initialize(environmentOptions, _providerName, SessionValidator);
         }
 
 
         /// <summary>
         /// Gets the name of the provider.
         /// </summary>
-        public static string ProviderName => DeviceManager.CPUProviderName;
+        public static string ProviderName => _providerName;
 
 
         /// <summary>
@@ -60,7 +62,7 @@ namespace TensorStack.Providers
         /// <param name="deviceType">Type of the device.</param>
         public static Device GetDevice()
         {
-            return GetDevice(DeviceType.CPU);
+            return GetDevice(DeviceType.GPU);
         }
 
 
@@ -86,9 +88,8 @@ namespace TensorStack.Providers
 
 
         /// <summary>
-        /// Gets the CPU provider this DeviceType.
+        /// Gets the DirectML provider this DeviceType.
         /// </summary>
-        /// <param name="deviceType">Type of the device.</param>
         /// <param name="optimizationLevel">The optimization level.</param>
         public static ExecutionProvider GetProvider(GraphOptimizationLevel optimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL)
         {
@@ -97,7 +98,7 @@ namespace TensorStack.Providers
 
 
         /// <summary>
-        /// Gets the CPU provider this DeviceType.
+        /// Gets the DirectML provider this DeviceType.
         /// </summary>
         /// <param name="deviceType">Type of the device.</param>
         /// <param name="optimizationLevel">The optimization level.</param>
@@ -108,7 +109,7 @@ namespace TensorStack.Providers
 
 
         /// <summary>
-        /// Gets the CPU provider this DeviceType, DeviceId.
+        /// Gets the DirectML provider this DeviceType, DeviceId.
         /// </summary>
         /// <param name="deviceType">Type of the device.</param>
         /// <param name="deviceId">The device identifier.</param>
@@ -120,7 +121,7 @@ namespace TensorStack.Providers
 
 
         /// <summary>
-        /// Gets the CPU provider for this Device.
+        /// Gets the DirectML provider for this Device.
         /// </summary>
         /// <param name="device">The device.</param>
         /// <param name="optimizationLevel">The optimization level.</param>
@@ -130,10 +131,33 @@ namespace TensorStack.Providers
                 return default;
             else if (device.Type == DeviceType.NPU)
                 return default;
-            else if (device.Type == DeviceType.GPU)
-                return default;
+            else if (device.Type == DeviceType.CPU)
+                return CreateProvider(optimizationLevel);
 
-            return CreateProvider(optimizationLevel);
+            return CreateProvider(device.DeviceId, optimizationLevel);
+        }
+
+
+        /// <summary>
+        /// Gets the DirectML provider for this DeviceId.
+        /// </summary>
+        /// <param name="deviceId">The device identifier.</param>
+        /// <param name="optimizationLevel">The optimization level.</param>
+        private static ExecutionProvider CreateProvider(int deviceId, GraphOptimizationLevel optimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL)
+        {
+            var memoryInfo = new OrtMemoryInfo(OrtMemoryInfo.allocatorCPU, OrtAllocatorType.DeviceAllocator, deviceId, OrtMemType.Default);
+            return new ExecutionProvider(_providerName, memoryInfo, configuration =>
+            {
+                var sessionOptions = new SessionOptions
+                {
+                    GraphOptimizationLevel = optimizationLevel
+                };
+
+                sessionOptions.AddSessionConfigEntries(configuration.SessionOptions);
+                sessionOptions.AppendExecutionProvider_DML(deviceId);
+                sessionOptions.AppendExecutionProvider_CPU();
+                return sessionOptions;
+            });
         }
 
 
@@ -144,7 +168,7 @@ namespace TensorStack.Providers
         /// <returns>ExecutionProvider.</returns>
         private static ExecutionProvider CreateProvider(GraphOptimizationLevel optimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL)
         {
-            return new ExecutionProvider(ProviderName, OrtMemoryInfo.DefaultInstance, configuration =>
+            return new ExecutionProvider(DeviceManager.CPUProviderName, OrtMemoryInfo.DefaultInstance, configuration =>
             {
                 var sessionOptions = new SessionOptions
                 {
@@ -166,11 +190,8 @@ namespace TensorStack.Providers
         /// <param name="device">The device.</param>
         private static SessionOptions SessionValidator(Device device)
         {
-            if (device.Type != DeviceType.CPU)
-                return null;
-
             var session = new SessionOptions();
-            session.AppendExecutionProvider_CPU();
+            session.AppendExecutionProvider_DML(device.Id);
             session.LogSeverityLevel = OrtLoggingLevel.ORT_LOGGING_LEVEL_ERROR;
             return session;
         }

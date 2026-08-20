@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using TensorStack.Common;
 
 namespace TensorStack.Python
 {

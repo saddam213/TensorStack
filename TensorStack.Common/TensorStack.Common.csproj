@@ -7,8 +7,7 @@
 
   <!--Common Packages-->
   <ItemGroup>
-    <PackageReference Include="System.Numerics.Tensors" Version="10.0.10" />
-    <PackageReference Include="Microsoft.ML.OnnxRuntime.Managed" Version="1.28.0" />
+    <PackageReference Include="System.Numerics.Tensors" Version="10.0.11" />
   </ItemGroup>
 
   <!--Nuget Settings-->
@@ -19,7 +18,7 @@
     <Description></Description>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>Core library for .NET handling tensors, pipelines, and ONNX model/session management.</Description>
+    <Description>Core library for .NET handling tensors, pipelines.</Description>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <None Remove="README.md" />
