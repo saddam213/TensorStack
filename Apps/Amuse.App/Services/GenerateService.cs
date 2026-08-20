@@ -4,11 +4,11 @@ using Amuse.Common;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using TensorStack.Audio;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
-using TensorStack.Image;
-using TensorStack.Video;
+using TensorStack.Media.Image;
+using TensorStack.Media.Audio;
+using TensorStack.Media.Video;
 
 namespace Amuse.App.Services
 {

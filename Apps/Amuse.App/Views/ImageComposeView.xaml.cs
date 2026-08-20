@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Windows.Media.Imaging;
 using TensorStack.Common;
-using TensorStack.Image;
+using TensorStack.Media.Image;
 using TensorStack.WPF.Services;
 
 namespace Amuse.App.Views

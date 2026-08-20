@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Pipeline;
-using TensorStack.Video;
+using TensorStack.Media.Video;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
 

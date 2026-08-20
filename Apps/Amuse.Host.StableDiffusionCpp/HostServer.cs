@@ -9,7 +9,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common.Tensor;
-using TensorStack.Image;
+using TensorStack.Media.Image;
 
 namespace Amuse.Host.StableDiffusionCpp
 {

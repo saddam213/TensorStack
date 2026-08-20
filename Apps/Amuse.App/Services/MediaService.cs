@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TensorStack.Audio;
-using TensorStack.Audio.Windows;
 using TensorStack.Common;
 using TensorStack.Common.Common;
 using TensorStack.Common.Video;
-using TensorStack.Video;
+using TensorStack.Media.Audio;
+using TensorStack.Media.Video;
 
 namespace Amuse.App.Services
 {

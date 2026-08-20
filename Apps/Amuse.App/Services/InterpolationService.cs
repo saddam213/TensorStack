@@ -5,10 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Pipeline;
+using TensorStack.Media.Video;
 using TensorStack.Providers;
-using TensorStack.Video;
-using TensorStack.Video.Common;
-using TensorStack.Video.Pipelines;
 
 namespace Amuse.App.Services
 {

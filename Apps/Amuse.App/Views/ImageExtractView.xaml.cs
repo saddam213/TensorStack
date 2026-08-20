@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
-using TensorStack.Image;
+using TensorStack.Media.Image;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
 

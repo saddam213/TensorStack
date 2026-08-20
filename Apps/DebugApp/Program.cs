@@ -531,7 +531,7 @@ namespace DebugApp
         //    await test.SaveAsync("M:\\Amuse3\\_uploaded\\StableDiffusion-amuse\\ControlNetImage.png");
         //}
 
-        //[nuget: TensorStack.Video.Windows]
+        //[nuget: TensorStack.Media.Windows]
         //[nuget: TensorStack.Providers.DML]
 
         //async Task QuickStartAsync()

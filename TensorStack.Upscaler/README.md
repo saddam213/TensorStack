@@ -10,9 +10,8 @@ This minimal example demonstrates how to upscale an image and a video using `Ten
 ```csharp
 [nuget: TensorStack.Upscaler]
 [nuget: TensorStack.Providers.DML]
-[nuget: TensorStack.Image.Bitmap]
-[nuget: TensorStack.Video.Windows]
-[nuget: TensorStack.Audio.Windows]
+[nuget: TensorStack.Media.Bitmap]
+[nuget: TensorStack.Media.Windows]
 [model: https://huggingface.co/TensorStack/Upscale-amuse/resolve/main/RealESR-General-4x/model.onnx]
 
 async Task QuickStartAsync()
@@ -103,7 +102,7 @@ var pipeline = UpscalePipeline.Create(new UpscalerConfig
 ## Upscale Video (Buffered)
 Buffers all frames in memory. Suitable for short-duration videos, AI-generated content, low-resolution videos, or GIFs.
 ```csharp
-    [nuget: TensorStack.Video.Windows]
+    [nuget: TensorStack.Media.Windows]
 
     // Read Video
     var inputVideo = await VideoInput.CreateAsync("Input.gif");
@@ -124,7 +123,7 @@ Buffers all frames in memory. Suitable for short-duration videos, AI-generated c
 ## Upscale Video (Stream)
 Processes frames one-by-one for minimal memory usage. Ideal for high-resolution or long-duration videos.
 ```csharp
-    [nuget: TensorStack.Video.Windows]
+    [nuget: TensorStack.Media.Windows]
 
     // Read Stream
     var inputStream = await VideoInputStream.CreateAsync("Input.mp4");
@@ -143,11 +142,11 @@ Processes frames one-by-one for minimal memory usage. Ideal for high-resolution 
 ---
 
 ## Audio Support
-TensorStack.Video only processes video frames, so audio will be missing from the final result.
+TensorStack.Media only processes video frames, so audio will be missing from the final result.
 
-You can use the TensorStack.Audio package to restore audio from the source video:
+You can use the TensorStack.Media package to restore audio from the source video:
 ```csharp
-    [nuget: TensorStack.Audio.Windows]
+    [nuget: TensorStack.Media.Windows]
 
     await AudioManager.AddAudioAsync("TargetVideo.mp4", "SourceVideo.mp4");
 ```
@@ -195,7 +194,7 @@ In the following example, the video is upscaled by **4×** and its frame rate is
 ```csharp
 [nuget: TensorStack.Upscaler]
 [nuget: TensorStack.Providers.DML]
-[nuget: TensorStack.Video.Windows]
+[nuget: TensorStack.Media.Windows]
 
 // Create Provider
 var provider = Provider.GetProvider();

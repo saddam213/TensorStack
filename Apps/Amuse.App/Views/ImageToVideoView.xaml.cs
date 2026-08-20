@@ -9,8 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
-using TensorStack.Image;
-using TensorStack.Video;
+using TensorStack.Media.Image;
+using TensorStack.Media.Video;
 using TensorStack.WPF.Controls;
 using TensorStack.WPF.Services;
 

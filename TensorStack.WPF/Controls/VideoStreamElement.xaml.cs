@@ -14,8 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using TensorStack.Common;
 using TensorStack.Common.Video;
-using TensorStack.Image;
-using TensorStack.Video;
+using TensorStack.Media.Image;
+using TensorStack.Media.Video;
 using TensorStack.WPF.Services;
 using TensorStack.WPF.Utils;
 
