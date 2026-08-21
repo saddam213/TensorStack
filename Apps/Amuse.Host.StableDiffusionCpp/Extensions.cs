@@ -56,6 +56,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 RefImages = GetReferenceImages(options, loadOptions.ProcessType),
                 ControlImage = GetControlNetImage(options, loadOptions.ProcessType),
                 MaskImage = GetMaskImage(options, loadOptions.ProcessType),
+                HiresParams = GetHiresParams(loadOptions, options),
                 SampleParams = new SampleParams
                 {
                     SampleSteps = options.Steps,
@@ -72,8 +73,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 VaeTilingParams = new VaeTilingParams
                 {
                     Enabled = options.EnableVaeTiling
-                },
-                HiresParams = GetHiresParams(loadOptions, options)
+                }
             };
         }
 
@@ -95,6 +95,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 ImageLast = GetLastFrame(options, loadOptions.ProcessType),
                 ControlFrames = GetControlFrames(options, loadOptions.ProcessType),
                 VaceStrength = options.ControlNetScale,
+                HiresParams = GetHiresParams(loadOptions, options),
                 SampleParams = new SampleParams
                 {
                     SampleSteps = options.Steps,
@@ -125,8 +126,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 {
                     Enabled = options.EnableVaeTiling,
                     TemporalTiling = options.EnableVaeSlicing
-                },
-                HiresParams = GetHiresParams(loadOptions, options)
+                }
             };
         }
 
@@ -155,6 +155,32 @@ namespace Amuse.Host.StableDiffusionCpp
 
         private static Config.ModelConfig GetModelConfig(PipelineLoadOptions options)
         {
+            if (options.Pipeline == "StableDiffusionXLPipeline")
+            {
+                return new Config.ModelConfig
+                {
+                    Full = options.CheckpointConfig.FullCheckpoint,
+                    Vae = options.CheckpointConfig.Vae,
+                    ClipL = options.CheckpointConfig.TextEncoder,
+                    ClipG = options.CheckpointConfig.TextEncoder2,
+                    Diffusion = options.CheckpointConfig.Unet,
+                    LoraModelDirectory = options.LoraAdapterPath,
+                    ControlNet = options.ControlNet?.Path
+                };
+            }
+            if (options.Pipeline == "StableDiffusion3Pipeline")
+            {
+                return new Config.ModelConfig
+                {
+                    Vae = options.CheckpointConfig.Vae,
+                    ClipL = options.CheckpointConfig.TextEncoder,
+                    ClipG = options.CheckpointConfig.TextEncoder2,
+                    T5XXL = options.CheckpointConfig.TextEncoder3,
+                    Diffusion = options.CheckpointConfig.Transformer,
+                    LoraModelDirectory = options.LoraAdapterPath,
+                    ControlNet = options.ControlNet?.Path
+                };
+            }
             if (options.Pipeline == "FluxPipeline")
             {
                 return new Config.ModelConfig
@@ -163,7 +189,8 @@ namespace Amuse.Host.StableDiffusionCpp
                     ClipL = options.CheckpointConfig.TextEncoder,
                     T5XXL = options.CheckpointConfig.TextEncoder2,
                     Diffusion = options.CheckpointConfig.Transformer,
-                    LoraModelDirectory = options.LoraAdapterPath
+                    LoraModelDirectory = options.LoraAdapterPath,
+                    ControlNet = options.ControlNet?.Path
                 };
             }
             if (options.Pipeline == "IdeogramPipeline")
@@ -174,7 +201,8 @@ namespace Amuse.Host.StableDiffusionCpp
                     LLM = options.CheckpointConfig.TextEncoder,
                     Diffusion = options.CheckpointConfig.Transformer,
                     DiffusionUncond = options.CheckpointConfig.Transformer2,
-                    LoraModelDirectory = options.LoraAdapterPath
+                    LoraModelDirectory = options.LoraAdapterPath,
+                    ControlNet = options.ControlNet?.Path
                 };
             }
             if (options.Pipeline == "LTX20Pipeline")
@@ -198,6 +226,7 @@ namespace Amuse.Host.StableDiffusionCpp
                     LLM = options.CheckpointConfig.TextEncoder,
                     Diffusion = options.CheckpointConfig.Transformer,
                     LoraModelDirectory = options.LoraAdapterPath,
+                    ControlNet = options.ControlNet?.Path,
                     ExtraModelArgs = "qwen_image_zero_cond_t=true" // TODO: should be optional
                 };
             }
@@ -212,7 +241,8 @@ namespace Amuse.Host.StableDiffusionCpp
                     Vae = options.CheckpointConfig.Vae,
                     LLM = options.CheckpointConfig.TextEncoder,
                     Diffusion = options.CheckpointConfig.Transformer,
-                    LoraModelDirectory = options.LoraAdapterPath
+                    LoraModelDirectory = options.LoraAdapterPath,
+                    ControlNet = options.ControlNet?.Path
                 };
             }
             throw new NotImplementedException(options.Pipeline);
@@ -454,7 +484,7 @@ namespace Amuse.Host.StableDiffusionCpp
             {
                 Steps = steps,
                 Enabled = true,
-                UpscaleTileSize= tileSize,
+                UpscaleTileSize = tileSize,
                 Upscaler = generateOptions.LatentUpscale.GetName(),
                 DenoisingStrength = generateOptions.LatentUpscaleStrength,
             };

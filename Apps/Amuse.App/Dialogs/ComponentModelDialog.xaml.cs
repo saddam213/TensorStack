@@ -160,14 +160,11 @@ namespace Amuse.App.Dialogs
                     yield return $"Model with Name '{ComponentModel.Name}' already exists";
             }
 
-            if (string.IsNullOrEmpty(ComponentModel.Checkpoint.MainFile))
-            {
-                yield return "MainFile cannot be empty";
-            }
-
             // Checkpoint
             if (!ComponentModel.Checkpoint.IsValid(out var checkpointValidation))
                 yield return checkpointValidation;
+            if (string.IsNullOrEmpty(ComponentModel.Checkpoint.MainFile))
+                yield return "MainFile cannot be empty";
         }
     }
 }

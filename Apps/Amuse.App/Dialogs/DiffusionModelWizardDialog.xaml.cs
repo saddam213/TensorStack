@@ -173,6 +173,33 @@ namespace Amuse.App.Dialogs
                     };
                 }
             }
+            else if (_selectedSource == ModelSourceType.LocalCheckpoint)
+            {
+                if (_selectedTemplate.Checkpoint.Unet != null)
+                {
+                    _selectedTemplate.Checkpoint = new DiffusionCheckpointModel
+                    {
+                        Unet = new CheckpointComponent
+                        {
+                            Name = "Unet",
+                            Path = _selectedFile,
+                            Type = CheckpointType.LocalFile,
+                        }
+                    };
+                }
+                else if (_selectedTemplate.Checkpoint.Transformer != null)
+                {
+                    _selectedTemplate.Checkpoint = new DiffusionCheckpointModel
+                    {
+                        Transformer = new CheckpointComponent
+                        {
+                            Name = "Transformer",
+                            Path = _selectedFile,
+                            Type = CheckpointType.LocalFile,
+                        }
+                    };
+                }
+            }
 
             _selectedTemplate.Initialize(Settings);
             Settings.DiffusionModels.Add(_selectedTemplate);
@@ -227,7 +254,7 @@ namespace Amuse.App.Dialogs
             if (!string.IsNullOrEmpty(_selectedName))
                 return;
 
-            if (_selectedSource == ModelSourceType.LocalFile)
+            if (_selectedSource == ModelSourceType.LocalFile || _selectedSource == ModelSourceType.LocalCheckpoint)
             {
                 if (!string.IsNullOrEmpty(_selectedFile))
                     SelectedName = Path.GetFileNameWithoutExtension(_selectedFile);
@@ -250,7 +277,7 @@ namespace Amuse.App.Dialogs
         {
             ModelSources = SelectedBackend == BackendType.PyTorch
                 ? [ModelSourceType.LocalFile, ModelSourceType.LocalFolder, ModelSourceType.Checkpoint]
-                : [ModelSourceType.LocalFile, ModelSourceType.Checkpoint];
+                : [ModelSourceType.LocalFile, ModelSourceType.LocalCheckpoint, ModelSourceType.Checkpoint];
 
             PipelineOptions.Clear();
             foreach (var pipelineOption in Settings.Templates.DiffusionTemplateMap.Where(x => x.Backend == _selectedBackend))
@@ -275,7 +302,7 @@ namespace Amuse.App.Dialogs
             if (Settings.DiffusionModels.Any(x => x.Name.Equals(_selectedName, StringComparison.OrdinalIgnoreCase)))
                 yield return $"Model with name '{_selectedName}' already exists";
 
-            if (_selectedSource == ModelSourceType.LocalFile)
+            if (_selectedSource == ModelSourceType.LocalFile || _selectedSource == ModelSourceType.LocalCheckpoint)
             {
                 if (string.IsNullOrEmpty(_selectedFile))
                     yield return "Model file name cannot be empty";

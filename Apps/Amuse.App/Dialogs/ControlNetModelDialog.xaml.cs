@@ -162,7 +162,8 @@ namespace Amuse.App.Dialogs
             // Checkpoint
             if (!ControlNetModel.Checkpoint.IsValid(out var checkpointValidation))
                 yield return checkpointValidation;
-
+            if (string.IsNullOrEmpty(ControlNetModel.Checkpoint.MainFile))
+                yield return "MainFile cannot be empty";
         }
     }
 }

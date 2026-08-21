@@ -29,27 +29,40 @@
         </DockPanel>
 
         <!--Main Content-->
-        <StackPanel>
-
-            <!--Model Settings-->
-            <GroupBox Header="Settings" Padding="4">
-                <UniformGrid Rows="1">
-                    <StackPanel Margin="2,0,2,0">
+        <GroupBox Header="Settings" Padding="4">
+            <DockPanel>
+                <UniformGrid DockPanel.Dock="Top" Columns="2">
+                    <StackPanel Margin="0,0,2,0">
                         <TextBlock Text="Pipeline" Style="{StaticResource FieldTextBlockStyle}"/>
                         <ComboBox ItemsSource="{Binding Settings.DiffusionPipelines}" SelectedItem="{Binding ControlNetModel.Pipeline}" SelectedIndex="0" Style="{StaticResource EnumComboBox}"/>
                     </StackPanel>
-                    <StackPanel Margin="2,0,2,0">
+                    <StackPanel Margin="2,0,0,0">
                         <TextBlock Text="Name" Style="{StaticResource FieldTextBlockStyle}"/>
                         <TextBox Text="{Binding ControlNetModel.Name, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
-                  </UniformGrid>
-            </GroupBox>
+                    <StackPanel Margin="0,0,2,0">
+                        <TextBlock Text="Type" Style="{StaticResource FieldTextBlockStyle}"/>
+                        <ComboBox SelectedItem="{Binding ControlNetModel.Checkpoint.Type, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding CheckpointTypes}" />
+                    </StackPanel>
+                    <StackPanel Margin="2,0,0,0">
+                        <TextBlock Text="Folder" Style="{StaticResource FieldTextBlockStyle}"/>
+                        <TextBox Text="{Binding ControlNetModel.Checkpoint.Folder, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,2,0">
+                        <TextBlock Text="Path" Style="{StaticResource FieldTextBlockStyle}"/>
+                        <TextBox Text="{Binding ControlNetModel.Checkpoint.Path, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Margin="2,0,0,0">
+                        <TextBlock Text="MainFile" Style="{StaticResource FieldTextBlockStyle}"/>
+                        <TextBox Text="{Binding ControlNetModel.Checkpoint.MainFile, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </UniformGrid>
+                <DockPanel Visibility="{Binding ControlNetModel.Checkpoint.Type, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=OnlineFolder|OnlineFile, UpdateSourceTrigger=PropertyChanged}" MinHeight="120">
+                    <TextBlock DockPanel.Dock="Top" Text="Download Flies" Style="{StaticResource FieldTextBlockStyle}"/>
+                    <TextBox Text="{Binding ControlNetModel.Checkpoint.DownloadFiles, Converter={StaticResource StringArrayConverter}}" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" />
+                </DockPanel>
+            </DockPanel>
+        </GroupBox>
 
-            <!--Checkpoint Settings-->
-            <GroupBox Header="{Binding ControlNetModel.Checkpoint.Name}" Margin="0,10,0,0" Height="160">
-                <Controls:CheckpointControl Settings="{Binding Settings}" Checkpoint="{Binding ControlNetModel.Checkpoint}" SupportedTypes="{Binding CheckpointTypes, Mode=OneWay}"/>
-            </GroupBox>
-
-        </StackPanel>
     </DockPanel>
 </CommonControls:DialogControl>

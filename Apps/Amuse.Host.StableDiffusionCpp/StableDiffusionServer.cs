@@ -448,6 +448,7 @@ namespace Amuse.Host.StableDiffusionCpp
 
             argumentBuilder.Append("--rng cpu ");
             argumentBuilder.Append("--lora-apply-mode at_runtime ");
+            argumentBuilder.Append("--force-sdxl-vae-conv-scale ");
             if (serverConfig.IsDebug)
                 argumentBuilder.Append("-v ");
             return argumentBuilder.ToString();

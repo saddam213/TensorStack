@@ -53,7 +53,7 @@
 
             <Grid>
                 <!--File-->
-                <StackPanel Visibility="{Binding SelectedSource, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=LocalFile}">
+                <StackPanel Visibility="{Binding SelectedSource, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=LocalFile|LocalCheckpoint}">
                     <TextBlock Text="Model File" Style="{StaticResource FieldTextBlockStyle}"/>
                     <CommonControls:FilePickerTextBox FileName="{Binding SelectedFile, Mode=TwoWay}" IsFolderPicker="False" IsRequired="True" Filter="{Binding FileFilter}"/>
                 </StackPanel>

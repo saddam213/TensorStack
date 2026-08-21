@@ -12708,6 +12708,1061 @@
     },
     {
       "Backend": "StableDiffusionCpp",
+      "Name": "SDXL_Base_CPP",
+      "Template": "SDXL",
+      "Pipeline": "StableDiffusionXLPipeline",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint", "ImageControlNet", "ImageToImageControlNet" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_SDXL"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_CLIP_L"
+        },
+        "TextEncoder2": {
+          "Name": "TextEncoder2",
+          "Type": "Component",
+          "Path": "TE_CLIP_G"
+        },
+        "Unet": {
+          "Name": "Unet",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 4, 8 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 6, 10 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 8, 16 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 7.5,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "SDXL_Turbo_CPP",
+      "Template": "SDXL",
+      "Pipeline": "StableDiffusionXLPipeline",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_SDXL"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_CLIP_L"
+        },
+        "TextEncoder2": {
+          "Name": "TextEncoder2",
+          "Type": "Component",
+          "Path": "TE_CLIP_G"
+        },
+        "Unet": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 4, 8 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 6, 10 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 8, 16 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 4,
+        "Width": 512,
+        "Height": 512,
+        "GuidanceScale": 0,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 512,
+          "Height": 512,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "SDXL_Lightning_CPP",
+      "Template": "SDXL",
+      "Pipeline": "StableDiffusionXLPipeline",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint", "ImageControlNet", "ImageToImageControlNet" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_SDXL"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_CLIP_L"
+        },
+        "TextEncoder2": {
+          "Name": "TextEncoder2",
+          "Type": "Component",
+          "Path": "TE_CLIP_G"
+        },
+        "Unet": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 4, 8 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 6, 10 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 8, 16 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 8,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 2,
+        "Scheduler": "EulerAncestral",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "SD3_Medium_CPP",
+      "Template": "SD3_Medium",
+      "Pipeline": "StableDiffusion3Pipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint", "ImageControlNet", "ImageToImageControlNet" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_SD3"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_CLIP_L"
+        },
+        "TextEncoder2": {
+          "Name": "TextEncoder2",
+          "Type": "Component",
+          "Path": "TE_CLIP_G"
+        },
+        "TextEncoder3": {
+          "Name": "TextEncoder3",
+          "Type": "Component",
+          "Path": "TE_T5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 4, 8 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 6, 10 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 8, 16 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 7.0,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "SD35_Medium_CPP",
+      "Template": "SD35_Medium",
+      "Pipeline": "StableDiffusion3Pipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint", "ImageControlNet", "ImageToImageControlNet" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_SD3"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_CLIP_L"
+        },
+        "TextEncoder2": {
+          "Name": "TextEncoder2",
+          "Type": "Component",
+          "Path": "TE_CLIP_G"
+        },
+        "TextEncoder3": {
+          "Name": "TextEncoder3",
+          "Type": "Component",
+          "Path": "TE_T5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 8, 12 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 10, 18 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 18, 28 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4.5,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "SD35_Large_CPP",
+      "Template": "SD35_Large",
+      "Pipeline": "StableDiffusion3Pipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint", "ImageControlNet", "ImageToImageControlNet" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_SD3"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_CLIP_L"
+        },
+        "TextEncoder2": {
+          "Name": "TextEncoder2",
+          "Type": "Component",
+          "Path": "TE_CLIP_G"
+        },
+        "TextEncoder3": {
+          "Name": "TextEncoder3",
+          "Type": "Component",
+          "Path": "TE_T5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 6, 10 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 8, 12 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 10, 18 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 3.5,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "SD35_Large_Turbo_CPP",
+      "Template": "SD35_Large",
+      "Pipeline": "StableDiffusion3Pipeline",
+      "ModelType": "Turbo",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint", "ImageControlNet", "ImageToImageControlNet" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_SD3"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_CLIP_L"
+        },
+        "TextEncoder2": {
+          "Name": "TextEncoder2",
+          "Type": "Component",
+          "Path": "TE_CLIP_G"
+        },
+        "TextEncoder3": {
+          "Name": "TextEncoder3",
+          "Type": "Component",
+          "Path": "TE_T5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 8, 12 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 10, 18 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 18, 28 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 4,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
       "Name": "ZImage_Base_CPP",
       "Template": "ZImage",
       "Pipeline": "ZImagePipeline",
@@ -13533,6 +14588,46 @@
         {
           "Name": "Edit",
           "Template": "QwenImage_Edit_CPP"
+        }
+      ]
+    },
+    {
+      "Name": "StableDiffusion XL",
+      "Backend": "StableDiffusionCpp",
+      "Options": [
+        {
+          "Name": "Base",
+          "Template": "SDXL_Base_CPP"
+        },
+        {
+          "Name": "Turbo",
+          "Template": "SDXL_Turbo_CPP"
+        },
+        {
+          "Name": "Lightning",
+          "Template": "SDXL_Lightning_CPP"
+        }
+      ]
+    },
+    {
+      "Name": "StableDiffusion 3",
+      "Backend": "StableDiffusionCpp",
+      "Options": [
+        {
+          "Name": "3.0 Medium",
+          "Template": "SD3_Medium_CPP"
+        },
+        {
+          "Name": "3.5 Medium",
+          "Template": "SD35_Medium_CPP"
+        },
+        {
+          "Name": "3.5 Large",
+          "Template": "SD35_Large_CPP"
+        },
+        {
+          "Name": "3.5 Large Turbo",
+          "Template": "SD35_Large_Turbo_CPP"
         }
       ]
     },

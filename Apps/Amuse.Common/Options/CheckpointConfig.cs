@@ -18,5 +18,28 @@
         public string ConditionEncoder { get; set; }
         public string AudioTokenizer { get; set; }
         public string AudioDetokenizer { get; set; }
+
+        public string FullCheckpoint
+        {
+            get
+            {
+                if ((!string.IsNullOrEmpty(Unet) || !string.IsNullOrEmpty(Transformer))
+                    && string.IsNullOrEmpty(Compute)
+                    && string.IsNullOrEmpty(TextEncoder)
+                    && string.IsNullOrEmpty(TextEncoder2)
+                    && string.IsNullOrEmpty(TextEncoder3)
+                    && string.IsNullOrEmpty(Vae)
+                    && string.IsNullOrEmpty(AudioVae)
+                    && string.IsNullOrEmpty(Vocoder)
+                    && string.IsNullOrEmpty(LatentUpsampler)
+                    && string.IsNullOrEmpty(LatentUpsamplerTemporal)
+                    && string.IsNullOrEmpty(ConditionEncoder)
+                    && string.IsNullOrEmpty(AudioTokenizer)
+                    && string.IsNullOrEmpty(AudioDetokenizer))
+                    return Unet ?? Transformer;
+
+                return null;
+            }
+        }
     }
 }

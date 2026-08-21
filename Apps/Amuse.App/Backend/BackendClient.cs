@@ -720,7 +720,7 @@ namespace Amuse.App.Runtime
             if (model is null)
                 return null;
 
-            var resolvedCheckpoint = model.Checkpoint.Resolve(Settings, Settings.DirectoryControlNet);
+            var resolvedCheckpoint = model.Checkpoint.Resolve(Settings, Settings.DirectoryControlNet, ResolveComponentFiles);
             return new ControlNetConfig
             {
                 Name = model.Name,
