@@ -13906,6 +13906,1015 @@
     },
     {
       "Backend": "StableDiffusionCpp",
+      "Name": "Wan21_1B_T2V_CPP",
+      "Template": "Wan21_1B_T2V",
+      "Pipeline": "WanPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 6, 10 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 8, 12 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 12, 18 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Frames": 81,
+        "FrameRate": 24,
+        "Width": 720,
+        "Height": 480,
+        "GuidanceScale": 5,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          17,
+          33,
+          49,
+          81,
+          113,
+          145,
+          177,
+          209,
+          241,
+          273
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 720,
+          "Height": 480,
+          "IsDefault": true
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Wan21_14B_T2V_CPP",
+      "Template": "Wan21_14B_T2V",
+      "Pipeline": "WanPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 21, 38 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 21, 38 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 34, 52 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Frames": 81,
+        "FrameRate": 24,
+        "Width": 720,
+        "Height": 480,
+        "GuidanceScale": 5,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          17,
+          33,
+          49,
+          81,
+          113,
+          145,
+          177,
+          209,
+          241,
+          273
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 720,
+          "Height": 480,
+          "IsDefault": true
+        },
+        {
+          "Width": 1280,
+          "Height": 720
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Wan21_14B_I2V_480_CPP",
+      "Template": "Wan21_14B_I2V",
+      "Pipeline": "WanPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "ImageToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "TextEncoder2": {
+          "Name": "ClipVision",
+          "Type": "Component",
+          "Path": "CV_Wan21"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 21, 38 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 21, 38 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 34, 52 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Frames": 81,
+        "FrameRate": 24,
+        "Width": 832,
+        "Height": 480,
+        "GuidanceScale": 5,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "IsFirstFrameLastFrameEnabled": true,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          17,
+          33,
+          49,
+          81,
+          113,
+          145,
+          177,
+          209,
+          241,
+          273
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 832,
+          "Height": 480,
+          "IsDefault": true
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Wan21_14B_I2V_720_CPP",
+      "Template": "Wan21_14B_I2V",
+      "Pipeline": "WanPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "ImageToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "TextEncoder2": {
+          "Name": "ClipVision",
+          "Type": "Component",
+          "Path": "CV_Wan21"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile",
+          "Path": ""
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 8, 21, 38 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 8, 21, 38 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 34, 52 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Frames": 81,
+        "FrameRate": 24,
+        "Width": 720,
+        "Height": 1280,
+        "GuidanceScale": 5,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "IsFirstFrameLastFrameEnabled": true,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          17,
+          33,
+          49,
+          81,
+          113,
+          145,
+          177,
+          209,
+          241,
+          273
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1280,
+          "Height": 720,
+          "IsDefault": true
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Wan22_5B_TI2V_CPP",
+      "Template": "Wan22_5B_TI2V",
+      "Pipeline": "WanPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo", "ImageToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan22"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "TextEncoder2": {
+          "Name": "ClipVision",
+          "Type": "Component",
+          "Path": "CV_Wan21"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 17, 31 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Frames": 121,
+        "FrameRate": 24,
+        "Width": 1280,
+        "Height": 704,
+        "GuidanceScale": 5,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "IsFirstFrameLastFrameEnabled": true,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          25,
+          49,
+          73,
+          97,
+          121
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1280,
+          "Height": 704,
+          "IsDefault": true
+        },
+        {
+          "Width": 1024,
+          "Height": 765
+        },
+        {
+          "Width": 960,
+          "Height": 960
+        },
+        {
+          "Width": 768,
+          "Height": 1024
+        },
+        {
+          "Width": 704,
+          "Height": 1280
+        },
+        {
+          "Width": 832,
+          "Height": 480
+        },
+        {
+          "Width": 640,
+          "Height": 480
+        },
+        {
+          "Width": 640,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 832
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Wan22_14B_T2V_CPP",
+      "Template": "Wan22_14B_T2V",
+      "Pipeline": "WanPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        },
+        "Transformer2": {
+          "Name": "Transformer2",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 17, 31 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 16,
+        "Steps2": 6,
+        "Frames": 81,
+        "FrameRate": 16,
+        "Width": 640,
+        "Height": 480,
+        "GuidanceScale": 4,
+        "GuidanceScale2": 3,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          17,
+          33,
+          49,
+          81,
+          113,
+          145,
+          177,
+          209,
+          241,
+          273
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1280,
+          "Height": 704
+        },
+        {
+          "Width": 1024,
+          "Height": 765
+        },
+        {
+          "Width": 960,
+          "Height": 960
+        },
+        {
+          "Width": 768,
+          "Height": 1024
+        },
+        {
+          "Width": 704,
+          "Height": 1280
+        },
+        {
+          "Width": 832,
+          "Height": 480
+        },
+        {
+          "Width": 640,
+          "Height": 480,
+          "IsDefault": true
+        },
+        {
+          "Width": 640,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 832
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Wan22_14B_I2V_CPP",
+      "Template": "Wan22_14B_I2V",
+      "Pipeline": "WanPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "ImageToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        },
+        "Transformer2": {
+          "Name": "Transformer2",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 17, 31 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 16,
+        "Steps2": 6,
+        "Frames": 81,
+        "FrameRate": 16,
+        "Width": 640,
+        "Height": 480,
+        "GuidanceScale": 4,
+        "GuidanceScale2": 3,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          17,
+          33,
+          49,
+          81,
+          113,
+          145,
+          177,
+          209,
+          241,
+          273
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1280,
+          "Height": 704
+        },
+        {
+          "Width": 1024,
+          "Height": 765
+        },
+        {
+          "Width": 960,
+          "Height": 960
+        },
+        {
+          "Width": 768,
+          "Height": 1024
+        },
+        {
+          "Width": 704,
+          "Height": 1280
+        },
+        {
+          "Width": 832,
+          "Height": 480
+        },
+        {
+          "Width": 640,
+          "Height": 480,
+          "IsDefault": true
+        },
+        {
+          "Width": 640,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 832
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
       "Name": "ZImage_Turbo_CPP",
       "Template": "ZImage",
       "Pipeline": "ZImagePipeline",
@@ -14424,7 +15433,7 @@
       ]
     },
     {
-      "Name": "WAN Video",
+      "Name": "Wan Video",
       "Backend": "PyTorch",
       "Options": [
         {
@@ -14628,6 +15637,40 @@
         {
           "Name": "3.5 Large Turbo",
           "Template": "SD35_Large_Turbo_CPP"
+        }
+      ]
+    },
+    {
+      "Name": "Wan Video",
+      "Backend": "StableDiffusionCpp",
+      "Options": [
+        {
+          "Name": "2.1 T2V (1B)",
+          "Template": "Wan21_1B_T2V_CPP"
+        },
+        {
+          "Name": "2.1 T2V (14B)",
+          "Template": "Wan21_14B_T2V_CPP"
+        },
+        {
+          "Name": "2.1 I2V (14B) 480p",
+          "Template": "Wan21_14B_I2V_480_CPP"
+        },
+        {
+          "Name": "2.1 I2V (14B) 720p",
+          "Template": "Wan21_14B_I2V_720_CPP"
+        },
+        {
+          "Name": "2.2 TI2V (5B)",
+          "Template": "Wan22_5B_TI2V_CPP"
+        },
+        {
+          "Name": "2.2 T2V (14B)",
+          "Template": "Wan22_14B_T2V_CPP"
+        },
+        {
+          "Name": "2.2 I2V (14B)",
+          "Template": "Wan22_14B_I2V_CPP"
         }
       ]
     },

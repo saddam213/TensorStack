@@ -244,9 +244,13 @@
                             <CommonControls:SliderControl Text="Steps" Value="{Binding Options.Steps}" Minimum="1" Maximum="100" TickFrequency="1" />
                         </StackPanel>
                         <StackPanel Visibility="{Binding IsSteps2Enabled, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
-                            <UniformGrid Columns="2">
+                            <UniformGrid Columns="2" Visibility="{Binding Pipeline.DiffusionModel.Pipeline, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=WanPipeline}">
                                 <CommonControls:SliderControl Text="Steps (Stage1)" Value="{Binding Options.Steps}" Minimum="1" Maximum="100" TickFrequency="1" Margin="0,0,3,0"/>
                                 <CommonControls:SliderControl Text="Steps (Stage2)" Value="{Binding Options.Steps2}" Minimum="1" Maximum="100" TickFrequency="1" Margin="3,0,0,0"/>
+                            </UniformGrid>
+                            <UniformGrid Columns="2" Visibility="{Binding Pipeline.DiffusionModel.Pipeline, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=WanPipeline}">
+                                <CommonControls:SliderControl Text="Steps (High Noise)" Value="{Binding Options.Steps2}" Minimum="1" Maximum="100" TickFrequency="1" Margin="0,0,3,0"/>
+                                <CommonControls:SliderControl Text="Steps (Low Noise)" Value="{Binding Options.Steps}" Minimum="1" Maximum="100" TickFrequency="1" Margin="3,0,0,0"/>
                             </UniformGrid>
                         </StackPanel>
 
@@ -255,9 +259,13 @@
                             <CommonControls:SliderControl Text="Guidance" Value="{Binding Options.GuidanceScale}" Minimum="1" Maximum="20" TickFrequency="0.1" ValueFormat="F2"/>
                         </StackPanel>
                         <StackPanel Visibility="{Binding IsGuidance2Enabled, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
-                            <UniformGrid Columns="2">
+                            <UniformGrid Columns="2" Visibility="{Binding Pipeline.DiffusionModel.Pipeline, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=WanPipeline}">
                                 <CommonControls:SliderControl Text="Guidance (Model)" Value="{Binding Options.GuidanceScale2}" Minimum="1" Maximum="20" TickFrequency="0.1" ValueFormat="F2" Margin="0,0,3,0"/>
                                 <CommonControls:SliderControl Text="Guidance (CFG)" Value="{Binding Options.GuidanceScale}" Minimum="1" Maximum="20" TickFrequency="0.1" ValueFormat="F2" Margin="3,0,0,0"/>
+                            </UniformGrid>
+                            <UniformGrid Columns="2" Visibility="{Binding Pipeline.DiffusionModel.Pipeline, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=WanPipeline}">
+                                <CommonControls:SliderControl Text="Guidance (High Noise)" Value="{Binding Options.GuidanceScale}" Minimum="1" Maximum="20" TickFrequency="0.1" ValueFormat="F2" Margin="3,0,0,0"/>
+                                <CommonControls:SliderControl Text="Guidance (Low Noise)" Value="{Binding Options.GuidanceScale2}" Minimum="1" Maximum="20" TickFrequency="0.1" ValueFormat="F2" Margin="0,0,3,0"/>
                             </UniformGrid>
                         </StackPanel>
 

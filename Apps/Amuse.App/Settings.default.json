@@ -664,6 +664,37 @@
       }
     },
     {
+      "Id": 211,
+      "Name": "Wan 2.2 AutoEncoder",
+      "Key": "VAE_Wan22",
+      "Link": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged",
+      "Checkpoint": {
+        "Name": "Component",
+        "Type": "OnlineFolder",
+        "Folder": "AutoEncoder",
+        "Path": "Wan22",
+        "MainFile": "wan2.2_vae.safetensors",
+        "DownloadFiles": [
+          "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan2.2_vae.safetensors"
+        ]
+      }
+    },
+    {
+      "Id": 212,
+      "Name": "Wan 2.1 ClipVision",
+      "Key": "CV_Wan21",
+      "Link": "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged",
+      "Checkpoint": {
+        "Name": "Component",
+        "Type": "OnlineFolder",
+        "Folder": "AutoEncoder",
+        "MainFile": "clip_vision_h.safetensors",
+        "DownloadFiles": [
+          "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
+        ]
+      }
+    },
+    {
       "Id": 300,
       "Name": "AceStep TextEncoder",
       "Key": "TE_AceStepXL",
@@ -14331,13 +14362,521 @@
         }
       ],
       "Link": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0"
+    },
+    {
+      "Id": 600,
+      "Backend": "StableDiffusionCpp",
+      "Name": "Wan 2.2 5B",
+      "Template": "Wan22_5B_TI2V",
+      "Pipeline": "WanPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo", "ImageToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan22"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/QuantStack/Wan2.2-TI2V-5B-GGUF/resolve/main/Wan2.2-TI2V-5B-Q8_0.gguf"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 17, 31 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Frames": 121,
+        "FrameRate": 24,
+        "Width": 1280,
+        "Height": 704,
+        "GuidanceScale": 5,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "IsFirstFrameLastFrameEnabled": true,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          25,
+          49,
+          73,
+          97,
+          121
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1280,
+          "Height": 704,
+          "IsDefault": true
+        },
+        {
+          "Width": 1024,
+          "Height": 765
+        },
+        {
+          "Width": 960,
+          "Height": 960
+        },
+        {
+          "Width": 768,
+          "Height": 1024
+        },
+        {
+          "Width": 704,
+          "Height": 1280
+        },
+        {
+          "Width": 832,
+          "Height": 480
+        },
+        {
+          "Width": 640,
+          "Height": 480
+        },
+        {
+          "Width": 640,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 832
+        }
+      ],
+      "Link": "https://huggingface.co/QuantStack/Wan2.2-TI2V-5B-GGUF"
+    },
+    {
+      "Id": 601,
+      "Backend": "StableDiffusionCpp",
+      "Name": "Wan 2.2 T2V 14B",
+      "Template": "Wan22_14B_T2V",
+      "Pipeline": "WanPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/QuantStack/Wan2.2-T2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-T2V-A14B-LowNoise-Q8_0.gguf"
+          ]
+        },
+        "Transformer2": {
+          "Name": "Transformer2",
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/QuantStack/Wan2.2-T2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-T2V-A14B-HighNoise-Q8_0.gguf"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 17, 31 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 16,
+        "Steps2": 6,
+        "Frames": 81,
+        "FrameRate": 16,
+        "Width": 640,
+        "Height": 480,
+        "GuidanceScale": 4,
+        "GuidanceScale2": 3,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          17,
+          33,
+          49,
+          81,
+          113,
+          145,
+          177,
+          209,
+          241,
+          273
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1280,
+          "Height": 704
+        },
+        {
+          "Width": 1024,
+          "Height": 765
+        },
+        {
+          "Width": 960,
+          "Height": 960
+        },
+        {
+          "Width": 768,
+          "Height": 1024
+        },
+        {
+          "Width": 704,
+          "Height": 1280
+        },
+        {
+          "Width": 832,
+          "Height": 480
+        },
+        {
+          "Width": 640,
+          "Height": 480,
+          "IsDefault": true
+        },
+        {
+          "Width": 640,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 832
+        }
+      ],
+      "Link": "https://huggingface.co/QuantStack/Wan2.2-T2V-A14B-GGUF"
+    },
+    {
+      "Id": 602,
+      "Backend": "StableDiffusionCpp",
+      "Name": "Wan 2.2 I2V 14B",
+      "Template": "Wan22_14B_I2V",
+      "Pipeline": "WanPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "ImageToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Wan21"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_UMT5_XXL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q8_0.gguf"
+          ]
+        },
+        "Transformer2": {
+          "Name": "Transformer2",
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q8_0.gguf"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 17, 31 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 16,
+        "Steps2": 6,
+        "Frames": 81,
+        "FrameRate": 16,
+        "Width": 640,
+        "Height": 480,
+        "GuidanceScale": 4,
+        "GuidanceScale2": 3,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          17,
+          33,
+          49,
+          81,
+          113,
+          145,
+          177,
+          209,
+          241,
+          273
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1280,
+          "Height": 704
+        },
+        {
+          "Width": 1024,
+          "Height": 765
+        },
+        {
+          "Width": 960,
+          "Height": 960
+        },
+        {
+          "Width": 768,
+          "Height": 1024
+        },
+        {
+          "Width": 704,
+          "Height": 1280
+        },
+        {
+          "Width": 832,
+          "Height": 480
+        },
+        {
+          "Width": 640,
+          "Height": 480,
+          "IsDefault": true
+        },
+        {
+          "Width": 640,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 640
+        },
+        {
+          "Width": 480,
+          "Height": 832
+        }
+      ],
+      "Link": "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF"
     }
   ],
   "LoraAdapterModels": [
     {
       "Id": 101,
       "Name": "40s Cyberpunk",
-      "RepoName": "zitloras",
       "Pipeline": "ZImagePipeline",
       "Key": "40scyberpunkz",
       "Checkpoint": {
@@ -14353,7 +14892,6 @@
     {
       "Id": 102,
       "Name": "80s Fantasy",
-      "RepoName": "zitloras",
       "Pipeline": "ZImagePipeline",
       "Key": "80sfantasy",
       "Checkpoint": {
@@ -14368,7 +14906,6 @@
     {
       "Id": 103,
       "Name": "Coloring Book Z",
-      "RepoName": "renderartist",
       "Pipeline": "ZImagePipeline",
       "Key": "coloringbookz",
       "Triggers": [ "c0l0ringb00k" ],
@@ -14384,7 +14921,6 @@
     {
       "Id": 201,
       "Name": "Camera Dolly-In",
-      "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
       "Key": "cameradollyin201",
       "Checkpoint": {
@@ -14400,7 +14936,6 @@
     {
       "Id": 202,
       "Name": "Camera Dolly-Out",
-      "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
       "Key": "cameradollyout202",
       "Checkpoint": {
@@ -14415,7 +14950,6 @@
     {
       "Id": 203,
       "Name": "Camera Dolly-Left",
-      "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
       "Key": "cameradollyleft203",
       "Checkpoint": {
@@ -14430,7 +14964,6 @@
     {
       "Id": 204,
       "Name": "Camera Dolly-Right",
-      "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
       "Key": "cameradollyright204",
       "Checkpoint": {
@@ -14445,7 +14978,6 @@
     {
       "Id": 205,
       "Name": "Camera Jib-Down",
-      "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
       "Key": "camerajibdown205",
       "Checkpoint": {
@@ -14460,7 +14992,6 @@
     {
       "Id": 206,
       "Name": "Camera Jib-Up",
-      "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
       "Key": "camerajibup206",
       "Checkpoint": {
@@ -14475,7 +15006,6 @@
     {
       "Id": 207,
       "Name": "Camera Static",
-      "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
       "Key": "camerastatic207",
       "Checkpoint": {
@@ -14490,7 +15020,6 @@
     {
       "Id": 208,
       "Name": "Detailer",
-      "RepoName": "Lightricks",
       "Pipeline": "LTX20Pipeline",
       "Key": "detailer208",
       "Checkpoint": {
@@ -14505,7 +15034,6 @@
     {
       "Id": 209,
       "Name": "Hyper-SDXL-8steps-CFG",
-      "RepoName": "ByteDance",
       "Pipeline": "StableDiffusionXLPipeline",
       "Key": "hypersdxl8stepscfg",
       "Checkpoint": {
@@ -14520,7 +15048,6 @@
     {
       "Id": 210,
       "Name": "Hyper-SD3-8steps-CFG",
-      "RepoName": "ByteDance",
       "Pipeline": "StableDiffusion3Pipeline",
       "Key": "hypersd38stepscfg",
       "Checkpoint": {
@@ -14535,7 +15062,6 @@
     {
       "Id": 211,
       "Name": "Hyper-FLUX.1-dev-8steps",
-      "RepoName": "ByteDance",
       "Pipeline": "FluxPipeline",
       "Key": "hyperflux1dev8steps",
       "Checkpoint": {
@@ -14550,7 +15076,6 @@
     {
       "Id": 212,
       "Name": "Sprite Sheet 4B",
-      "RepoName": "fal",
       "Pipeline": "Flux2KleinPipeline",
       "Key": "spritesheet4b",
       "Triggers": [ "2x2 sprite sheet" ],
@@ -14566,7 +15091,6 @@
     {
       "Id": 213,
       "Name": "Background Remove 4B",
-      "RepoName": "fal",
       "Pipeline": "Flux2KleinPipeline",
       "Key": "backgroundremove4b",
       "Checkpoint": {
@@ -14581,7 +15105,6 @@
     {
       "Id": 214,
       "Name": "Redbox Zoom 4B",
-      "RepoName": "fal",
       "Pipeline": "Flux2KleinPipeline",
       "Key": "redboxzoom4b",
       "Checkpoint": {
@@ -14596,7 +15119,6 @@
     {
       "Id": 216,
       "Name": "Outpaint 4B",
-      "RepoName": "fal",
       "Pipeline": "Flux2KleinPipeline",
       "Key": "outpaint4b",
       "Checkpoint": {
@@ -14611,7 +15133,6 @@
     {
       "Id": 217,
       "Name": "Virtual Try-On 9B",
-      "RepoName": "fal",
       "Pipeline": "Flux2KleinPipeline",
       "Key": "virtualtryon9b",
       "Checkpoint": {
@@ -14626,7 +15147,6 @@
     {
       "Id": 218,
       "Name": "Consistency 9B",
-      "RepoName": "dx8152",
       "Pipeline": "Flux2KleinPipeline",
       "Key": "consistency9b",
       "Checkpoint": {
@@ -14641,7 +15161,6 @@
     {
       "Id": 219,
       "Name": "Enhanced Details 9B",
-      "RepoName": "dx8152",
       "Pipeline": "Flux2KleinPipeline",
       "Key": "enhanceddetails9b",
       "Checkpoint": {
@@ -14656,7 +15175,6 @@
     {
       "Id": 220,
       "Name": "Scribbly Doodle 4B",
-      "RepoName": "reverentelusarca",
       "Pipeline": "Flux2KleinPipeline",
       "Key": "scribblydoodle4b",
       "Checkpoint": {
@@ -14671,7 +15189,6 @@
     {
       "Id": 221,
       "Name": "Scribbly Doodle 9B",
-      "RepoName": "reverentelusarca",
       "Pipeline": "Flux2KleinPipeline",
       "Key": "scribblydoodle9b",
       "Checkpoint": {
@@ -14686,7 +15203,6 @@
     {
       "Id": 240,
       "Name": "Highres/Aesthetic Boost",
-      "RepoName": "circlestone-labs",
       "Pipeline": "AnimaPipeline",
       "Key": "highresaestheticboost",
       "Checkpoint": {
@@ -14701,7 +15217,6 @@
     {
       "Id": 241,
       "Name": "Greg Rutkowski Style",
-      "RepoName": "circlestone-labs",
       "Pipeline": "AnimaPipeline",
       "Key": "gregrutkowski",
       "Checkpoint": {
@@ -14716,7 +15231,6 @@
     {
       "Id": 242,
       "Name": "Turbo (Step:8-12, CFG:1)",
-      "RepoName": "circlestone-labs",
       "Pipeline": "AnimaPipeline",
       "Key": "turbo",
       "Checkpoint": {
@@ -14731,7 +15245,6 @@
     {
       "Id": 243,
       "Name": "Anima RL",
-      "RepoName": "circlestone-labs",
       "Pipeline": "AnimaPipeline",
       "Key": "rl",
       "Checkpoint": {
@@ -14746,7 +15259,6 @@
     {
       "Id": 300,
       "Name": "Retro Anime",
-      "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
       "Key": "retroanime",
       "Triggers": [ "Purple retro anime style" ],
@@ -14762,7 +15274,6 @@
     {
       "Id": 301,
       "Name": "Soft Watercolor",
-      "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
       "Key": "softwatercolor",
       "Triggers": [ "Art Deco watercolor style" ],
@@ -14778,7 +15289,6 @@
     {
       "Id": 302,
       "Name": "Vintage Tarot",
-      "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
       "Key": "vintagetarot",
       "Triggers": [ "vintage tarot style" ],
@@ -14794,7 +15304,6 @@
     {
       "Id": 303,
       "Name": "Kids Drawing",
-      "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
       "Key": "kidsdrawing",
       "Triggers": [ "naive expressive sketch style" ],
@@ -14810,7 +15319,6 @@
     {
       "Id": 304,
       "Name": "Rainy Window",
-      "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
       "Key": "rainywindow",
       "Triggers": [ "rainy window style" ],
@@ -14826,7 +15334,6 @@
     {
       "Id": 305,
       "Name": "Sunset Blur",
-      "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
       "Key": "sunsetblur",
       "Triggers": [ "ethereal motion blur style" ],
@@ -14842,7 +15349,6 @@
     {
       "Id": 306,
       "Name": "Dark Brush",
-      "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
       "Key": "darkbrush",
       "Triggers": [ "monochrome ink wash style" ],
@@ -14858,7 +15364,6 @@
     {
       "Id": 307,
       "Name": "Dotmatrix",
-      "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
       "Key": "dotmatrix",
       "Triggers": [ "Monochrome stippling style" ],
@@ -14874,7 +15379,6 @@
     {
       "Id": 308,
       "Name": "Neon Drip",
-      "RepoName": "krea",
       "Pipeline": "Krea2Pipeline",
       "Key": "neondrip",
       "Triggers": [ "Textured abstract style" ],
@@ -14886,6 +15390,66 @@
         ]
       },
       "Link": "https://huggingface.co/krea/Krea-2-LoRA-neondrip"
+    },
+    {
+      "Id": 320,
+      "Name": "Wan 2.2 T2V (Step:4, CFG:1, HighNoise)",
+      "Pipeline": "WanPipeline",
+      "Key": "t2v4stepshigh",
+      "ViewFilter": ["TextToVideo"],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "DownloadFiles": [
+          "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_t2v_lightx2v_4steps_lora_v1.1_high_noise.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/tree/main/split_files/loras"
+    },
+    {
+      "Id": 321,
+      "Name": "Wan 2.2 T2V (Step:4, CFG:1, LowNoise)",
+      "Pipeline": "WanPipeline",
+      "Key": "t2v4stepslow",
+      "ViewFilter": [ "TextToVideo" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "DownloadFiles": [
+          "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_t2v_lightx2v_4steps_lora_v1.1_low_noise.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/tree/main/split_files/loras"
+    },
+    {
+      "Id": 322,
+      "Name": "Wan 2.2 I2V (Step:4, CFG:1, HighNoise)",
+      "Pipeline": "WanPipeline",
+      "Key": "i2v4stepshigh",
+      "ViewFilter": [ "ImageToVideo", "VideoToVideo" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "DownloadFiles": [
+          "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/tree/main/split_files/loras"
+    },
+    {
+      "Id": 323,
+      "Name": "Wan 2.2 I2V (Step:4, CFG:1, LowNoise)",
+      "Pipeline": "WanPipeline",
+      "Key": "i2v4stepslow",
+      "ViewFilter": [ "ImageToVideo", "VideoToVideo" ],
+      "Checkpoint": {
+        "Name": "LoraAdapter Model",
+        "Type": "OnlineFile",
+        "DownloadFiles": [
+          "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors"
+        ]
+      },
+      "Link": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/tree/main/split_files/loras"
     }
   ],
   "ControlNetModels": [

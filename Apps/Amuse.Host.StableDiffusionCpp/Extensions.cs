@@ -103,11 +103,7 @@ namespace Amuse.Host.StableDiffusionCpp
                     Scheduler = GetSigmaSchedule(options.SchedulerOptions),
                     Eta = options.SchedulerOptions.Eta > 0 ? options.SchedulerOptions.Eta : null,
                     FlowShift = options.SchedulerOptions.FlowShift > 0 ? options.SchedulerOptions.FlowShift : null,
-                    Guidance = new GuidanceParams
-                    {
-                        TxtCfg = Math.Max(1, options.GuidanceScale),
-                        DistilledGuidance = Math.Max(1, options.GuidanceScale2)
-                    }
+                    Guidance = options.GetGuidanceScale(loadOptions.Pipeline)
                 },
                 SampleParamsHighNoise = new SampleParams
                 {
@@ -116,17 +112,49 @@ namespace Amuse.Host.StableDiffusionCpp
                     Scheduler = GetSigmaSchedule(options.SchedulerOptions),
                     Eta = options.SchedulerOptions.Eta > 0 ? options.SchedulerOptions.Eta : null,
                     FlowShift = options.SchedulerOptions.FlowShift > 0 ? options.SchedulerOptions.FlowShift : null,
-                    Guidance = new GuidanceParams
-                    {
-                        TxtCfg = Math.Max(1, options.GuidanceScale),
-                        DistilledGuidance = Math.Max(1, options.GuidanceScale2)
-                    }
+                    Guidance = options.GetGuidanceScaleighNoise(loadOptions.Pipeline)
                 },
                 VaeTilingParams = new VaeTilingParams
                 {
                     Enabled = options.EnableVaeTiling,
                     TemporalTiling = options.EnableVaeSlicing
                 }
+            };
+        }
+
+
+        private static GuidanceParams GetGuidanceScale(this GenerateVideoOptions options, string pipelineType)
+        {
+            if (pipelineType == "WanPipeline")
+            {
+                return new GuidanceParams
+                {
+                    TxtCfg = Math.Max(1, options.GuidanceScale2),
+                    DistilledGuidance = Math.Max(1, options.GuidanceScale2)
+                };
+            }
+            return new GuidanceParams
+            {
+                TxtCfg = Math.Max(1, options.GuidanceScale),
+                DistilledGuidance = Math.Max(1, options.GuidanceScale2)
+            };
+        }
+
+
+        private static GuidanceParams GetGuidanceScaleighNoise(this GenerateVideoOptions options, string pipelineType)
+        {
+            if (pipelineType == "WanPipeline")
+            {
+                return new GuidanceParams
+                {
+                    TxtCfg = Math.Max(1, options.GuidanceScale),
+                    DistilledGuidance = Math.Max(1, options.GuidanceScale)
+                };
+            }
+            return new GuidanceParams
+            {
+                TxtCfg = Math.Max(1, options.GuidanceScale2),
+                DistilledGuidance = Math.Max(1, options.GuidanceScale)
             };
         }
 
@@ -216,6 +244,18 @@ namespace Amuse.Host.StableDiffusionCpp
                     Diffusion = options.CheckpointConfig.Transformer,
                     LoraModelDirectory = options.LoraAdapterPath,
                     UpscaleModelDirectory = GetHiresModelPath(options)
+                };
+            }
+            if (options.Pipeline == "WanPipeline")
+            {
+                return new Config.ModelConfig
+                {
+                    Vae = options.CheckpointConfig.Vae,
+                    T5XXL = options.CheckpointConfig.TextEncoder,
+                    ClipVison = options.CheckpointConfig.TextEncoder2,
+                    Diffusion = options.CheckpointConfig.Transformer,
+                    DiffusionHighNoise = options.CheckpointConfig.Transformer2,
+                    LoraModelDirectory = options.LoraAdapterPath
                 };
             }
             if (options.Pipeline == "QwenImagePipeline")
