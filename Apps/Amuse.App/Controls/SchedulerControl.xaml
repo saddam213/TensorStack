@@ -1777,10 +1777,10 @@
                 <!--Scheduler Type-->
                 <StackPanel>
                     <TextBlock Text="Scheduler" Style="{StaticResource FieldTextBlockStyle}" />
-                    <ComboBox SelectedValuePath="Scheduler" SelectedValue="{Binding SelectedOptions.Scheduler}" ItemsSource="{Binding Options}"/>
+                    <ComboBox SelectedItem="{Binding SelectedOptions}" ItemsSource="{Binding Options}"/>
                 </StackPanel>
 
-                <!--Scheduler Type-->
+                <!--SigmaSchedule Type-->
                 <StackPanel Visibility="{Binding IsSelectorOnly, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <TextBlock Text="Sigma Schedule" Style="{StaticResource FieldTextBlockStyle}" />
                     <ComboBox SelectedItem="{Binding SelectedOptions.SigmaScheduleType}" ItemsSource="{Binding Source={StaticResource SigmaScheduleType}}"/>

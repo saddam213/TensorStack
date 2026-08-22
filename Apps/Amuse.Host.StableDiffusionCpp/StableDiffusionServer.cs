@@ -416,13 +416,13 @@ namespace Amuse.Host.StableDiffusionCpp
             else if (serverConfig.MemoryMode == MemoryModeType.OffloadCPU)
             {
                 argumentBuilder.Append("--offload-to-cpu ");
-                argumentBuilder.Append("--params-backend te=disk,vae=disk,clip_vision=disk ");
+                argumentBuilder.Append("--params-backend diffusion=cpu,vae=disk,te=disk,clip_vision=disk ");
                 argumentBuilder.Append("--stream-layers ");
             }
             else if (serverConfig.MemoryMode == MemoryModeType.OffloadModel)
             {
                 argumentBuilder.Append("--offload-to-cpu ");
-                argumentBuilder.Append("--params-backend te=disk,vae=disk,clip_vision=disk ");
+                argumentBuilder.Append("--params-backend diffusion=cpu,vae=disk,te=disk,clip_vision=disk ");
             }
 
             if (serverConfig.MemoryMode == MemoryModeType.Device)

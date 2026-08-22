@@ -21,7 +21,7 @@
       "Backend": "PyTorch",
       "Environment": "cuda-130",
       "HostVersion": "3.14",
-      "Version": 14,
+      "Version": 16,
       "IsDefault": true,
       "Status": "Create",
       "Variables": {
@@ -37,7 +37,7 @@
         "wheel==0.47.0",
         "transformers==5.13.1",
         "accelerate==1.14.0",
-        "diffusers==0.39.0",
+        "diffusers==0.40.0",
         "protobuf==7.35.1",
         "sentencepiece==0.2.2",
         "ftfy==6.3.1",
@@ -60,7 +60,7 @@
       "Backend": "PyTorch",
       "Environment": "rocm-721",
       "HostVersion": "3.12",
-      "Version": 14,
+      "Version": 16,
       "Status": "Create",
       "IsDefault": true,
       "Variables": {
@@ -80,7 +80,7 @@
         "wheel==0.47.0",
         "transformers==5.13.1",
         "accelerate==1.14.0",
-        "diffusers==0.39.0",
+        "diffusers==0.40.0",
         "protobuf==7.35.1",
         "sentencepiece==0.2.2",
         "ftfy==6.3.1",
@@ -102,11 +102,11 @@
       "Backend": "StableDiffusionCpp",
       "Environment": "vulkan",
       "HostVersion": "Vulkan",
-      "Version": 0,
+      "Version": 2,
       "Status": "Create",
       "Variables": {},
       "Requirements": [
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/sd-master-de298c2-bin-win-vulkan-x64.zip"
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-827-97d2990/sd-master-97d2990-bin-win-vulkan-x64.zip"
       ]
     },
     {
@@ -117,12 +117,12 @@
       "Backend": "StableDiffusionCpp",
       "Environment": "vulkan",
       "HostVersion": "Vulkan",
-      "Version": 0,
+      "Version": 2,
       "Status": "Create",
       "IsDefault": true,
       "Variables": {},
       "Requirements": [
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/sd-master-de298c2-bin-win-vulkan-x64.zip"
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-827-97d2990/sd-master-97d2990-bin-win-vulkan-x64.zip"
       ]
     },
     {
@@ -133,12 +133,12 @@
       "Backend": "StableDiffusionCpp",
       "Environment": "vulkan",
       "HostVersion": "Vulkan",
-      "Version": 0,
+      "Version": 2,
       "Status": "Create",
       "IsDefault": true,
       "Variables": {},
       "Requirements": [
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/sd-master-de298c2-bin-win-vulkan-x64.zip"
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-827-97d2990/sd-master-97d2990-bin-win-vulkan-x64.zip"
       ]
     },
     {
@@ -149,13 +149,13 @@
       "Backend": "StableDiffusionCpp",
       "Environment": "cuda",
       "HostVersion": "CUDA",
-      "Version": 0,
+      "Version": 2,
       "Status": "Create",
       "IsDefault": true,
       "Variables": {},
       "Requirements": [
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/cudart-sd-bin-win-cu12-x64.zip",
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/sd-master-de298c2-bin-win-cuda12-x64.zip"
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-827-97d2990/cudart-sd-bin-win-cu12-x64.zip",
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-827-97d2990/sd-master-97d2990-bin-win-cuda12-x64.zip"
       ]
     },
 
@@ -167,11 +167,11 @@
       "Backend": "StableDiffusionCpp",
       "Environment": "rocm",
       "HostVersion": "ROCM",
-      "Version": 0,
+      "Version": 2,
       "Status": "Create",
       "Variables": {},
       "Requirements": [
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-820-de298c2/sd-master-de298c2-bin-win-rocm-7.14.0-x64.zip",
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-827-97d2990/sd-master-97d2990-bin-win-rocm-7.14.0-x64.zip",
         "https://repo.amd.com/rocm/tarball-multi-arch/therock-dist-windows-multiarch-7.14.0.tar.gz"
       ]
     }
@@ -1300,6 +1300,51 @@
         "MainFile": "ltx-2.3-22b-distilled_audio_vae.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/unsloth/LTX-2.3-GGUF/resolve/main/vae/ltx-2.3-22b-distilled_audio_vae.safetensors"
+        ]
+      }
+    },
+    {
+      "Id": 560,
+      "Name": "MiniMax-H3 Audio Vae",
+      "Key": "AVAE_MMH3",
+      "Link": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "Checkpoint": {
+        "Name": "Component",
+        "Type": "OnlineFolder",
+        "Folder": "AutoEncoder",
+        "MainFile": "minimax_h3_audio_vae_fp32.safetensors",
+        "DownloadFiles": [
+          "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_audio_vae_fp32.safetensors"
+        ]
+      }
+    },
+    {
+      "Id": 561,
+      "Name": "MiniMax-H3 Video Vae",
+      "Key": "VAE_MMH3",
+      "Link": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "Checkpoint": {
+        "Name": "Component",
+        "Type": "OnlineFolder",
+        "Folder": "AutoEncoder",
+        "MainFile": "minimax_h3_video_vae_fp16.safetensors",
+        "DownloadFiles": [
+          "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_video_vae_fp16.safetensors"
+        ]
+      }
+    },
+    {
+      "Id": 562,
+      "Name": "MiniMax-H3 TextEncoder",
+      "Key": "TE_MMH3_GGUF",
+      "Link": "https://huggingface.co/unsloth/MiniMax-H3-GGUF",
+      "Checkpoint": {
+        "Name": "Component",
+        "Type": "OnlineFolder",
+        "Folder": "TextEncoder",
+        "MainFile": "qwen3vl_32b_minimax_h3-Q4_K_M.gguf",
+        "DownloadFiles": [
+          "https://huggingface.co/unsloth/MiniMax-H3-GGUF/resolve/main/qwen3vl_32b_minimax_h3-Q4_K_M.gguf"
         ]
       }
     }
@@ -14871,6 +14916,181 @@
         }
       ],
       "Link": "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF"
+    },
+    {
+      "Id": 620,
+      "Backend": "StableDiffusionCpp",
+      "Name": "MiniMax H3",
+      "Template": "MiniMax_H3",
+      "Pipeline": "MiniMaxVideoPipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Video",
+      "ProcessTypes": [ "TextToVideo", "ImageToVideo" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_MMH3"
+        },
+        "AudioVae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "AVAE_MMH3"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_MMH3_GGUF"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "OnlineFile",
+          "DownloadFiles": [
+            "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors"
+          ]
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 6, 17, 26 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 8, 17, 31 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 20,
+        "Frames": 56,
+        "FrameRate": 24,
+        "Width": 864,
+        "Height": 480,
+        "GuidanceScale": 1,
+        "IsVaeTilingEnabled": true,
+        "IsVaeSlicingEnabled": true,
+        "IsFirstFrameLastFrameEnabled": true,
+        "Scheduler": "ResidualMultistep",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep",
+            "SigmaScheduleType": "Simple"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ],
+        "Strength": 0.7,
+        "FrameOptions": [
+          5,
+          22,
+          39,
+          56,
+          73,
+          90,
+          107,
+          124,
+          158,
+          209,
+          260,
+          311,
+          362,
+          413,
+          464,
+          566,
+          668,
+          770,
+          872,
+          940,
+          991
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 576
+        },
+        {
+          "Width": 864,
+          "Height": 480,
+          "IsDefault": true
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024
+        },
+        {
+          "Width": 480,
+          "Height": 864
+        },
+        {
+          "Width": 576,
+          "Height": 1024
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        }
+      ],
+      "Link": "https://huggingface.co/Comfy-Org/MiniMax-H3"
     }
   ],
   "LoraAdapterModels": [
@@ -15396,7 +15616,7 @@
       "Name": "Wan 2.2 T2V (Step:4, CFG:1, HighNoise)",
       "Pipeline": "WanPipeline",
       "Key": "t2v4stepshigh",
-      "ViewFilter": ["TextToVideo"],
+      "ViewFilter": [ "TextToVideo" ],
       "Checkpoint": {
         "Name": "LoraAdapter Model",
         "Type": "OnlineFile",

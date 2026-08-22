@@ -258,6 +258,17 @@ namespace Amuse.Host.StableDiffusionCpp
                     LoraModelDirectory = options.LoraAdapterPath
                 };
             }
+            if (options.Pipeline == "MiniMaxVideoPipeline")
+            {
+                return new Config.ModelConfig
+                {
+                    Vae = options.CheckpointConfig.Vae,
+                    VaeAudio = options.CheckpointConfig.AudioVae,
+                    LLM = options.CheckpointConfig.TextEncoder,
+                    Diffusion = options.CheckpointConfig.Transformer,
+                    LoraModelDirectory = options.LoraAdapterPath
+                };
+            }
             if (options.Pipeline == "QwenImagePipeline")
             {
                 return new Config.ModelConfig

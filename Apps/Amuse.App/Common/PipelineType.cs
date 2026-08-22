@@ -35,8 +35,6 @@ namespace Amuse.App.Common
         [Display(Name = "Qwen Image Pipeline", ShortName = "Qwen")]
         QwenImagePipeline = 50,
 
-      
-
         [Display(Name = "Ideogram4 Pipeline", ShortName = "Ideogram4")]
         IdeogramPipeline = 61,
 
@@ -90,6 +88,9 @@ namespace Amuse.App.Common
         [Display(Name = "AnyFlow Pipeline", ShortName = "AnyFlow")]
         AnyFlowPipeline = 112,
 
+        [Display(Name = "MiniMax Pipeline", ShortName = "MiniMax")]
+        MiniMaxVideoPipeline = 113,
+
 
         // Audio
         [Display(Name = "AceStep Pipeline", ShortName = "AceStep")]
@@ -97,6 +98,10 @@ namespace Amuse.App.Common
 
         [Display(Name = "LongCat Audio Pipeline", ShortName = "LongCat")]
         LongCatAudioPipeline = 210,
+
+        [Display(Name = "MiniMax Pipeline", ShortName = "MiniMax")]
+        MiniMaxAudioPipeline = 213,
+
 
         // Other
         [Display(Name = "Upscale Pipeline", ShortName = "Upscale")]
@@ -113,6 +118,7 @@ namespace Amuse.App.Common
 
 
         // Text
+        [Display(Name = "AutoText Pipeline", ShortName = "AutoText")]
         AutoTextPipeline = 600,
 
 
