@@ -3,8 +3,10 @@ using Amuse.Host.StableDiffusionCpp.Common;
 using Amuse.Host.StableDiffusionCpp.Config;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Channels;
@@ -20,6 +22,7 @@ namespace Amuse.Host.StableDiffusionCpp
         private readonly Channel<string> _consoleChannel = Channel.CreateUnbounded<string>();
         private readonly StableDiffusionClient _stableDiffusionClient;
         private readonly IProgress<PipelineProgress> _progressCallback;
+        private readonly List<string> _lastErrorMessage;
         private CancellationTokenSource _cancellationTokenSource;
         private Process _serverProcess;
         private Task _consoleOutputTask;
@@ -36,6 +39,7 @@ namespace Amuse.Host.StableDiffusionCpp
             _configuration = configuration;
             _progressCallback = progressCallback;
             _processHandler = new ProcessHandler();
+            _lastErrorMessage = new List<string>();
             _stableDiffusionClient = new StableDiffusionClient(configuration);
         }
 
@@ -56,6 +60,7 @@ namespace Amuse.Host.StableDiffusionCpp
         /// <param name="cancellationToken">The cancellation token.</param>
         public async Task StartAsync(CancellationToken cancellationToken = default)
         {
+            _lastErrorMessage.Clear();
             _cancellationTokenSource = new CancellationTokenSource();
             _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StartAsync] Starting StableDiffusion.cpp server...");
             _consoleOutputTask = ProcessConsoleOutput(_cancellationTokenSource.Token);
@@ -99,11 +104,8 @@ namespace Amuse.Host.StableDiffusionCpp
             try
             {
                 _logger.LogInformation("[AmuseHost] [StableDiffusionServer] [StopAsync] Stopping StableDiffusion.cpp server...");
-                _consoleChannel.Writer.TryComplete();
-                _cancellationTokenSource.Cancel();
-                if (_consoleOutputTask is not null)
-                    await _consoleOutputTask;
 
+                await FlushConsoleChannelAsync();
                 _serverProcess.Kill(true);
                 using (var cancelation = new CancellationTokenSource(timeout))
                 {
@@ -133,6 +135,7 @@ namespace Amuse.Host.StableDiffusionCpp
         {
             try
             {
+                _lastErrorMessage.Clear();
                 _currentJob = await _stableDiffusionClient.CreateJobAsync(request, cancellationToken);
                 if (_currentJob == null)
                     throw new Exception("Failed to create image job");
@@ -162,6 +165,7 @@ namespace Amuse.Host.StableDiffusionCpp
         {
             try
             {
+                _lastErrorMessage.Clear();
                 _currentJob = await _stableDiffusionClient.CreateJobAsync(request, cancellationToken);
                 if (_currentJob == null)
                     throw new Exception("Failed to create video job");
@@ -236,7 +240,12 @@ namespace Amuse.Host.StableDiffusionCpp
                 }
             }
 
-            return capabilities ?? throw new InvalidOperationException("StableDiffusion.cpp server failed to start");
+            if (capabilities == null)
+            {
+                await FlushConsoleChannelAsync();
+                throw new InvalidOperationException(GetErrorMessage("Failed to start server"));
+            }
+            return capabilities;
         }
 
 
@@ -244,28 +253,34 @@ namespace Amuse.Host.StableDiffusionCpp
         /// Wait for generation completion as an asynchronous operation.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>A Task&lt;JobModel&gt; representing the asynchronous operation.</returns>
-        /// <exception cref="System.InvalidOperationException">Generation Job</exception>
-        /// <exception cref="System.OperationCanceledException"></exception>
-        /// <exception cref="System.Exception">Generation Failed</exception>
         private async Task<JobModel> WaitForCompletionAsync(CancellationToken cancellationToken = default)
         {
-            using (var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(500)))
+            try
             {
-                while (await timer.WaitForNextTickAsync(cancellationToken))
+                using (var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(500)))
                 {
-                    var generationJob = await _stableDiffusionClient.GetJobAsync(_currentJob, cancellationToken)
-                                     ?? throw new InvalidOperationException($"Generation Job not found, Id: {_currentJob?.Id}");
-                    if (generationJob.Status == JobStatus.Completed)
-                        return generationJob;
-                    if (generationJob.Status == JobStatus.Cancelled)
-                        throw new OperationCanceledException();
-                    if (generationJob.Status == JobStatus.Failed)
-                        break;
-
+                    while (await timer.WaitForNextTickAsync(cancellationToken))
+                    {
+                        var generationJob = await _stableDiffusionClient.GetJobAsync(_currentJob, cancellationToken);
+                        if (generationJob.Status == JobStatus.Completed)
+                            return generationJob;
+                        if (generationJob.Status == JobStatus.Cancelled)
+                            throw new OperationCanceledException();
+                        if (generationJob.Status == JobStatus.Failed)
+                            break;
+                    }
+                    cancellationToken.ThrowIfCancellationRequested();
+                    throw new InvalidOperationException("Generation failed, Check Logs");
                 }
-                cancellationToken.ThrowIfCancellationRequested();
-                throw new Exception($"Generation Job failed, Id: {_currentJob?.Id}");
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                await FlushConsoleChannelAsync();
+                throw new InvalidOperationException(GetErrorMessage(ex.Message));
             }
         }
 
@@ -330,9 +345,14 @@ namespace Amuse.Host.StableDiffusionCpp
                     _logger.LogDebug(logFormat, consoleLine[7..].TrimStart());
                     return;
                 }
+                if (consoleLine.StartsWith("[WARN ]"))
+                {
+                    _logger.LogWarning(logFormat, consoleLine[7..].TrimStart());
+                    return;
+                }
                 if (consoleLine.StartsWith("[ERROR]"))
                 {
-                    _logger.LogError(logFormat, consoleLine[7..].TrimStart());
+                    _logger.LogError(logFormat, AddErrorMessage(consoleLine[7..].TrimStart()));
                     return;
                 }
             }
@@ -400,6 +420,45 @@ namespace Amuse.Host.StableDiffusionCpp
 
 
         /// <summary>
+        /// Flush console channel
+        /// </summary>
+        private async Task FlushConsoleChannelAsync()
+        {
+            _consoleChannel.Writer.TryComplete();
+            _cancellationTokenSource.Cancel();
+            if (_consoleOutputTask is not null)
+                await _consoleOutputTask;
+        }
+
+
+        /// <summary>
+        /// Adds the error message.
+        /// </summary>
+        /// <param name="errorLine">The error line.</param>
+        private string AddErrorMessage(string errorLine)
+        {
+            var message = errorLine.Split(" - ", 2, StringSplitOptions.TrimEntries).Last();
+            if (string.IsNullOrEmpty(message))
+                return errorLine;
+
+            _lastErrorMessage.Add(message);
+            return errorLine;
+        }
+
+
+        /// <summary>
+        /// Gets the error message.
+        /// </summary>
+        private string GetErrorMessage(string defaultMessage)
+        {
+            if (_lastErrorMessage.Count > 0)
+                return $"StableDiffusion.cpp Error:\n\n{string.Join('\n', _lastErrorMessage)}";
+
+            return $"StableDiffusion.cpp Error:\n\n{defaultMessage}";
+        }
+
+
+        /// <summary>
         /// Gets the server arguments.
         /// </summary>
         /// <param name="serverConfig">The server configuration.</param>
@@ -416,20 +475,20 @@ namespace Amuse.Host.StableDiffusionCpp
             else if (serverConfig.MemoryMode == MemoryModeType.OffloadCPU)
             {
                 argumentBuilder.Append("--offload-to-cpu ");
-                argumentBuilder.Append("--params-backend diffusion=cpu,vae=disk,te=disk,clip_vision=disk ");
+                argumentBuilder.Append("--params-backend vae=disk,te=disk,clip_vision=disk ");
                 argumentBuilder.Append("--stream-layers ");
             }
             else if (serverConfig.MemoryMode == MemoryModeType.OffloadModel)
             {
                 argumentBuilder.Append("--offload-to-cpu ");
-                argumentBuilder.Append("--params-backend diffusion=cpu,vae=disk,te=disk,clip_vision=disk ");
+                argumentBuilder.Append("--params-backend vae=disk,te=disk,clip_vision=disk ");
             }
 
             if (serverConfig.MemoryMode == MemoryModeType.Device)
             {
-                var QuantizationType = GetQuantizationType(serverConfig.QuantizationType);
+                var quantizationType = GetQuantizationType(serverConfig.QuantizationType);
                 argumentBuilder.Append("--eager-load ");
-                argumentBuilder.Append($"--type {QuantizationType} ");
+                argumentBuilder.Append($"--type {quantizationType} ");
             }
             else
             {

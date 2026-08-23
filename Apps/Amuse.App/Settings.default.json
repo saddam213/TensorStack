@@ -14947,22 +14947,22 @@
           "Name": "Transformer",
           "Type": "OnlineFile",
           "DownloadFiles": [
-            "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors"
+            "https://huggingface.co/unsloth/MiniMax-H3-GGUF/resolve/main/minimax_h3_fl2va_pruned-Q8_0.gguf"
           ]
         }
       },
       "MemoryProfile": [
         {
           "QualityMode": "Draft",
-          "MemoryModes": [ 6, 17, 26 ]
+          "MemoryModes": [ 6, 20, 24 ]
         },
         {
           "QualityMode": "Standard",
-          "MemoryModes": [ 6, 17, 26 ]
+          "MemoryModes": [ 6, 24, 36 ]
         },
         {
           "QualityMode": "Production",
-          "MemoryModes": [ 8, 17, 31 ]
+          "MemoryModes": [ 8, 24, 48 ]
         }
       ],
       "DefaultOptions": {
@@ -15090,7 +15090,7 @@
           "Height": 1344
         }
       ],
-      "Link": "https://huggingface.co/Comfy-Org/MiniMax-H3"
+      "Link": "https://huggingface.co/unsloth/MiniMax-H3-GGUF"
     }
   ],
   "LoraAdapterModels": [

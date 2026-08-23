@@ -11,11 +11,16 @@ using TensorStack.Media.Image;
 
 namespace Amuse.Host.StableDiffusionCpp
 {
-    public static class Extensions
+    internal static class ConfigManager
     {
-        public static Config.ServerConfig ToServerConfig(this PipelineLoadOptions loadOptions, PipelineCreateOptions createOptions)
+        /// <summary>
+        /// Converts PipelineLoadOptions/PipelineCreateOptions to ServerConfig.
+        /// </summary>
+        /// <param name="loadOptions">The load options.</param>
+        /// <param name="createOptions">The create options.</param>
+        internal static Config.ServerConfig ToServerConfig(this PipelineLoadOptions loadOptions, PipelineCreateOptions createOptions)
         {
-            if (!GetBackend(createOptions, out var backendType))
+            if (!GetBackendType(createOptions, out var backendType))
                 throw new Exception($"{loadOptions.DeviceVendor} Backend Not Found.");
 
             var deviceId = backendType == Common.BackendType.Vulkan
@@ -35,12 +40,18 @@ namespace Amuse.Host.StableDiffusionCpp
                 QuantizationType = loadOptions.QuantType,
                 IsFlashAttentionEnabled = loadOptions.IsFlashAttentionEnabled,
             };
-
             return config;
         }
 
 
-        public static ImageParams ToServerParams(this GenerateImageOptions options, Config.ModelConfig modelConfig, PipelineLoadOptions loadOptions, ImageParams defaultOptions)
+        /// <summary>
+        /// GenerateImageOptions to ImageParams.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="modelConfig">The model configuration.</param>
+        /// <param name="loadOptions">The load options.</param>
+        /// <param name="defaultOptions">The default options.</param>
+        internal static ImageParams ToImageParams(this GenerateImageOptions options, Config.ModelConfig modelConfig, PipelineLoadOptions loadOptions, ImageParams defaultOptions)
         {
             return defaultOptions with
             {
@@ -51,7 +62,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 Height = options.Height,
                 Strength = options.Strength,
                 ControlStrength = options.ControlNetScale,
-                Lora = loadOptions.LoraAdapters.GetLoraOptions(modelConfig.LoraModelDirectory, options.LoraOptions),
+                Lora = GetLoraParams(loadOptions.LoraAdapters, modelConfig.LoraModelDirectory, options.LoraOptions),
                 InitImage = GetInitImage(options, loadOptions.ProcessType),
                 RefImages = GetReferenceImages(options, loadOptions.ProcessType),
                 ControlImage = GetControlNetImage(options, loadOptions.ProcessType),
@@ -78,7 +89,14 @@ namespace Amuse.Host.StableDiffusionCpp
         }
 
 
-        public static VideoParams ToServerParams(this GenerateVideoOptions options, Config.ModelConfig modelConfig, PipelineLoadOptions loadOptions, VideoParams defaultOptions)
+        /// <summary>
+        /// GenerateVideoOptions to VideoParams.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="modelConfig">The model configuration.</param>
+        /// <param name="loadOptions">The load options.</param>
+        /// <param name="defaultOptions">The default options.</param>
+        internal static VideoParams ToVideoParams(this GenerateVideoOptions options, Config.ModelConfig modelConfig, PipelineLoadOptions loadOptions, VideoParams defaultOptions)
         {
             return defaultOptions with
             {
@@ -90,7 +108,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 Strength = options.Strength,
                 Frames = options.Frames,
                 FrameRate = (int)options.FrameRate,
-                Lora = loadOptions.LoraAdapters.GetLoraOptions(modelConfig.LoraModelDirectory, options.LoraOptions),
+                Lora = GetLoraParams(loadOptions.LoraAdapters, modelConfig.LoraModelDirectory, options.LoraOptions),
                 ImageFirst = GetFirstFrame(options, loadOptions.ProcessType),
                 ImageLast = GetLastFrame(options, loadOptions.ProcessType),
                 ControlFrames = GetControlFrames(options, loadOptions.ProcessType),
@@ -103,7 +121,7 @@ namespace Amuse.Host.StableDiffusionCpp
                     Scheduler = GetSigmaSchedule(options.SchedulerOptions),
                     Eta = options.SchedulerOptions.Eta > 0 ? options.SchedulerOptions.Eta : null,
                     FlowShift = options.SchedulerOptions.FlowShift > 0 ? options.SchedulerOptions.FlowShift : null,
-                    Guidance = options.GetGuidanceScale(loadOptions.Pipeline)
+                    Guidance = GetGuidanceScale(options, loadOptions.Pipeline)
                 },
                 SampleParamsHighNoise = new SampleParams
                 {
@@ -112,7 +130,7 @@ namespace Amuse.Host.StableDiffusionCpp
                     Scheduler = GetSigmaSchedule(options.SchedulerOptions),
                     Eta = options.SchedulerOptions.Eta > 0 ? options.SchedulerOptions.Eta : null,
                     FlowShift = options.SchedulerOptions.FlowShift > 0 ? options.SchedulerOptions.FlowShift : null,
-                    Guidance = options.GetGuidanceScaleighNoise(loadOptions.Pipeline)
+                    Guidance = GetGuidanceScaleighNoise(options, loadOptions.Pipeline)
                 },
                 VaeTilingParams = new VaeTilingParams
                 {
@@ -123,61 +141,9 @@ namespace Amuse.Host.StableDiffusionCpp
         }
 
 
-        private static GuidanceParams GetGuidanceScale(this GenerateVideoOptions options, string pipelineType)
+        private static bool GetBackendType(PipelineCreateOptions createOptions, out Common.BackendType backendType)
         {
-            if (pipelineType == "WanPipeline")
-            {
-                return new GuidanceParams
-                {
-                    TxtCfg = Math.Max(1, options.GuidanceScale2),
-                    DistilledGuidance = Math.Max(1, options.GuidanceScale2)
-                };
-            }
-            return new GuidanceParams
-            {
-                TxtCfg = Math.Max(1, options.GuidanceScale),
-                DistilledGuidance = Math.Max(1, options.GuidanceScale2)
-            };
-        }
-
-
-        private static GuidanceParams GetGuidanceScaleighNoise(this GenerateVideoOptions options, string pipelineType)
-        {
-            if (pipelineType == "WanPipeline")
-            {
-                return new GuidanceParams
-                {
-                    TxtCfg = Math.Max(1, options.GuidanceScale),
-                    DistilledGuidance = Math.Max(1, options.GuidanceScale)
-                };
-            }
-            return new GuidanceParams
-            {
-                TxtCfg = Math.Max(1, options.GuidanceScale2),
-                DistilledGuidance = Math.Max(1, options.GuidanceScale)
-            };
-        }
-
-
-        private static List<LoraParams> GetLoraOptions(this List<LoraConfig> loraAdapters, string loraModelDirectory, List<LoraOptions> loraAdapterOptions)
-        {
-            if (loraAdapterOptions.IsNullOrEmpty())
-                return [];
-
-            var loraParams = new List<LoraParams>();
-            foreach (var config in loraAdapters.Where(x => x.Path == loraModelDirectory))
-            {
-                var options = loraAdapterOptions.FirstOrDefault(x => x.Name == config.Name);
-                if (options == null)
-                    continue;
-
-                loraParams.Add(new LoraParams
-                {
-                    Multiplier = options.Strength,
-                    Path = config.Weights,
-                });
-            }
-            return loraParams;
+            return Enum.TryParse<Common.BackendType>(createOptions.HostVersion, true, out backendType);
         }
 
 
@@ -255,7 +221,8 @@ namespace Amuse.Host.StableDiffusionCpp
                     ClipVison = options.CheckpointConfig.TextEncoder2,
                     Diffusion = options.CheckpointConfig.Transformer,
                     DiffusionHighNoise = options.CheckpointConfig.Transformer2,
-                    LoraModelDirectory = options.LoraAdapterPath
+                    LoraModelDirectory = options.LoraAdapterPath,
+                    UpscaleModelDirectory = GetHiresModelPath(options)
                 };
             }
             if (options.Pipeline == "MiniMaxVideoPipeline")
@@ -266,7 +233,8 @@ namespace Amuse.Host.StableDiffusionCpp
                     VaeAudio = options.CheckpointConfig.AudioVae,
                     LLM = options.CheckpointConfig.TextEncoder,
                     Diffusion = options.CheckpointConfig.Transformer,
-                    LoraModelDirectory = options.LoraAdapterPath
+                    LoraModelDirectory = options.LoraAdapterPath,
+                    UpscaleModelDirectory = GetHiresModelPath(options)
                 };
             }
             if (options.Pipeline == "QwenImagePipeline")
@@ -297,6 +265,119 @@ namespace Amuse.Host.StableDiffusionCpp
                 };
             }
             throw new NotImplementedException(options.Pipeline);
+        }
+
+
+        private static GuidanceParams GetGuidanceScale(GenerateVideoOptions options, string pipelineType)
+        {
+            if (pipelineType == "WanPipeline")
+            {
+                return new GuidanceParams
+                {
+                    TxtCfg = Math.Max(1, options.GuidanceScale2),
+                    DistilledGuidance = Math.Max(1, options.GuidanceScale2)
+                };
+            }
+            return new GuidanceParams
+            {
+                TxtCfg = Math.Max(1, options.GuidanceScale),
+                DistilledGuidance = Math.Max(1, options.GuidanceScale2)
+            };
+        }
+
+
+        private static GuidanceParams GetGuidanceScaleighNoise(GenerateVideoOptions options, string pipelineType)
+        {
+            if (pipelineType == "WanPipeline")
+            {
+                return new GuidanceParams
+                {
+                    TxtCfg = Math.Max(1, options.GuidanceScale),
+                    DistilledGuidance = Math.Max(1, options.GuidanceScale)
+                };
+            }
+            return new GuidanceParams
+            {
+                TxtCfg = Math.Max(1, options.GuidanceScale2),
+                DistilledGuidance = Math.Max(1, options.GuidanceScale)
+            };
+        }
+
+
+        private static List<LoraParams> GetLoraParams(List<LoraConfig> loraAdapters, string loraModelDirectory, List<LoraOptions> loraAdapterOptions)
+        {
+            if (loraAdapterOptions.IsNullOrEmpty())
+                return [];
+
+            var loraParams = new List<LoraParams>();
+            foreach (var config in loraAdapters.Where(x => x.Path == loraModelDirectory))
+            {
+                var options = loraAdapterOptions.FirstOrDefault(x => x.Name == config.Name);
+                if (options == null)
+                    continue;
+
+                loraParams.Add(new LoraParams
+                {
+                    Multiplier = options.Strength,
+                    Path = config.Weights,
+                });
+            }
+            return loraParams;
+        }
+
+
+        private static HiresParams GetHiresParams(PipelineLoadOptions loadOptions, GenerateImageOptions generateOptions)
+        {
+            if (generateOptions.LatentUpscale == LatentUpscale.Model || generateOptions.LatentUpscale == LatentUpscale.None)
+                return default;
+
+            var tileSize = generateOptions.LatentUpscaleTileSize <= 0 ? 64 : generateOptions.LatentUpscaleTileSize;
+            var steps = generateOptions.LatentUpscaleSteps <= 0 ? generateOptions.Steps / 2 : generateOptions.LatentUpscaleSteps;
+            return new HiresParams
+            {
+                Steps = steps,
+                Enabled = true,
+                UpscaleTileSize = tileSize,
+                Upscaler = generateOptions.LatentUpscale.GetName(),
+                DenoisingStrength = generateOptions.LatentUpscaleStrength,
+            };
+        }
+
+
+        private static HiresParams GetHiresParams(PipelineLoadOptions loadOptions, GenerateVideoOptions generateOptions)
+        {
+            if (generateOptions.LatentUpscale == LatentUpscale.None)
+                return default;
+
+            var upscaleName = generateOptions.LatentUpscale.GetName();
+            if (generateOptions.LatentUpscale == LatentUpscale.Model)
+            {
+                if (!File.Exists(loadOptions.CheckpointConfig.LatentUpsampler))
+                    return default;
+
+                upscaleName = Path.GetFileNameWithoutExtension(loadOptions.CheckpointConfig.LatentUpsampler);
+            }
+
+            var tileSize = generateOptions.LatentUpscaleTileSize <= 0 ? 64 : generateOptions.LatentUpscaleTileSize;
+            var steps = generateOptions.LatentUpscaleSteps <= 0 ? generateOptions.Steps / 2 : generateOptions.LatentUpscaleSteps;
+            return new HiresParams
+            {
+                Steps = steps,
+                Enabled = true,
+                Upscaler = upscaleName,
+                UpscaleTileSize = tileSize,
+                CustomSigmas = [0.85f, 0.725f, 0.421875f, 0.0f], // TODO: optional
+                DenoisingStrength = generateOptions.LatentUpscaleStrength,
+            };
+        }
+
+
+        private static string GetHiresModelPath(PipelineLoadOptions loadOptions)
+        {
+            if (!File.Exists(loadOptions.CheckpointConfig.LatentUpsampler))
+                return default;
+
+            return Path.GetDirectoryName(loadOptions.CheckpointConfig.LatentUpsampler);
         }
 
 
@@ -349,48 +430,6 @@ namespace Amuse.Host.StableDiffusionCpp
                 SigmaScheduleType.Beta => "beta",
                 _ => "default"
             };
-        }
-
-
-        /// <summary>
-        /// Gets the open server port.
-        /// </summary>
-        /// <param name="defaultPort">The default port.</param>
-        /// <returns>System.Int32.</returns>
-        /// <exception cref="System.Exception">Unable to locate open port</exception>
-        private static short GetOpenPort(int defaultPort)
-        {
-            int PortStart = 2000;
-            int PortEnd = 8000;
-            var properties = IPGlobalProperties.GetIPGlobalProperties();
-            var tcpEndpoints = properties.GetActiveTcpListeners();
-            var usedPorts = tcpEndpoints
-                .Select(endpoint => endpoint.Port)
-                .Where(port => port >= PortStart && port <= PortEnd)
-                .OrderBy(port => port)
-                .Distinct();
-
-            if (!usedPorts.Contains(defaultPort))
-                return (short)defaultPort;
-
-            int openPort = PortStart;
-            foreach (int usedPort in usedPorts)
-            {
-                if (usedPort != openPort)
-                    break;
-                openPort++;
-            }
-
-            if (openPort <= PortEnd)
-                return (short)openPort;
-
-            throw new Exception("Unable to locate open port");
-        }
-
-
-        private static bool GetBackend(PipelineCreateOptions createOptions, out Common.BackendType backendType)
-        {
-            return Enum.TryParse<Common.BackendType>(createOptions.HostVersion, true, out backendType);
         }
 
 
@@ -524,58 +563,39 @@ namespace Amuse.Host.StableDiffusionCpp
         }
 
 
-        private static HiresParams GetHiresParams(PipelineLoadOptions loadOptions, GenerateImageOptions generateOptions)
+        /// <summary>
+        /// Gets the open server port.
+        /// </summary>
+        /// <param name="defaultPort">The default port.</param>
+        /// <returns>System.Int32.</returns>
+        /// <exception cref="System.Exception">Unable to locate open port</exception>
+        private static short GetOpenPort(int defaultPort)
         {
-            if (generateOptions.LatentUpscale == LatentUpscale.Model || generateOptions.LatentUpscale == LatentUpscale.None)
-                return default;
+            int PortStart = 2000;
+            int PortEnd = 8000;
+            var properties = IPGlobalProperties.GetIPGlobalProperties();
+            var tcpEndpoints = properties.GetActiveTcpListeners();
+            var usedPorts = tcpEndpoints
+                .Select(endpoint => endpoint.Port)
+                .Where(port => port >= PortStart && port <= PortEnd)
+                .OrderBy(port => port)
+                .Distinct();
 
-            var tileSize = generateOptions.LatentUpscaleTileSize <= 0 ? 64 : generateOptions.LatentUpscaleTileSize;
-            var steps = generateOptions.LatentUpscaleSteps <= 0 ? generateOptions.Steps / 2 : generateOptions.LatentUpscaleSteps;
-            return new HiresParams
+            if (!usedPorts.Contains(defaultPort))
+                return (short)defaultPort;
+
+            int openPort = PortStart;
+            foreach (int usedPort in usedPorts)
             {
-                Steps = steps,
-                Enabled = true,
-                UpscaleTileSize = tileSize,
-                Upscaler = generateOptions.LatentUpscale.GetName(),
-                DenoisingStrength = generateOptions.LatentUpscaleStrength,
-            };
-        }
-
-
-        private static HiresParams GetHiresParams(PipelineLoadOptions loadOptions, GenerateVideoOptions generateOptions)
-        {
-            if (generateOptions.LatentUpscale == LatentUpscale.None)
-                return default;
-
-            var upscaleName = generateOptions.LatentUpscale.GetName();
-            if (generateOptions.LatentUpscale == LatentUpscale.Model)
-            {
-                if (!File.Exists(loadOptions.CheckpointConfig.LatentUpsampler))
-                    return default;
-
-                upscaleName = Path.GetFileNameWithoutExtension(loadOptions.CheckpointConfig.LatentUpsampler);
+                if (usedPort != openPort)
+                    break;
+                openPort++;
             }
 
-            var tileSize = generateOptions.LatentUpscaleTileSize <= 0 ? 64 : generateOptions.LatentUpscaleTileSize;
-            var steps = generateOptions.LatentUpscaleSteps <= 0 ? generateOptions.Steps / 2 : generateOptions.LatentUpscaleSteps;
-            return new HiresParams
-            {
-                Steps = steps,
-                Enabled = true,
-                Upscaler = upscaleName,
-                UpscaleTileSize = tileSize,
-                CustomSigmas = [0.85f, 0.725f, 0.421875f, 0.0f], // TODO: optional
-                DenoisingStrength = generateOptions.LatentUpscaleStrength,
-            };
-        }
+            if (openPort <= PortEnd)
+                return (short)openPort;
 
-
-        private static string GetHiresModelPath(PipelineLoadOptions loadOptions)
-        {
-            if (!File.Exists(loadOptions.CheckpointConfig.LatentUpsampler))
-                return default;
-
-            return Path.GetDirectoryName(loadOptions.CheckpointConfig.LatentUpsampler);
+            throw new Exception("Unable to locate open port");
         }
     }
 }

@@ -162,7 +162,7 @@ namespace Amuse.Host.StableDiffusionCpp
                     {
                         var options = request.RunOptions.ImageOptions;
                         var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.ImageParams;
-                        var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
+                        var generateParams = options.ToImageParams(modelConfig, _pipelineLoadOptions, defaultsParams);
                         var result = await _pipeline.GenerateImageAsync(generateParams, PipelineCancellation.Token);
                         await SendMessage(new PipelineResponse(GetImageTensor(result)), cancellationToken);
                     }
@@ -170,7 +170,7 @@ namespace Amuse.Host.StableDiffusionCpp
                     {
                         var options = request.RunOptions.VideoOptions;
                         var defaultsParams = _pipeline.ModelCapabilities.DefaultParams.VideoParams;
-                        var generateParams = options.ToServerParams(modelConfig, _pipelineLoadOptions, defaultsParams);
+                        var generateParams = options.ToVideoParams(modelConfig, _pipelineLoadOptions, defaultsParams);
                         var result = await _pipeline.GenerateVideoAsync(generateParams, PipelineCancellation.Token);
                         await SaveVideoAsync(result, options.TempFileName, PipelineCancellation.Token);
                         await SendMessage(new PipelineResponse(default(Tensor<float>[])), cancellationToken);
