@@ -10,32 +10,12 @@ using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Common;
 using TensorStack.Common.Tensor;
+using static TensorStack.Media.Windows.MediaManager;
 
 namespace TensorStack.Media.Audio
 {
     public static class AudioManager
     {
-        private static string FFMpegPath = "ffmpeg.exe";
-        private static string FFProbePath = "ffprobe.exe";
-        private static string DirectoryTemp = "Temp";
-
-        /// <summary>
-        /// Configures the specified ffmpeg/ffprobe path.
-        /// </summary>
-        /// <param name="ffmpegPath">The ffmpeg path.</param>
-        /// <param name="ffprobePath">The ffprobe path.</param>
-        /// <param name="directoryTemp">The directory temporary.</param>
-        public static void Initialize(string ffmpegPath = default, string ffprobePath = default, string directoryTemp = default)
-        {
-            if (!string.IsNullOrEmpty(ffmpegPath))
-                FFMpegPath = ffmpegPath;
-            if (!string.IsNullOrEmpty(ffprobePath))
-                FFProbePath = ffprobePath;
-            if (!string.IsNullOrEmpty(directoryTemp))
-                DirectoryTemp = directoryTemp;
-        }
-
-
         /// <summary>
         /// Loads the audio information.
         /// </summary>
@@ -374,16 +354,17 @@ namespace TensorStack.Media.Audio
         /// <returns>System.Byte[].</returns>
         private static byte[] CreateAudioBuffer(AudioTensor audioTensor, int channels, int samples)
         {
+            int totalSamples = checked(samples * channels);
+            byte[] buffer = new byte[checked(totalSamples * sizeof(float))];
+            Span<byte> destination = buffer.AsSpan();
             int offset = 0;
-            byte[] buffer = new byte[samples * channels * 4]; // float32 = 4 bytes
             for (int i = 0; i < samples; i++)
             {
                 for (int c = 0; c < channels; c++)
                 {
                     float sample = Math.Clamp(audioTensor[c, i], -1f, 1f);
-                    byte[] bytes = BitConverter.GetBytes(sample);
-                    Buffer.BlockCopy(bytes, 0, buffer, offset, 4);
-                    offset += 4;
+                    BitConverter.TryWriteBytes(destination.Slice(offset, sizeof(float)), sample);
+                    offset += sizeof(float);
                 }
             }
             return buffer;
@@ -530,38 +511,8 @@ namespace TensorStack.Media.Audio
 
         #region FFMPEG / FFProbe
 
-        private static Process CreateProcess(string executable, string arguments)
-        {
-            var ffmpegProcess = new Process();
-            ffmpegProcess.StartInfo.FileName = executable;
-            ffmpegProcess.StartInfo.Arguments = arguments;
-            ffmpegProcess.StartInfo.UseShellExecute = false;
-            ffmpegProcess.StartInfo.CreateNoWindow = true;
-            return ffmpegProcess;
-        }
 
-
-        private static async Task ExecuteFFMPEGAsync(string arguments)
-        {
-            using (var process = CreateProcess(FFMpegPath, arguments))
-            {
-                process.Start();
-                await process.WaitForExitAsync();
-            }
-        }
-
-
-        private static async Task ExecuteFFProbeAsync(string arguments)
-        {
-            using (var process = CreateProcess(FFProbePath, arguments))
-            {
-                process.Start();
-                await process.WaitForExitAsync();
-            }
-        }
-
-
-        private static Process CreateReader(string inputFile, string audioCodec, int sampleRate, int channels)
+        internal static Process CreateReader(string inputFile, string audioCodec, int sampleRate, int channels)
         {
             var process = CreateProcess(FFMpegPath, $"-hide_banner -i \"{inputFile}\" -f s16le -acodec {audioCodec} -ac {channels} -ar {sampleRate} pipe:1");
             process.StartInfo.RedirectStandardOutput = true;
@@ -569,7 +520,7 @@ namespace TensorStack.Media.Audio
         }
 
 
-        private static Process CreateWriter(string audioOutputFile, int sampleRate, int channels)
+        internal static Process CreateWriter(string audioOutputFile, int sampleRate, int channels)
         {
             var process = CreateProcess(FFMpegPath, $"-hide_banner -y -f f32le -ac {channels} -ar {sampleRate} -i pipe:0 \"{audioOutputFile}\"");
             process.StartInfo.RedirectStandardInput = true;
@@ -577,7 +528,7 @@ namespace TensorStack.Media.Audio
         }
 
 
-        private static Process CreateMuxer(string targetVideo, string sourceVideo, string tempFile)
+        internal static Process CreateMuxer(string targetVideo, string sourceVideo, string tempFile)
         {
             var process = CreateProcess(FFMpegPath, $"-hide_banner -i \"{targetVideo}\" -i \"{sourceVideo}\" -c:v copy -c:a copy -map 0:v:0 -map 1:a:0 -y \"{tempFile}\"");
             process.StartInfo.RedirectStandardInput = true;
@@ -585,7 +536,7 @@ namespace TensorStack.Media.Audio
         }
 
 
-        private static Process CreateMetadata(string inputFile)
+        internal static Process CreateMetadata(string inputFile)
         {
             var process = CreateProcess(FFProbePath, $"-v quiet -print_format json -show_format -show_streams \"{inputFile}\"");
             process.StartInfo.RedirectStandardInput = true;
@@ -594,7 +545,7 @@ namespace TensorStack.Media.Audio
         }
 
 
-        private record AudioMetadata
+        internal record AudioMetadata
         {
             [JsonPropertyName("format")]
             public AudioFormat Format { get; set; }
@@ -604,7 +555,7 @@ namespace TensorStack.Media.Audio
         }
 
         [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
-        private record AudioFormat
+        internal record AudioFormat
         {
             [JsonPropertyName("filename")]
             public string FileName { get; set; }
@@ -626,7 +577,7 @@ namespace TensorStack.Media.Audio
         }
 
         [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
-        private record AudioStream
+        internal record AudioStream
         {
             [JsonPropertyName("codec_type")]
             public string Type { get; set; }
