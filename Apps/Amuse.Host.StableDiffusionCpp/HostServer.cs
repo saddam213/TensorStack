@@ -282,11 +282,9 @@ namespace Amuse.Host.StableDiffusionCpp
                 process.StartInfo.RedirectStandardInput = true;
                 process.StartInfo.RedirectStandardError = true;
                 process.Start();
-                var errorTask = process.StandardError.ReadToEndAsync();
                 await process.StandardInput.BaseStream.WriteAsync(webmBytes, cancellationToken);
                 process.StandardInput.Close();
                 await process.WaitForExitAsync(cancellationToken);
-                var error = await errorTask;
                 return process.ExitCode == 0;
             }
         }

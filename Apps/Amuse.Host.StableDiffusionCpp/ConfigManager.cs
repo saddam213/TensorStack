@@ -187,6 +187,17 @@ namespace Amuse.Host.StableDiffusionCpp
                     ControlNet = options.ControlNet?.Path
                 };
             }
+            if (options.Pipeline == "ChromaPipeline")
+            {
+                return new Config.ModelConfig
+                {
+                    Vae = options.CheckpointConfig.Vae,
+                    T5XXL = options.CheckpointConfig.TextEncoder,
+                    Diffusion = options.CheckpointConfig.Transformer,
+                    LoraModelDirectory = options.LoraAdapterPath,
+                    ControlNet = options.ControlNet?.Path
+                };
+            }
             if (options.Pipeline == "IdeogramPipeline")
             {
                 return new Config.ModelConfig
