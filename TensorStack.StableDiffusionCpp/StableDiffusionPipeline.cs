@@ -120,8 +120,9 @@ namespace TensorStack.StableDiffusionCpp
             cancellationToken.Register(() => CancelGenerate());
             return await Task.Run(() =>
             {
+                var result = GenerateVideo(options);
                 cancellationToken.ThrowIfCancellationRequested();
-                return GenerateVideo(options);
+                return result;
             }, cancellationToken).ConfigureAwait(false);
         }
 

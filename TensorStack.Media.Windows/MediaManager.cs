@@ -56,6 +56,7 @@ namespace TensorStack.Media
             {
                 try
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     if (await WriteFramesAsync(videoSequence.Frames, videoSequence.FrameRate, filename, encoder, cancellationToken))
                     {
                         if (videoSequence.Audio != null)
