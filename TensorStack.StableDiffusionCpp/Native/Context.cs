@@ -1,8 +1,8 @@
-﻿using TensorStack.StableDiffusionCpp.Common;
-using System;
+﻿using System;
 using System.Runtime.InteropServices.Marshalling;
 using TensorStack.Common.Tensor;
 using TensorStack.Media.Video;
+using TensorStack.StableDiffusionCpp.Common;
 
 namespace TensorStack.StableDiffusionCpp.Native
 {
@@ -13,10 +13,12 @@ namespace TensorStack.StableDiffusionCpp.Native
         private readonly NativeApi.sd_progress_cb_t _unmanagedProgressCallback;
         private readonly Action<LogLevelType, string> _logCallback;
         private readonly Action<int, int, float> _progressCallback;
-        private readonly Action<int, ImageTensor[]> _previewCallback;
+        private readonly Action<int, int, float, ImageTensor[]> _previewCallback;
         private readonly ContextSafeHandle _contextHandle;
         private readonly GenerateImageOptions _defaultImageOptions;
         private readonly GenerateVideoOptions _defaultVideoOptions;
+        private ImageTensor[] _previewTensors;
+        private bool _isGenerating;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Context"/> class.
@@ -24,7 +26,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <param name="progressCallback">The progress callback.</param>
         /// <param name="previewCallback">The preview callback.</param>
         /// <param name="logCallback">The log callback.</param>
-        private Context(Action<int, int, float> progressCallback = null, Action<int, ImageTensor[]> previewCallback = null, Action<LogLevelType, string> logCallback = null)
+        private Context(Action<int, int, float> progressCallback = null, Action<int, int, float, ImageTensor[]> previewCallback = null, Action<LogLevelType, string> logCallback = null)
         {
             _logCallback = logCallback;
             _previewCallback = previewCallback;
@@ -42,7 +44,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <param name="previewCallback">The preview callback.</param>
         /// <param name="logCallback">The log callback.</param>
         /// <exception cref="System.Exception">Failed to create StableDiffusion.cpp context</exception>
-        public Context(ContextOptions options, Action<int, int, float> progressCallback = null, Action<int, ImageTensor[]> previewCallback = null, Action<LogLevelType, string> logCallback = null)
+        public Context(ContextOptions options, Action<int, int, float> progressCallback = null, Action<int, int, float, ImageTensor[]> previewCallback = null, Action<LogLevelType, string> logCallback = null)
             : this(progressCallback, previewCallback, logCallback)
         {
             var native = options.ToUnmanaged();
@@ -123,6 +125,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             }
             finally
             {
+                ResetState();
                 parameters.FreeUnmanaged();
             }
         }
@@ -139,6 +142,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 if (!NativeApi.generate_video(_contextHandle.GetContext(), &parameters, out NativeApi.sd_image_t* unmanagedFrames, out int unmanagedFrameCount, out NativeApi.sd_audio_t* unmanagedAudio))
                     return null;
+
                 if (unmanagedFrames == null || unmanagedFrameCount <= 0)
                     return null;
 
@@ -160,6 +164,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             }
             finally
             {
+                ResetState();
                 parameters.FreeUnmanaged();
             }
         }
@@ -171,6 +176,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <param name="cancelType">Type of the cancel.</param>
         public void Cancel(CancelType cancelType)
         {
+            ResetState();
             NativeApi.sd_cancel_generation(_contextHandle.GetContext(), cancelType.ToUnmanaged());
         }
 
@@ -185,6 +191,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             if (_unmanagedPreviewCallback != null)
                 NativeApi.sd_set_preview_callback(null, NativeApi.preview_t.PREVIEW_COUNT, 0, false, false, null);
 
+            ResetState();
             _contextHandle?.Dispose();
         }
 
@@ -225,7 +232,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             NativeApi.sd_set_log_callback(_unmanagedLogCallback, null);
             NativeApi.sd_set_progress_callback(_unmanagedProgressCallback, null);
-            if (options.PreviewType != PreviewType.Disabled && options.PreviewType == PreviewType.Default)
+            if (options.PreviewType != PreviewType.Disabled && options.PreviewType != PreviewType.Default)
                 NativeApi.sd_set_preview_callback(_unmanagedPreviewCallback, options.PreviewType.ToUnmanaged(), options.PreviewInterval, !options.IsPreviewNoisy, options.IsPreviewNoisy, null);
         }
 
@@ -251,6 +258,12 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <param name="data">The data.</param>
         private void OnProgressCallback(int step, int steps, float time, void* data)
         {
+            if (_isGenerating && _previewTensors is not null)
+            {
+                _previewCallback?.Invoke(step, steps, time, _previewTensors);
+                _previewTensors = null;
+                return;
+            }
             _progressCallback?.Invoke(step, steps, time);
         }
 
@@ -265,6 +278,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <param name="data">The data.</param>
         private void OnPreviewCallback(int step, int frame_count, NativeApi.sd_image_t* frames, bool is_noisy, void* data)
         {
+            _isGenerating = true;
             if (frames == null || frame_count == 0 || _previewCallback == null)
                 return;
 
@@ -273,7 +287,17 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 managedFrames[i] = frames[i].ToManaged();
             }
-            _previewCallback?.Invoke(step, managedFrames);
+            _previewTensors = managedFrames;
+        }
+
+
+        /// <summary>
+        /// Resets the state.
+        /// </summary>
+        private void ResetState()
+        {
+            _isGenerating = false;
+            _previewTensors = null;
         }
     }
 }

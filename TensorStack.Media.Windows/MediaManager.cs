@@ -7,7 +7,7 @@ using TensorStack.Common.Common;
 using TensorStack.Common.Tensor;
 using TensorStack.Media.Video;
 
-namespace TensorStack.Media.Windows
+namespace TensorStack.Media
 {
     public static class MediaManager
     {

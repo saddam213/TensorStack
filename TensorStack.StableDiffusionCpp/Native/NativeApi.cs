@@ -7,7 +7,7 @@ using System.Text;
 
 namespace TensorStack.StableDiffusionCpp.Native
 {
-    internal static unsafe partial class NativeApi
+    public static unsafe partial class NativeApi
     {
         internal const string LibraryName = "stable-diffusion";
         internal const string LibraryVersion = "97d2990"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-827-97d2990/include/stable-diffusion.h
@@ -19,22 +19,40 @@ namespace TensorStack.StableDiffusionCpp.Native
             if (_libraryHandle != nint.Zero)
                 return true;
 
-            string fullPath = string.IsNullOrEmpty(libraryPath) 
-                ? Path.GetFullPath($"{LibraryName}.dll") 
-                : Path.GetFullPath(Path.Combine(libraryPath, $"{LibraryName}.dll"));
-            if (NativeLibrary.TryLoad(fullPath, out nint handle))
+            var deviceSize = nuint.Zero;
+            var currentDirectory = Environment.CurrentDirectory;
+            var workingDirectory = string.IsNullOrEmpty(libraryPath)
+                ? AppContext.BaseDirectory
+                : Path.GetFullPath(libraryPath);
+            var fullLibraryPath = Path.Combine(workingDirectory, $"{LibraryName}.dll");
+            if (!File.Exists(fullLibraryPath))
+                return false;
+
+            try
             {
+                Environment.CurrentDirectory = workingDirectory;
+                if (!NativeLibrary.TryLoad(fullLibraryPath, out nint handle))
+                    return false;
+
                 _libraryHandle = handle;
-                backendInfo = GetBackendInfo();
-                return true;
+                deviceSize = sd_list_devices(null, 0);
             }
-            return false;
+            finally
+            {
+                Environment.CurrentDirectory = currentDirectory;
+            }
+
+            if (deviceSize == nuint.Zero)
+                return false;
+
+            backendInfo = GetBackendInfo(deviceSize);
+            return true;
         }
 
-        private static BackendInfo GetBackendInfo()
+
+        private static BackendInfo GetBackendInfo(nuint deviceSize)
         {
-            nuint size = sd_list_devices(null, 0);
-            byte[] buffer = new byte[(int)size];
+            byte[] buffer = new byte[(int)deviceSize];
             fixed (byte* pBuffer = buffer)
             {
                 sd_list_devices(pBuffer, (nuint)buffer.Length);

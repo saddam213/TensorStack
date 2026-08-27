@@ -226,7 +226,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         internal static unsafe NativeApi.sd_sample_params_t ToUnmanaged(this SamplerOptions managed)
         {
             float* customSigmas = null;
-            if (managed.CustomSigmas is { Length: > 0 })
+            if (!managed.CustomSigmas.IsNullOrEmpty())
             {
                 customSigmas = (float*)NativeMemory.Alloc((nuint)managed.CustomSigmas.Length, sizeof(float));
                 managed.CustomSigmas.AsSpan().CopyTo(new Span<float>(customSigmas, managed.CustomSigmas.Length));
@@ -727,7 +727,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         internal static NativeApi.sd_hires_params_t ToUnmanaged(this HiresOptions managed)
         {
             float* customSigmas = null;
-            if (managed.CustomSigmas is { Length: > 0 })
+            if (!managed.CustomSigmas.IsNullOrEmpty())
             {
                 customSigmas = (float*)NativeMemory.Alloc((nuint)managed.CustomSigmas.Length, sizeof(float));
                 managed.CustomSigmas.AsSpan().CopyTo(new Span<float>(customSigmas, managed.CustomSigmas.Length));

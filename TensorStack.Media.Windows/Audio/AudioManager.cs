@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Common;
 using TensorStack.Common.Tensor;
-using static TensorStack.Media.Windows.MediaManager;
+using static TensorStack.Media.MediaManager;
 
 namespace TensorStack.Media.Audio
 {

@@ -29,7 +29,7 @@
         public PredictionType Prediction { get; set; } = PredictionType.Default;
         public LoraApplyType LoraApplyMode { get; set; } = LoraApplyType.AtRuntime;
 
-        public int Threads { get; set; }
+        public int Threads { get; set; } = -1;
         public DataType DataType { get; set; } = DataType.Default;
         public string MaxVram { get; set; } = "-1";
         public bool AutoFit { get; set; }
