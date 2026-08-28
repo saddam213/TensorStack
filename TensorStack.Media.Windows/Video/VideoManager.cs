@@ -75,31 +75,31 @@ namespace TensorStack.Media.Video
 
 
         /// <summary>
-        /// Loads the VideoTensor from file.
+        /// Loads a VideoSequence from file.
         /// </summary>
         /// <param name="videoFile">The video file.</param>
         /// <param name="widthOverride">The width.</param>
         /// <param name="heightOverride">The height.</param>
         ///  <param name="frameRateOverride">The frame rate.</param>
-        /// <returns>VideoTensor.</returns>
-        public static VideoSequence LoadVideoTensor(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop)
+        /// <returns>VideoSequence.</returns>
+        public static VideoSequence LoadVideoSequence(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop)
         {
-            return ReadVideo(videoFile, widthOverride, heightOverride, frameRateOverride, resizeMode);
+            return ReadVideoSequence(videoFile, widthOverride, heightOverride, frameRateOverride, resizeMode);
         }
 
 
         /// <summary>
-        /// Loads the VideoTensor from file asynchronous.
+        /// Loads the VideoSequence from file asynchronous.
         /// </summary>
         /// <param name="videoFile">The video file.</param>
         /// <param name="frameRate">The frame rate.</param>
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
         /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Task&lt;VideoTensor&gt;.</returns>
-        public static Task<VideoSequence> LoadVideoTensorAsync(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop, CancellationToken cancellationToken = default)
+        /// <returns>Task&lt;VideoSequence&gt;.</returns>
+        public static Task<VideoSequence> LoadVideoSequenceAsync(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop, CancellationToken cancellationToken = default)
         {
-            return Task.Run(() => ReadVideo(videoFile, widthOverride, heightOverride, frameRateOverride, resizeMode, cancellationToken));
+            return Task.Run(() => ReadVideoSequence(videoFile, widthOverride, heightOverride, frameRateOverride, resizeMode, cancellationToken));
         }
 
 
@@ -204,7 +204,7 @@ namespace TensorStack.Media.Video
 
 
         /// <summary>
-        /// Creates a new VideoTensor (in-memory)
+        /// Creates a new VideoSequence (in-memory)
         /// </summary>
         /// <param name="videoFile">The video file.</param>
         /// <param name="width">The width.</param>
@@ -212,9 +212,9 @@ namespace TensorStack.Media.Video
         /// <param name="frameRate">The frame rate.</param>
         /// <param name="resizeMode">The resize mode.</param>
         /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>VideoTensor.</returns>
+        /// <returns>VideoSequence.</returns>
         /// <exception cref="System.Exception">Failed to open video file.</exception>
-        internal static VideoSequence ReadVideo(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Stretch, CancellationToken cancellationToken = default)
+        internal static VideoSequence ReadVideoSequence(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Stretch, CancellationToken cancellationToken = default)
         {
             using (var videoReader = new VideoCapture(videoFile))
             {

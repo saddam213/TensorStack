@@ -2,8 +2,13 @@
 
 namespace TensorStack.Common.Tensor
 {
-    public sealed class VideoSequence
+    public class VideoSequence
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VideoSequence"/> class.
+        /// </summary>
+        /// <param name="frames">The frames.</param>
+        /// <param name="frameRate">The frame rate.</param>
         public VideoSequence(ImageTensor[] frames, float frameRate)
         {
             Frames = frames;
@@ -13,6 +18,12 @@ namespace TensorStack.Common.Tensor
             Duration = TimeSpan.FromSeconds(frames.Length / frameRate);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VideoSequence"/> class.
+        /// </summary>
+        /// <param name="frames">The frames.</param>
+        /// <param name="frameRate">The frame rate.</param>
+        /// <param name="audio">The audio.</param>
         public VideoSequence(ImageTensor[] frames, float frameRate, AudioTensor audio)
             : this(frames, frameRate)
         {
