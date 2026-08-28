@@ -1,7 +1,6 @@
 ﻿using System;
-using TensorStack.Common.Tensor;
 
-namespace TensorStack.Media.Video
+namespace TensorStack.Common.Tensor
 {
     public sealed class VideoSequence
     {

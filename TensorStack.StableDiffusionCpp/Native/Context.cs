@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices.Marshalling;
 using TensorStack.Common.Tensor;
-using TensorStack.Media.Video;
 using TensorStack.StableDiffusionCpp.Common;
 
 namespace TensorStack.StableDiffusionCpp.Native

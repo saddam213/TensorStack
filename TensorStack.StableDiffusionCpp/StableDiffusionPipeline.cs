@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common.Tensor;
-using TensorStack.Media.Video;
 using TensorStack.StableDiffusionCpp.Common;
 using TensorStack.StableDiffusionCpp.Native;
 

@@ -172,9 +172,9 @@ namespace TensorStack.Python
         /// </summary>
         /// <param name="options">The options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public Task<IReadOnlyList<Tensor<float>>> GenerateImageAsync(GenerateImageOptions options, CancellationToken cancellationToken = default)
+        public Task<ImageTensor[]> GenerateImageAsync(GenerateImageOptions options, CancellationToken cancellationToken = default)
         {
-            return Task.Run<IReadOnlyList<Tensor<float>>>(() =>
+            return Task.Run<ImageTensor[]>(() =>
             {
                 using (GIL.Acquire())
                 {
@@ -192,8 +192,8 @@ namespace TensorStack.Python
                         using (var pythonResults = _functionGenerate.Call(inferenceOptions, inputTensorData, controlInputTensorData))
                         {
                             return pythonResults.AsBareEnumerable<IPyBuffer, PyObjectImporters.Buffer>()
-                                .Select(x => x.ToTensor().Normalize(Normalization.OneToOne))
-                                .ToList();
+                                .Select(x => x.ToTensor().Normalize(Normalization.OneToOne).AsImageTensor())
+                                .ToArray();
                         }
                     }
                     catch (PythonInvocationException ex)
@@ -210,9 +210,9 @@ namespace TensorStack.Python
         /// </summary>
         /// <param name="options">The options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public Task<IReadOnlyList<Tensor<float>>> GenerateVideoAsync(GenerateVideoOptions options, CancellationToken cancellationToken = default)
+        public Task<Tensor<float>[]> GenerateVideoAsync(GenerateVideoOptions options, CancellationToken cancellationToken = default)
         {
-            return Task.Run<IReadOnlyList<Tensor<float>>>(() =>
+            return Task.Run<Tensor<float>[]>(() =>
             {
                 using (GIL.Acquire())
                 {
@@ -231,7 +231,7 @@ namespace TensorStack.Python
                         {
                             return pythonResults.AsBareEnumerable<IPyBuffer, PyObjectImporters.Buffer>()
                                 .Select(x => x.ToTensor().Normalize(Normalization.OneToOne))
-                                .ToList();
+                                .ToArray();
                         }
                     }
                     catch (PythonInvocationException ex)
@@ -248,9 +248,9 @@ namespace TensorStack.Python
         /// </summary>
         /// <param name="options">The options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public Task<IReadOnlyList<Tensor<float>>> GenerateAudioAsync(GenerateAudioOptions options, CancellationToken cancellationToken = default)
+        public Task<AudioTensor[]> GenerateAudioAsync(GenerateAudioOptions options, CancellationToken cancellationToken = default)
         {
-            return Task.Run<IReadOnlyList<Tensor<float>>>(() =>
+            return Task.Run<AudioTensor[]>(() =>
             {
                 using (GIL.Acquire())
                 {
@@ -266,8 +266,8 @@ namespace TensorStack.Python
                         using (var pythonResults = _functionGenerate.Call(inferenceOptions, inputTensorsData))
                         {
                             return pythonResults.AsBareEnumerable<IPyBuffer, PyObjectImporters.Buffer>()
-                                .Select(x => x.ToTensor().Normalize(Normalization.OneToOne))
-                                .ToList();
+                                .Select(x => x.ToTensor().Normalize(Normalization.OneToOne).AsAudioTensor(options.SampleRate))
+                                .ToArray();
                         }
                     }
                     catch (PythonInvocationException ex)
