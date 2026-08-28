@@ -167,14 +167,12 @@ namespace TensorStack.StableDiffusionCpp
             var elapsedTime = GetProgresTime(timeSeconds);
             _progresssCallback?.Report(new PipelineProgress
             {
-                Key = "Load",
-                Subkey = "Component",
+                Key = "Component",
                 Value = value,
                 Maximum = maximum,
-                Message = "Loading Pipeline Components...",
                 Elapsed = (float)elapsedTime.TotalMilliseconds,
             });
-            OnLogCallback(LogLevelType.Debug, $"{value}/{maximum}, {elapsedTime}");
+            OnLogCallback(LogLevelType.Debug, $"Component: {value}/{maximum}, {elapsedTime}");
         }
 
 
@@ -197,7 +195,7 @@ namespace TensorStack.StableDiffusionCpp
                 Tensors = frames,
                 Elapsed = (float)elapsedTime.TotalMilliseconds,
             });
-            OnLogCallback(LogLevelType.Debug, $"Step: {step}, Frames: {frames?.Length ?? 0}");
+            OnLogCallback(LogLevelType.Debug, $"Step: {step}/{steps}, {elapsedTime}, PreviewFrames: {frames?.Length ?? 0}");
         }
 
 
