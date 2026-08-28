@@ -20,7 +20,7 @@ namespace TensorStack.Upscaler.Common
     /// </summary>
     public sealed record InterpolationVideoOptions : InterpolationOptions
     {
-        public VideoTensor Video { get; init; }
+        public VideoSequence Video { get; init; }
     }
 
 

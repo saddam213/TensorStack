@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -81,7 +82,7 @@ namespace TensorStack.Media.Video
         /// <param name="heightOverride">The height.</param>
         ///  <param name="frameRateOverride">The frame rate.</param>
         /// <returns>VideoTensor.</returns>
-        public static VideoTensor LoadVideoTensor(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop)
+        public static VideoSequence LoadVideoTensor(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop)
         {
             return ReadVideo(videoFile, widthOverride, heightOverride, frameRateOverride, resizeMode);
         }
@@ -96,29 +97,9 @@ namespace TensorStack.Media.Video
         /// <param name="height">The height.</param>
         /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Task&lt;VideoTensor&gt;.</returns>
-        public static Task<VideoTensor> LoadVideoTensorAsync(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop, CancellationToken cancellationToken = default)
+        public static Task<VideoSequence> LoadVideoTensorAsync(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop, CancellationToken cancellationToken = default)
         {
             return Task.Run(() => ReadVideo(videoFile, widthOverride, heightOverride, frameRateOverride, resizeMode, cancellationToken));
-        }
-
-
-        /// <summary>
-        /// Saves the video.
-        /// </summary>
-        /// <param name="videoTensor">The video tensor.</param>
-        /// <param name="videoFile">The video file.</param>
-        /// <param name="framerate">The framerate.</param>
-        /// <param name="videoCodec">The video codec.</param>
-        /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        internal static async Task SaveVideoTensorAsync(string videoFile, VideoTensor videoTensor, string videoCodec = "mp4v", float? frameRateOverride = default, CancellationToken cancellationToken = default)
-        {
-            var frameRate = frameRateOverride ?? videoTensor.FrameRate;
-            var videoFrames = videoTensor
-                .Split()
-                .Select((frame, i) => new VideoFrame(i, frame, frameRate))
-                .ToAsyncEnumerable();
-
-            await WriteVideoStreamAsync(videoFile, videoFrames, videoCodec, cancellationToken: cancellationToken);
         }
 
 
@@ -233,7 +214,7 @@ namespace TensorStack.Media.Video
         /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>VideoTensor.</returns>
         /// <exception cref="System.Exception">Failed to open video file.</exception>
-        internal static VideoTensor ReadVideo(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Stretch, CancellationToken cancellationToken = default)
+        internal static VideoSequence ReadVideo(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Stretch, CancellationToken cancellationToken = default)
         {
             using (var videoReader = new VideoCapture(videoFile))
             {
@@ -267,7 +248,7 @@ namespace TensorStack.Media.Video
                         frameCount++;
                     }
                 }
-                return new VideoTensor(result.Join(), videoframeRate);
+                return new VideoSequence(CollectionsMarshal.AsSpan(result).ToArray(), videoframeRate);
             }
         }
 

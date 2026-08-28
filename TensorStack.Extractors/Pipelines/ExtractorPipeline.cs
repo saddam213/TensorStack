@@ -22,7 +22,7 @@ namespace TensorStack.Extractors.Pipelines
     /// </summary>
     public class ExtractorPipeline
         : IPipeline<ImageTensor, ExtractorImageOptions>,
-          IPipeline<VideoTensor, ExtractorVideoOptions>,
+          IPipeline<VideoSequence, ExtractorVideoOptions>,
           IPipelineStream<VideoFrame, ExtractorStreamOptions>
     {
         private readonly ExtractorModel _model;
@@ -84,25 +84,27 @@ namespace TensorStack.Extractors.Pipelines
         /// <param name="progressCallback">The progress callback.</param>
         /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A Task&lt;VideoTensor&gt; representing the asynchronous operation.</returns>
-        public async Task<VideoTensor> RunAsync(ExtractorVideoOptions options, IProgress<RunProgress> progressCallback = default, CancellationToken cancellationToken = default)
+        public async Task<VideoSequence> RunAsync(ExtractorVideoOptions options, IProgress<RunProgress> progressCallback = default, CancellationToken cancellationToken = default)
         {
             var timestamp = RunProgress.GetTimestamp();
-            var results = new List<ImageTensor>();
+            var videoLength = options.Video.FrameCount;
+            var results = new ImageTensor[videoLength];
             var metadata = await _model.LoadAsync(cancellationToken: cancellationToken);
-            foreach (var frame in options.Video.GetFrames())
+            for (int i = 0; i < videoLength; i++)
             {
+                var frame = options.Video.Frames[i];
                 var frameTime = Stopwatch.GetTimestamp();
                 var resultTensor = await ExtractInternalAsync(metadata, frame, options, default, cancellationToken);
                 if (options.MergeInput)
                     resultTensor = MergeResult(frame, resultTensor);
 
-                results.Add(resultTensor);
-                progressCallback?.Report(new RunProgress(results.Count, options.Video.Frames, frameTime));
+                results[i] = resultTensor;
+                progressCallback?.Report(new RunProgress(results.Length, videoLength, frameTime));
             }
 
-            var resultVideoTensor = new VideoTensor(results.Join(), options.Video.FrameRate);
+            var resultVideoSequence = new VideoSequence(results, options.Video.FrameRate);
             progressCallback?.Report(new RunProgress(timestamp));
-            return resultVideoTensor;
+            return resultVideoSequence;
         }
 
 

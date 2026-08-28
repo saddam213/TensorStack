@@ -72,7 +72,7 @@ namespace TensorStack.Extractors.Common
         /// <summary>
         /// Gets the input.
         /// </summary>
-        public VideoTensor Video { get; init; }
+        public VideoSequence Video { get; init; }
     }
 
 

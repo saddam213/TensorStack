@@ -59,7 +59,7 @@ namespace TensorStack.Extractors.Common
         /// <summary>
         /// Gets the video.
         /// </summary>
-        public VideoTensor Video { get; init; }
+        public VideoSequence Video { get; init; }
     }
 
 

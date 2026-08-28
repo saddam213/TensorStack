@@ -51,7 +51,7 @@ namespace TensorStack.Upscaler.Common
         /// <summary>
         /// Gets the video input.
         /// </summary>
-        public VideoTensor Video { get; init; }
+        public VideoSequence Video { get; init; }
     }
 
 

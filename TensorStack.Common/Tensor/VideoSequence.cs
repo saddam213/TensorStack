@@ -25,6 +25,7 @@ namespace TensorStack.Common.Tensor
         public TimeSpan Duration { get; }
         public AudioTensor Audio { get; }
         public ImageTensor[] Frames { get; }
+        public int FrameCount => Frames?.Length ?? 0;
         public bool HasAudio => Audio != null;
         public int SampleRate => Audio?.SampleRate ?? 0;
     }

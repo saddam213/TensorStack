@@ -21,7 +21,7 @@ namespace TensorStack.Upscaler.Pipelines
     /// Video Interpolation Pipeline.
     /// </summary>
     public class InterpolationPipeline :
-          IPipeline<VideoTensor, InterpolationVideoOptions>,
+          IPipeline<VideoSequence, InterpolationVideoOptions>,
           IPipelineStream<VideoFrame, InterpolationStreamOptions>
     {
         private readonly InterpolationModel _model;
@@ -60,17 +60,18 @@ namespace TensorStack.Upscaler.Pipelines
         /// <param name="options">The options.</param>
         /// <param name="progressCallback">The progress callback.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public async Task<VideoTensor> RunAsync(InterpolationVideoOptions options, IProgress<RunProgress> progressCallback = default, CancellationToken cancellationToken = default)
+        public async Task<VideoSequence> RunAsync(InterpolationVideoOptions options, IProgress<RunProgress> progressCallback = default, CancellationToken cancellationToken = default)
         {
             var frameIndex = 0;
-            var totalFrames = options.Video.Frames * options.Multiplier;
+            var totalFrames = options.Video.FrameCount * options.Multiplier;
             var newFrameRate = options.Video.FrameRate * options.Multiplier;
 
-            var results = new List<ImageTensor>();
+            var results = new ImageTensor[totalFrames];
             var previousFrame = default(ImageTensor);
-            var extraFramePositions = GetFlowEstimationKeyFrames(options.Video.Frames, options.Multiplier);
-            foreach (var frame in options.Video.GetFrames())
+            var extraFramePositions = GetFlowEstimationKeyFrames(options.Video.FrameCount, options.Multiplier);
+            for (int i = 0; i < options.Video.Frames.Length; i++)
             {
+                var frame = options.Video.Frames[i];
                 var currentFrame = frame.CloneAs();
                 if (frameIndex >= totalFrames)
                     break;
@@ -83,7 +84,7 @@ namespace TensorStack.Upscaler.Pipelines
                     {
                         timestamp = Stopwatch.GetTimestamp();
                         var newFrame = await RunInterpolationAsync(currentFrame, previousFrame, timestep, cancellationToken);
-                        results.Add(newFrame);
+                        results[frameIndex] = newFrame;
                         frameIndex++;
 
                         ReportProgress(progressCallback, frameIndex, totalFrames, timestamp);
@@ -92,13 +93,13 @@ namespace TensorStack.Upscaler.Pipelines
 
                 timestamp = Stopwatch.GetTimestamp();
                 previousFrame = currentFrame.CloneAs();
-                results.Add(currentFrame);
+                results[frameIndex] = currentFrame;
                 frameIndex++;
 
                 ReportProgress(progressCallback, frameIndex, totalFrames, timestamp);
             }
 
-            return new VideoTensor(results.Join(), newFrameRate);
+            return new VideoSequence(results[.. frameIndex], newFrameRate);
         }
 
 

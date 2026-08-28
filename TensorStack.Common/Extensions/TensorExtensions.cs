@@ -418,18 +418,6 @@ namespace TensorStack.Common
 
 
         /// <summary>
-        /// VideoTensor view of the TensorSpan.
-        /// </summary>
-        /// <param name="tensor">The tensor.</param>
-        /// <param name="framerate">The framerate.</param>
-        /// <returns>VideoTensor.</returns>
-        public static VideoTensor ToVideoTensor(this TensorSpan<float> tensor, float framerate)
-        {
-            return tensor.ToTensor().AsVideoTensor(framerate);
-        }
-
-
-        /// <summary>
         /// TensorSpan view of the Tensor.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -449,18 +437,6 @@ namespace TensorStack.Common
         public static ImageTensor AsImageTensor(this Tensor<float> tensor)
         {
             return new ImageTensor(tensor);
-        }
-
-
-        /// <summary>
-        /// VideoTensor view of the Tensor.
-        /// </summary>
-        /// <param name="tensor">The tensor.</param>
-        /// <param name="framerate">The framerate.</param>
-        /// <returns>VideoTensor.</returns>
-        public static VideoTensor AsVideoTensor(this Tensor<float> tensor, float framerate)
-        {
-            return new VideoTensor(tensor, framerate);
         }
 
 
