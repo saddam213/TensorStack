@@ -23,8 +23,11 @@
     <ProjectReference Include="..\..\TensorStack.Extractors\TensorStack.Extractors.csproj" />
     <ProjectReference Include="..\..\TensorStack.Upscaler\TensorStack.Upscaler.csproj" />
     <ProjectReference Include="..\..\TensorStack.Python\TensorStack.Python.csproj" />
+    <ProjectReference Include="..\..\TensorStack.Media\TensorStack.Media.csproj" />
+    <ProjectReference Include="..\..\TensorStack.Media.Windows\TensorStack.Media.Windows.csproj" />
     <ProjectReference Include="..\..\TensorStack.Media.SkiaSharp\TensorStack.Media.SkiaSharp.csproj" />
     <ProjectReference Include="..\..\TensorStack.OnnxRuntime.DML\TensorStack.OnnxRuntime.DML.csproj" />
+    <ProjectReference Include="..\..\TensorStack.StableDiffusionCpp\TensorStack.StableDiffusionCpp.csproj" />
   </ItemGroup>
 
   <!--Nuget Packages-->
