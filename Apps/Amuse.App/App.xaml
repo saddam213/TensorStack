@@ -102,6 +102,12 @@
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
 
+            <ObjectDataProvider x:Key="PipelineType" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="AmuseCommon:PipelineType"/>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+
             <ObjectDataProvider x:Key="QuantizationType" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                 <ObjectDataProvider.MethodParameters>
                     <x:Type TypeName="AmuseCommon:QuantizationType"/>

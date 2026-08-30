@@ -42,9 +42,9 @@ namespace DebugApp
                     FlashAttn = true,
                     DiffusionFlashAttn = true,
 
-                    LlmPath = "D:\\Repositories\\TensorStack\\Apps\\Amuse.App\\bin\\Debug\\net10.0-windows10.0.17763.0\\Models\\TextEncoder\\Qwen3VL-4B-Instruct-Q8_0.gguf",
-                    VaePath = "D:\\Repositories\\TensorStack\\Apps\\Amuse.App\\bin\\Debug\\net10.0-windows10.0.17763.0\\Models\\AutoEncoder\\QwenImage\\diffusion_pytorch_model.safetensors",
-                    DiffusionModelPath = "D:\\Repositories\\TensorStack\\Apps\\Amuse.App\\bin\\Debug\\net10.0-windows10.0.17763.0\\Models\\Diffusion\\Krea-2-Turbo-Q8_0.gguf",
+                    LlmPath = "Qwen3VL-4B-Instruct-Q8_0.gguf",
+                    VaePath = "diffusion_pytorch_model.safetensors",
+                    DiffusionModelPath = "Krea-2-Turbo-Q8_0.gguf",
                 });
 
                 var defaultOptions = pipeline.DefaultImageOptions;
@@ -75,8 +75,8 @@ namespace DebugApp
 
         private static async Task StableDiffusionCppVideo()
         {
-            var backend = Path.Combine(AppContext.BaseDirectory, "sd-cpp-cuda");
-            using (var pipeline = new StableDiffusionPipeline(backend))
+            var backendDirectory = Path.Combine(AppContext.BaseDirectory, "sd-cpp-cuda");
+            using (var pipeline = new StableDiffusionPipeline(backendDirectory))
             {
                 await pipeline.LoadContextAsync(new ContextOptions
                 {
@@ -86,10 +86,10 @@ namespace DebugApp
                     FlashAttn = true,
                     DiffusionFlashAttn = true,
 
-                    LlmPath = "D:\\Repositories\\TensorStack\\Apps\\Amuse.App\\bin\\Debug\\net10.0-windows10.0.17763.0\\Models\\TextEncoder\\qwen3vl_32b_minimax_h3-Q4_K_M.gguf",
-                    VaePath = "D:\\Repositories\\TensorStack\\Apps\\Amuse.App\\bin\\Debug\\net10.0-windows10.0.17763.0\\Models\\AutoEncoder\\minimax_h3_video_vae_fp16.safetensors",
-                    AudioVaePath = "D:\\Repositories\\TensorStack\\Apps\\Amuse.App\\bin\\Debug\\net10.0-windows10.0.17763.0\\Models\\AutoEncoder\\minimax_h3_audio_vae_fp32.safetensors",
-                    DiffusionModelPath = "D:\\Repositories\\TensorStack\\Apps\\Amuse.App\\bin\\Debug\\net10.0-windows10.0.17763.0\\Models\\Diffusion\\minimax_h3_fl2va_pruned-Q8_0.gguf",
+                    LlmPath = "qwen3vl_32b_minimax_h3-Q4_K_M.gguf",
+                    VaePath = "minimax_h3_video_vae_fp16.safetensors",
+                    AudioVaePath = "minimax_h3_audio_vae_fp32.safetensors",
+                    DiffusionModelPath = "minimax_h3_fl2va_pruned-Q8_0.gguf",
                 });
 
                 var defaultOptions = pipeline.DefaultVideoOptions;
