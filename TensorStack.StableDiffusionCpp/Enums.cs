@@ -115,7 +115,10 @@ namespace TensorStack.StableDiffusionCpp
         MXFP4 = 39,
         NVFP4 = 40,
         Q1_0 = 41,
-        Default = 42,
+        Q2_0 = 42,
+        F8_E4M3 = 43,
+        F8_E5M2 = 44,
+        Default = 45,
     }
 
     public enum LogLevelType

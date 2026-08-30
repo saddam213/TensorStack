@@ -10,7 +10,7 @@ namespace TensorStack.StableDiffusionCpp.Native
     public static unsafe partial class NativeApi
     {
         internal const string LibraryName = "stable-diffusion";
-        internal const string LibraryVersion = "97d2990"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-827-97d2990/include/stable-diffusion.h
+        internal const string LibraryVersion = "6b3edaa"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-841-6b3edaa/include/stable-diffusion.h
         private static nint _libraryHandle;
 
         internal static bool LoadNativeLibrary(out BackendInfo backendInfo, string libraryPath = null)
@@ -168,7 +168,10 @@ namespace TensorStack.StableDiffusionCpp.Native
             SD_TYPE_MXFP4 = 39,
             SD_TYPE_NVFP4 = 40,
             SD_TYPE_Q1_0 = 41,
-            SD_TYPE_COUNT = 42,
+            SD_TYPE_Q2_0 = 42,
+            SD_TYPE_F8_E4M3 = 43,
+            SD_TYPE_F8_E5M2 = 44,
+            SD_TYPE_COUNT = 45
         }
 
         internal enum sd_log_level_t

@@ -316,6 +316,12 @@
                     return NativeApi.sd_type_t.SD_TYPE_NVFP4;
                 case DataType.Q1_0:
                     return NativeApi.sd_type_t.SD_TYPE_Q1_0;
+                case DataType.Q2_0:
+                    return NativeApi.sd_type_t.SD_TYPE_Q2_0;
+                case DataType.F8_E4M3:
+                    return NativeApi.sd_type_t.SD_TYPE_F8_E4M3;
+                case DataType.F8_E5M2:
+                    return NativeApi.sd_type_t.SD_TYPE_F8_E5M2;
                 case DataType.Default:
                     return NativeApi.sd_type_t.SD_TYPE_COUNT;
                 default:
