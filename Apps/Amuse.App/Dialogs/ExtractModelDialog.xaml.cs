@@ -125,6 +125,7 @@ namespace Amuse.App.Dialogs
                 Settings.ExtractModels.Remove(_originalExtractModel);
             }
             Settings.ExtractModels.Insert(index, ExtractModel);
+            ExtractModel.Initialize(Settings);
             return base.SaveAsync();
         }
 

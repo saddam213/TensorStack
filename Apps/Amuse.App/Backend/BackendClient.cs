@@ -197,7 +197,7 @@ namespace Amuse.App.Runtime
                 if (imageTensors.IsNullOrEmpty())
                 {
                     if (!File.Exists(imageFileName))
-                        throw new Exception("Generated video result not found.");
+                        throw new Exception("Generated image result not found.");
 
                     return await ImageInput.CreateAsync(imageFileName);
                 }

@@ -2538,5 +2538,85 @@
     </Style>
 
 
+    <!--ContentComboBox-->
+    <Style TargetType="{x:Type CommonControls:ContentComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CommonControls:ContentComboBox}">
+                    <Grid x:Name="templateRoot"   SnapsToDevicePixels="true">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Width="0"/>
+                        </Grid.ColumnDefinitions>
+                        <Popup x:Name="PART_Popup" 
+                            Grid.ColumnSpan="2"
+                            Margin="1"
+                            Placement="Bottom"
+                            AllowsTransparency="true"
+                            PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}"
+                            IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}">
+                            <WindowsThemes:SystemDropShadowChrome x:Name="shadow" Color="Transparent" MinWidth="{Binding ActualWidth, ElementName=templateRoot}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border x:Name="dropDownBorder" Background="{StaticResource ComboBoxBackground}" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="1" >
+                                    <DockPanel>
+                                        <ContentPresenter x:Name="TopContentPresenter" 
+                                            DockPanel.Dock="Top" 
+                                            Content="{TemplateBinding TopContent}"
+                                            DataContext="{Binding DataContext, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                        <ContentPresenter x:Name="BottomContentPresenter"
+                                            DockPanel.Dock="Bottom" 
+                                            Content="{TemplateBinding BottomContent}"
+                                            DataContext="{Binding DataContext, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                        <ScrollViewer x:Name="DropDownScrollViewer" VerticalScrollBarVisibility="Auto" MaxHeight="{TemplateBinding MaxDropDownHeight}" >
+                                            <Grid RenderOptions.ClearTypeHint="Enabled">
+                                                <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                                    <Rectangle x:Name="opaqueRect" Fill="{Binding Background, ElementName=dropDownBorder}" Height="{Binding ActualHeight, ElementName=dropDownBorder}" Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
+                                                </Canvas>
+                                                <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                            </Grid>
+                                        </ScrollViewer>
+                                    </DockPanel>
+                                </Border>
+                            </WindowsThemes:SystemDropShadowChrome>
+                        </Popup>
+
+                        <!-- ComboBox Toggle Button  -->
+                        <ToggleButton x:Name="toggleButton"
+                            Grid.ColumnSpan="2"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            Style="{StaticResource ComboBoxToggleButton}"/>
+
+                        <!-- Selected Item -->
+                        <ContentPresenter
+                            x:Name="contentPresenter"
+                            Content="{TemplateBinding SelectionBoxItem}"
+                            ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                            ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            IsHitTestVisible="false"
+                            Margin="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasDropShadow" SourceName="PART_Popup" Value="true">
+                            <Setter Property="Margin" TargetName="shadow" Value="0,0,5,5"/>
+                            <Setter Property="Color" TargetName="shadow" Value="#71000000"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsGrouping" Value="true"/>
+                                <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

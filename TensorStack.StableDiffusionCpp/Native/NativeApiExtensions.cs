@@ -1,9 +1,9 @@
-﻿using TensorStack.StableDiffusionCpp.Common;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
+using TensorStack.StableDiffusionCpp.Common;
 
 namespace TensorStack.StableDiffusionCpp.Native
 {
@@ -32,21 +32,16 @@ namespace TensorStack.StableDiffusionCpp.Native
                 ControlNetPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.control_net_path),
                 IpAdapterPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.ip_adapter_path),
                 MotionModulePath = AnsiStringMarshaller.ConvertToManaged(unmanaged.motion_module_path),
-
                 // Embeddings = "",
-
                 PhotoMakerPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.photo_maker_path),
                 PulidWeightsPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.pulid_weights_path),
                 TensorTypeRules = AnsiStringMarshaller.ConvertToManaged(unmanaged.tensor_type_rules),
-
                 Threads = unmanaged.n_threads,
-
                 DataType = unmanaged.wtype.ToManaged(),
                 RngType = unmanaged.rng_type.ToManaged(),
                 SamplerRngType = unmanaged.sampler_rng_type.ToManaged(),
                 Prediction = unmanaged.prediction.ToManaged(),
                 LoraApplyMode = unmanaged.lora_apply_mode.ToManaged(),
-
                 EnableMmap = unmanaged.enable_mmap,
                 FlashAttn = unmanaged.flash_attn,
                 DiffusionFlashAttn = unmanaged.diffusion_flash_attn,
@@ -54,20 +49,14 @@ namespace TensorStack.StableDiffusionCpp.Native
                 DiffusionConvDirect = unmanaged.diffusion_conv_direct,
                 VaeConvDirect = unmanaged.vae_conv_direct,
                 ForceSdxlVaeConvScale = unmanaged.force_sdxl_vae_conv_scale,
-
                 VaeFormat = unmanaged.vae_format.ToManaged(),
-
                 MaxVram = AnsiStringMarshaller.ConvertToManaged(unmanaged.max_vram),
-
                 StreamLayers = unmanaged.stream_layers,
                 EagerLoad = unmanaged.eager_load,
-
                 Backend = AnsiStringMarshaller.ConvertToManaged(unmanaged.backend),
                 ParamsBackend = AnsiStringMarshaller.ConvertToManaged(unmanaged.params_backend),
                 SplitMode = AnsiStringMarshaller.ConvertToManaged(unmanaged.split_mode),
-
                 AutoFit = unmanaged.auto_fit,
-
                 RpcServers = AnsiStringMarshaller.ConvertToManaged(unmanaged.rpc_servers),
                 ModelArgs = AnsiStringMarshaller.ConvertToManaged(unmanaged.model_args),
             };
@@ -105,22 +94,17 @@ namespace TensorStack.StableDiffusionCpp.Native
                 control_net_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.ControlNetPath),
                 ip_adapter_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.IpAdapterPath),
                 motion_module_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.MotionModulePath),
-
                 embeddings = embeddings,
                 embedding_count = (uint)(managed.Embeddings?.Length ?? 0),
-
                 photo_maker_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.PhotoMakerPath),
                 pulid_weights_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.PulidWeightsPath),
                 tensor_type_rules = AnsiStringMarshaller.ConvertToUnmanaged(managed.TensorTypeRules),
-
                 n_threads = managed.Threads,
-
                 wtype = managed.DataType.ToUnmanaged(),
                 rng_type = managed.RngType.ToUnmanaged(),
                 sampler_rng_type = managed.SamplerRngType.ToUnmanaged(),
                 prediction = managed.Prediction.ToUnmanaged(),
                 lora_apply_mode = managed.LoraApplyMode.ToUnmanaged(),
-
                 enable_mmap = managed.EnableMmap,
                 flash_attn = managed.FlashAttn,
                 diffusion_flash_attn = managed.DiffusionFlashAttn,
@@ -128,20 +112,14 @@ namespace TensorStack.StableDiffusionCpp.Native
                 diffusion_conv_direct = managed.DiffusionConvDirect,
                 vae_conv_direct = managed.VaeConvDirect,
                 force_sdxl_vae_conv_scale = managed.ForceSdxlVaeConvScale,
-
                 vae_format = managed.VaeFormat.ToUnmanaged(),
-
                 max_vram = AnsiStringMarshaller.ConvertToUnmanaged(managed.MaxVram),
-
                 stream_layers = managed.StreamLayers,
                 eager_load = managed.EagerLoad,
-
                 backend = AnsiStringMarshaller.ConvertToUnmanaged(managed.Backend),
                 params_backend = AnsiStringMarshaller.ConvertToUnmanaged(managed.ParamsBackend),
                 split_mode = AnsiStringMarshaller.ConvertToUnmanaged(managed.SplitMode),
-
                 auto_fit = managed.AutoFit,
-
                 rpc_servers = AnsiStringMarshaller.ConvertToUnmanaged(managed.RpcServers),
                 model_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.ModelArgs)
             };
@@ -210,11 +188,9 @@ namespace TensorStack.StableDiffusionCpp.Native
                 CustomSigmas = [],
                 FlowShift = unmanaged.flow_shift,
                 ExtraSampleArgs = AnsiStringMarshaller.ConvertToManaged(unmanaged.extra_sample_args),
-
                 TxtCfg = unmangedGuidance.txt_cfg,
                 ImgCfg = unmangedGuidance.img_cfg,
                 DistilledGuidance = unmangedGuidance.distilled_guidance,
-
                 SlgLayers = layers,
                 SlgLayerEnd = unmangedGuidanceSlg.layer_end,
                 SlgLayerStart = unmangedGuidanceSlg.layer_start,
@@ -345,46 +321,30 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 loras = loras,
                 lora_count = (uint)(managed.Loras?.Length ?? 0),
-
                 prompt = AnsiStringMarshaller.ConvertToUnmanaged(managed.Prompt),
                 negative_prompt = AnsiStringMarshaller.ConvertToUnmanaged(managed.NegativePrompt),
-
                 clip_skip = managed.ClipSkip,
-
                 init_image = managed.InitImage != null ? managed.InitImage.ToUnmanaged() : default,
-
                 ref_images = refImages,
                 ref_images_count = managed.RefImages?.Length ?? 0,
-
                 ref_image_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.RefImageArgs),
-
                 mask_image = managed.MaskImage != null ? managed.MaskImage.ToUnmanaged(1) : default,
-
                 width = managed.Width,
                 height = managed.Height,
-
                 sample_params = managed.SampleParameters.ToUnmanaged(),
-
                 strength = managed.Strength,
                 seed = managed.Seed,
                 batch_count = managed.BatchCount,
-
                 control_image = managed.ControlImage != null ? managed.ControlImage.ToUnmanaged() : default,
-
                 control_strength = managed.ControlStrength,
-
                 ip_adapter_image = managed.IpAdapterImage != null ? managed.IpAdapterImage.ToUnmanaged() : default,
-
                 ip_adapter_strength = managed.IpAdapterStrength,
-
                 pm_params = managed.PmParameters.ToUnmanaged(),
                 pulid_params = managed.PulidParameters.ToUnmanaged(),
                 vae_tiling_params = managed.VaeTilingParameters.ToUnmanaged(),
                 cache = managed.Cache.ToUnmanaged(),
                 hires = managed.Hires.ToUnmanaged(),
-
                 qwen_image_layers = managed.QwenImageLayers,
-
                 circular_x = managed.CircularX,
                 circular_y = managed.CircularY
             };
@@ -524,48 +484,32 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 loras = loras,
                 lora_count = (uint)(managed.Loras?.Length ?? 0),
-
                 prompt = AnsiStringMarshaller.ConvertToUnmanaged(managed.Prompt),
                 negative_prompt = AnsiStringMarshaller.ConvertToUnmanaged(managed.NegativePrompt),
-
                 clip_skip = managed.ClipSkip,
-
                 init_image = managed.InitImage != null ? managed.InitImage.ToUnmanaged() : default,
-
                 end_image = managed.EndImage != null ? managed.EndImage.ToUnmanaged() : default,
-
                 ref_images = refImages,
                 ref_images_count = managed.RefImages?.Length ?? 0,
-
                 ref_videos = refVideos,
                 ref_videos_count = managed.RefVideos?.Length ?? 0,
-
                 ref_audios = refAudios,
                 ref_audios_count = managed.RefAudios?.Length ?? 0,
-
                 control_frames = controlFrames,
                 control_frames_size = managed.ControlFrames?.Length ?? 0,
-
                 width = managed.Width,
                 height = managed.Height,
-
                 sample_params = managed.SampleParameters.ToUnmanaged(),
                 high_noise_sample_params = managed.HighNoiseSampleParameters.ToUnmanaged(),
-
                 moe_boundary = managed.MoeBoundary,
                 strength = managed.Strength,
                 seed = managed.Seed,
-
                 video_frames = managed.VideoFrames,
                 fps = managed.Fps,
-
                 vace_strength = managed.VaceStrength,
-
                 vae_tiling_params = managed.VaeTilingParameters.ToUnmanaged(),
-
                 cache = managed.Cache.ToUnmanaged(),
                 hires = managed.Hires.ToUnmanaged(),
-
                 circular_x = managed.CircularX,
                 circular_y = managed.CircularY
             };
@@ -636,7 +580,6 @@ namespace TensorStack.StableDiffusionCpp.Native
 
             native.sample_params.FreeUnmanaged();
             native.high_noise_sample_params.FreeUnmanaged();
-
             native.vae_tiling_params.FreeUnmanaged();
             native.cache.FreeUnmanaged();
             native.hires.FreeUnmanaged();
@@ -1053,7 +996,6 @@ namespace TensorStack.StableDiffusionCpp.Native
                     tensor[0, 3, y, x] = channels == 4 ? pixel[3].NormalizeToFloat() : 1.0f; //A
                 }
             }
-
             return tensor;
         }
 

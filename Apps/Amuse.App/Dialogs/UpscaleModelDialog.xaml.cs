@@ -127,6 +127,7 @@ namespace Amuse.App.Dialogs
             }
 
             Settings.UpscaleModels.Insert(index, UpscaleModel);
+            UpscaleModel.Initialize(Settings);
             return base.SaveAsync();
         }
 
