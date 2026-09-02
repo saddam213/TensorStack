@@ -1305,6 +1305,22 @@
     },
     {
       "Id": 546,
+      "Name": "LTX 2.3 Latent Upscale",
+      "Key": "LU_LTX23",
+      "Link": "https://huggingface.co/Lightricks/LTX-2.5",
+      "AccessToken": "HuggingFace",
+      "Checkpoint": {
+        "Name": "Component",
+        "Type": "OnlineFolder",
+        "Folder": "Diffusion",
+        "MainFile": "ltx-2.3-spatial-upscaler-x2-1.1.safetensors",
+        "DownloadFiles": [
+          "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-spatial-upscaler-x2-1.1.safetensors"
+        ]
+      }
+    },
+    {
+      "Id": 547,
       "Name": "LTX 2.5 Vae (BF16)",
       "Key": "VAE_LTX25",
       "Link": "https://huggingface.co/Lightricks/LTX-2.5",
@@ -1320,7 +1336,7 @@
       }
     },
     {
-      "Id": 547,
+      "Id": 548,
       "Name": "LTX 2.5 Audio Vae (BF16)",
       "Key": "AVAE_LTX25",
       "Link": "https://huggingface.co/Lightricks/LTX-2.5",
@@ -1336,7 +1352,7 @@
       }
     },
     {
-      "Id": 548,
+      "Id": 549,
       "Name": "LTX 2.5 TextEncoder (INT8)",
       "Key": "TE_LTX25",
       "Link": "https://huggingface.co/Lightricks/LTX-2.5",
@@ -1348,6 +1364,22 @@
         "MainFile": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
         "DownloadFiles": [
           "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors"
+        ]
+      }
+    },
+    {
+      "Id": 550,
+      "Name": "LTX 2.5 Latent Upscale",
+      "Key": "LU_LTX25",
+      "Link": "https://huggingface.co/Lightricks/LTX-2.5",
+      "AccessToken": "HuggingFace",
+      "Checkpoint": {
+        "Name": "Component",
+        "Type": "OnlineFolder",
+        "Folder": "Diffusion",
+        "MainFile": "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+        "DownloadFiles": [
+          "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
         ]
       }
     },
@@ -13275,18 +13307,16 @@
           "Type": "Component",
           "Path": "TE_Gemma3_12B_GGUF"
         },
+        "LatentUpsampler": {
+          "Name": "LatentUpsampler",
+          "Type": "Component",
+          "Path": "LU_LTX23"
+        },
         "Transformer": {
           "Name": "Transformer",
           "Type": "OnlineFile",
           "DownloadFiles": [
             "https://huggingface.co/unsloth/LTX-2.3-GGUF/resolve/main/ltx-2.3-22b-dev-Q8_0.gguf"
-          ]
-        },
-        "LatentUpsampler": {
-          "Name": "LatentUpsampler",
-          "Type": "OnlineFile",
-          "DownloadFiles": [
-            "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-spatial-upscaler-x2-1.1.safetensors"
           ]
         }
       },
@@ -13487,18 +13517,16 @@
           "Type": "Component",
           "Path": "TE_Gemma3_12B_GGUF"
         },
+        "LatentUpsampler": {
+          "Name": "LatentUpsampler",
+          "Type": "Component",
+          "Path": "LU_LTX23"
+        },
         "Transformer": {
           "Name": "Transformer",
           "Type": "OnlineFile",
           "DownloadFiles": [
             "https://huggingface.co/unsloth/LTX-2.3-GGUF/resolve/main/distilled/ltx-2.3-22b-distilled-Q8_0.gguf"
-          ]
-        },
-        "LatentUpsampler": {
-          "Name": "LatentUpsampler",
-          "Type": "OnlineFile",
-          "DownloadFiles": [
-            "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-spatial-upscaler-x2-1.1.safetensors"
           ]
         }
       },
@@ -13694,18 +13722,16 @@
           "Type": "Component",
           "Path": "TE_LTX25"
         },
+        "LatentUpsampler": {
+          "Name": "LatentUpsampler",
+          "Type": "Component",
+          "Path": "LU_LTX25"
+        },
         "Transformer": {
           "Name": "Transformer",
           "Type": "OnlineFile",
           "DownloadFiles": [
             "https://huggingface.co/vantagewithai/LTX-2.5-GGUF/resolve/main/dev/ltx-2.5-22b-dev-transformer-Q8_0.gguf"
-          ]
-        },
-        "LatentUpsampler": {
-          "Name": "LatentUpsampler",
-          "Type": "OnlineFile",
-          "DownloadFiles": [
-            "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
           ]
         }
       },
@@ -13902,18 +13928,16 @@
           "Type": "Component",
           "Path": "TE_LTX25"
         },
+        "LatentUpsampler": {
+          "Name": "LatentUpsampler",
+          "Type": "Component",
+          "Path": "LU_LTX25"
+        },
         "Transformer": {
           "Name": "Transformer",
           "Type": "OnlineFile",
           "DownloadFiles": [
             "https://huggingface.co/vantagewithai/LTX-2.5-GGUF/resolve/main/distilled/ltx-2.5-22b-distilled-transformer-Q8_0.gguf"
-          ]
-        },
-        "LatentUpsampler": {
-          "Name": "LatentUpsampler",
-          "Type": "OnlineFile",
-          "DownloadFiles": [
-            "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
           ]
         }
       },
