@@ -21,6 +21,11 @@ namespace TensorStack.OnnxRuntime
         /// </summary>
         public static void Initialize(string executionProvider, Func<Device, SessionOptions> sessionValidator, string libraryPath = default)
         {
+            // Shut down telemetry BEFORE creating custom environment.
+            // This initializes the base system and disables telemetry immediately,
+            // Otherwise private info will be leaked to Microslop
+            Environment.SetEnvironmentVariable("ORT_DISABLE_TELEMETRY", "1");
+
             Initialize(new EnvironmentCreationOptions
             {
                 logId = "TensorStack",
@@ -46,6 +51,7 @@ namespace TensorStack.OnnxRuntime
             _deviceProvider = executionProvider;
             _environmentOptions = environmentOptions;
             _environment = OrtEnv.CreateInstanceWithOptions(ref _environmentOptions);
+            _environment.DisableTelemetryEvents();
 
             var providers = _environment.GetAvailableProviders();
             if (!providers.Contains(_deviceProvider, StringComparer.OrdinalIgnoreCase))
