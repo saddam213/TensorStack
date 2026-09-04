@@ -15778,6 +15778,578 @@
           "Height": 640
         }
       ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Boogu_Base",
+      "Template": "Boogu_Base",
+      "Pipeline": "BooguImagePipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux1"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_8B-VL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 8, 14 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 13, 20 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 23, 32 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4.0,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Boogu_Turbo",
+      "Template": "Boogu_Base_Turbo",
+      "Pipeline": "BooguImagePipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux1"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_8B-VL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 8, 14 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 13, 20 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 23, 32 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 4,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Boogu_Edit_Base",
+      "Template": "Boogu_Edit_Base",
+      "Pipeline": "BooguImagePipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "ImageEdit" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux1"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_8B-VL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 8, 14 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 13, 25 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 25, 32 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 30,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 4.0,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "Boogu_Edit_Turbo",
+      "Template": "Boogu_Edit_Turbo",
+      "Pipeline": "BooguImagePipeline",
+      "ModelType": "Base",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "ImageEdit" ],
+      "Checkpoint": {
+        "Vae": {
+          "Name": "AutoEncoder",
+          "Type": "Component",
+          "Path": "VAE_Flux1"
+        },
+        "TextEncoder": {
+          "Name": "TextEncoder",
+          "Type": "Component",
+          "Path": "TE_Qwen3_8B-VL"
+        },
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 8, 14 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 13, 25 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 25, 32 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 4,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
     }
   ],
   "DiffusionTemplateMap": [
@@ -16214,6 +16786,28 @@
         {
           "Name": "Turbo",
           "Template": "Anima_Turbo"
+        }
+      ]
+    },
+    {
+      "Name": "Boogu",
+      "Backend": "StableDiffusionCpp",
+      "Options": [
+        {
+          "Name": "Base",
+          "Template": "Boogu_Base"
+        },
+        {
+          "Name": "Base Turbo",
+          "Template": "Boogu_Base_Turbo"
+        },
+        {
+          "Name": "Edit",
+          "Template": "Boogu_Edit"
+        },
+        {
+          "Name": "Edit Turbo",
+          "Template": "Boogu_Edit_Turbo"
         }
       ]
     },

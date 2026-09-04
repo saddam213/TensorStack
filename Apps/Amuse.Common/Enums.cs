@@ -66,6 +66,9 @@ namespace Amuse.Common
         [Display(Name = "Kandinsky5 Image Pipeline", ShortName = "Kandinsky5", Description = "The fifth generation of the Kandinsky family, designed for high-quality text-to-image generation with strong semantic understanding and detailed visual synthesis. Intended as a general-purpose model for both artistic and realistic image generation.")]
         Kandinsky5ImagePipeline = 68,
 
+        [Display(Name = "Boogu Image Pipeline", ShortName = "BooguImage", Description = "BooguImage is an AI-powered image generation and editing tool that helps users quickly turn ideas into high-quality visuals. With simple prompts, users can create, edit, enhance, and transform images for creative, personal, or professional projects.")]
+        BooguImagePipeline = 69,
+
 
         // Video
         [Display(Name = "Wan Pipeline", ShortName = "Wan", Description = "A general-purpose video-generation family designed for high-quality text-to-video and image-to-video synthesis. Known for strong visual quality, relatively coherent motion, and broad applicability across cinematic and creative video-generation tasks.")]

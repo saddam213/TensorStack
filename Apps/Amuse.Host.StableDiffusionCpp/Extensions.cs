@@ -154,7 +154,8 @@ namespace Amuse.Host.StableDiffusionCpp
              || pipelineOptions.Pipeline == PipelineType.ErniePipeline
              || pipelineOptions.Pipeline == PipelineType.Flux2KleinPipeline
              || pipelineOptions.Pipeline == PipelineType.Krea2Pipeline
-             || pipelineOptions.Pipeline == PipelineType.ZImagePipeline)
+             || pipelineOptions.Pipeline == PipelineType.ZImagePipeline
+             || pipelineOptions.Pipeline == PipelineType.BooguImagePipeline)
             {
                 return contextOptions with
                 {
