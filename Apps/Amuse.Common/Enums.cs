@@ -42,6 +42,9 @@ namespace Amuse.Common
         [Display(Name = "Qwen Image Pipeline", ShortName = "Qwen", Description = "Qwen's image-generation family, with particular emphasis on instruction following, complex compositions, and text rendering. It is well suited to tasks where the model needs to understand detailed natural-language instructions rather than simply reproduce a visual style.")]
         QwenImagePipeline = 50,
 
+        [Display(Name = "HiDream Pipeline", ShortName = "HiDream", Description = "HiDream-O1 is an 8B-parameter unified image-generation model designed for text-to-image generation, instruction-based editing, long-text rendering, subject-driven personalization, and storyboard generation. It uses a Pixel-level Unified Transformer architecture with native support for complex prompts, detailed compositions.")]
+        HiDreamPipeline = 59,
+
         [Display(Name = "Ideogram4 Pipeline", ShortName = "Ideogram4", Description = "A model family particularly strong at generating images containing readable, correctly structured text. Well suited to posters, advertisements, logos, typography-heavy designs, and other graphic-design-oriented generations where text accuracy matters.")]
         IdeogramPipeline = 61,
 

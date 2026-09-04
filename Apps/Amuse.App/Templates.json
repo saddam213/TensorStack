@@ -15781,7 +15781,7 @@
     },
     {
       "Backend": "StableDiffusionCpp",
-      "Name": "Boogu_Base",
+      "Name": "Boogu_Base_CPP",
       "Template": "Boogu_Base",
       "Pipeline": "BooguImagePipeline",
       "ModelType": "Base",
@@ -15797,7 +15797,7 @@
         "TextEncoder": {
           "Name": "TextEncoder",
           "Type": "Component",
-          "Path": "TE_Qwen3_8B-VL"
+          "Path": "TE_Qwen3_8B_VL_GGUF"
         },
         "Transformer": {
           "Name": "Transformer",
@@ -15924,7 +15924,7 @@
     },
     {
       "Backend": "StableDiffusionCpp",
-      "Name": "Boogu_Turbo",
+      "Name": "Boogu_Turbo_CPP",
       "Template": "Boogu_Base_Turbo",
       "Pipeline": "BooguImagePipeline",
       "ModelType": "Base",
@@ -15940,7 +15940,7 @@
         "TextEncoder": {
           "Name": "TextEncoder",
           "Type": "Component",
-          "Path": "TE_Qwen3_8B-VL"
+          "Path": "TE_Qwen3_8B_VL_GGUF"
         },
         "Transformer": {
           "Name": "Transformer",
@@ -16067,7 +16067,7 @@
     },
     {
       "Backend": "StableDiffusionCpp",
-      "Name": "Boogu_Edit_Base",
+      "Name": "Boogu_Edit_Base_CPP",
       "Template": "Boogu_Edit_Base",
       "Pipeline": "BooguImagePipeline",
       "ModelType": "Base",
@@ -16083,7 +16083,7 @@
         "TextEncoder": {
           "Name": "TextEncoder",
           "Type": "Component",
-          "Path": "TE_Qwen3_8B-VL"
+          "Path": "TE_Qwen3_8B_VL_GGUF"
         },
         "Transformer": {
           "Name": "Transformer",
@@ -16210,7 +16210,7 @@
     },
     {
       "Backend": "StableDiffusionCpp",
-      "Name": "Boogu_Edit_Turbo",
+      "Name": "Boogu_Edit_Turbo_CPP",
       "Template": "Boogu_Edit_Turbo",
       "Pipeline": "BooguImagePipeline",
       "ModelType": "Base",
@@ -16226,7 +16226,7 @@
         "TextEncoder": {
           "Name": "TextEncoder",
           "Type": "Component",
-          "Path": "TE_Qwen3_8B-VL"
+          "Path": "TE_Qwen3_8B_VL_GGUF"
         },
         "Transformer": {
           "Name": "Transformer",
@@ -16249,6 +16249,272 @@
       ],
       "DefaultOptions": {
         "Steps": 4,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 0,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "HiDream_Base_CPP",
+      "Template": "HiDream",
+      "Pipeline": "HiDreamPipeline",
+      "ModelType": "Turbo",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 6, 10 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 9, 15 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 14, 18 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 50,
+        "Width": 1024,
+        "Height": 1024,
+        "GuidanceScale": 5,
+        "Scheduler": "Euler",
+        "Schedulers": [
+          {
+            "Scheduler": "Euler"
+          },
+          {
+            "Scheduler": "EulerAncestral"
+          },
+          {
+            "Scheduler": "DPM2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2SAncestral"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2M"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2Mv2"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDE"
+          },
+          {
+            "Scheduler": "DPMPlusPlus2MSDEBT"
+          },
+          {
+            "Scheduler": "ResidualMultistep"
+          },
+          {
+            "Scheduler": "Residual2S"
+          },
+          {
+            "Scheduler": "Heun"
+          },
+          {
+            "Scheduler": "IPNDM"
+          },
+          {
+            "Scheduler": "LCM"
+          },
+          {
+            "Scheduler": "DDIM"
+          },
+          {
+            "Scheduler": "TCD"
+          },
+          {
+            "Scheduler": "LMS"
+          },
+          {
+            "Scheduler": "ERSDE"
+          }
+        ]
+      },
+      "Resolutions": [
+        {
+          "Width": 640,
+          "Height": 1536
+        },
+        {
+          "Width": 768,
+          "Height": 1344
+        },
+        {
+          "Width": 832,
+          "Height": 1280
+        },
+        {
+          "Width": 896,
+          "Height": 1152
+        },
+        {
+          "Width": 768,
+          "Height": 768
+        },
+        {
+          "Width": 1024,
+          "Height": 1024,
+          "IsDefault": true
+        },
+        {
+          "Width": 1152,
+          "Height": 896
+        },
+        {
+          "Width": 1280,
+          "Height": 832
+        },
+        {
+          "Width": 1344,
+          "Height": 768
+        },
+        {
+          "Width": 1536,
+          "Height": 640
+        }
+      ]
+    },
+    {
+      "Backend": "StableDiffusionCpp",
+      "Name": "HiDream_Dev_CPP",
+      "Template": "HiDream_Dev",
+      "Pipeline": "HiDreamPipeline",
+      "ModelType": "Turbo",
+      "BaseType": "bfloat16",
+      "MediaType": "Image",
+      "ProcessTypes": [ "TextToImage", "ImageToImage", "ImageInpaint" ],
+      "Checkpoint": {
+        "Transformer": {
+          "Name": "Transformer",
+          "Type": "LocalFile"
+        }
+      },
+      "MemoryProfile": [
+        {
+          "QualityMode": "Draft",
+          "MemoryModes": [ 2, 6, 10 ]
+        },
+        {
+          "QualityMode": "Standard",
+          "MemoryModes": [ 2, 9, 15 ]
+        },
+        {
+          "QualityMode": "Production",
+          "MemoryModes": [ 2, 14, 18 ]
+        }
+      ],
+      "DefaultOptions": {
+        "Steps": 28,
         "Width": 1024,
         "Height": 1024,
         "GuidanceScale": 0,
@@ -16795,19 +17061,19 @@
       "Options": [
         {
           "Name": "Base",
-          "Template": "Boogu_Base"
+          "Template": "Boogu_Base_CPP"
         },
         {
           "Name": "Base Turbo",
-          "Template": "Boogu_Base_Turbo"
+          "Template": "Boogu_Base_Turbo_CPP"
         },
         {
           "Name": "Edit",
-          "Template": "Boogu_Edit"
+          "Template": "Boogu_Edit_CPP"
         },
         {
           "Name": "Edit Turbo",
-          "Template": "Boogu_Edit_Turbo"
+          "Template": "Boogu_Edit_Turbo_CPP"
         }
       ]
     },
@@ -16872,6 +17138,20 @@
         {
           "Name": "Klein 9B Base",
           "Template": "Flux2_Klein_9B_Base_CPP"
+        }
+      ]
+    },
+    {
+      "Name": "HiDream",
+      "Backend": "StableDiffusionCpp",
+      "Options": [
+        {
+          "Name": "O1",
+          "Template": "HiDream_Base_CPP"
+        },
+        {
+          "Name": "O1 Dev",
+          "Template": "HiDream_Dev_CPP"
         }
       ]
     },

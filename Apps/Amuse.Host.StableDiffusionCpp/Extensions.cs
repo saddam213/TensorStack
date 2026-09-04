@@ -150,6 +150,13 @@ namespace Amuse.Host.StableDiffusionCpp
                     ModelArgs = "qwen_image_zero_cond_t=true" // TODO: should be optional
                 };
             }
+            if (pipelineOptions.Pipeline == PipelineType.HiDreamPipeline)
+            {
+                return contextOptions with
+                {
+                    ModelPath = pipelineOptions.CheckpointConfig.FullCheckpoint
+                };
+            }
             if (pipelineOptions.Pipeline == PipelineType.AnimaPipeline
              || pipelineOptions.Pipeline == PipelineType.ErniePipeline
              || pipelineOptions.Pipeline == PipelineType.Flux2KleinPipeline
