@@ -42,6 +42,9 @@ namespace Amuse.Common
         [Display(Name = "Qwen Image Pipeline", ShortName = "Qwen", Description = "Qwen's image-generation family, with particular emphasis on instruction following, complex compositions, and text rendering. It is well suited to tasks where the model needs to understand detailed natural-language instructions rather than simply reproduce a visual style.")]
         QwenImagePipeline = 50,
 
+        [Display(Name = "Lens Pipeline", ShortName = "Lens", Description = "Microsoft's Lens is a compact 3.8-billion parameter text-to-image model designed for high-speed generation and precise prompt adherence. Built on a dual-stream Multimodal Diffusion Transformer (MMDiT), it bridges multi-layer text features from a large language model with a high-fidelity semantic VAE.")]
+        LensPipeline = 58,
+
         [Display(Name = "HiDream Pipeline", ShortName = "HiDream", Description = "HiDream-O1 is an 8B-parameter unified image-generation model designed for text-to-image generation, instruction-based editing, long-text rendering, subject-driven personalization, and storyboard generation. It uses a Pixel-level Unified Transformer architecture with native support for complex prompts, detailed compositions.")]
         HiDreamPipeline = 59,
 
