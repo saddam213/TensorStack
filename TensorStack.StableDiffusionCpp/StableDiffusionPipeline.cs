@@ -26,6 +26,8 @@ namespace TensorStack.StableDiffusionCpp
             _progresssCallback = progresssCallback;
             if (!NativeApi.LoadNativeLibrary(out var backendInfo, backendPath))
                 throw new Exception($"Failed to load 'StableDiffusion.cpp' native library: {backendPath}");
+            if (!NativeApi.LibraryVersion.Equals(backendInfo.Commit, StringComparison.OrdinalIgnoreCase))
+                OnLogCallback(LogLevelType.Warn, $"Native library version mismatch: loaded '{backendInfo.Commit}', expected '{NativeApi.LibraryVersion}'.");
 
             Backend = backendInfo;
         }
