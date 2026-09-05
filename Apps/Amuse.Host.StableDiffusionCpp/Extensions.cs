@@ -163,7 +163,8 @@ namespace Amuse.Host.StableDiffusionCpp
              || pipelineOptions.Pipeline == PipelineType.Krea2Pipeline
              || pipelineOptions.Pipeline == PipelineType.ZImagePipeline
              || pipelineOptions.Pipeline == PipelineType.BooguImagePipeline
-             || pipelineOptions.Pipeline == PipelineType.LensPipeline)
+             || pipelineOptions.Pipeline == PipelineType.LensPipeline
+             || pipelineOptions.Pipeline == PipelineType.LongCatImagePipeline)
             {
                 return contextOptions with
                 {
