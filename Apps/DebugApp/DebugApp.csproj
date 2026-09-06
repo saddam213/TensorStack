@@ -3,7 +3,6 @@
   <PropertyGroup>
     <Version>0.0.1</Version>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <PlatformTarget>x64</PlatformTarget>
@@ -26,7 +25,6 @@
     <ProjectReference Include="..\..\TensorStack.Media\TensorStack.Media.csproj" />
     <ProjectReference Include="..\..\TensorStack.Media.Windows\TensorStack.Media.Windows.csproj" />
     <ProjectReference Include="..\..\TensorStack.Media.SkiaSharp\TensorStack.Media.SkiaSharp.csproj" />
-    <ProjectReference Include="..\..\TensorStack.OnnxRuntime.DML\TensorStack.OnnxRuntime.DML.csproj" />
     <ProjectReference Include="..\..\TensorStack.StableDiffusionCpp\TensorStack.StableDiffusionCpp.csproj" />
   </ItemGroup>
 

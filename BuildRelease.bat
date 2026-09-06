@@ -19,15 +19,6 @@ dotnet pack TensorStack.Media.SkiaSharp/TensorStack.Media.SkiaSharp.csproj -c Re
 dotnet build TensorStack.OnnxRuntime/TensorStack.OnnxRuntime.csproj -c Release
 dotnet pack TensorStack.OnnxRuntime/TensorStack.OnnxRuntime.csproj -c Release
 
-dotnet build TensorStack.OnnxRuntime.CPU/TensorStack.OnnxRuntime.CPU.csproj -c Release
-dotnet pack TensorStack.OnnxRuntime.CPU/TensorStack.OnnxRuntime.CPU.csproj -c Release
-
-dotnet build TensorStack.OnnxRuntime.CUDA/TensorStack.OnnxRuntime.CUDA.csproj -c Release
-dotnet pack TensorStack.OnnxRuntime.CUDA/TensorStack.OnnxRuntime.CUDA.csproj -c Release
-
-dotnet build TensorStack.OnnxRuntime.DML/TensorStack.OnnxRuntime.DML.csproj -c Release
-dotnet pack TensorStack.OnnxRuntime.DML/TensorStack.OnnxRuntime.DML.csproj -c Release
-
 dotnet build TensorStack.Extractors/TensorStack.Extractors.csproj -c Release
 dotnet pack TensorStack.Extractors/TensorStack.Extractors.csproj -c Release
 

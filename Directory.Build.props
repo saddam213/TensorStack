@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <Version>0.11.3</Version>
+    <Version>0.12.1</Version>
     <Copyright>sa_ddam213 - 2026</Copyright>
     <RepositoryUrl>https://github.com/saddam213/TensorStack</RepositoryUrl>
     <PackageTags>onnx;onnx-runtime;</PackageTags>
@@ -11,5 +11,6 @@
     <Nullable>disable</Nullable>
     <PackageOutputPath>..\..\Nuget</PackageOutputPath>
     <Configurations>Debug;Release;</Configurations>
+    <TargetFrameworks>net10.0-windows10.0.17763.0</TargetFrameworks>
   </PropertyGroup>
 </Project>

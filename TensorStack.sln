@@ -17,12 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Media.Windows",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.OnnxRuntime", "TensorStack.OnnxRuntime\TensorStack.OnnxRuntime.csproj", "{ECD6C696-C56B-4034-BE35-46C71698A532}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.OnnxRuntime.DML", "TensorStack.OnnxRuntime.DML\TensorStack.OnnxRuntime.DML.csproj", "{B2768F02-6BF6-48B4-8332-076F659A26D0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.OnnxRuntime.CUDA", "TensorStack.OnnxRuntime.CUDA\TensorStack.OnnxRuntime.CUDA.csproj", "{1D836ABF-9249-4ABB-ADC5-3E657DF8386C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.OnnxRuntime.CPU", "TensorStack.OnnxRuntime.CPU\TensorStack.OnnxRuntime.CPU.csproj", "{EC5602DD-9237-460C-8681-64A619293D59}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Upscaler", "TensorStack.Upscaler\TensorStack.Upscaler.csproj", "{0DD66FB9-0BCD-43D9-9B6B-DEBF5F1D3635}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Extractors", "TensorStack.Extractors\TensorStack.Extractors.csproj", "{2D4CFD8B-DCA3-4231-838E-EA0B4CAC8D73}"
@@ -107,24 +101,6 @@ Global
 		{ECD6C696-C56B-4034-BE35-46C71698A532}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
 		{ECD6C696-C56B-4034-BE35-46C71698A532}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECD6C696-C56B-4034-BE35-46C71698A532}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B2768F02-6BF6-48B4-8332-076F659A26D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B2768F02-6BF6-48B4-8332-076F659A26D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B2768F02-6BF6-48B4-8332-076F659A26D0}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
-		{B2768F02-6BF6-48B4-8332-076F659A26D0}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
-		{B2768F02-6BF6-48B4-8332-076F659A26D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B2768F02-6BF6-48B4-8332-076F659A26D0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D836ABF-9249-4ABB-ADC5-3E657DF8386C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D836ABF-9249-4ABB-ADC5-3E657DF8386C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D836ABF-9249-4ABB-ADC5-3E657DF8386C}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
-		{1D836ABF-9249-4ABB-ADC5-3E657DF8386C}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
-		{1D836ABF-9249-4ABB-ADC5-3E657DF8386C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D836ABF-9249-4ABB-ADC5-3E657DF8386C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EC5602DD-9237-460C-8681-64A619293D59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC5602DD-9237-460C-8681-64A619293D59}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC5602DD-9237-460C-8681-64A619293D59}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
-		{EC5602DD-9237-460C-8681-64A619293D59}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
-		{EC5602DD-9237-460C-8681-64A619293D59}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC5602DD-9237-460C-8681-64A619293D59}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0DD66FB9-0BCD-43D9-9B6B-DEBF5F1D3635}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0DD66FB9-0BCD-43D9-9B6B-DEBF5F1D3635}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DD66FB9-0BCD-43D9-9B6B-DEBF5F1D3635}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
