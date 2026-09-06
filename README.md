@@ -4,7 +4,7 @@
 ![Nuget](https://img.shields.io/nuget/dt/TensorStack.Common?label=Nuget%20Downloads)
 [![GitHub last commit](https://img.shields.io/github/last-commit/TensorStack-AI/AmuseAI)](https://github.com/TensorStack-AI/AmuseAI/commits/master/)
 
-A modular .NET SDK for building AI-powered applications.
+A modular .NET SDK for building AI-powered applications on Windows OS.
 
 TensorStack provides reusable components for local AI inference, text generation, image generation, media processing, hardware acceleration, and application development through a unified developer experience.
 
@@ -23,7 +23,6 @@ Built for performance and flexibility, TensorStack powers all applications devel
 - Hardware acceleration support
 - Python interoperability
 - Extensible provider architecture
-- Cross-platform development
 ---
 
 ## Packages
@@ -37,16 +36,11 @@ Built for performance and flexibility, TensorStack powers all applications devel
 | TensorStack.Upscaler | AI image upscaling | [README](TensorStack.Common/Upscaler.md) | [![Upscaler Badge](https://img.shields.io/nuget/v/TensorStack.Upscaler?color=4bc51e&label=TensorStack.Upscaler)](https://www.nuget.org/packages/TensorStack.Upscaler) |
 | TensorStack.Extractors | Feature extraction and analysis |[README](TensorStack.Common/Extractors.md) | [![Upscaler Badge](https://img.shields.io/nuget/v/TensorStack.Extractors?color=4bc51e&label=TensorStack.Extractors)](https://www.nuget.org/packages/TensorStack.Extractors) |
 | TensorStack.Python | Python interoperability | [README](TensorStack.Common/Python.md) | [![Python Badge](https://img.shields.io/nuget/v/TensorStack.Python?color=4bc51e&label=TensorStack.Python)](https://www.nuget.org/packages/TensorStack.Python) |
+| TensorStack.OnnxRuntime | Onnx inference **(deprecated)** | [README](TensorStack.OnnxRuntime/README.md) | [![Onnx Badge](https://img.shields.io/nuget/v/TensorStack.OnnxRuntime?color=4bc51e&label=TensorStack.OnnxRuntime)](https://www.nuget.org/packages/TensorStack.OnnxRuntime) |
 
-### Inference Providers
-
-| Package | Description | Docs | Package |
-|---------|-------------|------|---------|
-| TensorStack.OnnxRuntime.CPU | CPU execution provider | [README](TensorStack.OnnxRuntime.CPU/README.md) | [![CPU Badge](https://img.shields.io/nuget/v/TensorStack.OnnxRuntime.CPU?color=4bc51e&label=TensorStack.OnnxRuntime.CPU)](https://www.nuget.org/packages/TensorStack.OnnxRuntime.CPU) |
-| TensorStack.OnnxRuntime.CUDA | NVIDIA CUDA execution provider | [README](TensorStack.OnnxRuntime.CUDA/README.md) | [![CUDA Badge](https://img.shields.io/nuget/v/TensorStack.OnnxRuntime.CUDA?color=4bc51e&label=TensorStack.OnnxRuntime.CUDA)](https://www.nuget.org/packages/TensorStack.OnnxRuntime.CUDA) |
-| TensorStack.OnnxRuntime.DML | DirectML execution provider | [README](TensorStack.OnnxRuntime.DML/README.md) | [![DML Badge](https://img.shields.io/nuget/v/TensorStack.OnnxRuntime.DML?color=4bc51e&label=TensorStack.OnnxRuntime.DML)](https://www.nuget.org/packages/TensorStack.OnnxRuntime.DML) |
 
 ---
+
 
 ### Media Processing
 
@@ -57,7 +51,6 @@ Built for performance and flexibility, TensorStack powers all applications devel
 | TensorStack.Media.BitmapImage |  Image ↔ Tensor (`BitmapImage`) | [README](TensorStack.Media.BitmapImage/README.md) | [![BitmapImage Badge](https://img.shields.io/nuget/v/TensorStack.Media.BitmapImage?color=4bc51e&label=TensorStack.Media.BitmapImage)](https://www.nuget.org/packages/TensorStack.Media.BitmapImage) |
 | TensorStack.Media.SkiaSharp |  Image ↔ Tensor (`SkiaSharp`) | [README](TensorStack.Media.SkiaSharp/README.md) | [![BitmapImage Badge](https://img.shields.io/nuget/v/TensorStack.Media.SkiaSharp?color=4bc51e&label=TensorStack.Media.SkiaSharp)](https://www.nuget.org/packages/TensorStack.Media.SkiaSharp) |
 | TensorStack.Media.Windows | Audio/Video ↔ Tensor (`OpenCvSharp4`, `FFMPEG`) | [README](TensorStack.Media.Windows/README.md) | [![Media.Windows Badge](https://img.shields.io/nuget/v/TensorStack.Media.Windows?color=4bc51e&label=TensorStack.Media.Windows)](https://www.nuget.org/packages/TensorStack.Media.Windows) |
-
 
 
 ---
