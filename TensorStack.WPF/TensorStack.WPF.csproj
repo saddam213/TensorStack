@@ -3,8 +3,6 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <PlatformTarget>x64</PlatformTarget>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <!--Projects-->
@@ -50,11 +48,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ColorPicker.dll" PackagePath="lib/net9.0-windows10.0.17763/">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <PackageCopyToOutput>true</PackageCopyToOutput>
-      <Pack>true</Pack>
-    </None>
     <None Include="ColorPicker.dll" PackagePath="lib/net10.0-windows10.0.17763/">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <PackageCopyToOutput>true</PackageCopyToOutput>

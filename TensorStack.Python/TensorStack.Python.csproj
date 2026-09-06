@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <PlatformTarget>x64</PlatformTarget>
     <NoWarn>PRTEXP001,PRTEXP002</NoWarn>
     <DisableCSnakesRuntimeSourceGenerator>true</DisableCSnakesRuntimeSourceGenerator>
   </PropertyGroup>
@@ -31,12 +30,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CSnakes.Runtime.dll" PackagePath="lib/net9.0/">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <PackageCopyToOutput>true</PackageCopyToOutput>
-      <Pack>true</Pack>
-    </None>
-    <None Include="CSnakes.Runtime.dll" PackagePath="lib/net10.0/">
+    <None Include="CSnakes.Runtime.dll" PackagePath="lib/net10.0-windows10.0.17763/">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <PackageCopyToOutput>true</PackageCopyToOutput>
       <Pack>true</Pack>

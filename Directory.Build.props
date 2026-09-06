@@ -11,6 +11,8 @@
     <Nullable>disable</Nullable>
     <PackageOutputPath>..\..\Nuget</PackageOutputPath>
     <Configurations>Debug;Release;</Configurations>
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <TargetFrameworks>net10.0-windows10.0.17763.0</TargetFrameworks>
   </PropertyGroup>
 </Project>
