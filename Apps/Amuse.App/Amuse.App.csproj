@@ -37,7 +37,6 @@
     <ProjectReference Include="..\..\TensorStack.Extractors\TensorStack.Extractors.csproj" />
     <ProjectReference Include="..\..\TensorStack.TextGeneration\TensorStack.TextGeneration.csproj" />
     <ProjectReference Include="..\..\TensorStack.Media\TensorStack.Media.csproj" />
-    <ProjectReference Include="..\..\TensorStack.Media.Windows\TensorStack.Media.Windows.csproj" />
     <ProjectReference Include="..\..\TensorStack.Media.BitmapImage\TensorStack.Media.BitmapImage.csproj" />
     <ProjectReference Include="..\..\TensorStack.OnnxRuntime\TensorStack.OnnxRuntime.csproj" />
   </ItemGroup>
