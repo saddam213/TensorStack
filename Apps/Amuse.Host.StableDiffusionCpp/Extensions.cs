@@ -35,8 +35,9 @@ namespace Amuse.Host.StableDiffusionCpp
                 MaxVram = pipelineOptions.MemoryMode == MemoryModeType.Device ? "0" : "-1",
                 DataType = GetDataType(pipelineOptions.QuantType, pipelineOptions.MemoryMode),
                 AutoFit = pipelineOptions.MemoryMode == MemoryModeType.Balanced,
-                StreamLayers = pipelineOptions.MemoryMode == MemoryModeType.OffloadCPU,
                 EagerLoad = pipelineOptions.MemoryMode == MemoryModeType.Device,
+                IsPrefetchEnabled = pipelineOptions.MemoryMode != MemoryModeType.Device,
+                IsSegmentedComputeEnabled = pipelineOptions.MemoryMode != MemoryModeType.Device,
 
                 // Misc
                 ForceSdxlVaeConvScale = true,

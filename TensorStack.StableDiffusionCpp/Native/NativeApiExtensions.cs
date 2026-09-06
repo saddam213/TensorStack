@@ -51,7 +51,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 ForceSdxlVaeConvScale = unmanaged.force_sdxl_vae_conv_scale,
                 VaeFormat = unmanaged.vae_format.ToManaged(),
                 MaxVram = AnsiStringMarshaller.ConvertToManaged(unmanaged.max_vram),
-                StreamLayers = unmanaged.stream_layers,
+                IsPrefetchEnabled = !unmanaged.disable_prefetch,
                 EagerLoad = unmanaged.eager_load,
                 Backend = AnsiStringMarshaller.ConvertToManaged(unmanaged.backend),
                 ParamsBackend = AnsiStringMarshaller.ConvertToManaged(unmanaged.params_backend),
@@ -59,6 +59,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 AutoFit = unmanaged.auto_fit,
                 RpcServers = AnsiStringMarshaller.ConvertToManaged(unmanaged.rpc_servers),
                 ModelArgs = AnsiStringMarshaller.ConvertToManaged(unmanaged.model_args),
+                IsSegmentedComputeEnabled = !unmanaged.disable_segmented_compute,
             };
         }
 
@@ -114,14 +115,15 @@ namespace TensorStack.StableDiffusionCpp.Native
                 force_sdxl_vae_conv_scale = managed.ForceSdxlVaeConvScale,
                 vae_format = managed.VaeFormat.ToUnmanaged(),
                 max_vram = AnsiStringMarshaller.ConvertToUnmanaged(managed.MaxVram),
-                stream_layers = managed.StreamLayers,
+                disable_prefetch = !managed.IsPrefetchEnabled,
                 eager_load = managed.EagerLoad,
                 backend = AnsiStringMarshaller.ConvertToUnmanaged(managed.Backend),
                 params_backend = AnsiStringMarshaller.ConvertToUnmanaged(managed.ParamsBackend),
                 split_mode = AnsiStringMarshaller.ConvertToUnmanaged(managed.SplitMode),
                 auto_fit = managed.AutoFit,
                 rpc_servers = AnsiStringMarshaller.ConvertToUnmanaged(managed.RpcServers),
-                model_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.ModelArgs)
+                model_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.ModelArgs),
+                disable_segmented_compute = !managed.IsSegmentedComputeEnabled
             };
         }
 
@@ -976,24 +978,44 @@ namespace TensorStack.StableDiffusionCpp.Native
             var width = checked((int)image.width);
             var height = checked((int)image.height);
             var channels = checked((int)image.channel);
+            var channelSize = checked(width * height);
             if (image.data == null)
                 throw new ArgumentNullException(nameof(image.data));
-            if (channels != 3 && channels != 4)
-                throw new NotSupportedException($"Unsupported channel count: {channels}. Expected 3 (RGB) or 4 (RGBA).");
 
-            var ptr = image.data;
-            var rowBytes = width * channels;
-            var tensor = new ImageTensor(height, width);
-            for (int y = 0; y < height; y++)
+            // TensorStack image tensors are strictly 4 channle RGBA
+            var imageData = image.data;
+            var tensor = new ImageTensor(height, width, 1f);
+            var r = tensor.GetChannel(1);
+            var g = tensor.GetChannel(2);
+            var b = tensor.GetChannel(3);
+            var a = tensor.GetChannel(4);
+            if (channels == 1)
             {
-                byte* row = ptr + y * rowBytes;
-                for (int x = 0; x < width; x++)
+                for (int i = 0; i < channelSize; i++)
                 {
-                    byte* pixel = row + x * channels;
-                    tensor[0, 0, y, x] = pixel[0].NormalizeToFloat(); //R
-                    tensor[0, 1, y, x] = pixel[1].NormalizeToFloat(); //G
-                    tensor[0, 2, y, x] = pixel[2].NormalizeToFloat(); //B
-                    tensor[0, 3, y, x] = channels == 4 ? pixel[3].NormalizeToFloat() : 1.0f; //A
+                    var value = imageData[i].NormalizeToFloat();
+                    r[i] = value;
+                    g[i] = value;
+                    b[i] = value;
+                }
+            }
+            else if (channels == 3)
+            {
+                for (int i = 0, src = 0; i < channelSize; i++)
+                {
+                    r[i] = imageData[src++].NormalizeToFloat();
+                    g[i] = imageData[src++].NormalizeToFloat();
+                    b[i] = imageData[src++].NormalizeToFloat();
+                }
+            }
+            else
+            {
+                for (int i = 0, src = 0; i < channelSize; i++)
+                {
+                    r[i] = imageData[src++].NormalizeToFloat();
+                    g[i] = imageData[src++].NormalizeToFloat();
+                    b[i] = imageData[src++].NormalizeToFloat();
+                    a[i] = imageData[src++].NormalizeToFloat();
                 }
             }
             return tensor;
@@ -1004,34 +1026,40 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             var height = tensor.Dimensions[2];
             var width = tensor.Dimensions[3];
+            var channelSize = checked(width * height);
             var byteCount = checked(width * height * channels);
             var data = (byte*)NativeMemory.Alloc((nuint)byteCount);
 
             try
             {
-                for (int y = 0; y < height; y++)
+                // StableDiffusion.cpp can injest 1,3 and 4 channel tensors depending on input type
+                // images can be 3 or 4, masks are 1, default to 3
+                var r = tensor.GetChannel(1);
+                var g = tensor.GetChannel(2);
+                var b = tensor.GetChannel(3);
+                var a = tensor.GetChannel(4);
+                if (channels == 1)
                 {
-                    var row = data + y * width * channels;
-                    for (int x = 0; x < width; x++)
+                    for (int i = 0; i < channelSize; i++)
+                        data[i] = r[i].DenormalizeToByte();
+                }
+                else if (channels == 3)
+                {
+                    for (int i = 0, dst = 0; i < channelSize; i++)
                     {
-                        byte* pixel = row + x * channels;
-                        switch (channels)
-                        {
-                            case 1:
-                                pixel[0] = tensor[0, 0, y, x].DenormalizeToByte();
-                                break;
-                            case 3:
-                                pixel[0] = tensor[0, 0, y, x].DenormalizeToByte(); // R
-                                pixel[1] = tensor[0, 1, y, x].DenormalizeToByte(); // G
-                                pixel[2] = tensor[0, 2, y, x].DenormalizeToByte(); // B
-                                break;
-                            case 4:
-                                pixel[0] = tensor[0, 0, y, x].DenormalizeToByte(); // R
-                                pixel[1] = tensor[0, 1, y, x].DenormalizeToByte(); // G
-                                pixel[2] = tensor[0, 2, y, x].DenormalizeToByte(); // B
-                                pixel[3] = tensor[0, 3, y, x].DenormalizeToByte(); // A
-                                break;
-                        }
+                        data[dst++] = r[i].DenormalizeToByte();
+                        data[dst++] = g[i].DenormalizeToByte();
+                        data[dst++] = b[i].DenormalizeToByte();
+                    }
+                }
+                else
+                {
+                    for (int i = 0, dst = 0; i < channelSize; i++)
+                    {
+                        data[dst++] = r[i].DenormalizeToByte();
+                        data[dst++] = g[i].DenormalizeToByte();
+                        data[dst++] = b[i].DenormalizeToByte();
+                        data[dst++] = a[i].DenormalizeToByte();
                     }
                 }
                 return new NativeApi.sd_image_t
@@ -1062,13 +1090,11 @@ namespace TensorStack.StableDiffusionCpp.Native
             if (audio.data == null)
                 throw new ArgumentNullException(nameof(audio.data));
 
-            var tensor = new Tensor<float>([channels, samples]);
             var totalSamples = checked(channels * samples);
-            for (int i = 0; i < totalSamples; i++)
-            {
-                tensor.Memory.Span[i] = audio.data[i];
-            }
-            return tensor.AsAudioTensor(sampleRate);
+            var managedTensor = new Tensor<float>([channels, samples]);
+            var unmanagedTensor = new ReadOnlySpan<float>(audio.data, totalSamples);
+            unmanagedTensor.CopyTo(managedTensor.Memory.Span);
+            return managedTensor.AsAudioTensor(sampleRate);
         }
 
 
@@ -1083,30 +1109,21 @@ namespace TensorStack.StableDiffusionCpp.Native
                 throw new InvalidOperationException("Audio has no samples.");
 
             var totalSamples = checked(channels * samples);
-            var byteCount = checked((nuint)totalSamples * sizeof(float));
-            var data = (float*)NativeMemory.Alloc(byteCount);
-
+            var unmanagedData = (float*)NativeMemory.Alloc((nuint)(totalSamples * sizeof(float)));
             try
             {
-                for (int channel = 0; channel < channels; channel++)
-                {
-                    for (int sample = 0; sample < samples; sample++)
-                    {
-                        data[channel * samples + sample] = audio[channel, sample];
-                    }
-                }
-
+                audio.Span.CopyTo(new Span<float>(unmanagedData, totalSamples));
                 return new NativeApi.sd_audio_t
                 {
                     sample_rate = (uint)sampleRate,
                     channels = (uint)channels,
                     sample_count = (ulong)samples,
-                    data = data
+                    data = unmanagedData
                 };
             }
             catch
             {
-                NativeMemory.Free(data);
+                NativeMemory.Free(unmanagedData);
                 throw;
             }
         }

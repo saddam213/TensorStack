@@ -33,7 +33,7 @@
         public DataType DataType { get; set; } = DataType.Default;
         public string MaxVram { get; set; } = "-1";
         public bool AutoFit { get; set; }
-        public bool StreamLayers { get; set; }
+        public bool IsPrefetchEnabled { get; set; } = true;
         public bool EagerLoad { get; set; }
         public string SplitMode { get; set; }
         public string TensorTypeRules { get; set; }
@@ -53,5 +53,6 @@
         public PreviewType PreviewType { get; set; } = PreviewType.Disabled;
         public int PreviewInterval { get; set; } = 1;
         public bool IsPreviewNoisy { get; set; }
+        public bool IsSegmentedComputeEnabled { get; set; } = true;
     }
 }

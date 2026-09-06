@@ -124,6 +124,7 @@ namespace TensorStack.StableDiffusionCpp
     public enum LogLevelType
     {
         Debug,
+        Verbose,
         Info,
         Warn,
         Error

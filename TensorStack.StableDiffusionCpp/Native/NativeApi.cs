@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "6b3edaa"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-841-6b3edaa/include/stable-diffusion.h
+        public const string LibraryVersion = "d8fb10c"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-846-d8fb10c/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
 
@@ -177,6 +177,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         internal enum sd_log_level_t
         {
             SD_LOG_DEBUG,
+            SD_LOG_VERBOSE,
             SD_LOG_INFO,
             SD_LOG_WARN,
             SD_LOG_ERROR
@@ -339,7 +340,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             public byte* max_vram;
 
             [MarshalAs(UnmanagedType.I1)]
-            public bool stream_layers;
+            public bool disable_prefetch;
 
             [MarshalAs(UnmanagedType.I1)]
             public bool eager_load;
@@ -353,6 +354,9 @@ namespace TensorStack.StableDiffusionCpp.Native
 
             public byte* rpc_servers;
             public byte* model_args;
+
+            [MarshalAs(UnmanagedType.I1)]
+            public bool disable_segmented_compute;
         }
 
 
