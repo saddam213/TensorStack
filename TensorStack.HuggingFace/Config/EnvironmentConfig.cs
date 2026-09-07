@@ -1,0 +1,108 @@
+﻿using System.Collections.Generic;
+using TensorStack.Common;
+
+namespace TensorStack.HuggingFace.Config
+{
+    public record EnvironmentConfig
+    {
+        public bool IsDebug { get; set; }
+        public string Directory { get; set; }
+        public string Environment { get; set; }
+        public string PythonVersion { get; set; }
+        public string[] Requirements { get; set; }
+        public Dictionary<string, string> Variables { get; set; }
+
+
+        public readonly static string[] DefaultRequirements =
+        [
+            "typing==3.7.4.3",
+            "wheel==0.47.0",
+            "transformers==5.13.1",
+            "accelerate==1.14.0",
+            "diffusers==0.39.0",
+            "protobuf==7.35.1",
+            "sentencepiece==0.2.2",
+            "ftfy==6.3.1",
+            "scipy==1.18.0",
+            "peft==0.20.0",
+            "torchsde==0.2.6",
+            "gguf==0.19.0",
+            "av==18.0.0",
+            "soundfile==0.14.0",
+            "optimum-quanto==0.2.7",
+            "bitsandbytes==0.50.0"
+        ];
+
+
+        public static EnvironmentConfig VendorDefault(VendorType vendorType)
+        {
+            return vendorType switch
+            {
+                VendorType.AMD => DefaultROCM,
+                VendorType.Nvidia => DefaultCUDA,
+                _ => DefaultCPU
+            };
+        }
+
+
+        public readonly static EnvironmentConfig DefaultCPU = new()
+        {
+            PythonVersion = "3.12",
+            Environment = "default-cpu",
+            Directory = "RuntimeHuggingFace",
+            Requirements = [
+                "torch==2.9.1",
+                "torchvaudio==2.9.1",
+                "torchvision==0.24.1",
+                "torchao==0.18.0",
+                ..DefaultRequirements,
+            ]
+        };
+
+
+        public readonly static EnvironmentConfig DefaultCUDA = new()
+        {
+            PythonVersion = "3.12",
+            Environment = "default-cuda",
+            Directory = "RuntimeHuggingFace",
+            Variables = new Dictionary<string, string> {
+                {"CUDA_VISIBLE_DEVICES", "0,1" },
+                {"DIFFUSERS_GGUF_CUDA_KERNELS", "true" }
+            },
+            Requirements =
+            [
+                "--extra-index-url https://download.pytorch.org/whl/cu130",
+                "torch==2.11.0+cu130",
+                "torchaudio==2.11.0+cu130",
+                "torchvision==0.26.0+cu130",
+                "torchao==0.17.0",
+                ..DefaultRequirements,
+            ]
+        };
+
+
+        public readonly static EnvironmentConfig DefaultROCM = new()
+        {
+            PythonVersion = "3.12",
+            Environment = "default-rocm",
+            Directory = "RuntimeHuggingFace",
+            Variables = new Dictionary<string, string> {
+                {"MIOPEN_FIND_MODE", "2" },
+                {"HIP_VISIBLE_DEVICES", "0,1" },
+                {"TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL", "1" }
+            },
+            Requirements =
+            [
+                "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm-7.2.1.tar.gz",
+                "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_core-7.2.1-py3-none-win_amd64.whl",
+                "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_devel-7.2.1-py3-none-win_amd64.whl",
+                "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_libraries_custom-7.2.1-py3-none-win_amd64.whl",
+                "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torch-2.9.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl",
+                "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torchaudio-2.9.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl",
+                "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torchvision-0.24.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl",
+                ..DefaultRequirements,
+            ]
+        };
+
+    }
+}

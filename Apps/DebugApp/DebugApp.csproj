@@ -21,7 +21,7 @@
     <ProjectReference Include="..\..\TensorStack.Common\TensorStack.Common.csproj" />
     <ProjectReference Include="..\..\TensorStack.Extractors\TensorStack.Extractors.csproj" />
     <ProjectReference Include="..\..\TensorStack.Upscaler\TensorStack.Upscaler.csproj" />
-    <ProjectReference Include="..\..\TensorStack.Python\TensorStack.Python.csproj" />
+    <ProjectReference Include="..\..\TensorStack.HuggingFace\TensorStack.HuggingFace.csproj" />
     <ProjectReference Include="..\..\TensorStack.Media\TensorStack.Media.csproj" />
     <ProjectReference Include="..\..\TensorStack.Media.SkiaSharp\TensorStack.Media.SkiaSharp.csproj" />
     <ProjectReference Include="..\..\TensorStack.StableDiffusionCpp\TensorStack.StableDiffusionCpp.csproj" />

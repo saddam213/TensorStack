@@ -1,0 +1,22 @@
+﻿namespace TensorStack.HuggingFace.Common
+{
+    public enum ProcessType
+    {
+        TextToImage = 0,
+        ImageToImage = 1,
+        ImageEdit = 2,
+        ImageInpaint = 3,
+        ImageControlNet = 4,
+        ImageToImageControlNet = 5,
+
+        TextToVideo = 300,
+        ImageToVideo = 301,
+        VideoToVideo = 302,
+
+        TextToAudio = 400,
+        AudioToText = 500,
+
+        TextToText = 800,
+        ImageToText = 801
+    }
+}

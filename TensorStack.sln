@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Extractors", "T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.TextGeneration", "TensorStack.TextGeneration\TensorStack.TextGeneration.csproj", "{F15D8B39-0CD0-446E-80A5-145214860368}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Python", "TensorStack.Python\TensorStack.Python.csproj", "{A8E54E85-1A1C-7E88-F163-4B89715D12F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.HuggingFace", "TensorStack.HuggingFace\TensorStack.HuggingFace.csproj", "{A8E54E85-1A1C-7E88-F163-4B89715D12F2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.WPF", "TensorStack.WPF\TensorStack.WPF.csproj", "{7857FE20-AE05-0406-1B43-6D71C008B379}"
 EndProject
@@ -38,9 +38,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amuse.App", "Apps\Amuse.App
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amuse.Common", "Apps\Amuse.Common\Amuse.Common.csproj", "{EB356593-64EA-142D-AA48-63BF20AC1343}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amuse.Host.Onnx", "Apps\Amuse.Host.Onnx\Amuse.Host.Onnx.csproj", "{B44ED101-BA40-6245-0389-71F72289FB4B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amuse.Host.OnnxRuntime", "Apps\Amuse.Host.OnnxRuntime\Amuse.Host.OnnxRuntime.csproj", "{B44ED101-BA40-6245-0389-71F72289FB4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amuse.Host.PyTorch", "Apps\Amuse.Host.PyTorch\Amuse.Host.PyTorch.csproj", "{E3E2CB70-0145-7F05-D936-3CE7DB5740FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amuse.Host.HuggingFace", "Apps\Amuse.Host.HuggingFace\Amuse.Host.HuggingFace.csproj", "{E3E2CB70-0145-7F05-D936-3CE7DB5740FF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amuse.Host.StableDiffusionCpp", "Apps\Amuse.Host.StableDiffusionCpp\Amuse.Host.StableDiffusionCpp.csproj", "{DEAD9EB8-5CDF-46ED-A612-65F88E5417C2}"
 EndProject
