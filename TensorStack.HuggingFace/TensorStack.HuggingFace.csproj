@@ -37,9 +37,9 @@
     </None>
   </ItemGroup>
 
+  <!--Python Files-->
   <ItemGroup>
-    <EmbeddedResource Include="PythonRuntime\Python\**\*" />
-    <EmbeddedResource Include="PythonRuntime\Pipelines\**\*" />
+    <EmbeddedResource Include="PythonRuntime\**\*" />
   </ItemGroup>
 
   <!--Nuget Settings-->
