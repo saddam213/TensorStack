@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using TensorStack.Common.Tensor;
 
-namespace TensorStack.Media.Video
+namespace TensorStack.Common.Video
 {
     public abstract class VideoInputBase : VideoSequence
     {

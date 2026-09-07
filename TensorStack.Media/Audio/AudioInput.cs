@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 License.
 using System.Threading;
 using System.Threading.Tasks;
+using TensorStack.Common.Audio;
 using TensorStack.Common.Tensor;
 
 namespace TensorStack.Media.Audio

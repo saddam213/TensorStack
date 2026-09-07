@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using TensorStack.Common;
 using TensorStack.Media.Audio;
+using TensorStack.Media.Video;
 using TensorStack.WPF.Services;
 using TensorStack.WPF.Utils;
 

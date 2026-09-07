@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common.Tensor;
 
-namespace TensorStack.Media.Image
+namespace TensorStack.Common.Image
 {
     public abstract class ImageInputBase : ImageTensor
     {

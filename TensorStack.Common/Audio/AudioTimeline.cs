@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TensorStack.Media.Audio
+namespace TensorStack.Common.Audio
 {
     public class AudioTimeline
     {
@@ -21,13 +21,5 @@ namespace TensorStack.Media.Audio
         public TimeSpan Overlap { get; init; }
         public TimeSpan Duration { get; init; }
         public List<AudioSegment> Segments { get; init; } = [];
-    }
-
-
-    public record AudioSegment(string Source, TimeSpan Start, TimeSpan Duration, TimeSpan Position)
-    {
-        public bool IsFirst { get; set; }
-        public bool IsLast { get; set; }
-        public string FileName { get; set; }
     }
 }

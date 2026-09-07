@@ -3,7 +3,7 @@
 using System;
 using TensorStack.Common.Tensor;
 
-namespace TensorStack.Media.Video
+namespace TensorStack.Common.Video
 {
     public class VideoInputStreamBase
     {

@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
+using TensorStack.Common.Audio;
 using TensorStack.Common.Common;
 using TensorStack.Common.Tensor;
 using static TensorStack.Media.MediaManager;

@@ -47,7 +47,6 @@ Built for performance and flexibility, TensorStack powers all applications devel
 | Package | Description | Docs | Package |
 |---------|-------------|------|---------|
 | TensorStack.Media | Shared Image/Audio/Video utilities | [README](TensorStack.Media/README.md) | [![Image Badge](https://img.shields.io/nuget/v/TensorStack.Media?color=4bc51e&label=TensorStack.Media)](https://www.nuget.org/packages/TensorStack.Media) |
-| TensorStack.Media.Bitmap | Image ↔ Tensor (`Bitmap`) | [README](TensorStack.Media.Bitmap/README.md) | [![Bitmap Badge](https://img.shields.io/nuget/v/TensorStack.Media.Bitmap?color=4bc51e&label=TensorStack.Media.Bitmap)](https://www.nuget.org/packages/TensorStack.Media.Bitmap) |
 | TensorStack.Media.BitmapImage |  Image ↔ Tensor (`BitmapImage`) | [README](TensorStack.Media.BitmapImage/README.md) | [![BitmapImage Badge](https://img.shields.io/nuget/v/TensorStack.Media.BitmapImage?color=4bc51e&label=TensorStack.Media.BitmapImage)](https://www.nuget.org/packages/TensorStack.Media.BitmapImage) |
 | TensorStack.Media.SkiaSharp |  Image ↔ Tensor (`SkiaSharp`) | [README](TensorStack.Media.SkiaSharp/README.md) | [![BitmapImage Badge](https://img.shields.io/nuget/v/TensorStack.Media.SkiaSharp?color=4bc51e&label=TensorStack.Media.SkiaSharp)](https://www.nuget.org/packages/TensorStack.Media.SkiaSharp) |
 

@@ -2,7 +2,7 @@
 // Licensed under the Apache 2.0 License.
 using System;
 
-namespace TensorStack.Media.Audio
+namespace TensorStack.Common.Audio
 {
     public record AudioInfo
     {

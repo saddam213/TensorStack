@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using TensorStack.Common;
+using TensorStack.Common.Image;
 using TensorStack.Common.Tensor;
 
 namespace TensorStack.Media.Image

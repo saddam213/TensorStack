@@ -7,12 +7,12 @@
 
   <!--Projects-->
   <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
-    <ProjectReference Include="..\TensorStack.Media\TensorStack.Media.csproj" />
+    <ProjectReference Include="..\TensorStack.Common\TensorStack.Common.csproj" />
   </ItemGroup>
 
   <!--Packages-->
   <ItemGroup Condition=" '$(Configuration)' == 'Release'">
-    <PackageReference Include="TensorStack.Media" Version="$(Version)" />
+    <PackageReference Include="TensorStack.Common" Version="$(Version)" />
   </ItemGroup>
 
   <!--Nuget Settings-->

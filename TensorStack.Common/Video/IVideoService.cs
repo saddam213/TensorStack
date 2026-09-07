@@ -2,10 +2,10 @@
 // Licensed under the Apache 2.0 License.
 using System.Threading.Tasks;
 
-namespace TensorStack.Media.Audio
+namespace TensorStack.Common.Video
 {
-    public interface IAudioService
+    public interface IVideoService
     {
-        Task<AudioInfo> GetAudioInfoAsync(string filename);
+        Task<VideoInfo> GetVideoInfoAsync(string filename);
     }
 }

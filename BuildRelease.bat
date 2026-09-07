@@ -4,9 +4,6 @@ dotnet pack TensorStack.Common/TensorStack.Common.csproj -c Release
 dotnet build TensorStack.Media/TensorStack.Media.csproj -c Release
 dotnet pack TensorStack.Media/TensorStack.Media.csproj -c Release
 
-dotnet build TensorStack.Media.Bitmap/TensorStack.Media.Bitmap.csproj -c Release
-dotnet pack TensorStack.Media.Bitmap/TensorStack.Media.Bitmap.csproj -c Release
-
 dotnet build TensorStack.Media.BitmapImage/TensorStack.Media.BitmapImage.csproj -c Release
 dotnet pack TensorStack.Media.BitmapImage/TensorStack.Media.BitmapImage.csproj -c Release
 

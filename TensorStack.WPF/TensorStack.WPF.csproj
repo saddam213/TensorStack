@@ -8,6 +8,7 @@
   <!--Projects-->
   <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\TensorStack.Common\TensorStack.Common.csproj" />
+    <ProjectReference Include="..\TensorStack.Media\TensorStack.Media.csproj" />
     <ProjectReference Include="..\TensorStack.Media.BitmapImage\TensorStack.Media.BitmapImage.csproj" />
   </ItemGroup>
 

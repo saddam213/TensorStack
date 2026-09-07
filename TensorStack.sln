@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Common", "Tenso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Media", "TensorStack.Media\TensorStack.Media.csproj", "{1CB4A90F-24D8-43F3-A7C4-91DE6354F709}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Media.Bitmap", "TensorStack.Media.Bitmap\TensorStack.Media.Bitmap.csproj", "{7BB55960-DD82-4A5C-A488-788BCDFF601C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Media.BitmapImage", "TensorStack.Media.BitmapImage\TensorStack.Media.BitmapImage.csproj", "{D7F2DCDD-D68E-4C23-8FA4-380577C47C34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.Media.SkiaSharp", "TensorStack.Media.SkiaSharp\TensorStack.Media.SkiaSharp.csproj", "{444A9A3A-CA3B-4539-9456-83ADA25038C2}"
@@ -69,12 +67,6 @@ Global
 		{1CB4A90F-24D8-43F3-A7C4-91DE6354F709}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
 		{1CB4A90F-24D8-43F3-A7C4-91DE6354F709}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CB4A90F-24D8-43F3-A7C4-91DE6354F709}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7BB55960-DD82-4A5C-A488-788BCDFF601C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7BB55960-DD82-4A5C-A488-788BCDFF601C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7BB55960-DD82-4A5C-A488-788BCDFF601C}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
-		{7BB55960-DD82-4A5C-A488-788BCDFF601C}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
-		{7BB55960-DD82-4A5C-A488-788BCDFF601C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7BB55960-DD82-4A5C-A488-788BCDFF601C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D7F2DCDD-D68E-4C23-8FA4-380577C47C34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D7F2DCDD-D68E-4C23-8FA4-380577C47C34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7F2DCDD-D68E-4C23-8FA4-380577C47C34}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
