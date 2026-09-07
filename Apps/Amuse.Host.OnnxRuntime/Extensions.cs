@@ -5,12 +5,12 @@ namespace Amuse.Host.OnnxRuntime
 {
     public static class Extensions
     {
-        public static TensorStack.TextGeneration.Pipelines.Whisper.LanguageType GetLanguageType(this Common.GenerateTextOptions options)
+        public static TensorStack.OnnxRuntime.LLM.Pipelines.Whisper.LanguageType GetLanguageType(this Common.GenerateTextOptions options)
         {
-            if (Enum.TryParse<TensorStack.TextGeneration.Pipelines.Whisper.LanguageType>(options.Language.GetShortName(), true, out var languageType))
+            if (Enum.TryParse<TensorStack.OnnxRuntime.LLM.Pipelines.Whisper.LanguageType>(options.Language.GetShortName(), true, out var languageType))
                 return languageType;
 
-            return TensorStack.TextGeneration.Pipelines.Whisper.LanguageType.EN;
+            return TensorStack.OnnxRuntime.LLM.Pipelines.Whisper.LanguageType.EN;
         }
     }
 }

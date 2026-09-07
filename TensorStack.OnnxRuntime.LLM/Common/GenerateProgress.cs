@@ -1,0 +1,14 @@
+// Copyright (c) Adam Clark. All rights reserved.
+// Licensed under the Apache 2.0 License.
+using TensorStack.Common.Pipeline;
+
+namespace TensorStack.OnnxRuntime.LLM.Common
+{
+    public record GenerateProgress : IRunProgress
+    {
+        public bool IsReset { get; set; }
+        public string Result { get; set; }
+        public int Value { get; set; }
+        public int Maximum { get; set; }
+    }
+}

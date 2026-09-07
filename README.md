@@ -32,12 +32,6 @@ Built for performance and flexibility, TensorStack powers all applications devel
 | Package | Description | Docs | Package |
 |---------|-------------|------|---------|
 | TensorStack.Common | Shared runtime and utilities | [README](TensorStack.Common/README.md) | [![Common Badge](https://img.shields.io/nuget/v/TensorStack.Common?color=4bc51e&label=TensorStack.Common)](https://www.nuget.org/packages/TensorStack.Common) |
-| TensorStack.TextGeneration | Text generation and LLM integrations | [README](TensorStack.TextGeneration/README.md) | [![TextGeneration Badge](https://img.shields.io/nuget/v/TensorStack.TextGeneration?color=4bc51e&label=TensorStack.TextGeneration)](https://www.nuget.org/packages/TensorStack.TextGeneration) |
-| TensorStack.Upscaler | AI image upscaling | [README](TensorStack.Common/Upscaler.md) | [![Upscaler Badge](https://img.shields.io/nuget/v/TensorStack.Upscaler?color=4bc51e&label=TensorStack.Upscaler)](https://www.nuget.org/packages/TensorStack.Upscaler) |
-| TensorStack.Extractors | Feature extraction and analysis |[README](TensorStack.Common/Extractors.md) | [![Upscaler Badge](https://img.shields.io/nuget/v/TensorStack.Extractors?color=4bc51e&label=TensorStack.Extractors)](https://www.nuget.org/packages/TensorStack.Extractors) |
-| TensorStack.Python | Python interoperability | [README](TensorStack.Common/Python.md) | [![Python Badge](https://img.shields.io/nuget/v/TensorStack.Python?color=4bc51e&label=TensorStack.Python)](https://www.nuget.org/packages/TensorStack.Python) |
-| TensorStack.OnnxRuntime | Onnx inference **(deprecated)** | [README](TensorStack.OnnxRuntime/README.md) | [![Onnx Badge](https://img.shields.io/nuget/v/TensorStack.OnnxRuntime?color=4bc51e&label=TensorStack.OnnxRuntime)](https://www.nuget.org/packages/TensorStack.OnnxRuntime) |
-
 
 ---
 

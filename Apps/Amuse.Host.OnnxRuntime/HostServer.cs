@@ -11,9 +11,9 @@ using TensorStack.Common;
 using TensorStack.Common.Pipeline;
 using TensorStack.Common.Tensor;
 using TensorStack.OnnxRuntime;
-using TensorStack.TextGeneration.Common;
-using TensorStack.TextGeneration.Pipelines.Supertonic;
-using TensorStack.TextGeneration.Pipelines.Whisper;
+using TensorStack.OnnxRuntime.LLM.Common;
+using TensorStack.OnnxRuntime.LLM.Pipelines.Supertonic;
+using TensorStack.OnnxRuntime.LLM.Pipelines.Whisper;
 
 
 namespace Amuse.Host.OnnxRuntime

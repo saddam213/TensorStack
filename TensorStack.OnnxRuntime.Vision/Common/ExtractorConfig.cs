@@ -1,0 +1,40 @@
+﻿// Copyright (c) Adam Clark. All rights reserved.
+// Licensed under the Apache 2.0 License.
+using TensorStack.Common;
+
+namespace TensorStack.OnnxRuntime.Extract
+{
+    public record ExtractorConfig : ModelConfig
+    {
+        /// <summary>
+        /// The channels the model supports 1 = Greyscale, RGB = 3, RGBA = 4.
+        /// </summary>
+        public int Channels { get; init; } = 3;
+
+        /// <summary>
+        /// The models input maximum size (0 = Any)
+        /// </summary>
+        public int SampleSize { get; init; }
+
+        /// <summary>
+        /// The models expected input normalization (0-1 or -1-1)
+        /// </summary>
+        public Normalization Normalization { get; init; } = Normalization.ZeroToOne;
+
+        /// <summary>
+        /// The models required output normalization
+        /// </summary>
+        public Normalization OutputNormalization { get; init; } = Normalization.OneToOne;
+
+        /// <summary>
+        /// The channels the model supports 1 = Greyscale, RGB = 3, RGBA = 4.
+        /// </summary>
+        public int OutputChannels { get; init; } = 1;
+
+        /// <summary>
+        /// Gets a value indicating whether the model output shape is dynamic/calculated
+        /// </summary>
+        /// <value><c>true</c> if this instance is dynamic output; otherwise, <c>false</c>.</value>
+        public bool IsDynamicOutput { get; set; }
+    }
+}

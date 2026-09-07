@@ -13,14 +13,11 @@ dotnet pack TensorStack.Media.SkiaSharp/TensorStack.Media.SkiaSharp.csproj -c Re
 dotnet build TensorStack.OnnxRuntime/TensorStack.OnnxRuntime.csproj -c Release
 dotnet pack TensorStack.OnnxRuntime/TensorStack.OnnxRuntime.csproj -c Release
 
-dotnet build TensorStack.Extractors/TensorStack.Extractors.csproj -c Release
-dotnet pack TensorStack.Extractors/TensorStack.Extractors.csproj -c Release
+dotnet build TensorStack.OnnxRuntime.LLM/TensorStack.OnnxRuntime.LLM.csproj -c Release
+dotnet pack TensorStack.OnnxRuntime.LLM/TensorStack.OnnxRuntime.LLM.csproj -c Release
 
-dotnet build TensorStack.Upscaler/TensorStack.Upscaler.csproj -c Release
-dotnet pack TensorStack.Upscaler/TensorStack.Upscaler.csproj -c Release
-
-dotnet build TensorStack.TextGeneration/TensorStack.TextGeneration.csproj -c Release
-dotnet pack TensorStack.TextGeneration/TensorStack.TextGeneration.csproj -c Release
+dotnet build TensorStack.OnnxRuntime.Vision/TensorStack.OnnxRuntime.Vision.csproj -c Release
+dotnet pack TensorStack.OnnxRuntime.Vision/TensorStack.OnnxRuntime.Vision.csproj -c Release
 
 dotnet build TensorStack.HuggingFace/TensorStack.HuggingFace.csproj -c Release
 dotnet pack TensorStack.HuggingFace/TensorStack.HuggingFace.csproj -c Release

@@ -1,0 +1,17 @@
+// Copyright (c) Adam Clark. All rights reserved.
+// Licensed under the Apache 2.0 License.
+using System.Collections.Generic;
+using TensorStack.Common.Tensor;
+
+namespace TensorStack.OnnxRuntime.LLM.Processing
+{
+    public interface ILogitsProcessor
+    {
+        /// <summary>
+        /// Processes the specified inputs logita.
+        /// </summary>
+        /// <param name="inputs">The inputs.</param>
+        /// <param name="logits">The logits.</param>
+        public void Process(List<long> inputs, Tensor<float> logits);
+    }
+}

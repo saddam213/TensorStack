@@ -326,7 +326,7 @@ namespace TensorStack.HuggingFace
         /// <summary>
         /// Gets the Notifications.
         /// </summary>
-        public Task<IReadOnlyList<PipelineProgress>> GetNotificationsAsync()
+        private Task<IReadOnlyList<PipelineProgress>> GetNotificationsAsync()
         {
             return Task.Run<IReadOnlyList<PipelineProgress>>(() =>
             {
@@ -356,7 +356,7 @@ namespace TensorStack.HuggingFace
         }
 
 
-        public Task<IReadOnlyList<PipelineProgress>> GetTokensAsync()
+        private Task<IReadOnlyList<PipelineProgress>> GetTokensAsync()
         {
             return Task.Run<IReadOnlyList<PipelineProgress>>(() =>
             {
@@ -384,7 +384,7 @@ namespace TensorStack.HuggingFace
         /// <summary>
         /// Gets the logs.
         /// </summary>
-        public Task<IReadOnlyList<string>> GetLogsAsync()
+        private Task<IReadOnlyList<string>> GetLogsAsync()
         {
             return Task.Run(() =>
             {
