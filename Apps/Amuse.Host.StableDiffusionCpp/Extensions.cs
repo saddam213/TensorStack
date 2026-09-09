@@ -541,11 +541,11 @@ namespace Amuse.Host.StableDiffusionCpp
         /// <param name="processType">Type of the process.</param>
         private static ImageTensor[] GetControlFrames(GenerateVideoOptions options, ProcessType processType)
         {
-            if (options.InputImages.IsNullOrEmpty())
+            if (options.InputVideos.IsNullOrEmpty())
                 return default;
 
-            if (options.InputImages.Count > 2 && processType == ProcessType.ImageToVideo)
-                return [.. options.InputImages];
+            if (processType == ProcessType.VideoToVideo)
+                return [.. options.InputVideos[0].Frames];
 
             return default;
         }
