@@ -899,12 +899,12 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         #endregion
 
-        #region VideoData
+        #region VideoSequence
 
-        internal static NativeApi.sd_ref_video_t ToUnmanaged(this VideoData managed)
+        internal static NativeApi.sd_ref_video_t ToUnmanaged(this VideoSequence managed)
         {
             NativeApi.sd_image_t* frames = null;
-            if (managed.Frames is { Length: > 0 })
+            if (managed.FrameCount > 0)
             {
                 frames = (NativeApi.sd_image_t*)NativeMemory.Alloc((nuint)managed.Frames.Length, (nuint)sizeof(NativeApi.sd_image_t));
                 for (int i = 0; i < managed.Frames.Length; i++)
@@ -922,8 +922,8 @@ namespace TensorStack.StableDiffusionCpp.Native
             return new NativeApi.sd_ref_video_t
             {
                 frames = frames,
-                frame_count = managed.Frames?.Length ?? 0,
-                fps = managed.Fps,
+                frame_count = managed.FrameCount,
+                fps = (int)managed.FrameRate,
                 audio = audio
             };
         }

@@ -11,7 +11,7 @@ namespace TensorStack.StableDiffusionCpp.Common
         public ImageTensor InitImage { get; set; }
         public ImageTensor EndImage { get; set; }
         public ImageTensor[] RefImages { get; set; }
-        public VideoData[] RefVideos { get; set; }
+        public VideoSequence[] RefVideos { get; set; }
         public AudioTensor[] RefAudios { get; set; }
         public ImageTensor[] ControlFrames { get; set; }
         public int Width { get; set; }
