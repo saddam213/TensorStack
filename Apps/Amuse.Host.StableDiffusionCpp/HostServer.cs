@@ -232,6 +232,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 LogLevelType.Debug => LogLevel.Debug,
                 LogLevelType.Warn => LogLevel.Warning,
                 LogLevelType.Error => LogLevel.Error,
+                LogLevelType.Verbose => LogLevel.Trace,
                 _ => LogLevel.Trace
             };
             Logger?.Log(logLevel, "[StableDiffusion.cpp] {message}", message);

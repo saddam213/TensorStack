@@ -433,6 +433,8 @@
             {
                 case NativeApi.sd_log_level_t.SD_LOG_DEBUG:
                     return LogLevelType.Debug;
+                case NativeApi.sd_log_level_t.SD_LOG_VERBOSE:
+                    return LogLevelType.Verbose;
                 case NativeApi.sd_log_level_t.SD_LOG_INFO:
                     return LogLevelType.Info;
                 case NativeApi.sd_log_level_t.SD_LOG_WARN:
