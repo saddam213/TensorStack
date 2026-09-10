@@ -70,8 +70,8 @@ namespace Amuse.Host.StableDiffusionCpp
                 var backendConfig = new TensorStack.StableDiffusionCpp.Common.BackendConfig
                 {
                     Name = request.CreateOptions.Environment,
-                    Directory = request.CreateOptions.Directory,
                     Requirements = request.CreateOptions.Requirements,
+                    Directory = Path.Combine(request.CreateOptions.Directory, request.CreateOptions.Environment),
                 };
 
                 if (!await InstallManager.InitializeAsync(backendConfig, isReinstall, async (l, m) => await SendProgressMessage(l, m)))
