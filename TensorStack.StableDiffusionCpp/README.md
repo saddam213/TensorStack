@@ -1,15 +1,53 @@
 # TensorStack.StableDiffusionCpp
 Basic .NET Wrapper API for StableDiffusion.cpp
 
+## Backends
+Using direct path to the `StableDiffusion.cpp` binaries
+
+```csharp
+
+var backendDirectory = "D:\\sd-cpp\\cuda";
+using (var pipeline = new StableDiffusionPipeline(configuration))
+{
+    foreach (var device in pipeline.Devices)
+    {
+        Console.WriteLine(device);
+        // BackendDevice { Type = GPU, Name = NVIDIA GeForce RTX 3090, Backend = cuda0 }
+        // BackendDevice { Type = CPU, Name = 12th Gen Intel(R) Core(TM) i7-12700KF, Backend = cpu }
+    }
+}
+```
+
+Using `InstallManager`, this will download compatible `StableDiffusion.cpp` binaries and other requirements (cuda, rocm)
+
+```csharp
+//var configuration = BackendConfig.DefaultCUDA;
+//var configuration = BackendConfig.DefaultROCM;
+var configuration = BackendConfig.DefaultVulkan;
+await InstallManager.InitializeAsync(configuration);
+
+using (var pipeline = new StableDiffusionPipeline(configuration))
+{
+    foreach (var device in pipeline.Devices)
+    {
+        Console.WriteLine(device);
+        // BackendDevice { Type = GPU, Name = NVIDIA GeForce RTX 3090, Backend = vulkan0 }
+        // BackendDevice { Type = CPU, Name = 12th Gen Intel(R) Core(TM) i7-12700KF, Backend = cpu }
+    }
+}
+```
+
+---
+
 ## Image Example
 Generate an image using Krea2 Turbo
 ```csharp
-    var backendDirectory = Path.Combine(AppContext.BaseDirectory, "sd-cpp-cuda");
-    using (var pipeline = new StableDiffusionPipeline(backendDirectory))
+    using (var pipeline = new StableDiffusionPipeline(configuration))
     {
+        var device = pipeline.Devices.FirstOrDefault(x => x.Type == DeviceType.GPU);
         await pipeline.LoadContextAsync(new ContextOptions
         {
-            Backend = "cuda0",
+            Backend = device.Backend,
             ParamsBackend = "*=cpu",
             MaxVram = "-1",
             FlashAttn = true,
@@ -45,12 +83,12 @@ Generate an image using Krea2 Turbo
 ## Video Example
 Generate an video using MiniMax-H3
 ```csharp
-    var backendDirectory = Path.Combine(AppContext.BaseDirectory, "sd-cpp-cuda");
-    using (var pipeline = new StableDiffusionPipeline(backendDirectory))
+    using (var pipeline = new StableDiffusionPipeline(configuration))
     {
+        var device = pipeline.Devices.FirstOrDefault(x => x.Type == DeviceType.GPU);
         await pipeline.LoadContextAsync(new ContextOptions
         {
-            Backend = "cuda0",
+            Backend = device.Backend,
             ParamsBackend = "*=cpu",
             MaxVram = "-1",
             FlashAttn = true,
