@@ -55,10 +55,10 @@ namespace TensorStack.Common.Tensor
         public IEnumerable<AudioTensor> Chunk(float seconds)
         {
             var sampleRate = (float)SampleRate;
-            int samplesPerChunk = (int)Math.Round(seconds * sampleRate);
+            var samplesPerChunk = (int)Math.Round(seconds * sampleRate);
             for (int start = 0; start < Samples; start += samplesPerChunk)
             {
-                int length = Math.Min(samplesPerChunk, Samples - start);
+                var length = Math.Min(samplesPerChunk, Samples - start);
                 yield return GetSequence(start / sampleRate, length / sampleRate);
             }
         }
@@ -83,8 +83,8 @@ namespace TensorStack.Common.Tensor
         /// <returns>AudioTensor.</returns>
         public AudioTensor GetSequence(float startSeconds, float lengthSeconds)
         {
-            int start = (int)Math.Round(startSeconds * SampleRate) * Channels;
-            int count = (int)Math.Round(lengthSeconds * SampleRate) * Channels;
+            var start = (int)Math.Round(startSeconds * SampleRate) * Channels;
+            var count = (int)Math.Round(lengthSeconds * SampleRate) * Channels;
             var samples = Memory.Span[start..(start + count)].ToArray();
             return new Tensor<float>(samples, [Channels, samples.Length / Channels]).AsAudioTensor(SampleRate);
         }
