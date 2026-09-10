@@ -52,21 +52,41 @@ namespace TensorStack.Common.Tensor
         /// Splits the Audio specified second chunks.
         /// </summary>
         /// <param name="seconds">The seconds.</param>
-        public IEnumerable<AudioTensor> Chunk(int seconds)
+        public IEnumerable<AudioTensor> Chunk(float seconds)
         {
-            int channels = Channels;
-            int totalSamples = Samples;
-            int samplesPerChunk = seconds * SampleRate;
-            for (int start = 0; start < totalSamples; start += samplesPerChunk)
+            var sampleRate = (float)SampleRate;
+            int samplesPerChunk = (int)Math.Round(seconds * sampleRate);
+            for (int start = 0; start < Samples; start += samplesPerChunk)
             {
-                int length = Math.Min(samplesPerChunk, totalSamples - start);
-                var slice = new Tensor<float>([channels, length]);
-                for (int c = 0; c < channels; c++)
-                    for (int i = 0; i < length; i++)
-                        slice[c, i] = this[c, start + i];
-
-                yield return slice.AsAudioTensor(SampleRate);
+                int length = Math.Min(samplesPerChunk, Samples - start);
+                yield return GetSequence(start / sampleRate, length / sampleRate);
             }
+        }
+
+
+        /// <summary>
+        /// Gets a chunk fo audio.
+        /// </summary>
+        /// <param name="lengthSeconds">The length seconds.</param>
+        /// <returns>AudioTensor.</returns>
+        public AudioTensor GetSequence(float lengthSeconds)
+        {
+            return GetSequence(0, lengthSeconds);
+        }
+
+
+        /// <summary>
+        /// Gets a chunk fo audio.
+        /// </summary>
+        /// <param name="startSeconds">The start seconds.</param>
+        /// <param name="lengthSeconds">The length seconds.</param>
+        /// <returns>AudioTensor.</returns>
+        public AudioTensor GetSequence(float startSeconds, float lengthSeconds)
+        {
+            int start = (int)Math.Round(startSeconds * SampleRate) * Channels;
+            int count = (int)Math.Round(lengthSeconds * SampleRate) * Channels;
+            var samples = Memory.Span[start..(start + count)].ToArray();
+            return new Tensor<float>(samples, [Channels, samples.Length / Channels]).AsAudioTensor(SampleRate);
         }
 
 

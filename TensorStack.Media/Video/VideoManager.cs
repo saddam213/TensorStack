@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
 using TensorStack.Common.Video;
+using TensorStack.Media.Audio;
 
 namespace TensorStack.Media.Video
 {
@@ -84,7 +85,9 @@ namespace TensorStack.Media.Video
         /// <returns>VideoSequence.</returns>
         public static VideoSequence LoadVideoSequence(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop)
         {
-            return ReadVideoSequence(videoFile, widthOverride, heightOverride, frameRateOverride, resizeMode);
+            var audioInfo = AudioManager.LoadInfo(videoFile);
+            var videoAudio = AudioManager.LoadTensor(videoFile, sampleRate: audioInfo.SampleRate, channels: audioInfo.Channels);
+            return ReadVideoSequence(videoFile, videoAudio, widthOverride, heightOverride, frameRateOverride, resizeMode);
         }
 
 
@@ -97,9 +100,11 @@ namespace TensorStack.Media.Video
         /// <param name="height">The height.</param>
         /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Task&lt;VideoSequence&gt;.</returns>
-        public static Task<VideoSequence> LoadVideoSequenceAsync(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop, CancellationToken cancellationToken = default)
+        public static async Task<VideoSequence> LoadVideoSequenceAsync(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop, CancellationToken cancellationToken = default)
         {
-            return Task.Run(() => ReadVideoSequence(videoFile, widthOverride, heightOverride, frameRateOverride, resizeMode, cancellationToken));
+            var audioInfo = await AudioManager.LoadInfoAsync(videoFile);
+            var audioTensor = await AudioManager.LoadTensorAsync(videoFile, sampleRate: audioInfo.SampleRate, channels: audioInfo.Channels, cancellationToken: cancellationToken);
+            return await Task.Run(() => ReadVideoSequence(videoFile, audioTensor, widthOverride, heightOverride, frameRateOverride, resizeMode, cancellationToken));
         }
 
 
@@ -214,7 +219,7 @@ namespace TensorStack.Media.Video
         /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>VideoSequence.</returns>
         /// <exception cref="System.Exception">Failed to open video file.</exception>
-        internal static VideoSequence ReadVideoSequence(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Stretch, CancellationToken cancellationToken = default)
+        internal static VideoSequence ReadVideoSequence(string videoFile, AudioTensor audio = null, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Stretch, CancellationToken cancellationToken = default)
         {
             using (var videoReader = new VideoCapture(videoFile))
             {
@@ -248,7 +253,7 @@ namespace TensorStack.Media.Video
                         frameCount++;
                     }
                 }
-                return new VideoSequence(CollectionsMarshal.AsSpan(result).ToArray(), videoframeRate);
+                return new VideoSequence([.. result], videoframeRate, audio);
             }
         }
 

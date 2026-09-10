@@ -373,27 +373,24 @@ namespace TensorStack.Media.Audio
 
 
         /// <summary>
-        /// Creates the audio tensor.
+        /// Creates the audio tensor from interleaved PCM16 audio.
         /// </summary>
-        /// <param name="audioBytes">The audio bytes.</param>
-        /// <param name="channels">The channels.</param>
+        /// <param name="audioBytes">The interleaved PCM16 audio bytes.</param>
+        /// <param name="channels">The number of channels.</param>
         /// <param name="sampleRate">The sample rate.</param>
         /// <returns>AudioTensor.</returns>
         private static AudioTensor CreateAudioTensor(byte[] audioBytes, int channels, int sampleRate)
         {
-            // Convert PCM16 -> float32 [-1, 1]
-            var sampleCount = audioBytes.Length / 2 / channels;
-            var result = new Tensor<float>([channels, sampleCount]);
-            for (int i = 0, s = 0; i < audioBytes.Length; i += 2, s++)
+            int totalSamples = audioBytes.Length / sizeof(short);
+            if (totalSamples % channels != 0)
+                throw new ArgumentException("Audio buffer does not contain a complete frame.", nameof(audioBytes));
+
+            var result = new Tensor<float>([channels, totalSamples / channels]);
+            for (int i = 0; i < totalSamples; i++)
             {
-                short sample = BitConverter.ToInt16(audioBytes, i);
-                float normalized = sample / 32768f;
-
-                int channel = s % channels;
-                int frame = s / channels;
-                result[channel, frame] = normalized;
+                short sample = BitConverter.ToInt16(audioBytes, i * sizeof(short));
+                result.Memory.Span[i] = sample / 32768f;
             }
-
             return result.AsAudioTensor(sampleRate);
         }
 
