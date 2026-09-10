@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TensorStack.Common;
 using TensorStack.Common.Tensor;
 using TensorStack.Media;
 using TensorStack.Media.Image;
@@ -31,20 +32,23 @@ namespace DebugApp
 
         private static async Task StableDiffusionCppImage()
         {
-            var backendDirectory = Path.Combine(AppContext.BaseDirectory, "sd-cpp-cuda");
-            using (var pipeline = new StableDiffusionPipeline(backendDirectory))
+            var configuration = BackendConfig.DefaultCUDA;
+            await InstallManager.InitializeAsync(configuration, logCallback: OnLogCallback);
+
+            using (var pipeline = new StableDiffusionPipeline(configuration, logCallback: OnLogCallback))
             {
+                var device = pipeline.Devices.FirstOrDefault(x => x.Type == DeviceType.GPU);
                 await pipeline.LoadContextAsync(new ContextOptions
                 {
-                    Backend = "cuda0",
+                    Backend = device.Backend,
                     ParamsBackend = "*=cpu",
                     MaxVram = "-1",
                     FlashAttn = true,
                     DiffusionFlashAttn = true,
 
-                    LlmPath = "Qwen3VL-4B-Instruct-Q8_0.gguf",
-                    VaePath = "diffusion_pytorch_model.safetensors",
-                    DiffusionModelPath = "Krea-2-Turbo-Q8_0.gguf",
+                    LlmPath = "E:\\Qwen3VL-4B-Instruct-Q8_0.gguf",
+                    VaePath = "E:\\QwenImageAutoEncoder.safetensors",
+                    DiffusionModelPath = "E:\\Krea-2-Turbo-Q8_0.gguf",
                 });
 
                 var defaultOptions = pipeline.DefaultImageOptions;

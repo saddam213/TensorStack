@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common.Tensor;
@@ -29,13 +31,28 @@ namespace TensorStack.StableDiffusionCpp
             if (!NativeApi.LibraryVersion.Equals(backendInfo.Commit, StringComparison.OrdinalIgnoreCase))
                 OnLogCallback(LogLevelType.Warn, $"Native library version mismatch: loaded '{backendInfo.Commit}', expected '{NativeApi.LibraryVersion}'.");
 
-            Backend = backendInfo;
+            BackendInfo = backendInfo;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StableDiffusionPipeline"/> class.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="progresssCallback">The progresss callback.</param>
+        /// <param name="logCallback">The log callback.</param>
+        public StableDiffusionPipeline(BackendConfig configuration, IProgress<PipelineProgress> progresssCallback = null, Action<LogLevelType, string> logCallback = null)
+            : this(configuration.Directory, progresssCallback, logCallback) { }
+
 
         /// <summary>
         /// Gets the loaded backend information.
         /// </summary>
-        public BackendInfo Backend { get; }
+        public BackendInfo BackendInfo { get; }
+
+        /// <summary>
+        /// Gets the devices.
+        /// </summary>
+        public IReadOnlyList<BackendDevice> Devices => BackendInfo?.Devices;
 
         /// <summary>
         /// Gets the default image options for the current context.

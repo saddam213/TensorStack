@@ -1,53 +1,63 @@
-﻿using Amuse.Common;
-using System;
+﻿using System;
 using System.Formats.Tar;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
 using TensorStack.Common.Common;
+using TensorStack.StableDiffusionCpp.Common;
+using TensorStack.StableDiffusionCpp.Native;
 
-namespace Amuse.Host.StableDiffusionCpp
+namespace TensorStack.StableDiffusionCpp
 {
-    internal static class InstallManager
+    public static class InstallManager
     {
         /// <summary>
         /// Initialize StableDiffusion.cpp environment
         /// </summary>
-        /// <param name="options">The options.</param>
+        /// <param name="configuration">The options.</param>
         /// <param name="progressCallback">The progress callback.</param>
-        public static async Task<bool> InitializeAsync(PipelineCreateOptions options, IProgress<PipelineProgress> progressCallback)
+        public static async Task<bool> InitializeAsync(BackendConfig configuration, bool reinstall = false, Action<LogLevelType, string> logCallback = null)
         {
-            var workingDirectory = options.Directory;
-            Directory.CreateDirectory(workingDirectory);
-            var environmentDirectory = Path.Combine(workingDirectory, options.Environment);
-            var applicationPath = Path.Combine(environmentDirectory, "sd-server.exe");
-            if (options.Mode == EnvironmentMode.Update || options.Mode == EnvironmentMode.Reinstall || options.Mode == EnvironmentMode.Rebuild)
+            var tempDirectory = Path.Combine(configuration.Directory, "temp");
+            try
             {
-                progressCallback.SendProgressMessage("Uninstall Environment...");
-                FileHelper.DeleteDirectory(environmentDirectory);
-                progressCallback.SendProgressMessage("Environment Uninstalled.");
+                Directory.CreateDirectory(tempDirectory);
+                var applicationPath = Path.Combine(configuration.Directory, $"{NativeApi.LibraryName}.dll");
+                if (reinstall)
+                {
+                    logCallback?.Invoke(LogLevelType.Info, "Uninstall Environment...");
+                    FileHelper.DeleteDirectory(configuration.Directory);
+                    logCallback?.Invoke(LogLevelType.Info, "Environment Uninstalled.");
+                }
+
+                if (File.Exists(applicationPath))
+                {
+                    logCallback?.Invoke(LogLevelType.Info, "Environment Already Installed.");
+                    return true;
+                }
+
+                // Download StableDiffusion.cpp Requirements
+                await DownloadRequirementsAsync(configuration.Requirements, tempDirectory, logCallback);
+
+                // Install StableDiffusion.cpp Requirements
+                await InstallRequirementsAsync(configuration.Requirements, configuration.Directory, tempDirectory, logCallback);
+
+                // Verify StableDiffusion.cpp Install
+                if (!File.Exists(applicationPath))
+                {
+                    logCallback?.Invoke(LogLevelType.Info, "Environment Install Failed.");
+                    FileHelper.DeleteDirectory(configuration.Directory);
+                    return false;
+                }
+
+                logCallback?.Invoke(LogLevelType.Info, "Environment Install Complete.");
+                return true;
             }
-
-            if (File.Exists(applicationPath))
-                return true; // Already Installed
-
-            // Download StableDiffusion.cpp Requirements
-            await DownloadRequirementsAsync(options.Requirements, workingDirectory, progressCallback);
-
-            // Install StableDiffusion.cpp Requirements
-            await InstallRequirementsAsync(options.Requirements, environmentDirectory, workingDirectory, progressCallback);
-
-            // Verify StableDiffusion.cpp Install
-            if (!File.Exists(applicationPath))
+            finally
             {
-                progressCallback.SendProgressMessage("Environment Install Failed.");
-                FileHelper.DeleteDirectory(environmentDirectory);
-                return false;
+                FileHelper.DeleteDirectory(tempDirectory);
             }
-
-            progressCallback.SendProgressMessage("Environment Install Complete.");
-            return true;
         }
 
 
@@ -58,20 +68,20 @@ namespace Amuse.Host.StableDiffusionCpp
         /// <param name="workingDirectory">The working directory.</param>
         /// <param name="progressCallback">The progress callback.</param>
         /// <returns>A Task representing the asynchronous operation.</returns>
-        private static async Task DownloadRequirementsAsync(string[] requirements, string workingDirectory, IProgress<PipelineProgress> progressCallback)
+        private static async Task DownloadRequirementsAsync(string[] requirements, string workingDirectory, Action<LogLevelType, string> logCallback = null)
         {
-            progressCallback.SendProgressMessage("Download Environment...");
+            logCallback?.Invoke(LogLevelType.Info, "Download Environment...");
             using (var httpClient = new HttpClient())
             {
                 foreach (var requirement in requirements)
                 {
                     var name = Path.GetFileName(requirement);
                     var destination = Path.Combine(workingDirectory, name);
-                    progressCallback.SendProgressMessage($"Downloading {name}...");
+                    logCallback?.Invoke(LogLevelType.Info, $"Downloading {name}...");
                     await DownloadFileAsync(httpClient, requirement, destination);
                 }
             }
-            progressCallback.SendProgressMessage("Download Environment Complete.");
+            logCallback?.Invoke(LogLevelType.Info, "Download Environment Complete.");
         }
 
 
@@ -82,9 +92,9 @@ namespace Amuse.Host.StableDiffusionCpp
         /// <param name="environmentDirectory">The environment directory.</param>
         /// <param name="workingDirectory">The working directory.</param>
         /// <param name="progressCallback">The progress callback.</param>
-        private static async Task InstallRequirementsAsync(string[] requirements, string environmentDirectory, string workingDirectory, IProgress<PipelineProgress> progressCallback)
+        private static async Task InstallRequirementsAsync(string[] requirements, string environmentDirectory, string workingDirectory, Action<LogLevelType, string> logCallback = null)
         {
-            progressCallback.SendProgressMessage("Installing Environment...");
+            logCallback?.Invoke(LogLevelType.Info, "Installing Environment...");
             Directory.CreateDirectory(environmentDirectory);
             foreach (var requirement in requirements)
             {
@@ -93,7 +103,7 @@ namespace Amuse.Host.StableDiffusionCpp
                 if (!File.Exists(requirementFile))
                     continue;
 
-                progressCallback.SendProgressMessage($"Unpacking {filename}...");
+                logCallback?.Invoke(LogLevelType.Info, $"Unpacking {filename}...");
                 await UnpackRequirementAsync(requirementFile, environmentDirectory, workingDirectory);
             }
         }

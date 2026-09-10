@@ -284,21 +284,6 @@ namespace Amuse.Host.StableDiffusionCpp
 
 
         /// <summary>
-        /// Sends a progress message.
-        /// </summary>
-        /// <param name="progressCallback">The progress callback.</param>
-        /// <param name="message">The message.</param>
-        internal static void SendProgressMessage(this IProgress<PipelineProgress> progressCallback, string message)
-        {
-            progressCallback?.Report(new PipelineProgress
-            {
-                Message = message,
-                Key = "Initialize"
-            });
-        }
-
-
-        /// <summary>
         /// Gets the type of the backend.
         /// </summary>
         /// <param name="options">The options.</param>

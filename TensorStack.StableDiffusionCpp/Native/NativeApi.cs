@@ -57,7 +57,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 sd_list_devices(pBuffer, (nuint)buffer.Length);
             }
-            var deviceInfos = Encoding.UTF8.GetString(buffer).TrimEnd('\0').Split("\n", StringSplitOptions.TrimEntries);
+            var deviceInfos = Encoding.UTF8.GetString(buffer).TrimEnd('\0').Split("\n", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
             var devices = new BackendDevice[deviceInfos.Length];
             for (int i = 0; i < deviceInfos.Length; i++)
             {
