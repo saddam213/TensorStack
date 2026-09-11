@@ -128,7 +128,7 @@ namespace TensorStack.Media
         /// <param name="cancellationToken">The cancellation token.</param>
         private static async Task<bool> WriteAudioAsync(AudioTensor audioTensor, string videoFile, CancellationToken cancellationToken = default)
         {
-            var tempFile = FileHelper.RandomFileName("mp4");
+            var tempFile = GetTempFileName("mp4");
             try
             {
                 using (var audioWriter = CreateAudioMuxer(videoFile, tempFile, audioTensor))
@@ -139,7 +139,7 @@ namespace TensorStack.Media
                     await audioWriter.StandardInput.BaseStream.FlushAsync(cancellationToken);
                     audioWriter.StandardInput.Close();
                     await audioWriter.WaitForExitAsync(cancellationToken);
-                    if (audioWriter.ExitCode != 0)
+                    if (audioWriter.ExitCode != 0 || !File.Exists(tempFile))
                         return false;
 
                     File.Move(tempFile, videoFile, true);
@@ -148,7 +148,7 @@ namespace TensorStack.Media
             }
             finally
             {
-                FileHelper.DeleteFile(tempFile);
+                FileHelper.QueueDeleteFile(tempFile);
             }
         }
 
@@ -264,5 +264,11 @@ namespace TensorStack.Media
             return process;
         }
 
+
+        internal static string GetTempFileName(string extension)
+        {
+            Directory.CreateDirectory(DirectoryTemp);
+            return Path.Combine(DirectoryTemp, FileHelper.RandomFileName(extension));
+        }
     }
 }

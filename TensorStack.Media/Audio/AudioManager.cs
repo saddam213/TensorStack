@@ -230,8 +230,7 @@ namespace TensorStack.Media.Audio
         /// <param name="sourceVideoFile">The source video file.</param>
         internal static void MuxAudio(string targetVideoFile, string sourceVideoFile)
         {
-            var tempFile = FileHelper.RandomFileName(DirectoryTemp, targetVideoFile);
-
+            var tempFile = GetTempFileName(targetVideoFile);
             try
             {
                 using (var ffmpeg = CreateMuxer(targetVideoFile, sourceVideoFile, tempFile))
