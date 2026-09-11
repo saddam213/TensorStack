@@ -14,7 +14,7 @@ namespace TensorStack.StableDiffusionCpp.Common
             Directory = "Runtime\\vulkan",
             Requirements =
             [
-               "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-849-d04e895/sd-master-d04e895-bin-win-vulkan-x64.zip"
+               "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-859-7f410a3/sd-master-7f410a3-bin-win-vulkan-x64.zip"
             ]
         };
 
@@ -25,8 +25,8 @@ namespace TensorStack.StableDiffusionCpp.Common
             Directory = "Runtime\\cuda",
             Requirements =
             [
-                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-849-d04e895/cudart-sd-bin-win-cu12-x64.zip",
-                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-849-d04e895/sd-master-d04e895-bin-win-cuda12-x64.zip"
+                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-859-7f410a3/cudart-sd-bin-win-cu12-x64.zip",
+                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-859-7f410a3/sd-master-7f410a3-bin-win-cuda12-x64.zip"
             ]
         };
 
@@ -37,7 +37,7 @@ namespace TensorStack.StableDiffusionCpp.Common
             Directory = "Runtime\\rocm",
             Requirements =
             [
-                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-849-d04e895/sd-master-d04e895-bin-win-rocm-7.14.0-x64.zip",
+                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-859-7f410a3/sd-master-7f410a3-bin-win-rocm-7.14.0-x64.zip",
                 "https://repo.amd.com/rocm/tarball-multi-arch/therock-dist-windows-multiarch-7.14.0.tar.gz"
             ]
         };

@@ -54,5 +54,7 @@
         public int PreviewInterval { get; set; } = 1;
         public bool IsPreviewNoisy { get; set; }
         public bool IsSegmentedComputeEnabled { get; set; } = true;
+        public float ScaleLinear { get; set; }
+        public float ScaleAttn { get; set; }
     }
 }

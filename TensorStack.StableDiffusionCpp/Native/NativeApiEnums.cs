@@ -212,8 +212,8 @@
                     return NativeApi.prediction_t.SEFI_FLOW_PRED;
                 case PredictionType.MiniT2IFlow:
                     return NativeApi.prediction_t.MINIT2I_FLOW_PRED;
-                case PredictionType.Default:
-                    return NativeApi.prediction_t.PREDICTION_COUNT;
+                case PredictionType.SenseNovaFlow:
+                    return NativeApi.prediction_t.SENSENOVA_U1_FLOW_PRED;
                 default:
                     return NativeApi.prediction_t.PREDICTION_COUNT;
             }
@@ -237,8 +237,8 @@
                     return PredictionType.SefiFlow;
                 case NativeApi.prediction_t.MINIT2I_FLOW_PRED:
                     return PredictionType.MiniT2IFlow;
-                case NativeApi.prediction_t.PREDICTION_COUNT:
-                    return PredictionType.Default;
+                case NativeApi.prediction_t.SENSENOVA_U1_FLOW_PRED:
+                    return PredictionType.SenseNovaFlow;
                 default:
                     return PredictionType.Default;
             }

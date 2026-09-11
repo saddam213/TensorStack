@@ -76,7 +76,8 @@ namespace TensorStack.StableDiffusionCpp
         FluxFlow,
         SefiFlow,
         MiniT2IFlow,
-        Default
+        SenseNovaFlow,
+        Default,
     }
 
     public enum DataType

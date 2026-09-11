@@ -60,6 +60,8 @@ namespace TensorStack.StableDiffusionCpp.Native
                 RpcServers = AnsiStringMarshaller.ConvertToManaged(unmanaged.rpc_servers),
                 ModelArgs = AnsiStringMarshaller.ConvertToManaged(unmanaged.model_args),
                 IsSegmentedComputeEnabled = !unmanaged.disable_segmented_compute,
+                ScaleLinear = unmanaged.linear_scale,
+                ScaleAttn = unmanaged.attn_scale
             };
         }
 
@@ -123,7 +125,9 @@ namespace TensorStack.StableDiffusionCpp.Native
                 auto_fit = managed.AutoFit,
                 rpc_servers = AnsiStringMarshaller.ConvertToUnmanaged(managed.RpcServers),
                 model_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.ModelArgs),
-                disable_segmented_compute = !managed.IsSegmentedComputeEnabled
+                disable_segmented_compute = !managed.IsSegmentedComputeEnabled,
+                linear_scale = managed.ScaleLinear,
+                attn_scale = managed.ScaleAttn
             };
         }
 
