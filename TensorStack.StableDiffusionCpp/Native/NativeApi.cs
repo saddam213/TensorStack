@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "b68d586"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-853-b68d586/include/stable-diffusion.h
+        public const string LibraryVersion = "5ebce93"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-858-5ebce93/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
 
@@ -129,6 +129,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             FLUX_FLOW_PRED,
             SEFI_FLOW_PRED,
             MINIT2I_FLOW_PRED,
+            SENSENOVA_U1_FLOW_PRED,
             PREDICTION_COUNT
         }
 
@@ -743,6 +744,9 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_sample_params_to_str))]
         internal static partial byte* sd_sample_params_to_str(sd_sample_params_t* sample_params);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_model_version_name))]
+        internal static partial byte* sd_get_model_version_name(sd_ctx_t* sd_ctx);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_default_sample_method))]
         internal static partial sample_method_t sd_get_default_sample_method(sd_ctx_t* sd_ctx);

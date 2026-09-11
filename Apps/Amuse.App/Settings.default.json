@@ -102,11 +102,11 @@
       "Backend": "StableDiffusionCpp",
       "Environment": "vulkan",
       "HostVersion": "Vulkan",
-      "Version": 6,
+      "Version": 858,
       "Status": "Create",
       "Variables": {},
       "Requirements": [
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-853-b68d586/sd-master-b68d586-bin-win-vulkan-x64.zip"
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-858-5ebce93/sd-master-5ebce93-bin-win-vulkan-x64.zip"
       ]
     },
     {
@@ -117,12 +117,12 @@
       "Backend": "StableDiffusionCpp",
       "Environment": "vulkan",
       "HostVersion": "Vulkan",
-      "Version": 8,
+      "Version": 858,
       "Status": "Create",
       "IsDefault": true,
       "Variables": {},
       "Requirements": [
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-853-b68d586/sd-master-b68d586-bin-win-vulkan-x64.zip"
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-858-5ebce93/sd-master-5ebce93-bin-win-vulkan-x64.zip"
       ]
     },
     {
@@ -133,12 +133,12 @@
       "Backend": "StableDiffusionCpp",
       "Environment": "vulkan",
       "HostVersion": "Vulkan",
-      "Version": 8,
+      "Version": 858,
       "Status": "Create",
       "IsDefault": true,
       "Variables": {},
       "Requirements": [
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-853-b68d586/sd-master-b68d586-bin-win-vulkan-x64.zip"
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-858-5ebce93/sd-master-5ebce93-bin-win-vulkan-x64.zip"
       ]
     },
     {
@@ -149,16 +149,15 @@
       "Backend": "StableDiffusionCpp",
       "Environment": "cuda",
       "HostVersion": "CUDA",
-      "Version": 8,
+      "Version": 858,
       "Status": "Create",
       "IsDefault": true,
       "Variables": {},
       "Requirements": [
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-853-b68d586/cudart-sd-bin-win-cu12-x64.zip",
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-853-b68d586/sd-master-b68d586-bin-win-cuda12-x64.zip"
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-858-5ebce93/cudart-sd-bin-win-cu12-x64.zip",
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-858-5ebce93/sd-master-5ebce93-bin-win-cuda12-x64.zip"
       ]
     },
-
     {
       "Id": 104,
       "Name": "StableDiffusion.cpp ROCM",
@@ -167,11 +166,11 @@
       "Backend": "StableDiffusionCpp",
       "Environment": "rocm",
       "HostVersion": "ROCM",
-      "Version": 8,
+      "Version": 858,
       "Status": "Create",
       "Variables": {},
       "Requirements": [
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-853-b68d586/sd-master-b68d586-bin-win-rocm-7.14.0-x64.zip",
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-858-5ebce93/sd-master-5ebce93-bin-win-rocm-7.14.0-x64.zip",
         "https://repo.amd.com/rocm/tarball-multi-arch/therock-dist-windows-multiarch-7.14.0.tar.gz"
       ]
     }
