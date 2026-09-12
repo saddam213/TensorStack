@@ -11,6 +11,9 @@ namespace TensorStack.Common
         HuggingFace = 10,
 
         [Display(Name = "StableDiffusionCpp", ShortName = "SD.cpp", Description = "GGML model inference using StableDiffusionCpp")]
-        StableDiffusionCpp = 20
+        StableDiffusionCpp = 20,
+
+        // Deprecated
+        PyTorch = 1000
     }
 }

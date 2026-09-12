@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <Version>3.7.9</Version>
-    <PackageVersion>0.12.9</PackageVersion>
+    <PackageVersion>0.12.11</PackageVersion>
     <RepositoryUrl>https://github.com/saddam213/AmuseAI</RepositoryUrl>
     <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
   </PropertyGroup>
