@@ -1,4 +1,5 @@
-﻿using Amuse.Common.Message;
+﻿using Amuse.Common.Config;
+using Amuse.Common.Message;
 using System;
 using System.Collections.Generic;
 using System.IO.MemoryMappedFiles;
@@ -7,10 +8,16 @@ using TensorStack.Common.Tensor;
 
 namespace Amuse.Common
 {
-    public static unsafe class PipelineTensorChannel
+    public unsafe class PipelineTensorChannel
     {
-        private const string RequestMapName = "TensorChannel.ClientToServer";
-        private const string ResponseMapName = "TensorChannel.ServerToClient";
+        private readonly string _requestMapName;
+        private readonly string _responseMapName;
+
+        public PipelineTensorChannel(ServerConfig serverConfig)
+        {
+            _requestMapName = $"{serverConfig.ChannelTensor}.ClientToServer";
+            _responseMapName = $"{serverConfig.ChannelTensor}.ServerToClient";
+        }
 
 
         /// <summary>
@@ -18,10 +25,10 @@ namespace Amuse.Common
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>MemoryMappedFile.</returns>
-        public static MemoryMappedFile WriteRequest(PipelineRequest request)
+        public MemoryMappedFile WriteRequest(PipelineRequest request)
         {
             var tensors = request.PackTensors();
-            return WriteToMappedFile(RequestMapName, tensors ?? []);
+            return WriteToMappedFile(_requestMapName, tensors ?? []);
         }
 
 
@@ -29,13 +36,13 @@ namespace Amuse.Common
         /// Reads the request tensors from shared memory.
         /// </summary>
         /// <param name="request">The request.</param>
-        public static void ReadRequest(PipelineRequest request)
+        public void ReadRequest(PipelineRequest request)
         {
             var metadata = request.TensorMetadata;
             if (request == null || metadata == null || metadata.Dimensions.IsNullOrEmpty())
                 return;
 
-            var packedTensors = ReadFromMappedFile(RequestMapName, metadata.Dimensions);
+            var packedTensors = ReadFromMappedFile(_requestMapName, metadata.Dimensions);
             request.UnpackTensors(packedTensors);
         }
 
@@ -45,9 +52,9 @@ namespace Amuse.Common
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>MemoryMappedFile.</returns>
-        public static MemoryMappedFile WriteResponse(IReadOnlyList<Tensor<float>> tensors)
+        public MemoryMappedFile WriteResponse(IReadOnlyList<Tensor<float>> tensors)
         {
-            return WriteToMappedFile(ResponseMapName, tensors ?? []);
+            return WriteToMappedFile(_responseMapName, tensors ?? []);
         }
 
 
@@ -55,13 +62,13 @@ namespace Amuse.Common
         /// Reads the response tensors from shared memory.
         /// </summary>
         /// <param name="response">The response.</param>
-        public static void ReadResponse(PipelineResponse response)
+        public void ReadResponse(PipelineResponse response)
         {
             var metadata = response.TensorMetadata;
             if (response == null || metadata == null || metadata.Dimensions.IsNullOrEmpty())
                 return;
 
-            var tensors = ReadFromMappedFile(ResponseMapName, metadata.Dimensions);
+            var tensors = ReadFromMappedFile(_responseMapName, metadata.Dimensions);
             response.UnpackTensors(tensors);
         }
 

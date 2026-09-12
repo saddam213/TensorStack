@@ -21,6 +21,7 @@ namespace Amuse.Common
         private readonly NamedPipeClientStream _commandChannel;
         private readonly NamedPipeClientStream _pipelineChannel;
         private readonly NamedPipeClientStream _progressChannel;
+        private readonly PipelineTensorChannel _pipelineTensorChannel;
         private readonly ProcessHandler _processHandler;
         private readonly IProgress<PipelineProgress> _progressCallback;
 
@@ -39,6 +40,7 @@ namespace Amuse.Common
             _commandChannel = new NamedPipeClientStream(".", _serverConfig.ChannelCommand, PipeDirection.InOut, PipeOptions.Asynchronous);
             _pipelineChannel = new NamedPipeClientStream(".", _serverConfig.ChannelPipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
             _progressChannel = new NamedPipeClientStream(".", _serverConfig.ChannelProgress, PipeDirection.In, PipeOptions.Asynchronous);
+            _pipelineTensorChannel = new PipelineTensorChannel(_serverConfig);
             _ = ProcessProgressQueueAsync(_progressCallback);
         }
 
@@ -128,10 +130,10 @@ namespace Amuse.Common
         /// <param name="cancellationToken">The cancellation token.</param>
         protected virtual async Task<PipelineResponse> SendPipelineTensorRequestAsync(PipelineRequest request, CancellationToken cancellationToken = default)
         {
-            using (var tensorChannel = PipelineTensorChannel.WriteRequest(request))
+            using (var tensorChannel = _pipelineTensorChannel.WriteRequest(request))
             {
                 var response = await SendPipelineRequest(request, cancellationToken);
-                PipelineTensorChannel.ReadResponse(response);
+                _pipelineTensorChannel.ReadResponse(response);
                 await SendTensorResponseComplete(cancellationToken);
                 if (response.IsError)
                 {

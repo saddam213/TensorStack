@@ -11,6 +11,7 @@ namespace Amuse.Common.Config
         public string ChannelCommand { get; init; }
         public string ChannelPipeName { get; init; }
         public string ChannelProgress { get; init; }
+        public string ChannelTensor { get; init; }
         public string DirectoryBase { get; init; }
 
         public static ServerConfig GetConfig(ServerType serverType, string directoryBase = null)
@@ -32,7 +33,8 @@ namespace Amuse.Common.Config
                     Executable = "AmuseHost.OnnxRuntime.exe",
                     ChannelCommand = "AmuseHost.OnnxRuntime.Command",
                     ChannelPipeName = "AmuseHost.OnnxRuntime.PipeName",
-                    ChannelProgress = "AmuseHost.OnnxRuntime.Progress"
+                    ChannelProgress = "AmuseHost.OnnxRuntime.Progress",
+                    ChannelTensor = "AmuseHost.OnnxRuntime.Tensor"
                 }
             },
             {
@@ -43,7 +45,8 @@ namespace Amuse.Common.Config
                     Executable = "AmuseHost.HuggingFace.exe",
                     ChannelCommand = "AmuseHost.HuggingFace.Command",
                     ChannelPipeName = "AmuseHost.HuggingFace.PipeName",
-                    ChannelProgress = "AmuseHost.HuggingFace.Progress"
+                    ChannelProgress = "AmuseHost.HuggingFace.Progress",
+                    ChannelTensor = "AmuseHost.HuggingFace.Tensor"
                 }
             },
             {
@@ -54,7 +57,8 @@ namespace Amuse.Common.Config
                     Executable = "AmuseHost.StableDiffusionCpp.exe",
                     ChannelCommand = "AmuseHost.StableDiffusionCpp.Command",
                     ChannelPipeName = "AmuseHost.StableDiffusionCpp.PipeName",
-                    ChannelProgress = "AmuseHost.StableDiffusionCpp.Progress"
+                    ChannelProgress = "AmuseHost.StableDiffusionCpp.Progress",
+                    ChannelTensor = "AmuseHost.StableDiffusionCpp.Tensor"
                 }
             }
         };

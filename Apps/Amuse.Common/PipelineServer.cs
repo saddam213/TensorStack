@@ -21,6 +21,7 @@ namespace Amuse.Common
         private readonly Channel<PipelineProgress> _progressQueue;
         private RequestType _pipelineState;
         private MemoryMappedFile _tensorChannel;
+        private PipelineTensorChannel _pipelineTensorChannel;
 
 
         public PipelineServer(ServerConfig config, ILogger logger)
@@ -31,6 +32,7 @@ namespace Amuse.Common
             _progressChannel = new NamedPipeServerStream(Config.ChannelProgress, PipeDirection.Out, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, Config.ChunkSize, Config.ChunkSize);
             _commandChannel = new NamedPipeServerStream(Config.ChannelCommand, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, Config.ChunkSize, Config.ChunkSize);
             _pipelineChannel = new NamedPipeServerStream(Config.ChannelPipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, Config.ChunkSize, Config.ChunkSize);
+            _pipelineTensorChannel = new PipelineTensorChannel(Config);
         }
 
         protected ILogger Logger { get; }
@@ -250,7 +252,7 @@ namespace Amuse.Common
         {
             var response = new PipelineResponse(image);
             var packedTensors = response.PackTensors();
-            _tensorChannel = PipelineTensorChannel.WriteResponse(packedTensors);
+            _tensorChannel = _pipelineTensorChannel.WriteResponse(packedTensors);
             await _pipelineChannel.SendMessage(response, cancellationToken);
         }
 
@@ -259,7 +261,7 @@ namespace Amuse.Common
         {
             var response = new PipelineResponse(audio);
             var packedTensors = response.PackTensors();
-            _tensorChannel = PipelineTensorChannel.WriteResponse(packedTensors);
+            _tensorChannel = _pipelineTensorChannel.WriteResponse(packedTensors);
             await _pipelineChannel.SendMessage(response, cancellationToken);
         }
 
@@ -268,7 +270,7 @@ namespace Amuse.Common
         {
             var response = new PipelineResponse(video);
             var packedTensors = response.PackTensors();
-            _tensorChannel = PipelineTensorChannel.WriteResponse(packedTensors);
+            _tensorChannel = _pipelineTensorChannel.WriteResponse(packedTensors);
             await _pipelineChannel.SendMessage(response, cancellationToken);
         }
 
@@ -276,14 +278,14 @@ namespace Amuse.Common
         protected async Task SendTensorResponse(CancellationToken cancellationToken, params TextInput[] text)
         {
             var response = new PipelineResponse(text);
-            _tensorChannel = PipelineTensorChannel.WriteResponse([]);
+            _tensorChannel = _pipelineTensorChannel.WriteResponse([]);
             await _pipelineChannel.SendMessage(response, cancellationToken);
         }
 
 
         protected void ReadTensorRequest(PipelineRequest request)
         {
-            PipelineTensorChannel.ReadRequest(request);
+            _pipelineTensorChannel.ReadRequest(request);
         }
 
 
@@ -298,7 +300,7 @@ namespace Amuse.Common
         protected async Task SendTensorResponse(PipelineResponse response, CancellationToken cancellationToken)
         {
             var packedTensors = response.PackTensors();
-            _tensorChannel = PipelineTensorChannel.WriteResponse(packedTensors);
+            _tensorChannel = _pipelineTensorChannel.WriteResponse(packedTensors);
             await _pipelineChannel.SendMessage(response, cancellationToken);
         }
 
