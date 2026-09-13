@@ -8,8 +8,6 @@ A modular .NET SDK for building AI-powered applications on Windows OS.
 
 TensorStack provides reusable components for local AI inference, text generation, image generation, media processing, hardware acceleration, and application development through a unified developer experience.
 
-Built for performance and flexibility, TensorStack powers all applications developed by TensorStack-AI, including [**Amuse**](https://github.com/TensorStack-AI/AmuseAI), the official reference application and UI demonstration of the platform.
-
 ---
 
 ## Features
