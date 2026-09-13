@@ -7,7 +7,7 @@ using TensorStack.Common;
 using TensorStack.Common.Image;
 using TensorStack.Common.Tensor;
 
-namespace TensorStack.Media.Image
+namespace TensorStack.WPF.Image
 {
     /// <summary>
     /// ImageInput implementation with System.Windows.Media.Imaging.WriteableBitmap.

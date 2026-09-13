@@ -10,8 +10,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using TensorStack.Media.Image;
 using TensorStack.WPF.Adorner;
+using TensorStack.WPF.Image;
 using TensorStack.WPF.Services;
 
 namespace TensorStack.WPF.Controls

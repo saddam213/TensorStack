@@ -76,18 +76,6 @@ namespace TensorStack.Media.Audio
 
 
         /// <summary>
-        /// Saves the audio to file asynchronously.
-        /// </summary>
-        /// <param name="filename">The filename.</param>
-        /// <param name="audioTensor">The audio tensor.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        public static async Task SaveAudioAsync(string filename, AudioTensor audioTensor, CancellationToken cancellationToken = default)
-        {
-            await WriteAudioAsync(filename, audioTensor, cancellationToken);
-        }
-
-
-        /// <summary>
         /// Adds the audio from source video to target video.
         /// </summary>
         /// <param name="targetVideoFile">The target video file.</param>
@@ -204,7 +192,7 @@ namespace TensorStack.Media.Audio
         /// <param name="audioOutputFile">The audio output file.</param>
         /// <param name="audioTensor">The audio tensor.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        private static async Task WriteAudioAsync(string audioOutputFile, AudioTensor audioTensor, CancellationToken cancellationToken = default)
+        internal static async Task WriteAudioAsync(string audioOutputFile, AudioTensor audioTensor, CancellationToken cancellationToken = default)
         {
             var samples = audioTensor.Samples;
             var channels = audioTensor.Channels;
@@ -490,7 +478,7 @@ namespace TensorStack.Media.Audio
         }
 
 
-        internal static async Task SaveVideoStreamAsync(string audioFile, AudioInputStream audioStream, float? sampleRateOverride, int? channelsOverride, CancellationToken cancellationToken)
+        internal static async Task SaveAudioStreamAsync(string audioFile, AudioInputStream audioStream, float? sampleRateOverride, int? channelsOverride, CancellationToken cancellationToken)
         {
             string inputArgs = "";
             if (audioStream.AudioCodec == "pcm_s16le")

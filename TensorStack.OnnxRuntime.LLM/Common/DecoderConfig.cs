@@ -1,6 +1,4 @@
-﻿using TensorStack.OnnxRuntime;
-
-namespace TensorStack.OnnxRuntime.LLM.Common
+﻿namespace TensorStack.OnnxRuntime.LLM.Common
 {
     public record DecoderConfig : ModelConfig
     {

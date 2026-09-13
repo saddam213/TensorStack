@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace TensorStack.StableDiffusionCpp.Common
+﻿namespace TensorStack.StableDiffusionCpp.Common
 {
     public record BackendConfig
     {

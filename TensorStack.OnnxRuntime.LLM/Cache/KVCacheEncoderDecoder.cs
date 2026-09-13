@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
 using Microsoft.ML.OnnxRuntime;
-using TensorStack.OnnxRuntime;
 using Metadata = TensorStack.OnnxRuntime.ModelMetadata;
 
 namespace TensorStack.OnnxRuntime.LLM.Cache

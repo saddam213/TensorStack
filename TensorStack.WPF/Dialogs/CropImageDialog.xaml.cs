@@ -4,8 +4,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using TensorStack.Media.Image;
 using TensorStack.WPF.Controls;
+using TensorStack.WPF.Image;
 
 namespace TensorStack.WPF.Dialogs
 {

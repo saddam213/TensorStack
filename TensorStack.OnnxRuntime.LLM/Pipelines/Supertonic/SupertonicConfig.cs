@@ -1,6 +1,4 @@
-﻿using TensorStack.OnnxRuntime;
-
-namespace TensorStack.OnnxRuntime.LLM.Pipelines.Supertonic
+﻿namespace TensorStack.OnnxRuntime.LLM.Pipelines.Supertonic
 {
     public record SupertonicConfig
     {

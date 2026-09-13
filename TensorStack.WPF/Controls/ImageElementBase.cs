@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using TensorStack.Common;
-using TensorStack.Media.Image;
 using TensorStack.WPF.Dialogs;
+using TensorStack.WPF.Image;
 using TensorStack.WPF.Services;
 
 namespace TensorStack.WPF.Controls

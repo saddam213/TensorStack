@@ -39,9 +39,6 @@ TensorStack provides reusable components for local AI inference, text generation
 | Package | Description | Docs | Package |
 |---------|-------------|------|---------|
 | TensorStack.Media | Shared Image/Audio/Video utilities | [README](TensorStack.Media/README.md) | [![Image Badge](https://img.shields.io/nuget/v/TensorStack.Media?color=4bc51e&label=TensorStack.Media)](https://www.nuget.org/packages/TensorStack.Media) |
-| TensorStack.Media.BitmapImage |  Image ↔ Tensor (`BitmapImage`) | [README](TensorStack.Media.BitmapImage/README.md) | [![BitmapImage Badge](https://img.shields.io/nuget/v/TensorStack.Media.BitmapImage?color=4bc51e&label=TensorStack.Media.BitmapImage)](https://www.nuget.org/packages/TensorStack.Media.BitmapImage) |
-| TensorStack.Media.SkiaSharp |  Image ↔ Tensor (`SkiaSharp`) | [README](TensorStack.Media.SkiaSharp/README.md) | [![BitmapImage Badge](https://img.shields.io/nuget/v/TensorStack.Media.SkiaSharp?color=4bc51e&label=TensorStack.Media.SkiaSharp)](https://www.nuget.org/packages/TensorStack.Media.SkiaSharp) |
-
 
 ---
 

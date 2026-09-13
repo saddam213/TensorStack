@@ -4,12 +4,6 @@ dotnet pack TensorStack.Common/TensorStack.Common.csproj -c Release
 dotnet build TensorStack.Media/TensorStack.Media.csproj -c Release
 dotnet pack TensorStack.Media/TensorStack.Media.csproj -c Release
 
-dotnet build TensorStack.Media.BitmapImage/TensorStack.Media.BitmapImage.csproj -c Release
-dotnet pack TensorStack.Media.BitmapImage/TensorStack.Media.BitmapImage.csproj -c Release
-
-dotnet build TensorStack.Media.SkiaSharp/TensorStack.Media.SkiaSharp.csproj -c Release
-dotnet pack TensorStack.Media.SkiaSharp/TensorStack.Media.SkiaSharp.csproj -c Release
-
 dotnet build TensorStack.OnnxRuntime/TensorStack.OnnxRuntime.csproj -c Release
 dotnet pack TensorStack.OnnxRuntime/TensorStack.OnnxRuntime.csproj -c Release
 

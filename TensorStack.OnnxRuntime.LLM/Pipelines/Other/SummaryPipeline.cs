@@ -5,7 +5,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common.Pipeline;
-using TensorStack.OnnxRuntime;
 using TensorStack.OnnxRuntime.LLM.Common;
 using TensorStack.OnnxRuntime.LLM.Tokenizers;
 

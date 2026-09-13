@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Pipeline;
 using TensorStack.Common.Tensor;
-using TensorStack.OnnxRuntime;
 
 namespace TensorStack.OnnxRuntime.LLM.Pipelines.Supertonic
 {

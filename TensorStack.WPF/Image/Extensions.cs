@@ -8,7 +8,7 @@ using System.Windows.Media.Imaging;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
 
-namespace TensorStack.Media.Image
+namespace TensorStack.WPF.Image
 {
     public static class Extensions
     {

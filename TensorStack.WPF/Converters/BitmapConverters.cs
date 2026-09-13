@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using TensorStack.Common.Tensor;
 using TensorStack.Common.Video;
-using TensorStack.Media.Image;
+using TensorStack.WPF.Image;
 
 namespace TensorStack.WPF.Converters
 {

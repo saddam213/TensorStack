@@ -2,9 +2,9 @@
 using System.Windows.Media.Imaging;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
-using TensorStack.Media.Image;
 using TensorStack.Media.Audio;
 using TensorStack.Media.Video;
+using TensorStack.WPF.Image;
 
 namespace TensorStack.WPF.Controls
 {
