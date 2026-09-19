@@ -139,7 +139,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             var parameters = options.ToUnmanaged();
             try
             {
-                if (!NativeApi.generate_video(_contextHandle.GetContext(), &parameters, out NativeApi.sd_image_t* unmanagedFrames, out int unmanagedFrameCount, out NativeApi.sd_audio_t* unmanagedAudio))
+                if (!NativeApi.generate_video(_contextHandle.GetContext(), &parameters, out NativeApi.sd_image_t* unmanagedFrames, out int unmanagedFrameCount, out NativeApi.sd_audio_t* unmanagedAudio, out int fps))
                     return null;
 
                 if (unmanagedFrames == null || unmanagedFrameCount <= 0)

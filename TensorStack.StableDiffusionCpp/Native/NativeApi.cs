@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "7f410a3"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-859-7f410a3/include/stable-diffusion.h
+        public const string LibraryVersion = "f9ddc0f"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-868-f9ddc0f/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
 
@@ -300,6 +300,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             public byte* embeddings_connectors_path;
             public byte* vae_path;
             public byte* audio_vae_path;
+            public byte* audio_encoder_path;
             public byte* taesd_path;
             public byte* control_net_path;
             public byte* ip_adapter_path;
@@ -361,6 +362,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 
             public float linear_scale;
             public float attn_scale;
+            public byte* tokenizer;
         }
 
 
@@ -775,7 +777,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(generate_video))]
         [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool generate_video(sd_ctx_t* sd_ctx, sd_vid_gen_params_t* sd_vid_gen_params, out sd_image_t* frames_out, out int num_frames_out, out sd_audio_t* audio_out);
+        internal static partial bool generate_video(sd_ctx_t* sd_ctx, sd_vid_gen_params_t* sd_vid_gen_params, out sd_image_t* frames_out, out int num_frames_out, out sd_audio_t* audio_out, out int fps_out);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(new_upscaler_ctx))]
         internal static partial upscaler_ctx_t* new_upscaler_ctx(byte* esrgan_path, [MarshalAs(UnmanagedType.I1)] bool direct, int n_threads, int tile_size, byte* backend, byte* params_backend);

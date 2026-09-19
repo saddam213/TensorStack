@@ -22,7 +22,6 @@ namespace TensorStack.StableDiffusionCpp
             var tempDirectory = Path.Combine(configuration.Directory, "temp");
             try
             {
-                Directory.CreateDirectory(tempDirectory);
                 var applicationPath = Path.Combine(configuration.Directory, $"{NativeApi.LibraryName}.dll");
                 if (reinstall)
                 {
@@ -36,6 +35,8 @@ namespace TensorStack.StableDiffusionCpp
                     logCallback?.Invoke(LogLevelType.Info, "Environment Already Installed.");
                     return true;
                 }
+
+                Directory.CreateDirectory(tempDirectory);
 
                 // Download StableDiffusion.cpp Requirements
                 await DownloadRequirementsAsync(configuration.Requirements, tempDirectory, logCallback);

@@ -15,12 +15,14 @@
         public string EmbeddingsConnectorsPath { get; set; }
         public string VaePath { get; set; }
         public string AudioVaePath { get; set; }
+        public string AudioEncoderPath { get; set; }
         public string TaesdPath { get; set; }
         public string ControlNetPath { get; set; }
         public string IpAdapterPath { get; set; }
         public string MotionModulePath { get; set; }
         public string PhotoMakerPath { get; set; }
         public string PulidWeightsPath { get; set; }
+        public string TokenizerPath { get; set; }
 
         public string Backend { get; set; }
         public string ParamsBackend { get; set; }

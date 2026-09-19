@@ -28,6 +28,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 EmbeddingsConnectorsPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.embeddings_connectors_path),
                 VaePath = AnsiStringMarshaller.ConvertToManaged(unmanaged.vae_path),
                 AudioVaePath = AnsiStringMarshaller.ConvertToManaged(unmanaged.audio_vae_path),
+                AudioEncoderPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.audio_encoder_path),
                 TaesdPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.taesd_path),
                 ControlNetPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.control_net_path),
                 IpAdapterPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.ip_adapter_path),
@@ -61,7 +62,8 @@ namespace TensorStack.StableDiffusionCpp.Native
                 ModelArgs = AnsiStringMarshaller.ConvertToManaged(unmanaged.model_args),
                 IsSegmentedComputeEnabled = !unmanaged.disable_segmented_compute,
                 ScaleLinear = unmanaged.linear_scale,
-                ScaleAttn = unmanaged.attn_scale
+                ScaleAttn = unmanaged.attn_scale,
+                TokenizerPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.tokenizer),
             };
         }
 
@@ -93,6 +95,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 embeddings_connectors_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.EmbeddingsConnectorsPath),
                 vae_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.VaePath),
                 audio_vae_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.AudioVaePath),
+                audio_encoder_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.AudioEncoderPath),
                 taesd_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.TaesdPath),
                 control_net_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.ControlNetPath),
                 ip_adapter_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.IpAdapterPath),
@@ -127,7 +130,8 @@ namespace TensorStack.StableDiffusionCpp.Native
                 model_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.ModelArgs),
                 disable_segmented_compute = !managed.IsSegmentedComputeEnabled,
                 linear_scale = managed.ScaleLinear,
-                attn_scale = managed.ScaleAttn
+                attn_scale = managed.ScaleAttn,
+                tokenizer = AnsiStringMarshaller.ConvertToUnmanaged(managed.TokenizerPath)
             };
         }
 
@@ -147,6 +151,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             AnsiStringMarshaller.Free(native.embeddings_connectors_path);
             AnsiStringMarshaller.Free(native.vae_path);
             AnsiStringMarshaller.Free(native.audio_vae_path);
+            AnsiStringMarshaller.Free(native.audio_encoder_path);
             AnsiStringMarshaller.Free(native.taesd_path);
             AnsiStringMarshaller.Free(native.control_net_path);
             AnsiStringMarshaller.Free(native.ip_adapter_path);
@@ -160,6 +165,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             AnsiStringMarshaller.Free(native.split_mode);
             AnsiStringMarshaller.Free(native.rpc_servers);
             AnsiStringMarshaller.Free(native.model_args);
+            AnsiStringMarshaller.Free(native.tokenizer);
             if (native.embeddings != null)
             {
                 for (uint i = 0; i < native.embedding_count; i++)
