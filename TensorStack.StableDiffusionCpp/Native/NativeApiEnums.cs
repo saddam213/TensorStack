@@ -144,8 +144,8 @@
                     return NativeApi.scheduler_t.FLUX_SCHEDULER;
                 case SchedulerType.Beta:
                     return NativeApi.scheduler_t.BETA_SCHEDULER;
-                case SchedulerType.Default:
-                    return NativeApi.scheduler_t.SCHEDULER_COUNT;
+                case SchedulerType.LLADA:
+                    return NativeApi.scheduler_t.LLADA_IMAGE_SCHEDULER;
                 default:
                     return NativeApi.scheduler_t.SCHEDULER_COUNT;
             }

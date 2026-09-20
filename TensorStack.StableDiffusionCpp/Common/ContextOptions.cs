@@ -58,5 +58,6 @@
         public bool IsSegmentedComputeEnabled { get; set; } = true;
         public float ScaleLinear { get; set; }
         public float ScaleAttn { get; set; }
+        public bool SageAttn { get; set; }
     }
 }

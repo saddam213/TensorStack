@@ -64,6 +64,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 ScaleLinear = unmanaged.linear_scale,
                 ScaleAttn = unmanaged.attn_scale,
                 TokenizerPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.tokenizer),
+                SageAttn = unmanaged.sage_attn
             };
         }
 
@@ -131,7 +132,8 @@ namespace TensorStack.StableDiffusionCpp.Native
                 disable_segmented_compute = !managed.IsSegmentedComputeEnabled,
                 linear_scale = managed.ScaleLinear,
                 attn_scale = managed.ScaleAttn,
-                tokenizer = AnsiStringMarshaller.ConvertToUnmanaged(managed.TokenizerPath)
+                tokenizer = AnsiStringMarshaller.ConvertToUnmanaged(managed.TokenizerPath),
+                sage_attn = managed.SageAttn,
             };
         }
 

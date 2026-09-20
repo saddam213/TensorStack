@@ -64,6 +64,7 @@ namespace TensorStack.StableDiffusionCpp
         FLUX2,
         FLUX,
         Beta,
+        LLADA,
         Default
     }
 

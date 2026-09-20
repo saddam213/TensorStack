@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "f9ddc0f"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-868-f9ddc0f/include/stable-diffusion.h
+        public const string LibraryVersion = "c678dfe"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-889-c678dfe/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
 
@@ -117,6 +117,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             FLUX2_SCHEDULER,
             FLUX_SCHEDULER,
             BETA_SCHEDULER,
+            LLADA_IMAGE_SCHEDULER,
             SCHEDULER_COUNT
         }
 
@@ -363,6 +364,9 @@ namespace TensorStack.StableDiffusionCpp.Native
             public float linear_scale;
             public float attn_scale;
             public byte* tokenizer;
+
+            [MarshalAs(UnmanagedType.I1)]
+            public bool sage_attn;
         }
 
 
