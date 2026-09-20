@@ -16,10 +16,10 @@
 
     <!--Common Packages-->
   <ItemGroup>
+    <PackageReference Include="OpenCvSharp5" Version="5.0.0.20260905" />
+    <PackageReference Include="OpenCvSharp5.runtime.win" Version="5.0.0.20260905" />
     <PackageReference Include="System.Linq.Async" Version="7.0.1" />
     <PackageReference Include="SkiaSharp" Version="4.151.2" />
-    <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260627" />
-    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260627" />
   </ItemGroup>
 
   <!--Binaries-->

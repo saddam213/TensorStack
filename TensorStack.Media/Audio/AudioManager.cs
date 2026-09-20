@@ -99,24 +99,6 @@ namespace TensorStack.Media.Audio
 
 
         /// <summary>
-        /// Checks if a video file has audio.
-        /// </summary>
-        /// <param name="filename">The filename.</param>
-        public static async Task<bool> HasAudioAsync(string filename)
-        {
-            try
-            {
-                await ReadInfoAsync(filename);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-
-        /// <summary>
         /// Reads the audio data as AudioTensor
         /// </summary>
         /// <param name="audioInputFile">The audio input file.</param>
@@ -272,16 +254,23 @@ namespace TensorStack.Media.Audio
         /// <returns>AudioInfo.</returns>
         internal static AudioInfo ReadInfo(string filename)
         {
-            using (var metadataReader = CreateMetadata(filename))
+            try
             {
-                metadataReader.Start();
-                var videoInfo = default(AudioInfo);
-                using (var reader = metadataReader.StandardOutput)
+                using (var metadataReader = CreateMetadata(filename))
                 {
-                    videoInfo = ParseInfo(filename, reader.ReadToEnd());
+                    metadataReader.Start();
+                    var videoInfo = default(AudioInfo);
+                    using (var reader = metadataReader.StandardOutput)
+                    {
+                        videoInfo = ParseInfo(filename, reader.ReadToEnd());
+                    }
+                    metadataReader.WaitForExit();
+                    return videoInfo;
                 }
-                metadataReader.WaitForExit();
-                return videoInfo;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
@@ -293,16 +282,23 @@ namespace TensorStack.Media.Audio
         /// <param name="cancellationToken">The cancellation token.</param>
         internal static async Task<AudioInfo> ReadInfoAsync(string filename, CancellationToken cancellationToken = default)
         {
-            using (var metadataReader = CreateMetadata(filename))
+            try
             {
-                metadataReader.Start();
-                var videoInfo = default(AudioInfo);
-                using (var reader = metadataReader.StandardOutput)
+                using (var metadataReader = CreateMetadata(filename))
                 {
-                    videoInfo = ParseInfo(filename, await reader.ReadToEndAsync(cancellationToken));
+                    metadataReader.Start();
+                    var videoInfo = default(AudioInfo);
+                    using (var reader = metadataReader.StandardOutput)
+                    {
+                        videoInfo = ParseInfo(filename, await reader.ReadToEndAsync(cancellationToken));
+                    }
+                    await metadataReader.WaitForExitAsync(cancellationToken);
+                    return videoInfo;
                 }
-                await metadataReader.WaitForExitAsync(cancellationToken);
-                return videoInfo;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 

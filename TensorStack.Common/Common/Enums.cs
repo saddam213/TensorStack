@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
 
+using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace TensorStack.Common
 {
     /// <summary>
@@ -72,5 +75,42 @@ namespace TensorStack.Common
     {
         Bilinear = 0,
         Bicubic = 1
+    }
+
+
+    public static class EnumExtensions
+    {
+        public static string GetDisplayName(this Enum enumObj)
+        {
+            return enumObj.GetDisplayAttribute()?.GetName() ?? enumObj.ToString();
+        }
+
+
+        public static string GetShortName(this Enum enumObj)
+        {
+            return enumObj.GetDisplayAttribute()?.GetShortName() ?? enumObj.ToString();
+        }
+
+
+        public static string GetDescription(this Enum enumObj)
+        {
+            return enumObj.GetDisplayAttribute()?.GetDescription() ?? string.Empty;
+        }
+
+
+        private static DisplayAttribute GetDisplayAttribute(this Enum enumObj)
+        {
+            var fieldInfo = enumObj.GetType().GetField(enumObj.ToString());
+            var attribArray = fieldInfo.GetCustomAttributes(false);
+            if (attribArray.Length > 0)
+            {
+                foreach (var att in attribArray)
+                {
+                    if (att is DisplayAttribute display)
+                        return display;
+                }
+            }
+            return null;
+        }
     }
 }

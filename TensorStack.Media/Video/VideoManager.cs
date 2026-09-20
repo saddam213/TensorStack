@@ -84,9 +84,13 @@ namespace TensorStack.Media.Video
         /// <returns>VideoSequence.</returns>
         public static VideoSequence LoadVideoSequence(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop)
         {
+            var audioTensor = default(AudioTensor);
             var audioInfo = AudioManager.LoadInfo(videoFile);
-            var videoAudio = AudioManager.LoadTensor(videoFile, sampleRate: audioInfo.SampleRate, channels: audioInfo.Channels);
-            return ReadVideoSequence(videoFile, videoAudio, widthOverride, heightOverride, frameRateOverride, resizeMode);
+            if (audioInfo != null)
+            {
+                audioTensor = AudioManager.LoadTensor(videoFile, sampleRate: audioInfo.SampleRate, channels: audioInfo.Channels);
+            }
+            return ReadVideoSequence(videoFile, audioTensor, widthOverride, heightOverride, frameRateOverride, resizeMode);
         }
 
 
@@ -101,8 +105,12 @@ namespace TensorStack.Media.Video
         /// <returns>Task&lt;VideoSequence&gt;.</returns>
         public static async Task<VideoSequence> LoadVideoSequenceAsync(string videoFile, int? widthOverride = default, int? heightOverride = default, float? frameRateOverride = default, ResizeMode resizeMode = ResizeMode.Crop, CancellationToken cancellationToken = default)
         {
+            var audioTensor = default(AudioTensor);
             var audioInfo = await AudioManager.LoadInfoAsync(videoFile);
-            var audioTensor = await AudioManager.LoadTensorAsync(videoFile, sampleRate: audioInfo.SampleRate, channels: audioInfo.Channels, cancellationToken: cancellationToken);
+            if (audioInfo != null)
+            {
+                audioTensor = await AudioManager.LoadTensorAsync(videoFile, sampleRate: audioInfo.SampleRate, channels: audioInfo.Channels, cancellationToken: cancellationToken);
+            }
             return await Task.Run(() => ReadVideoSequence(videoFile, audioTensor, widthOverride, heightOverride, frameRateOverride, resizeMode, cancellationToken));
         }
 
@@ -226,7 +234,7 @@ namespace TensorStack.Media.Video
                     throw new Exception("Failed to open video file.");
 
                 var frameCount = 0;
-                var result = new List<ImageTensor>();
+                var frames = new List<Mat>();
                 var videoSize = new Size(videoReader.FrameWidth, videoReader.FrameHeight);
                 var videoNewSize = GetNewVideoSize(widthOverride, heightOverride, videoSize, resizeMode);
                 var videoCropSize = GetCropVideoSize(widthOverride, heightOverride, videoNewSize, resizeMode);
@@ -237,9 +245,7 @@ namespace TensorStack.Media.Video
                     while (true)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
-
-                        videoReader.Read(frame);
-                        if (frame.Empty())
+                        if (!videoReader.Read(frame) || frame.Empty())
                             break;
 
                         if (frameCount % frameSkipInterval == 0)
@@ -247,12 +253,22 @@ namespace TensorStack.Media.Video
                             if (videoSize != videoNewSize)
                                 Cv2.Resize(frame, frame, videoNewSize);
 
-                            result.Add(frame.ToTensor(videoCropSize));
+                            frames.Add(frame.Clone());
                         }
                         frameCount++;
                     }
                 }
-                return new VideoSequence([.. result], videoframeRate, audio);
+
+                var result = new ImageTensor[frames.Count];
+                var workerCount = Math.Min(Environment.ProcessorCount, 8);
+                Parallel.For(0, frames.Count, new ParallelOptions { MaxDegreeOfParallelism = workerCount, CancellationToken = cancellationToken }, i =>
+                {
+                    using (frames[i])
+                    {
+                        result[i] = frames[i].ToTensor(videoCropSize);
+                    }
+                });
+                return new VideoSequence(result, videoframeRate, audio);
             }
         }
 
@@ -467,7 +483,6 @@ namespace TensorStack.Media.Video
             int cropY = 0;
             int height = matrix.Rows;
             int width = matrix.Cols;
-
             if (cropSize != default)
             {
                 if (width == cropSize.Width)
@@ -482,29 +497,27 @@ namespace TensorStack.Media.Video
                 }
             }
 
+            var scale = 2.0f / 255.0f;
+            var srcStride = matrix.Step();
+            var source = matrix.DataPointer;
             var imageTensor = new ImageTensor(height, width);
-            var destination = imageTensor.Memory.Span;
-
-            unsafe
+            var r = imageTensor.GetChannel(1);
+            var g = imageTensor.GetChannel(2);
+            var b = imageTensor.GetChannel(3);
+            var a = imageTensor.GetChannel(4);
+            for (int y = 0; y < height; y++)
             {
-                var source = matrix.DataPointer;
-                int srcStride = matrix.Cols * 3;
-                int dstStride = height * width;
-                for (int y = 0; y < height; y++)
+                var dst = y * width;
+                var src = source + ((y + cropY) * srcStride) + (cropX * 3);
+                for (int x = 0; x < width; x++, dst++)
                 {
-                    for (int x = 0; x < width; x++)
-                    {
-                        int srcIndex = ((y + cropY) * matrix.Cols + (x + cropX)) * 3;
-                        int dstIndex = y * width + x;
-
-                        destination[0 * dstStride + dstIndex] = GetFloatValue(source[srcIndex + 2]); // R
-                        destination[1 * dstStride + dstIndex] = GetFloatValue(source[srcIndex + 1]); // G
-                        destination[2 * dstStride + dstIndex] = GetFloatValue(source[srcIndex + 0]); // B
-                        destination[3 * dstStride + dstIndex] = GetFloatValue(byte.MaxValue);        // A
-                    }
+                    b[dst] = src[0] * scale - 1.0f;
+                    g[dst] = src[1] * scale - 1.0f;
+                    r[dst] = src[2] * scale - 1.0f;
+                    a[dst] = 1.0f;
+                    src += 3;
                 }
             }
-
             return imageTensor;
         }
 
@@ -528,7 +541,6 @@ namespace TensorStack.Media.Video
                 for (int x = 0; x < width; x++)
                 {
                     int offset = y * width + x;
-
                     if (channels == 1)
                     {
                         byte gray = GetByteValue(source[offset]);
