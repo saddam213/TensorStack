@@ -16,7 +16,7 @@
             <controls:FontAwesome DockPanel.Dock="Left" Size="50" Margin="10,10,10,10" IconStyle="Light" >
                 <controls:FontAwesome.Style>
                     <Style TargetType="{x:Type controls:FontAwesome}">
-                        <Setter Property="Icon" Value="&#xf071;" />
+                        <Setter Property="Icon" Value="f071" />
                         <Setter Property="Visibility" Value="Visible" />
                         <Setter Property="Color" Value="{Binding BorderBrush}" />
                         <Style.Triggers>
@@ -27,16 +27,16 @@
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding MessageBoxIcon, ElementName=UI}" Value="Question">
-                                <Setter Property="Icon" Value="&#xf059;" />
+                                <Setter Property="Icon" Value="f059" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding MessageBoxIcon, ElementName=UI}" Value="Info">
-                                <Setter Property="Icon" Value="&#xf05a;" />
+                                <Setter Property="Icon" Value="f05a" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding MessageBoxIcon, ElementName=UI}" Value="Warning">
-                                <Setter Property="Icon" Value="&#xf06a;" />
+                                <Setter Property="Icon" Value="f06a" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding MessageBoxIcon, ElementName=UI}" Value="Error">
-                                <Setter Property="Icon" Value="&#xf071;" />
+                                <Setter Property="Icon" Value="f071" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -58,11 +58,11 @@
 
         </DockPanel>
         <StackPanel DockPanel.Dock="Left" VerticalAlignment="Bottom" Margin="0,0,0,4">
-            <CheckBox Content="Don't Ask Again" IsChecked="{Binding IsDontAskSelected}" Visibility="{Binding IsDontAskEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <CheckBox Content="{controls:Localize DontAskAgain}" IsChecked="{Binding IsDontAskSelected}" Visibility="{Binding IsDontAskEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0"  Height="30">
-            <Button Content="Ok" Command="{Binding OkCommand}" Width="100">
+            <Button Content="{controls:Localize Ok}" Command="{Binding OkCommand}" Width="100">
                 <Button.Style>
                     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
                         <Setter Property="Visibility" Value="Collapsed" />
@@ -75,8 +75,8 @@
                 </Button.Style>
             </Button>
             <UniformGrid Columns="2">
-                <Button Content="Yes" Command="{Binding YesCommand}" Width="100" IsDefault="True"/>
-                <Button Content="No" Command="{Binding NoCommand}"/>
+                <Button Content="{controls:Localize Yes}" Command="{Binding YesCommand}" Width="100" IsDefault="True"/>
+                <Button Content="{controls:Localize No}" Command="{Binding NoCommand}"/>
                 <UniformGrid.Style>
                     <Style TargetType="{x:Type UniformGrid}">
                         <Setter Property="Visibility" Value="Collapsed" />

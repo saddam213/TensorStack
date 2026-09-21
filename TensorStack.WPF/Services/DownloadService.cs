@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Common;
+using TensorStack.WPF.Resources;
 
 namespace TensorStack.WPF.Services
 {
@@ -95,7 +96,7 @@ namespace TensorStack.WPF.Services
 
             var totalDownloadSize = await GetTotalSizeFromHeadersAsync(downloadFiles, httpClient, cancellationToken);
             if (totalDownloadSize == 0)
-                throw new Exception("Queried file headers returned 0 bytes");
+                throw new Exception(Errors.DownloadQueriedZero);
 
             var totalBytesRead = 0L;
             double bytesPerSecond = 0;

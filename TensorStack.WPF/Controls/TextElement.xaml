@@ -20,17 +20,17 @@
 
                 <Grid DockPanel.Dock="Right" Visibility="{Binding IsRemoveEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button Command="{Binding ClearCommand}" Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" >
-                        <CommonControls:FontAwesome Icon="&#xf2ed;" />
+                        <CommonControls:FontAwesome Icon="f2ed" />
                     </Button>
                 </Grid>
 
 
                 <UniformGrid Columns="2" >
                     <Button Command="{Binding LoadCommand}" Visibility="{Binding IsLoadEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" >
-                        <CommonControls:FontAwesome Icon="&#xf0ee;" />
+                        <CommonControls:FontAwesome Icon="f0ee" />
                     </Button>
                     <Button Command="{Binding SaveCommand}" Visibility="{Binding IsSaveEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" >
-                        <CommonControls:FontAwesome Icon="&#xf0c7;" />
+                        <CommonControls:FontAwesome Icon="f0c7" />
                     </Button>
                 </UniformGrid>
 

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using TensorStack.Common;
 
 namespace TensorStack.WPF.Converters
 {
@@ -52,7 +53,7 @@ namespace TensorStack.WPF.Converters
             if (value is not Enum myEnum)
                 return value;
 
-            return myEnum.GetDisplayDescription();
+            return myEnum.GetDescription();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -70,7 +71,7 @@ namespace TensorStack.WPF.Converters
             if (value is not Enum myEnum)
                 return false;
 
-            if (string.IsNullOrEmpty(myEnum.GetDisplayDescription()))
+            if (string.IsNullOrEmpty(myEnum.GetDescription()))
                 return false;
 
             return true;

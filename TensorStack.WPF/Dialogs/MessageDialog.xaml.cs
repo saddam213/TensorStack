@@ -2,6 +2,8 @@
 // Licensed under the Apache 2.0 License.
 using TensorStack.WPF.Controls;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using TensorStack.WPF.Resources;
 
 namespace TensorStack.WPF.Dialogs
 {
@@ -110,19 +112,37 @@ namespace TensorStack.WPF.Dialogs
 
     public enum MessageBoxIconType
     {
+        [Display(Name = "MessageBoxIconType0", ResourceType = typeof(Enums))]
         None = 0,
+
+        [Display(Name = "MessageBoxIconType1", ResourceType = typeof(Enums))]
         Question = 1,
+
+        [Display(Name = "MessageBoxIconType2", ResourceType = typeof(Enums))]
         Info = 2,
+
+        [Display(Name = "MessageBoxIconType3", ResourceType = typeof(Enums))]
         Warning = 3,
+
+        [Display(Name = "MessageBoxIconType4", ResourceType = typeof(Enums))]
         Error = 4,
     }
 
     public enum MessageBoxStyleType
     {
+        [Display(Name = "MessageBoxStyleType0", ResourceType = typeof(Enums))]
         None = 0,
+
+        [Display(Name = "MessageBoxStyleType1", ResourceType = typeof(Enums))]
         Info = 1,
+
+        [Display(Name = "MessageBoxStyleType2", ResourceType = typeof(Enums))]
         Warning = 2,
+
+        [Display(Name = "MessageBoxStyleType3", ResourceType = typeof(Enums))]
         Success = 3,
+
+        [Display(Name = "MessageBoxStyleType4", ResourceType = typeof(Enums))]
         Danger = 4,
     }
 }

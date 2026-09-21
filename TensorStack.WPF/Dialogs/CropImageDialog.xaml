@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TensorStack.WPF.Dialogs"
         xmlns:controls="clr-namespace:TensorStack.WPF.Controls"
-        Title="Crop Image" 
+        Title="{controls:Localize CropImage}" 
         MinHeight="620"
         MinWidth="440"
         x:Name="UI"
@@ -16,11 +16,11 @@
         <StackPanel  DockPanel.Dock="Bottom" >
             <DockPanel VerticalAlignment="Bottom">
                 <StackPanel DockPanel.Dock="Right" VerticalAlignment="Bottom">
-                    <Button Content="Crop" Command="{Binding CropCommand}" Visibility="{Binding IsCropped, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Width="100" Height="25" ></Button>
-                    <Button Content="Reset" Command="{Binding ResetCommand}" Visibility="{Binding IsCropped, Converter={StaticResource BooleanToVisibilityConverter}}" Width="100" Height="25"></Button>
+                    <Button Content="{controls:Localize Crop}" Command="{Binding CropCommand}" Visibility="{Binding IsCropped, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Width="100" Height="25" ></Button>
+                    <Button Content="{controls:Localize Reset}" Command="{Binding ResetCommand}" Visibility="{Binding IsCropped, Converter={StaticResource BooleanToVisibilityConverter}}" Width="100" Height="25"></Button>
                 </StackPanel>
                 <StackPanel >
-                    <TextBlock Text="Image File"/>
+                    <TextBlock Text="{controls:Localize ImageFile}"/>
                     <controls:FilePickerTextBox FileName="{Binding ImageFile, Mode=TwoWay}" IsEnabled="{Binding HasInitialImage, Converter={StaticResource InverseBoolConverter}}" IsRequired="True" Filter="Image Files|*.bmp;*.jpg;*.jpeg;*.png;*.gif;*.tif;*.tiff|All Files|*.*" />
                     <StackPanel.Style>
                         <Style TargetType="{x:Type StackPanel}">
@@ -51,9 +51,9 @@
                             <Rectangle Width="{Binding Width, ElementName=CropFrame}" Height="{Binding Height, ElementName=CropFrame}"  Stroke="{StaticResource CropFrameBrush}" StrokeThickness="2" Fill="Transparent"/>
                             <Grid Background="Transparent">
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <controls:FontAwesome Icon="&#xf047;" IconStyle="Light" Size="40" Color="{StaticResource CropFrameBrush}"/>
-                                    <TextBlock Text="Drag to move" Foreground="{StaticResource CropFrameBrush}" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="Mouse wheel to zoom" Foreground="{StaticResource CropFrameBrush}" HorizontalAlignment="Center"/>
+                                    <controls:FontAwesome Icon="f047" IconStyle="Light" Size="40" Color="{StaticResource CropFrameBrush}"/>
+                                    <TextBlock Text="{controls:Localize Tooltip_DragToMove}" Foreground="{StaticResource CropFrameBrush}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{controls:Localize Tooltip_MouseZoom}" Foreground="{StaticResource CropFrameBrush}" HorizontalAlignment="Center"/>
                                 </StackPanel>
                                 <Grid.Style>
                                     <Style TargetType="{x:Type Grid}">

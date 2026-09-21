@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using TensorStack.WPF.Controls;
+using TensorStack.WPF.Resources;
 
 namespace TensorStack.WPF.Utils
 {
@@ -13,7 +14,7 @@ namespace TensorStack.WPF.Utils
                 return mainWindow.DoDragDropFile(dragSource, filepath, dropType, visual, visualScale);
             }
 
-            throw new System.Exception("WindowMainBase not found");
+            throw new System.Exception(Errors.WindowMainBaseNotFound);
         }
 
         public static DragDropEffects DoDragDropObject<T>(DependencyObject dragSource, T dropData, DragDropType dropType, UIElement visual = null, double visualScale = 1)
@@ -23,7 +24,7 @@ namespace TensorStack.WPF.Utils
                 return mainWindow.DoDragDropObject<T>(dragSource, dropData, dropType, visual, visualScale);
             }
 
-            throw new System.Exception("WindowMainBase not found");
+            throw new System.Exception(Errors.WindowMainBaseNotFound);
         }
     }
 }

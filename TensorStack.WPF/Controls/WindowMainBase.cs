@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using TensorStack.Common;
 using TensorStack.WPF.Adorner;
+using TensorStack.WPF.Resources;
 
 namespace TensorStack.WPF.Controls
 {
@@ -238,11 +240,22 @@ namespace TensorStack.WPF.Controls
 
     public enum DragDropType
     {
+        [Display(Name = "DragDropType0", ResourceType = typeof(Enums))]
         None = 0,
+
+        [Display(Name = "DragDropType1", ResourceType = typeof(Enums))]
         Text = 1,
+
+        [Display(Name = "DragDropType2", ResourceType = typeof(Enums))]
         Image = 2,
+
+        [Display(Name = "DragDropType3", ResourceType = typeof(Enums))]
         Video = 3,
+
+        [Display(Name = "DragDropType4", ResourceType = typeof(Enums))]
         Audio = 4,
+
+        [Display(Name = "DragDropType5", ResourceType = typeof(Enums))]
         Conversation = 5
     }
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using TensorStack.WPF.Resources;
 using TensorStack.WPF.Services;
 
 namespace TensorStack.WPF.Controls
@@ -20,30 +21,14 @@ namespace TensorStack.WPF.Controls
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty FileNameProperty =
-           DependencyProperty.Register("FileName", typeof(string), typeof(FilePickerTextBox));
-
-        public static readonly DependencyProperty FilterProperty =
-            DependencyProperty.Register("Filter", typeof(string), typeof(FilePickerTextBox));
-
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register("Title", typeof(string), typeof(FilePickerTextBox));
-
-        public static readonly DependencyProperty InitialDirectoryProperty =
-            DependencyProperty.Register("InitialDirectory", typeof(string), typeof(FilePickerTextBox));
-
-        public static readonly DependencyProperty DefaultExtProperty =
-            DependencyProperty.Register("DefaultExt", typeof(string), typeof(FilePickerTextBox));
-
-        public static readonly DependencyProperty IsRequiredProperty =
-            DependencyProperty.Register("IsRequired", typeof(bool), typeof(FilePickerTextBox));
-
-        public static readonly DependencyProperty IsFolderPickerProperty =
-            DependencyProperty.Register("IsFolderPicker", typeof(bool), typeof(FilePickerTextBox));
-
-        public static readonly DependencyProperty IsReadOnlyProperty =
-            DependencyProperty.Register("IsReadOnly", typeof(bool), typeof(FilePickerTextBox));
-
+        public static readonly DependencyProperty FileNameProperty = DependencyProperty.Register(nameof(FileName), typeof(string), typeof(FilePickerTextBox));
+        public static readonly DependencyProperty FilterProperty = DependencyProperty.Register(nameof(Filter), typeof(string), typeof(FilePickerTextBox));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(FilePickerTextBox));
+        public static readonly DependencyProperty InitialDirectoryProperty = DependencyProperty.Register(nameof(InitialDirectory), typeof(string), typeof(FilePickerTextBox));
+        public static readonly DependencyProperty DefaultExtProperty = DependencyProperty.Register(nameof(DefaultExt), typeof(string), typeof(FilePickerTextBox));
+        public static readonly DependencyProperty IsRequiredProperty = DependencyProperty.Register(nameof(IsRequired), typeof(bool), typeof(FilePickerTextBox));
+        public static readonly DependencyProperty IsFolderPickerProperty = DependencyProperty.Register(nameof(IsFolderPicker), typeof(bool), typeof(FilePickerTextBox));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(FilePickerTextBox));
         public event EventHandler<string> FileNameChanged;
 
         /// <summary>
@@ -239,10 +224,10 @@ namespace TensorStack.WPF.Controls
                 return ValidationResult.ValidResult;
 
             if (!IsFolder && !IsValidFileFormat(filename))
-                return new ValidationResult(false, $"File does not exist");
+                return new ValidationResult(false, Errors.FileNotExists);
 
             if (IsFolder && !Directory.Exists(filename))
-                return new ValidationResult(false, $"Directory does not exist");
+                return new ValidationResult(false, Errors.DirectoryNotExists);
 
             return ValidationResult.ValidResult;
         }

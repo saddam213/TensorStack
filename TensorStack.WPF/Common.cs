@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TensorStack.WPF.Controls;
+using TensorStack.WPF.Resources;
 using TensorStack.WPF.Services;
 
 namespace TensorStack.WPF
@@ -16,16 +16,28 @@ namespace TensorStack.WPF
         public const double DragDistance = 20.0;
 
         public readonly static string[] TextFileExtensions = [".txt", ".md"];
-        public const string TextFileFilter = "Text Files|*.txt;*.md;|All Files|*.*";
-
         public readonly static string[] ImageFileExtensions = [".bmp", ".jpg", ".jpeg", ".png", ".tif", ".tiff"];
-        public const string ImageFileFilter = "Image Files|*.bmp;*.jpg;*.jpeg;*.png;*.gif;*.tif;*.tiff|All Files|*.*";
-
         public readonly static string[] AudioFileExtensions = [".wav", ".mp3", ".aac", ".flac", ".m4a", ".ogg", ".mp4", ".mov", ".mkv", ".webm",];
-        public const string AudioFileFilter = "Audio Files|*.mp3;*.wav;*.flac;*.m4a;*.aac;*.ogg;*.mp4;*.mov;*.mkv;*.webm|All Files|*.*";
-
         public readonly static string[] VideoFileExtensions = [".mp4", ".gif"];
-        public const string VideoFileFilter = "Videos Files|*.mp4;*.gif;|All Files|*.*;";
+        public static string TextFileFilter
+        {
+            get { return $"{Default.TextFiles} |*.txt;*.md;|{Default.AllFiles}|*.*"; }
+        }
+
+        public static string ImageFileFilter
+        {
+            get { return $"{Default.ImageFiles} |*.bmp;*.jpg;*.jpeg;*.png;*.gif;*.tif;*.tiff|{Default.AllFiles}|*.*"; }
+        }
+
+        public static string AudioFileFilter
+        {
+            get { return $"{Default.AudioFiles} |*.mp3;*.wav;*.flac;*.m4a;*.aac;*.ogg;*.mp4;*.mov;*.mkv;*.webm|{Default.AllFiles}|*.*"; }
+        }
+
+        public static string VideoFileFilter
+        {
+            get { return $"{Default.VideoFiles} |*.mp4;*.gif;|{Default.AllFiles}|*.*;"; }
+        }
 
 
         public static WindowMainBase GetMainWindow(this IServiceProvider services)
@@ -101,56 +113,6 @@ namespace TensorStack.WPF
         private static bool IsSingletonControl(this Type controlType)
         {
             return controlType.GetInterfaces().Contains(typeof(ILifetimeSingleton));
-        }
-
-
-        public static string GetDisplayName(this Enum enumObj)
-        {
-            var fieldInfo = enumObj.GetType().GetField(enumObj.ToString());
-            var attribArray = fieldInfo.GetCustomAttributes(false);
-            if (attribArray.Length > 0)
-            {
-                foreach (var att in attribArray)
-                {
-                    if (att is DisplayAttribute display)
-                        return display.Name ?? enumObj.ToString();
-                    else if (att is System.ComponentModel.DescriptionAttribute desc)
-                        return desc.Description;
-                }
-            }
-            return enumObj.ToString();
-        }
-
-
-        public static string GetShortName(this Enum enumObj)
-        {
-            var fieldInfo = enumObj.GetType().GetField(enumObj.ToString());
-            var attribArray = fieldInfo.GetCustomAttributes(false);
-            if (attribArray.Length > 0)
-            {
-                foreach (var att in attribArray)
-                {
-                    if (att is DisplayAttribute display)
-                        return display.ShortName ?? enumObj.ToString();
-                }
-            }
-            return enumObj.ToString();
-        }
-
-
-        public static string GetDisplayDescription(this Enum enumObj)
-        {
-            var fieldInfo = enumObj.GetType().GetField(enumObj.ToString());
-            var attribArray = fieldInfo.GetCustomAttributes(false);
-            if (attribArray.Length > 0)
-            {
-                foreach (var att in attribArray)
-                {
-                    if (att is DisplayAttribute display)
-                        return display.Description;
-                }
-            }
-            return string.Empty;
         }
 
 
@@ -262,21 +224,22 @@ namespace TensorStack.WPF
         {
             var bytesLeft = progress.TotalSize - progress.TotalBytes;
             if (bytesLeft <= 0)
-                return "Complete";
+                return Default.Complete;
 
             if (progress.BytesSec == 0)
-                return "Calculating...";
+                return $"{Default.Calculating}...";
 
+            var remaining = Default.Remaining.ToLower();
             var secondsLeft = bytesLeft / progress.BytesSec;
             var timeSpan = TimeSpan.FromSeconds(secondsLeft);
             if (timeSpan.TotalDays >= 1)
-                return $"{timeSpan.Days}d {timeSpan.Hours}h remaining";
+                return $"{timeSpan.Days}d {timeSpan.Hours}h {remaining}";
             else if (timeSpan.TotalHours >= 1)
-                return $"{timeSpan.Hours}h {timeSpan.Minutes}m remaining";
+                return $"{timeSpan.Hours}h {timeSpan.Minutes}m {remaining}";
             else if (timeSpan.TotalMinutes >= 1)
-                return $"{timeSpan.Minutes}m {timeSpan.Seconds}s remaining";
+                return $"{timeSpan.Minutes}m {timeSpan.Seconds}s {remaining}";
 
-            return $"{timeSpan.Seconds}s remaining";
+            return $"{timeSpan.Seconds}s {remaining}";
         }
     }
 }

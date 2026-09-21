@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TensorStack.WPF.Image;
+using TensorStack.WPF.Resources;
 using TensorStack.WPF.Services;
 using TensorStack.WPF.Utils;
 
@@ -172,7 +174,7 @@ namespace TensorStack.WPF.Controls
         /// </summary>
         private async Task SaveOverlayAsync()
         {
-            var saveFilename = await DialogService.SaveFileAsync("Save Image", "Overlay", filter: "png files (*.png)|*.png", defualtExt: "png");
+            var saveFilename = await DialogService.SaveFileAsync(Default.SaveOverlay, Default.Overlay, filter: $"PNG {Default.Files.ToLower()} (*.png)|*.png", defualtExt: "png");
             if (!string.IsNullOrEmpty(saveFilename))
             {
                 await OverlaySource.SaveAsync(saveFilename);
@@ -195,7 +197,7 @@ namespace TensorStack.WPF.Controls
         /// </summary>
         private async Task SaveCanvasAsync()
         {
-            var saveFilename = await DialogService.SaveFileAsync("Save Image", "Canavs", filter: "png files (*.png)|*.png", defualtExt: "png");
+            var saveFilename = await DialogService.SaveFileAsync(Default.SaveCanvas, Default.Canvas, filter: $"PNG {Default.Files.ToLower()} (*.png)|*.png", defualtExt: "png");
             if (!string.IsNullOrEmpty(saveFilename))
             {
                 var canvasSource = CreateCanvasSource();
@@ -410,21 +412,34 @@ namespace TensorStack.WPF.Controls
 
     public enum SplitterPosition
     {
+        [Display(Name = "SplitterPosition0", ResourceType = typeof(Enums))]
         Source,
+
+        [Display(Name = "SplitterPosition1", ResourceType = typeof(Enums))]
         Center,
+
+        [Display(Name = "SplitterPosition2", ResourceType = typeof(Enums))]
         Overlay
     }
 
     public enum SplitterDirection
     {
+        [Display(Name = "SplitterDirection0", ResourceType = typeof(Enums))]
         LeftToRight,
+
+        [Display(Name = "SplitterDirection1", ResourceType = typeof(Enums))]
         RightToLeft
     }
 
     public enum SplitterVisibility
     {
+        [Display(Name = "SplitterVisibility0", ResourceType = typeof(Enums))]
         Auto,
+
+        [Display(Name = "SplitterVisibility1", ResourceType = typeof(Enums))]
         Mouse,
+
+        [Display(Name = "SplitterVisibility2", ResourceType = typeof(Enums))]
         Manual
     }
 }

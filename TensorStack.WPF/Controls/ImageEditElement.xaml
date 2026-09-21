@@ -33,7 +33,7 @@
                 <!--Buttons-->
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
                     <Button 
-                        ToolTip="Load Image" 
+                        ToolTip="{CommonControls:Localize Tooltip_LoadImage}" 
                         ToolTipService.ShowOnDisabled="True" 
                         ToolTipService.InitialShowDelay="500" 
                         Command="{Binding LoadSourceCommand, Mode=OneWay}" 
@@ -43,7 +43,7 @@
                     </Button>
                     <Grid Visibility="{Binding IsLoadMaskEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Button  
-                            ToolTip="Load Mask Image" 
+                            ToolTip="{CommonControls:Localize Tooltip_LoadImageMask}" 
                             ToolTipService.ShowOnDisabled="True"
                             ToolTipService.InitialShowDelay="500"
                             Command="{Binding LoadMaskCommand, Mode=OneWay}" 
@@ -64,12 +64,12 @@
                     <!--Tool Size-->
                     <Grid DockPanel.Dock="Top" Margin="0,0,0,5">
                         <DockPanel Visibility="{Binding SelectedEditMode, Mode=OneWay, Converter={StaticResource InverseEnumToVisibilityConverter}, ConverterParameter=Select}">
-                            <TextBlock DockPanel.Dock="Left" Text="Tool Size" Style="{StaticResource FieldTextBlockStyle}" Margin="0,2,4,0"/>
+                            <TextBlock DockPanel.Dock="Left" Text="{CommonControls:Localize ToolSize}" Style="{StaticResource FieldTextBlockStyle}" Margin="0,2,4,0"/>
                             <TextBlock DockPanel.Dock="Right" Text="{Binding MaskDrawSize, Mode=OneWay}" Style="{StaticResource FieldTextBlockStyle}" Margin="0,2,2,0"/>
                             <Slider Minimum="2" Maximum="100" TickFrequency="1" Value="{Binding MaskDrawSize, Mode=TwoWay}" Margin="2,0"/>
                         </DockPanel>
                         <DockPanel Visibility="{Binding SelectedEditMode, Mode=OneWay, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Select}">
-                            <TextBlock DockPanel.Dock="Left" Text="Tool Size" Style="{StaticResource FieldTextBlockStyle}" Margin="0,2,4,0"/>
+                            <TextBlock DockPanel.Dock="Left" Text="{CommonControls:Localize ToolSize}" Style="{StaticResource FieldTextBlockStyle}" Margin="0,2,4,0"/>
                             <TextBlock DockPanel.Dock="Right" Text="{Binding SelectionSize, Mode=OneWay}" Style="{StaticResource FieldTextBlockStyle}" Margin="0,2,2,0"/>
                             <Slider Minimum="1" Maximum="20" TickFrequency="1" Value="{Binding SelectionSize, Mode=TwoWay}" Margin="2,0"/>
                         </DockPanel>
@@ -79,7 +79,7 @@
                         <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" >
 
                             <!--Off-->
-                            <Grid ToolTip="Mouse" 
+                            <Grid ToolTip="{CommonControls:Localize Tooltip_EditMouseMode}" 
                                 ToolTipService.InitialShowDelay="500" 
                                 ToolTipService.ShowOnDisabled="True"
                                 Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
@@ -100,7 +100,7 @@
                             </Grid>
 
                             <!--Resize-->
-                            <Grid ToolTip="Move/Resize Mode" 
+                            <Grid ToolTip="{CommonControls:Localize Tooltip_EditResizeMode}" 
                                 ToolTipService.InitialShowDelay="500" 
                                 ToolTipService.ShowOnDisabled="True"
                                 Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
@@ -122,7 +122,7 @@
                             </Grid>
 
                             <!--Draw-->
-                            <Grid ToolTip="Draw Mode" 
+                            <Grid ToolTip="{CommonControls:Localize Tooltip_EditDrawMode}" 
                                 ToolTipService.InitialShowDelay="500" 
                                 ToolTipService.ShowOnDisabled="True" 
                                 Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
@@ -144,7 +144,7 @@
                             </Grid>
 
                             <!--Erase-->
-                            <Grid ToolTip="Erase Mode" 
+                            <Grid ToolTip="{CommonControls:Localize Tooltip_EditEraseMode}" 
                                 ToolTipService.InitialShowDelay="500" 
                                 ToolTipService.ShowOnDisabled="True"
                                 Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}" 
@@ -166,7 +166,7 @@
                             </Grid>
 
                             <!--Select-->
-                            <Grid ToolTip="Select Mode" 
+                            <Grid ToolTip="{CommonControls:Localize Tooltip_EditSelectMode}" 
                                 ToolTipService.InitialShowDelay="500" 
                                 ToolTipService.ShowOnDisabled="True"  
                                 Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
@@ -223,10 +223,10 @@
                                     </CommonControls:FontAwesome>
                                     <ToggleButton.Style>
                                         <Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource ToggleButtonBasic}">
-                                            <Setter Property="ToolTip" Value="Mask Mode - Discard Mask" />
+                                            <Setter Property="ToolTip" Value="{CommonControls:Localize Tooltip_MaskModeDiscard}" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsMaskInvertEnabled, Mode=OneWay}" Value="True">
-                                                    <Setter Property="ToolTip" Value="Mask Mode - Keep Mask" />
+                                                    <Setter Property="ToolTip" Value="{CommonControls:Localize Tooltip_MaskModeKeep}" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -236,7 +236,7 @@
 
                             <!--Clear Mask-->
                             <Grid Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
-                                <Button Command="{Binding MaskClearCommand, Mode=OneWay}" ToolTip="Clear Mask" ToolTipService.InitialShowDelay="500">
+                                <Button Command="{Binding MaskClearCommand, Mode=OneWay}" ToolTip="{CommonControls:Localize Tooltip_ClearMask}" ToolTipService.InitialShowDelay="500">
                                     <CommonControls:FontAwesome Icon="f05e" IconStyle="Light"  />
                                 </Button>
                             </Grid>
@@ -298,18 +298,18 @@
                     <Grid Visibility="{Binding AllowDrop, ElementName=DragDropContainer, Converter={StaticResource BooleanToVisibilityConverter}}" IsHitTestVisible="False" >
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding IsMaskEnabled, Converter={StaticResource InverseBooleanToVisibilityConverter}}" >
                             <CommonControls:FontAwesome Icon="e74c" Size="30" IconStyle="SharpLight" Color="{StaticResource AccentColour2}"/>
-                            <TextBlock Text="Drag &amp; Drop Image Here" Foreground="{StaticResource AccentColour2}" FontSize="13" FontWeight="DemiBold" Margin="0,6,0,0"/>
+                            <TextBlock Text="{CommonControls:Localize DragDropImage}" Foreground="{StaticResource AccentColour2}" FontSize="13" FontWeight="DemiBold" Margin="0,6,0,0"/>
                         </StackPanel>
                         <UniformGrid Columns="2" Visibility="{Binding IsMaskEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <Border BorderThickness="0,0,1,0" BorderBrush="{StaticResource AccentColour2}">
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
                                     <CommonControls:FontAwesome Icon="e74c" Size="26" IconStyle="SharpLight" Color="{StaticResource AccentColour2}"/>
-                                    <TextBlock Text="Drag &amp; Drop Image Here" Foreground="{StaticResource AccentColour2}" FontSize="13" FontWeight="DemiBold" Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Center"/>
+                                    <TextBlock Text="{CommonControls:Localize DragDropImage}" Foreground="{StaticResource AccentColour2}" FontSize="13" FontWeight="DemiBold" Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Center"/>
                                 </StackPanel>
                             </Border>
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <CommonControls:FontAwesome Icon="e74c" Size="26" IconStyle="SharpLight" Color="{StaticResource AccentColour2}"/>
-                                <TextBlock Text="Drag &amp; Drop Mask Here" Foreground="{StaticResource AccentColour2}" FontSize="13" FontWeight="DemiBold" Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Center"/>
+                                <TextBlock Text="{CommonControls:Localize DragDropMask}" Foreground="{StaticResource AccentColour2}" FontSize="13" FontWeight="DemiBold" Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Center"/>
                             </StackPanel>
                         </UniformGrid>
                     </Grid>
@@ -319,27 +319,27 @@
                         <ContextMenu>
 
                             <!--Source-->
-                            <MenuItem Header="Load" InputGestureText="Ctrl+O" Command="{Binding LoadSourceCommand}">
+                            <MenuItem Header="{CommonControls:Localize Load}" InputGestureText="Ctrl+O" Command="{Binding LoadSourceCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f07c" IconStyle="Light" Size="15" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Copy" InputGestureText="Ctrl+C" Command="{Binding CopySourceCommand}">
+                            <MenuItem Header="{CommonControls:Localize Copy}" InputGestureText="Ctrl+C" Command="{Binding CopySourceCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Paste" InputGestureText="Ctrl+V" Command="{Binding PasteSourceCommand}">
+                            <MenuItem Header="{CommonControls:Localize Paste}" InputGestureText="Ctrl+V" Command="{Binding PasteSourceCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0ea" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Save" InputGestureText="Ctrl+S" Command="{Binding SaveSourceCommand}">
+                            <MenuItem Header="{CommonControls:Localize Save}" InputGestureText="Ctrl+S" Command="{Binding SaveSourceCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0c7" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Clear" InputGestureText="Ctrl+Z" Command="{Binding ClearCommand}">
+                            <MenuItem Header="{CommonControls:Localize Clear}" InputGestureText="Ctrl+Z" Command="{Binding ClearCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f2ed" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>
@@ -347,17 +347,17 @@
 
                             <!--Mask-->
                             <Separator Margin="0,3" Opacity=".3"/>
-                            <MenuItem Header="Load Mask" InputGestureText="Ctrl+F" Command="{Binding LoadMaskCommand}">
+                            <MenuItem Header="{CommonControls:Localize LoadMask}" InputGestureText="Ctrl+F" Command="{Binding LoadMaskCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f07c" IconStyle="Light" Size="15" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Copy Mask" InputGestureText="Ctrl+G" Command="{Binding CopyMaskCommand}">
+                            <MenuItem Header="{CommonControls:Localize CopyMask}" InputGestureText="Ctrl+G" Command="{Binding CopyMaskCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Save Mask" InputGestureText="Ctrl+H" Command="{Binding SaveMaskCommand}">
+                            <MenuItem Header="{CommonControls:Localize SaveMask}" InputGestureText="Ctrl+H" Command="{Binding SaveMaskCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0c7" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>
@@ -365,12 +365,12 @@
 
                             <!--Canvas-->
                             <Separator Margin="0,3" Opacity=".3"/>
-                            <MenuItem Header="Copy Canvas" InputGestureText="Ctrl+J" Command="{Binding CopyCanvasCommand}" >
+                            <MenuItem Header="{CommonControls:Localize CopyCanvas}" InputGestureText="Ctrl+J" Command="{Binding CopyCanvasCommand}" >
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Save Canvas" InputGestureText="Ctrl+K" Command="{Binding SaveCanvasCommand}" >
+                            <MenuItem Header="{CommonControls:Localize SaveCanvas}" InputGestureText="Ctrl+K" Command="{Binding SaveCanvasCommand}" >
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0c7" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>

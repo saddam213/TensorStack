@@ -13,6 +13,8 @@ namespace TensorStack.WPF.Controls
             InitializeComponent();
         }
 
+        public static readonly DependencyProperty SelectedColorProperty = DependencyProperty.Register(nameof(SelectedColor), typeof(Color), typeof(ColorPicker), new PropertyMetadata(Colors.Black));
+        public static readonly DependencyProperty IsPickerOpenProperty = DependencyProperty.Register(nameof(IsPickerOpen), typeof(bool), typeof(ColorPicker), new PropertyMetadata(false));
 
         public Color SelectedColor
         {
@@ -20,31 +22,11 @@ namespace TensorStack.WPF.Controls
             set { SetValue(SelectedColorProperty, value); }
         }
 
-
-        public static readonly DependencyProperty SelectedColorProperty =
-            DependencyProperty.Register("SelectedColor", typeof(Color), typeof(ColorPicker), new PropertyMetadata(Colors.Black));
-
-    
-
-
-
-
         public bool IsPickerOpen
         {
             get { return (bool)GetValue(IsPickerOpenProperty); }
             set { SetValue(IsPickerOpenProperty, value); }
         }
-
-
-        public static readonly DependencyProperty IsPickerOpenProperty =
-            DependencyProperty.Register("IsPickerOpen", typeof(bool), typeof(ColorPicker), new PropertyMetadata(false));
-
-
-
-
-
-     
-
 
     }
 }

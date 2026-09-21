@@ -13,14 +13,9 @@ namespace TensorStack.WPF.Controls
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty FloatValueProperty =
-           DependencyProperty.Register(nameof(FloatValue), typeof(float), typeof(FloatBox), new PropertyMetadata<FloatBox>((c) => c.OnValueChanged()) { BindsTwoWayByDefault = true });
-
-        public static readonly DependencyProperty TextValueProperty =
-            DependencyProperty.Register(nameof(TextValue), typeof(string), typeof(FloatBox), new PropertyMetadata<FloatBox>((c) => c.OnTextValueChanged()){ DefaultValue = "0" });
-
-        public static readonly DependencyProperty IsTextInvalidProperty =
-            DependencyProperty.Register(nameof(IsTextInvalid), typeof(bool), typeof(FloatBox));
+        public static readonly DependencyProperty FloatValueProperty = DependencyProperty.Register(nameof(FloatValue), typeof(float), typeof(FloatBox), new PropertyMetadata<FloatBox>((c) => c.OnValueChanged()) { BindsTwoWayByDefault = true });
+        public static readonly DependencyProperty TextValueProperty = DependencyProperty.Register(nameof(TextValue), typeof(string), typeof(FloatBox), new PropertyMetadata<FloatBox>((c) => c.OnTextValueChanged()) { DefaultValue = "0" });
+        public static readonly DependencyProperty IsTextInvalidProperty = DependencyProperty.Register(nameof(IsTextInvalid), typeof(bool), typeof(FloatBox));
 
         public float FloatValue
         {

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TensorStack.Common;
+using TensorStack.WPF.Resources;
 using TensorStack.WPF.Services;
 
 namespace TensorStack.WPF.Controls
@@ -82,7 +83,7 @@ namespace TensorStack.WPF.Controls
 
         private async Task LoadAsync()
         {
-            var sourceFilename = await DialogService.OpenFileAsync("Load Text", filter: "Text files |*.txt;|All Files|*.*;", defualtExt: "txt");
+            var sourceFilename = await DialogService.OpenFileAsync(Default.LoadText, filter: $"{Default.TextFiles} |*.txt;|All Files|*.*;", defualtExt: "txt");
             if (!string.IsNullOrEmpty(sourceFilename))
             {
                 var textInput = await TensorStack.Common.TextInput.CreateAsync(sourceFilename, Encoding.UTF8);
@@ -104,7 +105,7 @@ namespace TensorStack.WPF.Controls
 
         private async Task SaveAsync()
         {
-            var saveFilename = await DialogService.SaveFileAsync("Save Text", "Text", filter: "Text files |*.txt;|*.md;", defualtExt: "txt");
+            var saveFilename = await DialogService.SaveFileAsync(Default.SaveText, Default.Text, filter: $"{Default.TextFiles} |*.txt;|*.md;", defualtExt: "txt");
             if (!string.IsNullOrEmpty(saveFilename))
             {
                 await File.WriteAllTextAsync(saveFilename, TextSource.Text);

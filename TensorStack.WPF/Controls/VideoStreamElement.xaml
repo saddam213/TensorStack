@@ -46,7 +46,7 @@
                 <!--Load/Save/View-->
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
                     <Button 
-                        ToolTip="Open Video File" 
+                        ToolTip="{CommonControls:Localize Tooltip_OpenVideo}" 
                         ToolTipService.Placement="Top"
                         ToolTipService.InitialShowDelay="600" 
                         Command="{Binding LoadSourceCommand}" 
@@ -55,7 +55,7 @@
                         <CommonControls:FontAwesome Icon="f008" />
                     </Button>
                     <Button 
-                        ToolTip="Save Video File" 
+                        ToolTip="{CommonControls:Localize Tooltip_SaveVideo}" 
                         ToolTipService.Placement="Top"
                         ToolTipService.InitialShowDelay="600" 
                         Command="{Binding SaveSourceCommand}" 
@@ -68,8 +68,8 @@
                         IconFalse="e76b" 
                         ColorTrue="{StaticResource DefaultForeground}"
                         ColorFalse="{StaticResource DefaultForeground}"
-                        ToolTipTrue="Video Player"
-                        ToolTipFalse="Video Frame Viewer"
+                        ToolTipTrue="{CommonControls:Localize Tooltip_VideoModePlayer}"
+                        ToolTipFalse="{CommonControls:Localize Tooltip_VideoModeFrames}"
                         ToolTipPlacement="Top"
                         ToolTipInitialDelay="600"
                         IsChecked="{Binding IsVideoFrameView, Mode=TwoWay}"
@@ -85,8 +85,8 @@
                             SizeFalse="11"
                             ColorTrue="#80FFFFFF"
                             ColorFalse="#25FFFFFF"
-                            ToolTipTrue="Disable Auto-Play"
-                            ToolTipFalse="Enable Auto-Play"
+                            ToolTipTrue="{CommonControls:Localize Tooltip_DisableAutoPlay}"
+                            ToolTipFalse="{CommonControls:Localize Tooltip_EnableAutoPlay}"
                             ToolTipPlacement="Top"
                             ToolTipInitialDelay="600"
                             IsChecked="{Binding IsAutoPlayEnabled, Mode=TwoWay}"/>
@@ -97,8 +97,8 @@
                             SizeFalse="11"
                             ColorTrue="#80FFFFFF"
                             ColorFalse="#25FFFFFF"
-                            ToolTipTrue="Disable Auto-Replay"
-                            ToolTipFalse="Enable Auto-Replay"
+                            ToolTipTrue="{CommonControls:Localize Tooltip_DisableAutoReplay}"
+                            ToolTipFalse="{CommonControls:Localize Tooltip_EnableAutoReplay}"
                             ToolTipPlacement="Top"
                             ToolTipInitialDelay="600"
                             IsChecked="{Binding IsReplayEnabled, Mode=TwoWay}"/>
@@ -108,7 +108,7 @@
                 <!--Clear-->
                 <Grid DockPanel.Dock="Right" Visibility="{Binding IsRemoveEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button 
-                        ToolTip="Clear Video" 
+                        ToolTip="{CommonControls:Localize Tooltip_ClearVideo}" 
                         ToolTipService.Placement="Top"
                         ToolTipService.InitialShowDelay="600" 
                         Command="{Binding ClearCommand}" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
@@ -385,34 +385,34 @@
                     <!--DragDrop Notification-->
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding AllowDrop, ElementName=DragDropContainer, Converter={StaticResource BooleanToVisibilityConverter}}" IsHitTestVisible="False">
                         <CommonControls:FontAwesome Icon="e74c" Size="30" IconStyle="SharpLight" Color="{StaticResource AccentColour2}"/>
-                        <TextBlock Text="Drag &amp; Drop Video Here" Foreground="{StaticResource AccentColour2}" FontSize="13" FontWeight="DemiBold" Margin="0,6,0,0"/>
+                        <TextBlock Text="{CommonControls:Localize DragDropVideo}" Foreground="{StaticResource AccentColour2}" FontSize="13" FontWeight="DemiBold" Margin="0,6,0,0"/>
                     </StackPanel>
 
                     <!--ContextMenu-->
                     <Grid.ContextMenu>
                         <ContextMenu>
                             <!--Source-->
-                            <MenuItem Header="Load" InputGestureText="Ctrl+O" Command="{Binding LoadSourceCommand}">
+                            <MenuItem Header="{CommonControls:Localize Load}" InputGestureText="Ctrl+O" Command="{Binding LoadSourceCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f07c" IconStyle="Light" Size="15" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Copy" InputGestureText="Ctrl+C" Command="{Binding CopySourceCommand}">
+                            <MenuItem Header="{CommonControls:Localize Copy}" InputGestureText="Ctrl+C" Command="{Binding CopySourceCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Paste" InputGestureText="Ctrl+V" Command="{Binding PasteSourceCommand}">
+                            <MenuItem Header="{CommonControls:Localize Paste}" InputGestureText="Ctrl+V" Command="{Binding PasteSourceCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0ea" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Save" InputGestureText="Ctrl+S" Command="{Binding SaveSourceCommand}">
+                            <MenuItem Header="{CommonControls:Localize Save}" InputGestureText="Ctrl+S" Command="{Binding SaveSourceCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0c7" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Clear" InputGestureText="Ctrl+Z" Command="{Binding ClearCommand}">
+                            <MenuItem Header="{CommonControls:Localize Clear}" InputGestureText="Ctrl+Z" Command="{Binding ClearCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f2ed" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>
@@ -420,17 +420,17 @@
 
                             <!--Overlay-->
                             <Separator Margin="0,3" Opacity=".3"/>
-                            <MenuItem Header="Load Overlay" InputGestureText="Ctrl+F" Command="{Binding LoadOverlayCommand}">
+                            <MenuItem Header="{CommonControls:Localize LoadOverlay}" InputGestureText="Ctrl+F" Command="{Binding LoadOverlayCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f07c" IconStyle="Light" Size="15" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Copy Overlay" InputGestureText="Ctrl+G" Command="{Binding CopyOverlayCommand}">
+                            <MenuItem Header="{CommonControls:Localize CopyOverlay}" InputGestureText="Ctrl+G" Command="{Binding CopyOverlayCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0c5" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Save Overlay" InputGestureText="Ctrl+H" Command="{Binding SaveOverlayCommand}">
+                            <MenuItem Header="{CommonControls:Localize SaveOverlay}" InputGestureText="Ctrl+H" Command="{Binding SaveOverlayCommand}">
                                 <MenuItem.Icon>
                                     <CommonControls:FontAwesome Icon="f0c7" IconStyle="Light" Size="15"/>
                                 </MenuItem.Icon>

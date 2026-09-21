@@ -6,6 +6,7 @@ using System.Windows.Media.Imaging;
 using TensorStack.Common;
 using TensorStack.WPF.Dialogs;
 using TensorStack.WPF.Image;
+using TensorStack.WPF.Resources;
 using TensorStack.WPF.Services;
 
 namespace TensorStack.WPF.Controls
@@ -176,7 +177,7 @@ namespace TensorStack.WPF.Controls
         /// </summary>
         protected virtual async Task SaveSourceAsync()
         {
-            var saveFilename = await DialogService.SaveFileAsync("Save Image", "Image", filter: "png files (*.png)|*.png", defualtExt: "png");
+            var saveFilename = await DialogService.SaveFileAsync(Default.SaveImage, Default.Image, filter: $"PNG {Default.Files.ToLower()} (*.png)|*.png", defualtExt: "png");
             if (!string.IsNullOrEmpty(saveFilename))
             {
                 await Source.SaveAsync(saveFilename);
@@ -290,7 +291,7 @@ namespace TensorStack.WPF.Controls
             }
             else
             {
-                var imageFilename = initialFilename ?? await DialogService.OpenFileAsync("Open Image", filter: "Image Files|*.bmp;*.jpg;*.jpeg;*.png;*.gif;*.tif;*.tiff|All Files|*.*");
+                var imageFilename = initialFilename ?? await DialogService.OpenFileAsync(Default.OpenImage, filter: $"{Default.ImageFiles} |*.bmp;*.jpg;*.jpeg;*.png;*.gif;*.tif;*.tiff|{Default.AllFiles}|*.*");
                 if (!string.IsNullOrEmpty(imageFilename))
                 {
                     var imageInput = new ImageInput(imageFilename);

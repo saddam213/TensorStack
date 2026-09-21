@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TensorStack.WPF.Adorner;
 using TensorStack.WPF.Image;
+using TensorStack.WPF.Resources;
 using TensorStack.WPF.Services;
 
 namespace TensorStack.WPF.Controls
@@ -338,7 +340,7 @@ namespace TensorStack.WPF.Controls
         /// </summary>
         private async Task SaveMaskAsync()
         {
-            var saveFilename = await DialogService.SaveFileAsync("Save Mask", "Mask", filter: "png files (*.png)|*.png", defualtExt: "png");
+            var saveFilename = await DialogService.SaveFileAsync(Default.SaveMask, Default.Mask, filter: $"PNG {Default.Files.ToLower()} (*.png)|*.png", defualtExt: "png");
             if (!string.IsNullOrEmpty(saveFilename))
             {
                 var maskImage = GetImageMask();
@@ -362,7 +364,7 @@ namespace TensorStack.WPF.Controls
         /// </summary>
         private async Task SaveCanvasAsync()
         {
-            var saveFilename = await DialogService.SaveFileAsync("Save Canvas", "Canvas", filter: "png files (*.png)|*.png", defualtExt: "png");
+            var saveFilename = await DialogService.SaveFileAsync(Default.SaveCanvas, Default.Canvas, filter: $"PNG {Default.Files.ToLower()} (*.png)|*.png", defualtExt: "png");
             if (!string.IsNullOrEmpty(saveFilename))
             {
                 var canvasImage = GetImageCanvas();
@@ -869,10 +871,19 @@ namespace TensorStack.WPF.Controls
 
     public enum ImageEditMode
     {
+        [Display(Name = "ImageEditMode0", ResourceType = typeof(Enums))]
         None = 0,
+
+        [Display(Name = "ImageEditMode1", ResourceType = typeof(Enums))]
         Draw = 1,
+
+        [Display(Name = "ImageEditMode2", ResourceType = typeof(Enums))]
         Erase = 2,
+
+        [Display(Name = "ImageEditMode3", ResourceType = typeof(Enums))]
         Resize = 3,
+
+        [Display(Name = "ImageEditMode4", ResourceType = typeof(Enums))]
         Select = 4
     }
 }

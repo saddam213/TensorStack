@@ -8,8 +8,11 @@
     xmlns:Common="clr-namespace:TensorStack.Common;assembly=TensorStack.Common"
     xmlns:CommonControls="clr-namespace:TensorStack.WPF.Controls"
     xmlns:CommonConverters="clr-namespace:TensorStack.WPF.Converters"
+    xmlns:Services="clr-namespace:TensorStack.WPF.Services"
     xmlns:Dialogs="clr-namespace:TensorStack.WPF.Dialogs">
 
+    <!--Localization-->
+    <x:Static x:Key="Localization" Member="Services:LocalizationService.Instance" />
 
     <!--Images-->
     <BitmapImage x:Key="ImageIcon" UriSource="pack://application:,,,/TensorStack.WPF;component/Images/Icon.png" />
@@ -2341,18 +2344,18 @@
                                 <DockPanel x:Name="WindowCommandButtonsPanel" VerticalAlignment="Stretch" Margin="1" >
                                     <UniformGrid DockPanel.Dock="Right" Columns="3"  DataContext="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type CommonControls:WindowBase}}}" WindowChrome.IsHitTestVisibleInChrome="True">
                                         <Button Command="{Binding MinimizeCommand}" Padding="10,1" >
-                                            <CommonControls:FontAwesome Icon="&#xf2d1;" />
+                                            <CommonControls:FontAwesome Icon="f2d1" />
                                         </Button>
                                         <Grid>
                                             <Button x:Name="RestoreButton" Command="{Binding RestoreCommand}" Padding="10,1">
-                                                <CommonControls:FontAwesome Icon="&#xf2d2;" />
+                                                <CommonControls:FontAwesome Icon="f2d2" />
                                             </Button>
                                             <Button x:Name="MaximizeButton" Command="{Binding MaximizeCommand}" Padding="10,1">
-                                                <CommonControls:FontAwesome Icon="&#xf2d0;" />
+                                                <CommonControls:FontAwesome Icon="f2d0" />
                                             </Button>
                                         </Grid>
                                         <Button x:Name="CloseButton" Command="{Binding CloseCommand}" Padding="12,0" >
-                                            <CommonControls:FontAwesome Icon="&#xf00d;" />
+                                            <CommonControls:FontAwesome Icon="f00d" />
                                         </Button>
                                     </UniformGrid>
 
@@ -2481,7 +2484,7 @@
                                 <!--Window Actions-->
                                 <DockPanel x:Name="WindowCommandButtonsPanel" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="1" DataContext="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type CommonControls:DialogControl}}}" WindowChrome.IsHitTestVisibleInChrome="True" >
                                     <Button x:Name="CloseButton" Command="{Binding CloseCommand}" Padding="12,0" >
-                                        <CommonControls:FontAwesome Icon="&#xf00d;" />
+                                        <CommonControls:FontAwesome Icon="f00d" />
                                     </Button>
                                 </DockPanel>
                             </UniformGrid>

@@ -126,6 +126,6 @@ namespace TensorStack.WPF.Controls
             get { return (double)GetValue(IconOpacityProperty); }
             set { SetValue(IconOpacityProperty, value); }
         }
-          
+
     }
 }

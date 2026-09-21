@@ -9,6 +9,7 @@ namespace TensorStack.WPF.Controls
     /// </summary>
     public partial class AddOnButton : BaseControl
     {
+        private double _iconOpacity = 1f;
         public AddOnButton()
         {
             InitializeComponent();
@@ -64,8 +65,6 @@ namespace TensorStack.WPF.Controls
             set { SetValue(IconMarginProperty, value); }
         }
 
-
-        private double _iconOpacity = 1f;
         public double IconOpacity
         {
             get { return _iconOpacity; }

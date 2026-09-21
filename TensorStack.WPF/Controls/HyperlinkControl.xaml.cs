@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows;
+using TensorStack.WPF.Resources;
 
 namespace TensorStack.WPF.Controls
 {
@@ -56,7 +57,7 @@ namespace TensorStack.WPF.Controls
             }
             catch (Exception ex)
             {
-                await DialogService.ShowErrorAsync("Navigate Error", $"Failed to navigate to URL: {ex.Message}");
+                await DialogService.ShowErrorAsync(Errors.Navigate, $"{Errors.NavigateToUrl}: {ex.Message}");
             }
         }
     }

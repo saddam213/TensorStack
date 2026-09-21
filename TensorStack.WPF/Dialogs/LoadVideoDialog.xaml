@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TensorStack.WPF.Dialogs"
         xmlns:Controls="clr-namespace:TensorStack.WPF.Controls"
-        Title="Load Video" 
+        Title="{Controls:Localize LoadVideo}" 
         x:Name="UI"
         Icon="{DynamicResource ImageIcon}"
         Style="{StaticResource {x:Type Controls:DialogControl}}">
@@ -14,16 +14,16 @@
         <UniformGrid Columns="2"  DockPanel.Dock="Bottom" >
             <DockPanel Margin="4,15,0,0" Visibility="{Binding IsGenerating, Converter={StaticResource BooleanToHiddenConverter}}">
                 <Grid DockPanel.Dock="Left">
-                    <Controls:FontAwesome Icon="&#xf3f4;" IconStyle="Light" Size="30" IsSpinner="True" />
+                    <Controls:FontAwesome Icon="f3f4" IconStyle="Light" Size="30" IsSpinner="True" />
                 </Grid>
                 <StackPanel VerticalAlignment="Center" Margin="10,0,0,0">
                     <TextBlock Text="Generating Video Input..." FontSize="14"/>
-                    <TextBlock Text="This step may take some time" FontSize="10"/>
+                    <TextBlock Text="This may take some time" FontSize="10"/>
                 </StackPanel>
             </DockPanel>
             <UniformGrid Columns="2" Margin="0,25,0,0">
-                <Button IsDefault="True" Command="{Binding SaveCommand}" MinWidth="100" Height="30">OK</Button>
-                <Button IsCancel="True" Command="{Binding CancelCommand}" MinWidth="100" Height="30">Cancel</Button>
+                <Button IsDefault="True" Content="{Controls:Localize Ok}" Command="{Binding SaveCommand}" MinWidth="100" Height="30"/>
+                <Button IsCancel="True" Content="{Controls:Localize Cancel}" Command="{Binding CancelCommand}" MinWidth="100" Height="30"/>
             </UniformGrid>
         </UniformGrid>
 
@@ -32,29 +32,31 @@
             <DockPanel  DockPanel.Dock="Right" LastChildFill="False" Margin="15,0,0,0" MinWidth="200" IsEnabled="{Binding IsGenerating, Converter={StaticResource InverseBoolConverter}}">
 
                 <StackPanel DockPanel.Dock="Top">
-                    <TextBlock Text="Video Information" />
+                    <TextBlock Text="{Controls:Localize VideoInformation}" />
                     <Separator Opacity=".4"/>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Width: " Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text="{Controls:Localize Width}" Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text=": "/>
                         <TextBlock Text="{Binding SourceInfo.Width}" VerticalAlignment="Bottom"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Height: " Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text="{Controls:Localize Height}" Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text=": "/>
                         <TextBlock Text="{Binding SourceInfo.Height}" VerticalAlignment="Bottom"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Frames: " Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text="{Controls:Localize Frames}" Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text=": "/>
                         <TextBlock Text="{Binding SourceInfo.FrameCount}" VerticalAlignment="Bottom"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="FrameRate: " Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text="{Controls:Localize FrameRate}" Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text=": "/>
                         <TextBlock Text="{Binding SourceInfo.FrameRate}" VerticalAlignment="Bottom" />
                     </StackPanel>
-
-
 
                 </StackPanel>
 
@@ -62,7 +64,7 @@
 
                 <UniformGrid Columns="2"  DockPanel.Dock="Bottom" >
                     <StackPanel >
-                        <TextBlock Text="ResizeMode" Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text="{Controls:Localize ResizeMode}" Style="{StaticResource FieldTextBlockStyle}" />
                         <ComboBox ItemsSource="{Binding Source={StaticResource ResizeMode}}" SelectedItem="{Binding SelectedResizeMode}" />
                     </StackPanel>
 
@@ -70,22 +72,22 @@
                     </StackPanel>
 
                     <StackPanel IsEnabled="{Binding IsFixedSizeEnabled, Converter={StaticResource InverseBoolConverter}}">
-                        <TextBlock Text="Width" Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text="{Controls:Localize Width}" Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBox Text="{Binding SelectedWidth, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
 
                     <StackPanel IsEnabled="{Binding IsFixedSizeEnabled, Converter={StaticResource InverseBoolConverter}}">
-                        <TextBlock Text="Height" Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text="{Controls:Localize Height}" Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBox Text="{Binding SelectedHeight, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
 
                     <StackPanel >
-                        <TextBlock Text="FrameRate" Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text="{Controls:Localize FrameRate}" Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBox Text="{Binding SelectedFrameRate, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
 
                     <StackPanel>
-                        <TextBlock Text="Frames" Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock Text="{Controls:Localize Frames}" Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBox Text="{Binding SelectedFrameCount, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </UniformGrid>

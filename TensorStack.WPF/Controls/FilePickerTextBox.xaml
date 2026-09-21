@@ -20,12 +20,12 @@
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
             <Button Command="{Binding OpenFileDialogCommand}" Padding="15, 0">
                 <StackPanel Orientation="Horizontal">
-                    <controls:FontAwesome Icon="&#xf002;" Size="12" />
-                    <TextBlock Text="Browse" Margin="4,0,0,0"/>
+                    <controls:FontAwesome Icon="f002" Size="12" />
+                    <TextBlock Text="{controls:Localize Browse}" Margin="4,0,0,0"/>
                 </StackPanel>
             </Button>
             <Button Command="{Binding ClearFileCommand}" Visibility="{Binding IsRequired, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Width="24" BorderThickness="0,1,1,1" >
-                <controls:FontAwesome Icon="&#xf00d;" Size="15" IconStyle="Light"/>
+                <controls:FontAwesome Icon="f00d" Size="15" IconStyle="Light"/>
             </Button>
         </StackPanel>
 

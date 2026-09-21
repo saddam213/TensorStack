@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using TensorStack.Common;
 using TensorStack.Media.Audio;
 using TensorStack.Media.Video;
+using TensorStack.WPF.Resources;
 using TensorStack.WPF.Services;
 using TensorStack.WPF.Utils;
 
@@ -242,7 +243,7 @@ namespace TensorStack.WPF.Controls
         /// </summary>
         private async Task SaveAsync()
         {
-            var saveFilename = await DialogService.SaveFileAsync("Save Audio", "Audio", filter: "Audio Files (*.mp3;*.wav;*.m4a;*.aac;*.ogg;)|*.mp3;*.wav;*.m4a;*.aac;*.ogg;", defualtExt: "wav");
+            var saveFilename = await DialogService.SaveFileAsync(Default.SaveAudio, Default.Audio, filter: $"{Default.AudioFiles} (*.mp3;*.wav;*.m4a;*.aac;*.ogg;)|*.mp3;*.wav;*.m4a;*.aac;*.ogg;", defualtExt: "wav");
             if (!string.IsNullOrEmpty(saveFilename))
             {
                 await Source.SaveAsync(saveFilename);
@@ -387,7 +388,7 @@ namespace TensorStack.WPF.Controls
         /// <returns>A Task&lt;AudioInputStream&gt; representing the asynchronous operation.</returns>
         private async Task<AudioInputStream> LoadAudioAsync(string initialFilename = null)
         {
-            var sourceFilename = initialFilename ?? await DialogService.OpenFileAsync("Load Audio", "Audio", filter: "Audio/Video files (*.mp3;*.wav;*.flac;*.m4a;*.aac;*.ogg;*.mp4;*.mov;*.mkv;*.webm)|*.mp3;*.wav;*.flac;*.m4a;*.aac;*.ogg;*.mp4;*.mov;*.mkv;*.webm", defualtExt: "wav");
+            var sourceFilename = initialFilename ?? await DialogService.OpenFileAsync(Default.LoadAudio, Default.Audio, filter: $"{Default.AudioFiles} (*.mp3;*.wav;*.flac;*.m4a;*.aac;*.ogg;*.mp4;*.mov;*.mkv;*.webm)|*.mp3;*.wav;*.flac;*.m4a;*.aac;*.ogg;*.mp4;*.mov;*.mkv;*.webm", defualtExt: "wav");
             if (string.IsNullOrEmpty(sourceFilename))
                 return default;
 
