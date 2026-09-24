@@ -59,5 +59,6 @@
         public float ScaleLinear { get; set; }
         public float ScaleAttn { get; set; }
         public bool SageAttn { get; set; }
+        public int ConditioningCacheSize { get; set; } = 4;
     }
 }

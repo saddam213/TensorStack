@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "c678dfe"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-889-c678dfe/include/stable-diffusion.h
+        public const string LibraryVersion = "740c7ae"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-911-740c7ae/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
 
@@ -367,6 +367,8 @@ namespace TensorStack.StableDiffusionCpp.Native
 
             [MarshalAs(UnmanagedType.I1)]
             public bool sage_attn;
+
+            public int conditioning_cache_size;
         }
 
 
@@ -397,6 +399,13 @@ namespace TensorStack.StableDiffusionCpp.Native
             public int frame_count;
             public int fps;
             public sd_audio_t audio;
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct sd_image_preprocess_params_t
+        {
+            public byte* rules;
         }
 
 
@@ -558,6 +567,8 @@ namespace TensorStack.StableDiffusionCpp.Native
 
             [MarshalAs(UnmanagedType.I1)]
             public bool circular_y;
+
+            public sd_image_preprocess_params_t image_preprocess;
         }
 
 
@@ -598,6 +609,8 @@ namespace TensorStack.StableDiffusionCpp.Native
 
             [MarshalAs(UnmanagedType.I1)]
             public bool circular_y;
+
+            public sd_image_preprocess_params_t image_preprocess;
         }
 
 
@@ -795,6 +808,9 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(get_upscale_factor))]
         internal static partial int get_upscale_factor(upscaler_ctx_t* upscaler_ctx);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(get_upscaler_model_scale))]
+        internal static partial int get_upscaler_model_scale(byte* model_path);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(new_adetailer_ctx))]
         internal static partial adetailer_ctx_t* new_adetailer_ctx(byte* detector_path, int n_threads, byte* backend, byte* params_backend);

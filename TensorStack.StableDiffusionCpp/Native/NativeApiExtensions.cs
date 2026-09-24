@@ -64,7 +64,8 @@ namespace TensorStack.StableDiffusionCpp.Native
                 ScaleLinear = unmanaged.linear_scale,
                 ScaleAttn = unmanaged.attn_scale,
                 TokenizerPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.tokenizer),
-                SageAttn = unmanaged.sage_attn
+                SageAttn = unmanaged.sage_attn,
+                ConditioningCacheSize = unmanaged.conditioning_cache_size
             };
         }
 
@@ -134,6 +135,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 attn_scale = managed.ScaleAttn,
                 tokenizer = AnsiStringMarshaller.ConvertToUnmanaged(managed.TokenizerPath),
                 sage_attn = managed.SageAttn,
+                conditioning_cache_size = managed.ConditioningCacheSize,
             };
         }
 
@@ -299,6 +301,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 QwenImageLayers = unmanaged.qwen_image_layers,
                 CircularX = unmanaged.circular_x,
                 CircularY = unmanaged.circular_y,
+                ImagePreprocess = AnsiStringMarshaller.ConvertToManaged(unmanaged.image_preprocess.rules),
                 // Loras = "",
                 // InitImage = "",
                 // RefImages = "",
@@ -360,7 +363,11 @@ namespace TensorStack.StableDiffusionCpp.Native
                 hires = managed.Hires.ToUnmanaged(),
                 qwen_image_layers = managed.QwenImageLayers,
                 circular_x = managed.CircularX,
-                circular_y = managed.CircularY
+                circular_y = managed.CircularY,
+                image_preprocess = new NativeApi.sd_image_preprocess_params_t
+                {
+                    rules = AnsiStringMarshaller.ConvertToUnmanaged(managed.ImagePreprocess)
+                }
             };
         }
 
@@ -402,6 +409,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             native.vae_tiling_params.FreeUnmanaged();
             native.cache.FreeUnmanaged();
             native.hires.FreeUnmanaged();
+            AnsiStringMarshaller.Free(native.image_preprocess.rules);
         }
 
         #endregion
@@ -525,7 +533,11 @@ namespace TensorStack.StableDiffusionCpp.Native
                 cache = managed.Cache.ToUnmanaged(),
                 hires = managed.Hires.ToUnmanaged(),
                 circular_x = managed.CircularX,
-                circular_y = managed.CircularY
+                circular_y = managed.CircularY,
+                image_preprocess = new NativeApi.sd_image_preprocess_params_t
+                {
+                    rules = AnsiStringMarshaller.ConvertToUnmanaged(managed.ImagePreprocess)
+                }
             };
         }
 
@@ -597,6 +609,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             native.vae_tiling_params.FreeUnmanaged();
             native.cache.FreeUnmanaged();
             native.hires.FreeUnmanaged();
+            AnsiStringMarshaller.Free(native.image_preprocess.rules);
         }
 
         #endregion

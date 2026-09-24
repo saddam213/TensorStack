@@ -29,5 +29,6 @@ namespace TensorStack.StableDiffusionCpp.Common
         public HiresOptions Hires { get; set; }
         public bool CircularX { get; set; }
         public bool CircularY { get; set; }
+        public string ImagePreprocess { get; set; }
     }
 }

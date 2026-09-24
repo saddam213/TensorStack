@@ -30,5 +30,6 @@ namespace TensorStack.StableDiffusionCpp.Common
         public int QwenImageLayers { get; set; }
         public bool CircularX { get; set; }
         public bool CircularY { get; set; }
+        public string ImagePreprocess { get; set; }
     }
 }
