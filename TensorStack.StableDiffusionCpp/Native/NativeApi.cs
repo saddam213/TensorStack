@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "740c7ae"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-911-740c7ae/include/stable-diffusion.h
+        public const string LibraryVersion = "2f88688"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-920-2f88688/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
 
@@ -267,11 +267,11 @@ namespace TensorStack.StableDiffusionCpp.Native
             [MarshalAs(UnmanagedType.I1)]
             public bool temporal_tiling;
 
-            public int tile_size_x;
-            public int tile_size_y;
+            public int tile_size_w;
+            public int tile_size_h;
             public float target_overlap;
-            public float rel_size_x;
-            public float rel_size_y;
+            public float rel_size_w;
+            public float rel_size_h;
 
             public byte* extra_tiling_args;
         }

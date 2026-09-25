@@ -640,11 +640,11 @@ namespace TensorStack.StableDiffusionCpp.Native
             return new TilingOptions
             {
                 Enabled = unmanaged.enabled,
-                TileSizeX = unmanaged.tile_size_x,
-                TileSizeY = unmanaged.tile_size_y,
+                TileSizeW = unmanaged.tile_size_w,
+                TileSizeH = unmanaged.tile_size_h,
                 TargetOverlap = unmanaged.target_overlap,
-                RelSizeX = unmanaged.rel_size_x,
-                RelSizeY = unmanaged.rel_size_y,
+                RelSizeW = unmanaged.rel_size_w,
+                RelSizeH = unmanaged.rel_size_h,
                 TemporalTiling = unmanaged.temporal_tiling,
                 ExtraTilingArgs = AnsiStringMarshaller.ConvertToManaged(unmanaged.extra_tiling_args)
             };
@@ -657,11 +657,11 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 enabled = managed.Enabled,
                 temporal_tiling = managed.TemporalTiling,
-                tile_size_x = managed.TileSizeX,
-                tile_size_y = managed.TileSizeY,
+                tile_size_w = managed.TileSizeW,
+                tile_size_h = managed.TileSizeH,
                 target_overlap = managed.TargetOverlap,
-                rel_size_x = managed.RelSizeX,
-                rel_size_y = managed.RelSizeY,
+                rel_size_w = managed.RelSizeW,
+                rel_size_h = managed.RelSizeH,
                 extra_tiling_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.ExtraTilingArgs)
             };
         }
@@ -1047,7 +1047,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         }
 
 
-        public static unsafe NativeApi.sd_image_t ToUnmanaged(this ImageTensor tensor, int channels = 3)
+        public static unsafe NativeApi.sd_image_t ToUnmanaged(this ImageTensor tensor, int channels = 4)
         {
             var height = tensor.Dimensions[2];
             var width = tensor.Dimensions[3];

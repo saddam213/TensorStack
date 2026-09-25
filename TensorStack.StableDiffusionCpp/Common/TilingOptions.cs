@@ -4,11 +4,11 @@
     {
         public bool Enabled { get; set; }
         public bool TemporalTiling { get; set; }
-        public int TileSizeX { get; set; }
-        public int TileSizeY { get; set; }
+        public int TileSizeW { get; set; }
+        public int TileSizeH { get; set; }
         public float TargetOverlap { get; set; }
-        public float RelSizeX { get; set; }
-        public float RelSizeY { get; set; }
+        public float RelSizeW { get; set; }
+        public float RelSizeH { get; set; }
         public string ExtraTilingArgs { get; set; }
     }
 }
