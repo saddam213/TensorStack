@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllFiles" xml:space="preserve">
+    <value>すべてのファイル</value>
+  </data>
+  <data name="Audio" xml:space="preserve">
+    <value>オーディオ</value>
+  </data>
+  <data name="AudioFiles" xml:space="preserve">
+    <value>オーディオファイル</value>
+  </data>
+  <data name="Automate" xml:space="preserve">
+    <value>自動化</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>参照</value>
+  </data>
+  <data name="Calculating" xml:space="preserve">
+    <value>計算中</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Canceling" xml:space="preserve">
+    <value>キャンセル中</value>
+  </data>
+  <data name="Canvas" xml:space="preserve">
+    <value>キャンバス</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>クリア</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="CopyCanvas" xml:space="preserve">
+    <value>キャンバスをコピー</value>
+  </data>
+  <data name="CopyMask" xml:space="preserve">
+    <value>マスクをコピー</value>
+  </data>
+  <data name="CopyOverlay" xml:space="preserve">
+    <value>オーバーレイをコピー</value>
+  </data>
+  <data name="Crop" xml:space="preserve">
+    <value>切り抜き</value>
+  </data>
+  <data name="CropImage" xml:space="preserve">
+    <value>画像を切り抜き</value>
+  </data>
+  <data name="DontAskAgain" xml:space="preserve">
+    <value>今後表示しない</value>
+  </data>
+  <data name="DragDropAudio" xml:space="preserve">
+    <value>ここにオーディオをドラッグ＆ドロップ</value>
+  </data>
+  <data name="DragDropImage" xml:space="preserve">
+    <value>ここに画像をドラッグ＆ドロップ</value>
+  </data>
+  <data name="DragDropMask" xml:space="preserve">
+    <value>ここにマスクをドラッグ＆ドロップ</value>
+  </data>
+  <data name="DragDropText" xml:space="preserve">
+    <value>ここにテキストをドラッグ＆ドロップ</value>
+  </data>
+  <data name="DragDropVideo" xml:space="preserve">
+    <value>ここに動画をドラッグ＆ドロップ</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>ファイル</value>
+  </data>
+  <data name="FrameCount" xml:space="preserve">
+    <value>フレーム数</value>
+  </data>
+  <data name="FrameRate" xml:space="preserve">
+    <value>フレームレート</value>
+  </data>
+  <data name="Frames" xml:space="preserve">
+    <value>フレーム</value>
+  </data>
+  <data name="Generate" xml:space="preserve">
+    <value>生成</value>
+  </data>
+  <data name="Height" xml:space="preserve">
+    <value>高さ</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>画像</value>
+  </data>
+  <data name="ImageFile" xml:space="preserve">
+    <value>画像ファイル</value>
+  </data>
+  <data name="ImageFiles" xml:space="preserve">
+    <value>画像ファイル</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="Load" xml:space="preserve">
+    <value>読み込み</value>
+  </data>
+  <data name="LoadAudio" xml:space="preserve">
+    <value>オーディオを読み込む</value>
+  </data>
+  <data name="LoadImage" xml:space="preserve">
+    <value>画像を読み込む</value>
+  </data>
+  <data name="LoadMask" xml:space="preserve">
+    <value>マスクを読み込む</value>
+  </data>
+  <data name="LoadOverlay" xml:space="preserve">
+    <value>オーバーレイを読み込む</value>
+  </data>
+  <data name="LoadText" xml:space="preserve">
+    <value>テキストを読み込む</value>
+  </data>
+  <data name="LoadVideo" xml:space="preserve">
+    <value>動画を読み込む</value>
+  </data>
+  <data name="Mask" xml:space="preserve">
+    <value>マスク</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>いいえ</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="OpenImage" xml:space="preserve">
+    <value>画像を開く</value>
+  </data>
+  <data name="Overlay" xml:space="preserve">
+    <value>オーバーレイ</value>
+  </data>
+  <data name="Paste" xml:space="preserve">
+    <value>貼り付け</value>
+  </data>
+  <data name="Remaining" xml:space="preserve">
+    <value>残り</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="ResizeMode" xml:space="preserve">
+    <value>リサイズモード</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="SaveAudio" xml:space="preserve">
+    <value>オーディオを保存</value>
+  </data>
+  <data name="SaveCanvas" xml:space="preserve">
+    <value>キャンバスを保存</value>
+  </data>
+  <data name="SaveImage" xml:space="preserve">
+    <value>画像を保存</value>
+  </data>
+  <data name="SaveMask" xml:space="preserve">
+    <value>マスクを保存</value>
+  </data>
+  <data name="SaveOverlay" xml:space="preserve">
+    <value>オーバーレイを保存</value>
+  </data>
+  <data name="SaveText" xml:space="preserve">
+    <value>テキストを保存</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>テキスト</value>
+  </data>
+  <data name="TextFiles" xml:space="preserve">
+    <value>テキストファイル</value>
+  </data>
+  <data name="ToolSize" xml:space="preserve">
+    <value>ツールサイズ</value>
+  </data>
+  <data name="VideoFiles" xml:space="preserve">
+    <value>動画ファイル</value>
+  </data>
+  <data name="VideoInformation" xml:space="preserve">
+    <value>動画情報</value>
+  </data>
+  <data name="Width" xml:space="preserve">
+    <value>幅</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>はい</value>
+  </data>
+</root>

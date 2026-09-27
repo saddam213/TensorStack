@@ -1,5 +1,8 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using TensorStack.WPF.Services;
 
 namespace TensorStack.WPF.Controls
@@ -9,31 +12,50 @@ namespace TensorStack.WPF.Controls
     /// </summary>
     public partial class LocalizationControl : BaseControl
     {
-        private LocalizationItem selectedItem;
+        private LocalizationItem _selectedItem;
 
         public LocalizationControl()
         {
             Items =
             [
-                new LocalizationItem("en-US", "English")
+                new LocalizationItem("en", "English"),
+                new LocalizationItem("ja", "日本語")
             ];
-            SelectedItem = Items.FirstOrDefault(x => x.Key == CultureInfo.CurrentUICulture.IetfLanguageTag) ?? Items[^1];
             InitializeComponent();
         }
 
+        public static readonly DependencyProperty UILanguageProperty = DependencyProperty.Register(nameof(UILanguage), typeof(string), typeof(LocalizationControl), new PropertyMetadata<LocalizationControl>((c) => c.OnLanguageChanged()) { DefaultValue = "" });
         public LocalizationItem[] Items { get; }
+
+        public string UILanguage
+        {
+            get { return (string)GetValue(UILanguageProperty); }
+            set { SetValue(UILanguageProperty, value); }
+        }
 
         public LocalizationItem SelectedItem
         {
-            get { return selectedItem; }
+            get { return _selectedItem; }
             set
             {
-                if (SetProperty(ref selectedItem, value))
+                if (SetProperty(ref _selectedItem, value))
                 {
-                    if (selectedItem != null)
-                        LocalizationService.Instance.SetLanguage(selectedItem.Key);
+                    if (_selectedItem == null)
+                        return;
+
+                    LocalizationService.Instance.SetLanguage(_selectedItem.Key);
                 }
             }
+        }
+
+
+        private Task OnLanguageChanged()
+        {
+            if (string.IsNullOrEmpty(UILanguage))
+            {
+                SelectedItem = Items.FirstOrDefault(x => x.Key.Equals(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, StringComparison.OrdinalIgnoreCase)) ?? Items[0];
+            }
+            return Task.CompletedTask;
         }
 
     }

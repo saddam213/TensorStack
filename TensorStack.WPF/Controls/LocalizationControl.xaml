@@ -6,6 +6,6 @@
              xmlns:Controls="clr-namespace:TensorStack.WPF.Controls"
              mc:Ignorable="d" >
     <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type Controls:LocalizationControl}}}">
-        <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" DisplayMemberPath="Name"/>
+        <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" DisplayMemberPath="Name" SelectedValue="{Binding UILanguage, Mode=TwoWay}" SelectedValuePath="Key"/>
     </Grid>
 </Controls:BaseControl>
