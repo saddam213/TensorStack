@@ -12,7 +12,7 @@
             Directory = "Runtime\\vulkan",
             Requirements =
             [
-               "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-920-2f88688/sd-master-2f88688-bin-win-vulkan-x64.zip"
+               "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-929-3f8527a/sd-master-3f8527a-bin-win-vulkan-x64.zip"
             ]
         };
 
@@ -23,8 +23,8 @@
             Directory = "Runtime\\cuda",
             Requirements =
             [
-                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-920-2f88688/cudart-sd-bin-win-cu12-x64.zip",
-                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-920-2f88688/sd-master-2f88688-bin-win-cuda12-x64.zip"
+                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-929-3f8527a/cudart-sd-bin-win-cu12-x64.zip",
+                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-929-3f8527a/sd-master-3f8527a-bin-win-cuda12-x64.zip"
             ]
         };
 
@@ -35,7 +35,7 @@
             Directory = "Runtime\\rocm",
             Requirements =
             [
-                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-920-2f88688/sd-master-2f88688-bin-win-rocm-7.14.0-x64.zip",
+                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-929-3f8527a/sd-master-3f8527a-bin-win-rocm-7.14.0-x64.zip",
                 "https://repo.amd.com/rocm/tarball-multi-arch/therock-dist-windows-multiarch-7.14.0.tar.gz"
             ]
         };
