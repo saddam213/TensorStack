@@ -72,6 +72,9 @@ namespace TensorStack.HuggingFace.Common
         [JsonPropertyName("cache_type")]
         public CacheType CacheType { get; set; }
 
+        [JsonPropertyName("tools")]
+        public string[] Tools { get; set; }
+
 
         [JsonIgnore]
         public List<ImageTensor> InputImages { get; set; } = [];

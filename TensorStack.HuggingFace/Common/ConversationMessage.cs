@@ -2,7 +2,7 @@
 
 namespace TensorStack.HuggingFace.Common
 {
-    public record ConversationMessage(ConversationRole Role, string Content, int[] ImageIndex, int[] AudioIndex);
+    public record ConversationMessage(ConversationRole Role, string Content, int[] ImageIndex, int[] AudioIndex, string[] ToolCalls);
 
     public enum ConversationRole
     {
@@ -13,6 +13,9 @@ namespace TensorStack.HuggingFace.Common
         System = 1,
 
         [JsonStringEnumMemberName("assistant")]
-        Assistant = 2
+        Assistant = 2,
+
+        [JsonStringEnumMemberName("tool")]
+        Tool = 3
     }
 }

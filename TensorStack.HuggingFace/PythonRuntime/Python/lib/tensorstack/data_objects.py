@@ -345,6 +345,7 @@ class ConversationMessage:
     content: str
     image_index: Sequence[int]
     audio_index: Sequence[int]
+    tool_calls: Sequence[str]
 
 
 @dataclass(slots=True)
@@ -371,6 +372,7 @@ class GenerateTextOptions:
     enable_thinking: bool = True
     sample_rate: int = 0
     cache_type: CacheType = CacheType.Dynamic
+    tools: Sequence[str] = None
 
     def __post_init__(self):
         self.temperature = float(self.temperature)

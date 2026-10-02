@@ -1,9 +1,10 @@
 from tensorstack.utils import Stopwatch, token_push
-from tensorstack.data_objects import PipelineConfig, GenerateTextOptions
+from tensorstack.data_objects import PipelineConfig, GenerateTextOptions, ConversationMessage
 from tensorstack.enums import  MemoryMode, CacheType
 import time
 import torch
 import threading
+import json
 from pathlib import Path
 from queue import Queue, Empty
 from dataclasses import dataclass
@@ -214,12 +215,14 @@ class TextPipeline:
 
         print(f"[DEBUG] Conversation Before: {options.conversation}")
         for message in options.conversation:
+            role = message["role"]
             image_indices = message.get("image_index", [])
             audio_indices = message.get("audio_index", [])
-            role = message["role"]
-            text = self.sanitize_special_tokens(message["content"])
+            text = self.sanitize_special_tokens(message.get("content", None))
+            tool_calls = self._parse_tool_calls(message)
             if not image_indices and not audio_indices:
-                messages.append({ "role": role, "content": text })
+                parsed_message = self.remove_none_values({"role": role, "content": text, "tool_calls": tool_calls})
+                messages.append(parsed_message)
                 continue
 
             # Image Placeholders
@@ -234,7 +237,8 @@ class TextPipeline:
             for idx in audio_indices:
                 content.append({ "type": "audio"})
 
-            messages.append({ "role": role, "content": content })
+            parsed_message = self.remove_none_values({"role": role, "content": content, "tool_calls": tool_calls})
+            messages.append(parsed_message)
 
         print(f"[DEBUG] Conversation After: {messages}")
         return messages
@@ -249,14 +253,16 @@ class TextPipeline:
                 conversation,
                 tokenize=False,
                 add_generation_prompt=True,
-                enable_thinking=options.enable_thinking
+                enable_thinking=options.enable_thinking,
+                tools = self._get_tools(options)
             )
         elif self.tokenizer is not None:
             return self.tokenizer.apply_chat_template(
                 conversation,
                 tokenize=False,
                 add_generation_prompt=True,
-                enable_thinking=options.enable_thinking
+                enable_thinking=options.enable_thinking,
+                tools = self._get_tools(options)
             )
         return None
 
@@ -281,14 +287,21 @@ class TextPipeline:
     #------------------------------------------------
     def _build_token_replacements(self):
         replacements = []
-        thinking_start = { "<|channel>" }
-        thinking_end = { "<channel|>" }
+        thinking_start = { "<think>", "<|channel>" }
+        thinking_end = { "</think>", "<channel|>" }
+        tool_start = { "<|tool_call>","<tool_call>" }
+        tool_end = { "<tool_call|>" ,"</tool_call>"}
+
+        for token in tool_start:
+            replacements.append((token, "<tool_call>"))
+        for token in tool_end:
+            replacements.append((token, "</tool_call>\n"))
+        for token in thinking_start:
+            replacements.append((token, "<think>\n"))
+        for token in thinking_end:
+            replacements.append((token, "\n</think>\n"))
         for token in self.tokenizer.all_special_tokens:
-            if token in thinking_start:
-                replacements.append((token, "<think>\n"))
-            elif token in thinking_end:
-                replacements.append((token, "\n</think>\n"))
-            else:
+            if not any(existing_token == token for existing_token, _ in replacements):
                 replacements.append((token, ""))
         self.special_replacements = tuple(replacements)
 
@@ -325,9 +338,42 @@ class TextPipeline:
     # Sanitize special tokens
     #------------------------------------------------
     def sanitize_special_tokens(self, text):
+        if text is None:
+            return text
         for token in self.tokenizer.all_special_tokens:
             text = text.replace(token, token.strip("[]<>|"))
         return text
+
+
+    #------------------------------------------------
+    # Get the configured tools
+    #------------------------------------------------
+    def _get_tools(self, options: GenerateTextOptions):
+        if not options.tools:
+            return []
+        return [json.loads(tool) for tool in options.tools]
+
+
+    #------------------------------------------------
+    # Get Parse the tool calls
+    #------------------------------------------------
+    def _parse_tool_calls(self, message: ConversationMessage):
+        tools = message.get("tool_calls", [])
+        if not tools:
+            return None
+
+        tool_calls = []
+        for tool in tools:
+            tool_call = json.loads(tool)
+            tool_calls.append({"type": "function", "function": tool_call})
+        return tool_calls
+
+
+    #------------------------------------------------
+    # Remove None
+    #------------------------------------------------
+    def remove_none_values(self, data: dict) -> dict:
+        return {key: value for key, value in data.items() if value is not None}
 
 
 #------------------------------------------------
