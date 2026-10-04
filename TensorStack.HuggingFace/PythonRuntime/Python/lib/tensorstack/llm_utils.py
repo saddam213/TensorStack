@@ -293,13 +293,15 @@ class TextPipeline:
         tool_end = { "<tool_call|>" ,"</tool_call>"}
 
         for token in tool_start:
-            replacements.append((token, "<tool_call>"))
+            replacements.append((token, "<tool_call>\n"))
         for token in tool_end:
-            replacements.append((token, "</tool_call>\n"))
+            replacements.append((token, "\n</tool_call>\n"))
         for token in thinking_start:
             replacements.append((token, "<think>\n"))
         for token in thinking_end:
             replacements.append((token, "\n</think>\n"))
+
+        replacements.append(("<|\"|>", "\""))
         for token in self.tokenizer.all_special_tokens:
             if not any(existing_token == token for existing_token, _ in replacements):
                 replacements.append((token, ""))

@@ -130,9 +130,9 @@
     <value>ナビゲーションエラー</value>
   </data>
   <data name="NavigateToUrl" xml:space="preserve">
-    <value>URL への移動に失敗しました</value>
+    <value>URLへの移動に失敗しました</value>
   </data>
   <data name="WindowMainBaseNotFound" xml:space="preserve">
-    <value>WindowMainBase が見つかりません</value>
+    <value>WindowMainBaseが見つかりません</value>
   </data>
 </root>

@@ -130,13 +130,13 @@
     <value>自動再生を有効化</value>
   </data>
   <data name="Tooltip_SaveAudioFile" xml:space="preserve">
-    <value>オーディオファイルを保存</value>
+    <value>音声ファイルを保存</value>
   </data>
   <data name="Tooltip_OpenAudioFile" xml:space="preserve">
-    <value>オーディオファイルを開く</value>
+    <value>音声ファイルを開く</value>
   </data>
   <data name="Tooltip_ClearAudio" xml:space="preserve">
-    <value>オーディオをクリア</value>
+    <value>音声をクリア</value>
   </data>
   <data name="Tooltip_LoadImage" xml:space="preserve">
     <value>画像を読み込む</value>
@@ -175,10 +175,10 @@
     <value>動画ファイルを保存</value>
   </data>
   <data name="Tooltip_VideoModePlayer" xml:space="preserve">
-    <value>ビデオフレームビューアー</value>
+    <value>動画フレームビューア</value>
   </data>
   <data name="Tooltip_VideoModeFrames" xml:space="preserve">
-    <value>ビデオプレーヤー</value>
+    <value>動画プレーヤー</value>
   </data>
   <data name="Tooltip_ClearVideo" xml:space="preserve">
     <value>動画をクリア</value>

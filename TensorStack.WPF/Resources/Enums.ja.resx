@@ -130,7 +130,7 @@
     <value>動画</value>
   </data>
   <data name="DragDropType4" xml:space="preserve">
-    <value>オーディオ</value>
+    <value>音声</value>
   </data>
   <data name="DragDropType5" xml:space="preserve">
     <value>会話</value>

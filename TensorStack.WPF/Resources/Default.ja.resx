@@ -121,10 +121,10 @@
     <value>すべてのファイル</value>
   </data>
   <data name="Audio" xml:space="preserve">
-    <value>オーディオ</value>
+    <value>音声</value>
   </data>
   <data name="AudioFiles" xml:space="preserve">
-    <value>オーディオファイル</value>
+    <value>音声ファイル</value>
   </data>
   <data name="Automate" xml:space="preserve">
     <value>自動化</value>
@@ -172,7 +172,7 @@
     <value>今後表示しない</value>
   </data>
   <data name="DragDropAudio" xml:space="preserve">
-    <value>ここにオーディオをドラッグ＆ドロップ</value>
+    <value>ここに音声をドラッグ＆ドロップ</value>
   </data>
   <data name="DragDropImage" xml:space="preserve">
     <value>ここに画像をドラッグ＆ドロップ</value>
@@ -220,7 +220,7 @@
     <value>読み込み</value>
   </data>
   <data name="LoadAudio" xml:space="preserve">
-    <value>オーディオを読み込む</value>
+    <value>音声を読み込む</value>
   </data>
   <data name="LoadImage" xml:space="preserve">
     <value>画像を読み込む</value>
@@ -256,7 +256,7 @@
     <value>貼り付け</value>
   </data>
   <data name="Remaining" xml:space="preserve">
-    <value>残り</value>
+    <value>空き</value>
   </data>
   <data name="Reset" xml:space="preserve">
     <value>リセット</value>
@@ -268,7 +268,7 @@
     <value>保存</value>
   </data>
   <data name="SaveAudio" xml:space="preserve">
-    <value>オーディオを保存</value>
+    <value>音声を保存</value>
   </data>
   <data name="SaveCanvas" xml:space="preserve">
     <value>キャンバスを保存</value>
