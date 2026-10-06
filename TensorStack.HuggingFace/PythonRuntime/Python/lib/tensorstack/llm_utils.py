@@ -83,7 +83,7 @@ class TextPipeline:
         if use_device:
             inputs = inputs.to(device)
 
-        print(f"[DEBUG] use_cache: {use_cache}, use_device: {use_device}, cache_type: {cache_type}")
+        #print(f"[DEBUG] use_cache: {use_cache}, use_device: {use_device}, cache_type: {cache_type}")
         self.streamer = None
         if options.num_beams == 1:
             self.streamer = CountingStreamer(
@@ -213,7 +213,7 @@ class TextPipeline:
         if options.conversation is None:
             return messages
 
-        print(f"[DEBUG] Conversation Before: {options.conversation}")
+        #print(f"[DEBUG] Conversation Before: {options.conversation}")
         for message in options.conversation:
             role = message["role"]
             image_indices = message.get("image_index", [])
@@ -240,7 +240,7 @@ class TextPipeline:
             parsed_message = self.remove_none_values({"role": role, "content": content, "tool_calls": tool_calls})
             messages.append(parsed_message)
 
-        print(f"[DEBUG] Conversation After: {messages}")
+        #print(f"[DEBUG] Conversation After: {messages}")
         return messages
 
 
