@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "3f8527a"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-929-3f8527a/include/stable-diffusion.h
+        public const string LibraryVersion = "a1ded76"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-945-a1ded76/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
 
@@ -623,6 +623,14 @@ namespace TensorStack.StableDiffusionCpp.Native
         }
 
 
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct sd_preview_info_t
+        {
+            public int sample_pass;
+            public int total_steps;
+        }
+
+
         // ============================================================
         // Opaque native types
         // ============================================================
@@ -662,6 +670,9 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_preview_callback))]
         internal static partial void sd_set_preview_callback(sd_preview_cb_t cb, preview_t mode, int interval, [MarshalAs(UnmanagedType.I1)] bool denoised, [MarshalAs(UnmanagedType.I1)] bool noisy, void* data);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_preview_info))]
+        internal static partial sd_preview_info_t sd_get_preview_info();
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_backend_eval_callback))]
         internal static partial void sd_set_backend_eval_callback(sd_graph_eval_callback_t cb, void* data);
@@ -828,7 +839,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(convert_with_components))]
         [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool convert_with_components(byte* model_path, byte* clip_l_path, byte* clip_g_path, byte* t5xxl_path, byte* diffusion_model_path, byte* vae_path, byte* output_path, sd_type_t output_type, byte* tensor_type_rules, [MarshalAs(UnmanagedType.I1)] bool convert_name, int n_threads);
+        internal static partial bool convert_with_components(byte* model_path, byte* clip_l_path, byte* clip_g_path, byte* t5xxl_path, byte* diffusion_model_path, byte* vae_path, byte* output_path, sd_type_t output_type, byte* tensor_type_rules, [MarshalAs(UnmanagedType.I1)] bool convert_name, int n_threads, sd_lora_t* loras, int lora_count);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(preprocess_canny))]
         [return: MarshalAs(UnmanagedType.I1)]
