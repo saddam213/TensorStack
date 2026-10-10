@@ -1,9 +1,12 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using TensorStack.WPF.Services;
 
 
@@ -12,12 +15,22 @@ namespace TensorStack.WPF.Controls
     public abstract class ViewControl : UserControl, IViewControl, INotifyPropertyChanged
     {
         private readonly NavigationService _navigationService;
+        private readonly DoubleAnimation _viewAnimation;
         private bool _isDragDrop;
         private DragDropType _dragDropType;
 
         public ViewControl(NavigationService navigationService)
         {
             _navigationService = navigationService;
+            _viewAnimation = new DoubleAnimation
+            {
+                To = 1,
+                From = .4,
+                FillBehavior = FillBehavior.Stop,
+                Duration = new Duration(TimeSpan.FromMilliseconds(150)),
+                EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseIn }
+            };
+            _viewAnimation.Completed += (s, e) => { Opacity = 1; };
         }
 
         public virtual int Id { get; }
@@ -35,14 +48,17 @@ namespace TensorStack.WPF.Controls
             set { SetProperty(ref _dragDropType, value); }
         }
 
+
         public virtual Task OpenAsync(OpenViewArgs args = default)
         {
+            BeginAnimation(OpacityProperty, _viewAnimation);
             return Task.CompletedTask;
         }
 
 
         public virtual Task CloseAsync()
         {
+            Opacity = .4;
             return Task.CompletedTask;
         }
 

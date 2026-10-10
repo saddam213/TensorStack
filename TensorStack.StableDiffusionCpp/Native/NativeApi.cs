@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "a1ded76"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-945-a1ded76/include/stable-diffusion.h
+        public const string LibraryVersion = "1b0ba10"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-956-1b0ba10/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
 
@@ -360,6 +360,9 @@ namespace TensorStack.StableDiffusionCpp.Native
 
             [MarshalAs(UnmanagedType.I1)]
             public bool disable_segmented_compute;
+
+            [MarshalAs(UnmanagedType.I1)]
+            public bool batched_cfg;
 
             public float linear_scale;
             public float attn_scale;

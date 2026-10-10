@@ -17,7 +17,7 @@
 
   <!--Common Packages-->
   <ItemGroup>
-    <PackageReference Include="Microsoft.ML.OnnxRuntime.Managed" Version="1.29.0" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.Managed" Version="1.30.0" />
     <PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.24.4" />
   </ItemGroup>
 

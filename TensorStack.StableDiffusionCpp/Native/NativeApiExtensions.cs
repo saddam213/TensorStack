@@ -65,7 +65,8 @@ namespace TensorStack.StableDiffusionCpp.Native
                 ScaleAttn = unmanaged.attn_scale,
                 TokenizerPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.tokenizer),
                 SageAttn = unmanaged.sage_attn,
-                ConditioningCacheSize = unmanaged.conditioning_cache_size
+                ConditioningCacheSize = unmanaged.conditioning_cache_size,
+                IsBatchedCfgEnabled = !unmanaged.batched_cfg,
             };
         }
 
@@ -136,6 +137,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 tokenizer = AnsiStringMarshaller.ConvertToUnmanaged(managed.TokenizerPath),
                 sage_attn = managed.SageAttn,
                 conditioning_cache_size = managed.ConditioningCacheSize,
+                batched_cfg = managed.IsBatchedCfgEnabled
             };
         }
 

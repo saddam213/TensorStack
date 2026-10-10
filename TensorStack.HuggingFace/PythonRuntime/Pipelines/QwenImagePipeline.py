@@ -12,7 +12,7 @@ from threading import Event
 from functools import partial
 from collections.abc import Buffer
 from typing import Dict, Sequence, List, Tuple, Optional, Any
-from transformers import Qwen2Tokenizer, Qwen2_5_VLForConditionalGeneration
+from transformers import Qwen2Tokenizer, Qwen2VLProcessor, Qwen2_5_VLForConditionalGeneration
 from diffusers import (
     AutoencoderKLQwenImage,
     QwenImageControlNetModel,
@@ -187,6 +187,26 @@ def load_tokenizer(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str
 
 
 #------------------------------------------------
+# Load Qwen2VLProcessor
+#------------------------------------------------
+def load_processor(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
+    if _pipeline and _pipeline.processor:
+        print(f"[Load] Loading Cached Processor")
+        return _pipeline.processor
+
+    processor_path: Path = _model_config["tokenizer"]
+
+    # 1. Load from pretrained folder
+    print(f"[Load] Loading Pretrained Processor")
+    processor = Qwen2VLProcessor.from_pretrained(
+        processor_path,
+        dtype=config.data_type,
+        **pipeline_kwargs
+    )
+    return processor
+
+
+#------------------------------------------------
 # Load Qwen2_5_VLForConditionalGeneration
 #------------------------------------------------
 def load_text_encoder(config: DataObjects.PipelineConfig, pipeline_kwargs: Dict[str, str]):
@@ -336,6 +356,9 @@ def create_pipeline(config: DataObjects.PipelineConfig):
     }
 
     # Load Models
+    processor = None
+    if _processType == ProcessType.ImageEdit:
+        processor = load_processor(config, pipeline_kwargs)
     tokenizer = load_tokenizer(config, pipeline_kwargs)
     text_encoder = load_text_encoder(config, pipeline_kwargs)
     transformer = load_transformer(config, pipeline_kwargs)
@@ -349,6 +372,7 @@ def create_pipeline(config: DataObjects.PipelineConfig):
     return pipeline.from_pretrained(
         template_path,
         tokenizer=tokenizer,
+        processor=processor,
         text_encoder=text_encoder,
         transformer=transformer,
         vae=vae,

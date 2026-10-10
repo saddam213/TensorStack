@@ -5,7 +5,7 @@
 
   <!--Common Packages-->
   <ItemGroup>
-    <PackageReference Include="System.Numerics.Tensors" Version="10.0.11" />
+    <PackageReference Include="System.Numerics.Tensors" Version="10.0.12" />
   </ItemGroup>
 
   <!--Nuget Settings-->

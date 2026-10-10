@@ -16,21 +16,21 @@ namespace TensorStack.HuggingFace.Config
         public readonly static string[] DefaultRequirements =
         [
             "typing==3.7.4.3",
-            "wheel==0.47.0",
-            "transformers==5.13.1",
-            "accelerate==1.14.0",
-            "diffusers==0.39.0",
-            "protobuf==7.35.1",
+            "wheel==0.48.0",
+            "transformers==5.19.0",
+            "accelerate==1.15.0",
+            "diffusers==0.41.0",
+            "protobuf==7.36.2",
             "sentencepiece==0.2.2",
             "ftfy==6.3.1",
-            "scipy==1.18.0",
-            "peft==0.20.0",
+            "scipy==1.18.1",
+            "peft==0.21.2",
             "torchsde==0.2.6",
             "gguf==0.19.0",
-            "av==18.0.0",
+            "av==19.0.1",
             "soundfile==0.14.0",
             "optimum-quanto==0.2.7",
-            "bitsandbytes==0.50.0"
+            "bitsandbytes==0.50.2"
         ];
 
 

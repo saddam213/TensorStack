@@ -60,5 +60,6 @@
         public float ScaleAttn { get; set; }
         public bool SageAttn { get; set; }
         public int ConditioningCacheSize { get; set; } = 4;
+        public bool IsBatchedCfgEnabled { get; set; }
     }
 }
