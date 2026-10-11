@@ -232,7 +232,7 @@ namespace TensorStack.StableDiffusionCpp
         {
             foreach (var file in source.EnumerateFiles())
             {
-                file.MoveTo(Path.Combine(destination, file.Name));
+                file.MoveTo(Path.Combine(destination, file.Name), true);
             }
 
             foreach (var directory in source.EnumerateDirectories())

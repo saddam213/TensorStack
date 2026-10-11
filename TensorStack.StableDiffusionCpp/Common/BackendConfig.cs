@@ -35,7 +35,8 @@
             Directory = "Runtime\\rocm",
             Requirements =
             [
-                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/sd-master-1b0ba10-bin-win-rocm-10.1.0-x64.zip"
+                "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/sd-master-1b0ba10-bin-win-rocm-10.1.0-x64.zip",
+                "https://stable.repo.amd.com/rocm/core/tarball/therock-dist-windows-multiarch-10.1.0.tar.gz"
             ]
         };
     }
