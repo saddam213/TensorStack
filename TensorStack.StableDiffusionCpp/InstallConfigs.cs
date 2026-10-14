@@ -1,14 +1,24 @@
-﻿namespace TensorStack.StableDiffusionCpp.Common
-{
-    public record BackendConfig
-    {
-        public string Name { get; init; }
-        public string Directory { get; init; }
-        public string[] Requirements { get; init; }
+﻿using TensorStack.Common;
 
-        public readonly static BackendConfig DefaultVulkan = new()
+namespace TensorStack.StableDiffusionCpp
+{
+    public static class InstallConfigs
+    {
+        public static EnvironmentConfig VendorDefault(VendorType vendorType)
+        {
+            return vendorType switch
+            {
+                VendorType.AMD => DefaultROCM,
+                VendorType.Nvidia => DefaultCUDA,
+                _ => DefaultVulkan
+            };
+        }
+
+
+        public readonly static EnvironmentConfig DefaultVulkan = new()
         {
             Name = "vulkan",
+            Version = "956",
             Directory = "Runtime\\vulkan",
             Requirements =
             [
@@ -17,9 +27,10 @@
         };
 
 
-        public readonly static BackendConfig DefaultCUDA = new()
+        public readonly static EnvironmentConfig DefaultCUDA = new()
         {
             Name = "cuda",
+            Version = "956",
             Directory = "Runtime\\cuda",
             Requirements =
             [
@@ -29,9 +40,10 @@
         };
 
 
-        public readonly static BackendConfig DefaultROCM = new()
+        public readonly static EnvironmentConfig DefaultROCM = new()
         {
             Name = "rocm",
+            Version = "956",
             Directory = "Runtime\\rocm",
             Requirements =
             [

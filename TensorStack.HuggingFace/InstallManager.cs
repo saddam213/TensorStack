@@ -6,22 +6,21 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
+using TensorStack.Common;
 using TensorStack.Common.Common;
+using TensorStack.Common.Pipeline;
 using TensorStack.HuggingFace.Common;
-using TensorStack.HuggingFace.Config;
 
 namespace TensorStack.HuggingFace
 {
     /// <summary>
     /// PythonManager - Manage Python portable installation and virtual environment creation
     /// </summary>
-    public class InstallManager
+    public class InstallManager : EnvironmentInstaller
     {
         private readonly ILogger _logger;
-        private readonly EnvironmentConfig _config;
         private readonly string _pythonPath;
         private readonly string _pipelinePath;
-        private readonly string _baseDirectory;
         private readonly PythonVersion _pythonVersion;
 
         /// <summary>
@@ -30,65 +29,36 @@ namespace TensorStack.HuggingFace
         /// <param name="config">The configuration.</param>
         /// <param name="baseDirectory">The base directory.</param>
         /// <param name="logger">The logger.</param>
-        public InstallManager(EnvironmentConfig config, string baseDirectory, ILogger logger = default)
+        public InstallManager(EnvironmentConfig config, IProgress<RunProgress> progressCallback = null, ILogger logger = default)
+            : base(config, progressCallback)
         {
             _logger = logger;
-            _config = config;
-            _pythonVersion = GetPythonVresion(config.PythonVersion);
-            _baseDirectory = Path.GetFullPath(baseDirectory);
-            _pythonPath = Path.GetFullPath(Path.Join(_config.Directory, _pythonVersion.Folder));
-            _pipelinePath = Path.GetFullPath(Path.Join(_config.Directory, "Pipelines"));
+            _pythonVersion = GetPythonVresion(config.Version);
+            _pythonPath = Path.GetFullPath(Path.Join(Config.Directory, _pythonVersion.Folder));
+            _pipelinePath = Path.GetFullPath(Path.Join(Config.Directory, "Pipelines"));
             CopyInternalPythonFiles();
             CopyInternalPipelineFiles();
         }
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InstallManager"/> class.
+        /// Checks if a environment exists
         /// </summary>
-        /// <param name="config">The configuration.</param>
-        /// <param name="logger">The logger.</param>
-        public InstallManager(EnvironmentConfig config, ILogger logger = default)
-            : this(config, AppDomain.CurrentDomain.BaseDirectory, logger) { }
-
-
-        /// <summary>
-        /// Load an existing environment.
-        /// </summary>
-        /// <param name="progressCallback">The progress callback.</param>
-        public async Task<IPythonEnvironment> LoadAsync(IProgress<PipelineProgress> progressCallback = null)
+        /// <returns><c>true</c> if exists, <c>false</c> otherwise.</returns>
+        public override bool Exists()
         {
-            return await LoadInternalAsync(progressCallback);
-        }
-
-
-        /// <summary>
-        /// Creates the Python Virtual Environment.
-        /// If the environment already exists it is loaded after package manager is run (update)
-        /// </summary>
-        /// <param name="isRebuild">Delete and rebuild the environment</param>
-        /// <param name="isReinstall">Delete and rebuild the environment and base Python installation</param>
-        public Task<IPythonEnvironment> CreateAsync(EnvironmentMode mode, IProgress<PipelineProgress> progressCallback = null)
-        {
-            return Task.Run(async () =>
-            {
-                var isRebuild = mode == EnvironmentMode.Rebuild;
-                var isReinstall = mode == EnvironmentMode.Reinstall;
-                await DownloadAsync(isReinstall, progressCallback);
-                if (isReinstall || isRebuild)
-                    await DeleteAsync();
-
-                return await CreateInternalAsync(mode, progressCallback);
-            });
+            var path = Path.Combine(_pipelinePath, $".{Config.Name}");
+            return Directory.Exists(path);
         }
 
 
         /// <summary>
         /// Delete an environment
         /// </summary>
-        private async Task<bool> DeleteAsync()
+        /// <returns><c>true</c> if deleted, <c>false</c> otherwise.</returns>
+        public override async Task<bool> DeleteAsync()
         {
-            var path = Path.Combine(_pipelinePath, $".{_config.Environment}");
+            var path = Path.Combine(_pipelinePath, $".{Config.Name}");
             if (!Directory.Exists(path))
                 return false;
 
@@ -98,29 +68,48 @@ namespace TensorStack.HuggingFace
 
 
         /// <summary>
-        /// Checks if a environment exists
+        /// Load an existing environment.
         /// </summary>
-        /// <param name="name">The name.</param>
-        public bool Exists()
+        /// <returns><c>true</c> if loaded, <c>false</c> otherwise.</returns>
+        public override async Task<bool> LoadAsync()
         {
-            var path = Path.Combine(_pipelinePath, $".{_config.Environment}");
-            return Directory.Exists(path);
+            return await LoadInternalAsync();
+        }
+
+
+        /// <summary>
+        /// Creates the Environment.
+        /// </summary>
+        /// <param name="status">The status.</param>
+        /// <returns><c>true</c> if created/updated, <c>false</c> otherwise.</returns>
+        public override async Task<bool> CreateAsync(EnvironmentStatus status)
+        {
+            return await Task.Run(async () =>
+            {
+                var isRebuild = status == EnvironmentStatus.Rebuild;
+                var isReinstall = status == EnvironmentStatus.Reinstall;
+                await DownloadAsync(isReinstall);
+                if (isReinstall || isRebuild)
+                    await DeleteAsync();
+
+                return await CreateInternalAsync(status);
+            });
         }
 
 
         /// <summary>
         /// Creates an environment.
         /// </summary>
-        private async Task<IPythonEnvironment> CreateInternalAsync(EnvironmentMode environmentMode, IProgress<PipelineProgress> progressCallback = null)
+        private async Task<bool> CreateInternalAsync(EnvironmentStatus status, IProgress<PipelineProgress> progressCallback = null)
         {
             var requirementsFile = Path.Combine(_pipelinePath, "requirements.txt");
             try
             {
-                progressCallback.SendMessage($"{environmentMode} Python Virtual Environment (.{_config.Environment})");
-                await File.WriteAllLinesAsync(requirementsFile, _config.Requirements);
-                var environment = PythonEnvironmentHelper.CreateEnvironment(_config.Environment, _pythonPath, _pipelinePath, requirementsFile, _pythonVersion.Version, _logger);
-                progressCallback.SendMessage($"Python Virtual Environment Configured.");
-                return environment;
+                LogProgress($"{status} Python Virtual Environment (.{Config.Name})");
+                await File.WriteAllLinesAsync(requirementsFile, Config.Requirements);
+                PythonEnvironmentHelper.CreateEnvironment(Config.Name, _pythonPath, _pipelinePath, requirementsFile, _pythonVersion.Version, _logger);
+                LogProgress($"Python Virtual Environment Configured.");
+                return true;
             }
             finally
             {
@@ -135,17 +124,17 @@ namespace TensorStack.HuggingFace
         /// <param name="progressCallback">The progress callback.</param>
         /// <returns>A Task&lt;IPythonEnvironment&gt; representing the asynchronous operation.</returns>
         /// <exception cref="System.Exception">Environment does not exist</exception>
-        private async Task<IPythonEnvironment> LoadInternalAsync(IProgress<PipelineProgress> progressCallback = null)
+        private async Task<bool> LoadInternalAsync(IProgress<PipelineProgress> progressCallback = null)
         {
             if (!Exists())
                 throw new Exception("Environment does not exist");
 
             return await Task.Run(() =>
             {
-                progressCallback.SendMessage($"Loading Python Virtual Environment (.{_config.Environment})");
-                var environment = PythonEnvironmentHelper.CreateEnvironment(_config.Environment, _pythonPath, _pipelinePath, _pythonVersion.Version, _logger);
-                progressCallback.SendMessage($"Python Virtual Environment Loaded");
-                return environment;
+                LogProgress($"Loading Python Virtual Environment (.{Config.Name})");
+                PythonEnvironmentHelper.CreateEnvironment(Config.Name, _pythonPath, _pipelinePath, _pythonVersion.Version, _logger);
+                LogProgress($"Python Virtual Environment Loaded");
+                return true;
             });
         }
 
@@ -162,14 +151,14 @@ namespace TensorStack.HuggingFace
             var pythonUrl = _pythonVersion.Link;
             if (reinstall)
             {
-                progressCallback.SendMessage($"Reinstalling Python {_pythonVersion}...");
+                LogProgress($"Reinstalling Python {_pythonVersion}...");
                 if (File.Exists(downloadPath))
                     File.Delete(downloadPath);
 
                 if (Directory.Exists(_pythonPath))
                     Directory.Delete(_pythonPath, true);
 
-                progressCallback.SendMessage($"Python Uninstalled.");
+                LogProgress($"Python Uninstalled.");
             }
 
             // Create Python 
@@ -178,7 +167,7 @@ namespace TensorStack.HuggingFace
             // Download Python
             if (!File.Exists(downloadPath))
             {
-                progressCallback.SendMessage($"Download Python {_pythonVersion}...");
+                LogProgress($"Download Python {_pythonVersion}...");
                 using (var httpClient = new HttpClient())
                 using (var response = await httpClient.GetAsync(pythonUrl))
                 {
@@ -188,13 +177,13 @@ namespace TensorStack.HuggingFace
                         await response.Content.CopyToAsync(stream);
                     }
                 }
-                progressCallback.SendMessage("Python Download Complete.");
+                LogProgress("Python Download Complete.");
             }
 
             // Extract ZIP file
             if (!File.Exists(exePath))
             {
-                progressCallback.SendMessage($"Installing Python {_pythonVersion}...");
+                LogProgress($"Installing Python {_pythonVersion}...");
                 CopyInternalPythonFiles();
                 using (var archive = ZipFile.OpenRead(downloadPath))
                 {
@@ -221,7 +210,7 @@ namespace TensorStack.HuggingFace
                         }
                     }
                 }
-                progressCallback.SendMessage($"Python Install Complete.");
+                LogProgress($"Python Install Complete.");
             }
         }
 

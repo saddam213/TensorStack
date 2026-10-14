@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using TensorStack.Common;
 using TensorStack.Common.Tensor;
 using TensorStack.StableDiffusionCpp.Common;
 using TensorStack.StableDiffusionCpp.Native;
@@ -39,7 +40,7 @@ namespace TensorStack.StableDiffusionCpp
         /// <param name="configuration">The configuration.</param>
         /// <param name="progresssCallback">The progresss callback.</param>
         /// <param name="logCallback">The log callback.</param>
-        public StableDiffusionPipeline(BackendConfig configuration, IProgress<PipelineProgress> progresssCallback = null, Action<LogLevelType, string> logCallback = null)
+        public StableDiffusionPipeline(EnvironmentConfig configuration, IProgress<PipelineProgress> progresssCallback = null, Action<LogLevelType, string> logCallback = null)
             : this(configuration.Directory, progresssCallback, logCallback) { }
 
 

@@ -14,6 +14,11 @@
     <PackageReference Include="TensorStack.Media" Version="$(Version)" />
   </ItemGroup>
 
+  <!--Common-->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+  </ItemGroup>
+
   <!--Nuget Settings-->
   <PropertyGroup>
     <Title>$(AssemblyName)</Title>

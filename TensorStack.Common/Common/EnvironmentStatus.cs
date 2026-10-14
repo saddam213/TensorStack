@@ -1,6 +1,6 @@
-﻿namespace TensorStack.HuggingFace.Common
+﻿namespace TensorStack.Common
 {
-    public enum EnvironmentMode
+    public enum EnvironmentStatus
     {
         Create = 0,
         Load = 1,

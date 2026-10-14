@@ -1,58 +1,109 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Formats.Tar;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
+using TensorStack.Common;
 using TensorStack.Common.Common;
-using TensorStack.StableDiffusionCpp.Common;
+using TensorStack.Common.Pipeline;
 using TensorStack.StableDiffusionCpp.Native;
 
 namespace TensorStack.StableDiffusionCpp
 {
-    public static class InstallManager
+    public class InstallManager : EnvironmentInstaller
     {
+        private readonly ILogger _logger;
+
         /// <summary>
-        /// Initialize StableDiffusion.cpp environment
+        /// Initializes a new instance of the <see cref="InstallManager"/> class.
         /// </summary>
-        /// <param name="configuration">The options.</param>
+        /// <param name="config">The configuration.</param>
         /// <param name="progressCallback">The progress callback.</param>
-        public static async Task<bool> InitializeAsync(BackendConfig configuration, bool reinstall = false, Action<LogLevelType, string> logCallback = null)
+        /// <param name="logger">The logger.</param>
+        public InstallManager(EnvironmentConfig config, IProgress<RunProgress> progressCallback = null, ILogger logger = default)
+            : base(config, progressCallback)
         {
-            var tempDirectory = Path.Combine(configuration.Directory, "temp");
+            _logger = logger;
+        }
+
+
+        /// <summary>
+        /// Checks if a environment exists
+        /// </summary>
+        /// <returns><c>true</c> if exists, <c>false</c> otherwise.</returns>
+        public override bool Exists()
+        {
+            return Directory.Exists(Config.Directory);
+        }
+
+
+        /// <summary>
+        /// Delete an environment
+        /// </summary>
+        /// <returns><c>true</c> if deleted, <c>false</c> otherwise.</returns>
+        public override Task<bool> DeleteAsync()
+        {
+            if (!Exists())
+                return Task.FromResult(false);
+
+            FileHelper.DeleteDirectory(Config.Directory);
+            return Task.FromResult(true);
+        }
+
+
+        /// <summary>
+        /// Load an existing environment.
+        /// </summary>
+        /// <returns><c>true</c> if loaded, <c>false</c> otherwise.</returns>
+        public override Task<bool> LoadAsync()
+        {
+            return Task.FromResult(Exists());
+        }
+
+
+        /// <summary>
+        /// Creates the Environment.
+        /// </summary>
+        /// <param name="status">The status.</param>
+        /// <returns><c>true</c> if created/updated, <c>false</c> otherwise.</returns>
+        public override async Task<bool> CreateAsync(EnvironmentStatus status)
+        {
+            var tempDirectory = Path.Combine(Config.Directory, "temp");
             try
             {
-                var applicationPath = Path.Combine(configuration.Directory, $"{NativeApi.LibraryName}.dll");
-                if (reinstall)
+                var applicationPath = Path.Combine(Config.Directory, $"{NativeApi.LibraryName}.dll");
+                if (status == EnvironmentStatus.Update || status == EnvironmentStatus.Rebuild || status == EnvironmentStatus.Reinstall)
                 {
-                    logCallback?.Invoke(LogLevelType.Info, "Uninstall Environment...");
-                    FileHelper.DeleteDirectory(configuration.Directory);
-                    logCallback?.Invoke(LogLevelType.Info, "Environment Uninstalled.");
+                    LogProgress("Uninstall Environment...");
+                    FileHelper.DeleteDirectory(Config.Directory);
+                    LogProgress("Environment Uninstalled.");
                 }
 
                 if (File.Exists(applicationPath))
                 {
-                    logCallback?.Invoke(LogLevelType.Info, "Environment Already Installed.");
+                    LogProgress("Environment Already Installed.");
                     return true;
                 }
 
                 Directory.CreateDirectory(tempDirectory);
 
                 // Download StableDiffusion.cpp Requirements
-                await DownloadRequirementsAsync(configuration.Requirements, tempDirectory, logCallback);
+                await DownloadRequirementsAsync(Config.Requirements, tempDirectory);
 
                 // Install StableDiffusion.cpp Requirements
-                await InstallRequirementsAsync(configuration.Requirements, configuration.Directory, tempDirectory, logCallback);
+                await InstallRequirementsAsync(Config.Requirements, Config.Directory, tempDirectory);
 
                 // Verify StableDiffusion.cpp Install
                 if (!File.Exists(applicationPath))
                 {
-                    logCallback?.Invoke(LogLevelType.Info, "Environment Install Failed.");
-                    FileHelper.DeleteDirectory(configuration.Directory);
+                    LogProgress("Environment Install Failed.");
+                    FileHelper.DeleteDirectory(Config.Directory);
                     return false;
                 }
 
-                logCallback?.Invoke(LogLevelType.Info, "Environment Install Complete.");
+                LogProgress("Environment Install Complete.");
                 return true;
             }
             finally
@@ -69,20 +120,20 @@ namespace TensorStack.StableDiffusionCpp
         /// <param name="workingDirectory">The working directory.</param>
         /// <param name="progressCallback">The progress callback.</param>
         /// <returns>A Task representing the asynchronous operation.</returns>
-        private static async Task DownloadRequirementsAsync(string[] requirements, string workingDirectory, Action<LogLevelType, string> logCallback = null)
+        private async Task DownloadRequirementsAsync(string[] requirements, string workingDirectory)
         {
-            logCallback?.Invoke(LogLevelType.Info, "Download Environment...");
+            LogProgress("Download Environment...");
             using (var httpClient = new HttpClient())
             {
                 foreach (var requirement in requirements)
                 {
                     var name = Path.GetFileName(requirement);
                     var destination = Path.Combine(workingDirectory, name);
-                    logCallback?.Invoke(LogLevelType.Info, $"Downloading {name}...");
+                    LogProgress($"Downloading {name}...");
                     await DownloadFileAsync(httpClient, requirement, destination);
                 }
             }
-            logCallback?.Invoke(LogLevelType.Info, "Download Environment Complete.");
+            LogProgress("Download Environment Complete.");
         }
 
 
@@ -93,9 +144,9 @@ namespace TensorStack.StableDiffusionCpp
         /// <param name="environmentDirectory">The environment directory.</param>
         /// <param name="workingDirectory">The working directory.</param>
         /// <param name="progressCallback">The progress callback.</param>
-        private static async Task InstallRequirementsAsync(string[] requirements, string environmentDirectory, string workingDirectory, Action<LogLevelType, string> logCallback = null)
+        private async Task InstallRequirementsAsync(string[] requirements, string environmentDirectory, string workingDirectory)
         {
-            logCallback?.Invoke(LogLevelType.Info, "Installing Environment...");
+            LogProgress("Installing Environment...");
             Directory.CreateDirectory(environmentDirectory);
             foreach (var requirement in requirements)
             {
@@ -104,7 +155,7 @@ namespace TensorStack.StableDiffusionCpp
                 if (!File.Exists(requirementFile))
                     continue;
 
-                logCallback?.Invoke(LogLevelType.Info, $"Unpacking {filename}...");
+                LogProgress($"Unpacking {filename}...");
                 await UnpackRequirementAsync(requirementFile, environmentDirectory, workingDirectory);
             }
         }
