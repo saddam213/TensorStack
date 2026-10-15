@@ -1,6 +1,6 @@
 ﻿namespace TensorStack.Common
 {
-    public enum EnvironmentStatus
+    public enum BackendStatus
     {
         Create = 0,
         Load = 1,

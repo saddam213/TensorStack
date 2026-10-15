@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
-using TensorStack.WPF.Controls;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using TensorStack.WPF.Controls;
 using TensorStack.WPF.Resources;
 
 namespace TensorStack.WPF.Dialogs
@@ -19,7 +19,7 @@ namespace TensorStack.WPF.Dialogs
         private bool _isDontAskEnabled;
         private bool _isDontAskSelected;
 
-        public MessageDialog() 
+        public MessageDialog()
         {
             OkCommand = new AsyncRelayCommand(Ok);
             NoCommand = new AsyncRelayCommand(No);

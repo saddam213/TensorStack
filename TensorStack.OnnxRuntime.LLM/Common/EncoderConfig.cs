@@ -6,6 +6,6 @@
         public int NumHeads { get; set; }
         public int NumLayers { get; set; }
         public int HiddenSize { get; set; }
-        public int NumKVHeads { get;  set; }
+        public int NumKVHeads { get; set; }
     }
 }

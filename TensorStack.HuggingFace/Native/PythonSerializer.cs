@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace TensorStack.HuggingFace
+namespace TensorStack.HuggingFace.Native
 {
     public static class PythonSerializer
     {
@@ -23,7 +23,7 @@ namespace TensorStack.HuggingFace
 
         public static Dictionary<string, object> ToPythonDictionary<T>(this T source, params string[] ignoreProperties) where T : class
         {
-            var json = JsonSerializer.Serialize<T>(source, _serializerOptions);
+            var json = JsonSerializer.Serialize(source, _serializerOptions);
             var dict = JsonSerializer.Deserialize<Dictionary<string, object>>(json, _serializerOptions);
             return dict.ToJsonElementDictionary(ignoreProperties);
         }

@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
-using TensorStack.WPF.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TensorStack.WPF.Controls;
 
 namespace TensorStack.WPF.Services
 {

@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <NoWarn>PRTEXP001,PRTEXP002</NoWarn>
-    <DisableCSnakesRuntimeSourceGenerator>true</DisableCSnakesRuntimeSourceGenerator>
   </PropertyGroup>
 
   <!--Projects-->
@@ -18,19 +17,17 @@
 
   <!--Common-->
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.4.2" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
-    <PackageReference Include="ZstdSharp.Port" Version="0.8.8" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.13" />
   </ItemGroup>
 
   <!--Binaries-->
   <ItemGroup>
-    <Reference Include="CSnakes.Runtime">
-      <HintPath>CSnakes.Runtime.dll</HintPath>
+    <Reference Include="CSnakesLite">
+      <HintPath>CSnakesLite.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CSnakes.Runtime.dll" PackagePath="lib/net10.0-windows10.0.17763/">
+    <None Include="CSnakesLite.dll" PackagePath="lib/net10.0-windows10.0.17763/">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <PackageCopyToOutput>true</PackageCopyToOutput>
       <Pack>true</Pack>
@@ -39,7 +36,8 @@
 
   <!--Python Files-->
   <ItemGroup>
-    <EmbeddedResource Include="PythonRuntime\**\*" />
+    <EmbeddedResource Include="Native\Python\**\*" />
+    <EmbeddedResource Include="Native\Pipelines\**\*" />
   </ItemGroup>
 
   <!--Nuget Settings-->

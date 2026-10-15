@@ -45,7 +45,7 @@ namespace TensorStack.WPF.Dialogs
         /// <param name="logger">The logger.</param>
         public CropImageDialog()
         {
-            SaveCommand = new AsyncRelayCommand(SaveAsync,  CanExecuteSave);
+            SaveCommand = new AsyncRelayCommand(SaveAsync, CanExecuteSave);
             CropCommand = new AsyncRelayCommand(Crop, CanExecuteCrop);
             ResetCommand = new AsyncRelayCommand(ResetSource);
             InitializeComponent();

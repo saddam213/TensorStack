@@ -4,7 +4,7 @@ namespace TensorStack.OnnxRuntime.LLM.Common
 {
     public record SearchOptions : GenerateOptions
     {
-        public SearchOptions(){}
+        public SearchOptions() { }
         public SearchOptions(GenerateOptions options) : base(options) { }
     }
 }

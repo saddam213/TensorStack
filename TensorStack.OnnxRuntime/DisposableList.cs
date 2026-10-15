@@ -12,17 +12,17 @@ namespace TensorStack.OnnxRuntime
 
         public DisposableList() { }
 
-        public DisposableList(int count) 
+        public DisposableList(int count)
             : base(count) { }
 
-        public DisposableList(IEnumerable<T> collection) 
+        public DisposableList(IEnumerable<T> collection)
             : base(collection) { }
 
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed)
                 return;
-            
+
             if (disposing)
             {
                 // Dispose in the reverse order (reverse order of creation)

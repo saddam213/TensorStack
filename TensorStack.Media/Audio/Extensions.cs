@@ -26,7 +26,7 @@ namespace TensorStack.Media.Audio
         /// <param name="filename">The filename.</param>
         /// <param name="audioTensor">The audio tensor.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public static async Task SaveAsync(this AudioTensor audioTensor, string filename,  CancellationToken cancellationToken = default)
+        public static async Task SaveAsync(this AudioTensor audioTensor, string filename, CancellationToken cancellationToken = default)
         {
             await AudioManager.WriteAudioAsync(filename, audioTensor, cancellationToken);
         }

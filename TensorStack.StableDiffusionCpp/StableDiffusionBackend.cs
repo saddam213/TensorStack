@@ -7,26 +7,49 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Common;
-using TensorStack.Common.Pipeline;
+using TensorStack.StableDiffusionCpp.Common;
 using TensorStack.StableDiffusionCpp.Native;
 
 namespace TensorStack.StableDiffusionCpp
 {
-    public class InstallManager : EnvironmentInstaller
+    /// <summary>
+    /// Install/Manage StableDiffusion.cpp environment 
+    /// </summary>
+    public class StableDiffusionBackend : Backend<PipelineProgress>, IVendorBackend
     {
-        private readonly ILogger _logger;
+        private ILogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InstallManager"/> class.
+        /// Initializes a new instance of the <see cref="StableDiffusionBackend"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
         /// <param name="progressCallback">The progress callback.</param>
         /// <param name="logger">The logger.</param>
-        public InstallManager(EnvironmentConfig config, IProgress<RunProgress> progressCallback = null, ILogger logger = default)
-            : base(config, progressCallback)
+        public StableDiffusionBackend(BackendConfig config, IProgress<PipelineProgress> progressCallback = null, ILogger logger = default)
+            : base(config, progressCallback) => Initialize(logger);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StableDiffusionBackend"/> class.
+        /// </summary>
+        /// <param name="vendor">The vendor.</param>
+        /// <param name="progressCallback">The progress callback.</param>
+        /// <param name="logger">The logger.</param>
+        public StableDiffusionBackend(VendorType vendor, IProgress<PipelineProgress> progressCallback = null, ILogger logger = default)
+            : base(vendor, progressCallback) => Initialize(logger);
+
+        /// <summary>
+        /// Initializes the specified InstallManager.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        protected void Initialize(ILogger logger)
         {
             _logger = logger;
         }
+
+        /// <summary>
+        /// Gets the backend.
+        /// </summary>
+        public override BackendType Type => BackendType.StableDiffusionCpp;
 
 
         /// <summary>
@@ -35,7 +58,7 @@ namespace TensorStack.StableDiffusionCpp
         /// <returns><c>true</c> if exists, <c>false</c> otherwise.</returns>
         public override bool Exists()
         {
-            return Directory.Exists(Config.Directory);
+            return Directory.Exists(GetDirectory());
         }
 
 
@@ -48,7 +71,7 @@ namespace TensorStack.StableDiffusionCpp
             if (!Exists())
                 return Task.FromResult(false);
 
-            FileHelper.DeleteDirectory(Config.Directory);
+            FileHelper.DeleteDirectory(GetDirectory());
             return Task.FromResult(true);
         }
 
@@ -59,25 +82,69 @@ namespace TensorStack.StableDiffusionCpp
         /// <returns><c>true</c> if loaded, <c>false</c> otherwise.</returns>
         public override Task<bool> LoadAsync()
         {
-            return Task.FromResult(Exists());
+            try
+            {
+                return Task.FromResult(NativeApi.LoadNativeLibrary(out _, GetDirectory()));
+            }
+            catch (Exception)
+            {
+                return Task.FromResult(false);
+            }
         }
 
 
         /// <summary>
-        /// Creates the Environment.
+        /// Setup the Environment.
         /// </summary>
         /// <param name="status">The status.</param>
         /// <returns><c>true</c> if created/updated, <c>false</c> otherwise.</returns>
-        public override async Task<bool> CreateAsync(EnvironmentStatus status)
+        public override Task<bool> SetupAsync(BackendStatus status)
         {
-            var tempDirectory = Path.Combine(Config.Directory, "temp");
+            return Task.Run(() => SetupInternalAsync(status));
+        }
+
+
+        /// <summary>
+        /// Gets the default vendor configuration.
+        /// </summary>
+        /// <param name="vendor">The vendor.</param>
+        /// <returns>EnvironmentConfig.</returns>
+        protected override BackendConfig GetVendorConfig(VendorType vendor)
+        {
+            return GetConfig(vendor);
+        }
+
+
+        /// <summary>
+        /// Logs the progress message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        protected override void LogProgress(string message)
+        {
+            _logger?.LogInformation(message);
+            LogProgress(new PipelineProgress { Key = "Initialize", Message = message });
+        }
+
+
+        /// <summary>
+        /// Setup the Environment.
+        /// </summary>
+        /// <param name="status">The status.</param>
+        /// <returns>A Task&lt;System.Boolean&gt; representing the asynchronous operation.</returns>
+        private async Task<bool> SetupInternalAsync(BackendStatus status)
+        {
+            if (status == BackendStatus.Load)
+                return Exists();
+
+            var directory = GetDirectory();
+            var tempDirectory = Path.Combine(directory, "temp");
             try
             {
-                var applicationPath = Path.Combine(Config.Directory, $"{NativeApi.LibraryName}.dll");
-                if (status == EnvironmentStatus.Update || status == EnvironmentStatus.Rebuild || status == EnvironmentStatus.Reinstall)
+                var applicationPath = Path.Combine(directory, $"{NativeApi.LibraryName}.dll");
+                if (status == BackendStatus.Update || status == BackendStatus.Rebuild || status == BackendStatus.Reinstall)
                 {
                     LogProgress("Uninstall Environment...");
-                    FileHelper.DeleteDirectory(Config.Directory);
+                    FileHelper.DeleteDirectory(directory);
                     LogProgress("Environment Uninstalled.");
                 }
 
@@ -93,13 +160,13 @@ namespace TensorStack.StableDiffusionCpp
                 await DownloadRequirementsAsync(Config.Requirements, tempDirectory);
 
                 // Install StableDiffusion.cpp Requirements
-                await InstallRequirementsAsync(Config.Requirements, Config.Directory, tempDirectory);
+                await InstallRequirementsAsync(Config.Requirements, directory, tempDirectory);
 
                 // Verify StableDiffusion.cpp Install
                 if (!File.Exists(applicationPath))
                 {
                     LogProgress("Environment Install Failed.");
-                    FileHelper.DeleteDirectory(Config.Directory);
+                    FileHelper.DeleteDirectory(directory);
                     return false;
                 }
 
@@ -316,5 +383,48 @@ namespace TensorStack.StableDiffusionCpp
             return sourceFile.Contains("therock-dist-windows");
         }
 
+
+        /// <summary>
+        /// Gets the Vendor default configuration.
+        /// </summary>
+        /// <param name="vendor">The vendor.</param>
+        public static BackendConfig GetConfig(VendorType vendor)
+        {
+            return vendor switch
+            {
+                VendorType.AMD => new BackendConfig
+                {
+                    Name = "rocm",
+                    Version = "956",
+                    Directory = "StableDiffusionCpp",
+                    Requirements =
+                    [
+                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/sd-master-1b0ba10-bin-win-rocm-10.1.0-x64.zip",
+                        "https://stable.repo.amd.com/rocm/core/tarball/therock-dist-windows-multiarch-10.1.0.tar.gz"
+                    ]
+                },
+                VendorType.Nvidia => new BackendConfig
+                {
+                    Name = "cuda",
+                    Version = "956",
+                    Directory = "StableDiffusionCpp",
+                    Requirements =
+                    [
+                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/cudart-sd-bin-win-cu12-x64.zip",
+                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/sd-master-1b0ba10-bin-win-cuda12-x64.zip"
+                    ]
+                },
+                _ => new BackendConfig
+                {
+                    Name = "vulkan",
+                    Version = "956",
+                    Directory = "StableDiffusionCpp",
+                    Requirements =
+                    [
+                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/sd-master-1b0ba10-bin-win-vulkan-x64.zip"
+                    ]
+                },
+            };
+        }
     }
 }

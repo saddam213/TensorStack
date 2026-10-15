@@ -2,7 +2,7 @@
 
 namespace TensorStack.StableDiffusionCpp
 {
-    public enum BackendType
+    public enum SDBackendType
     {
         [Display(Name = "", ShortName = "cpu")]
         CPU = 0,

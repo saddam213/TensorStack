@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace TensorStack.HuggingFace
+namespace TensorStack.HuggingFace.Native
 {
-
     internal record LogEntry(DateTime Timestamp, string Message);
 
     internal static class LogParser

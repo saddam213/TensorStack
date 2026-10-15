@@ -66,7 +66,7 @@ namespace TensorStack.OnnxRuntime.LLM.Pipelines.Phi
         {
             await TokenizePromptAsync(options);
 
-            var sequences = await BeamSearchAsync(options,progressCallback, cancellationToken);
+            var sequences = await BeamSearchAsync(options, progressCallback, cancellationToken);
             var results = new GenerateResult[sequences.Length];
             for (int beam = 0; beam < sequences.Length; beam++)
             {

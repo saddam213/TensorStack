@@ -81,6 +81,6 @@ namespace TensorStack.Common.Pipeline
     public interface IPipelineStream<T, O> : IPipelineStream<T, O, RunProgress>
         where T : class
         where O : IRunOptions
-    { 
+    {
     }
 }

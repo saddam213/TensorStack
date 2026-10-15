@@ -1,8 +1,8 @@
-﻿using TensorStack.WPF.Services;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
 using TensorStack.WPF.Resources;
+using TensorStack.WPF.Services;
 
 namespace TensorStack.WPF.Controls
 {

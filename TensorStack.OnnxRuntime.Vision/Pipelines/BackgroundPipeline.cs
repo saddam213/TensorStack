@@ -99,7 +99,7 @@ namespace TensorStack.OnnxRuntime.Extract
                     var outputTensor = results[0].ToTensor();
                     if (outputBuffer.Length != 4)
                         outputTensor.Reshape([1, .. outputTensor.Dimensions]);
-       
+
                     // Normalize
                     outputTensor.Normalize(_model.OutputNormalization);
 

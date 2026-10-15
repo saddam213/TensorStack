@@ -17,7 +17,7 @@ namespace TensorStack.OnnxRuntime.LLM.Pipelines.Florence
         /// Initializes a new instance of the <see cref="FlorenceTokenizer"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
-        public FlorenceTokenizer(TokenizerConfig configuration) 
+        public FlorenceTokenizer(TokenizerConfig configuration)
             : base(configuration)
         {
             _coordinateMap = CreateCoordinateMapping();

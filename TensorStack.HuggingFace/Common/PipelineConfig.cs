@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using TensorStack.Common;
-using TensorStack.HuggingFace.Common;
 
-namespace TensorStack.HuggingFace.Config
+namespace TensorStack.HuggingFace.Common
 {
     public sealed record PipelineConfig
     {

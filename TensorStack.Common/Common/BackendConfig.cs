@@ -2,7 +2,7 @@
 
 namespace TensorStack.Common
 {
-    public record EnvironmentConfig
+    public record BackendConfig
     {
         public string Name { get; init; }
         public string Version { get; set; }

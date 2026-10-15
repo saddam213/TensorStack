@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TensorStack.HuggingFace.Config
+namespace TensorStack.HuggingFace.Common
 {
     public sealed record CheckpointConfig
     {

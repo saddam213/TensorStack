@@ -21,8 +21,8 @@ namespace TensorStack.WPF.Controls
         {
             if (!string.IsNullOrEmpty(Append))
             {
-                Format = string.IsNullOrEmpty(Format) 
-                    ? $"{{0}}{Append}" 
+                Format = string.IsNullOrEmpty(Format)
+                    ? $"{{0}}{Append}"
                     : string.Concat(Format, Append);
             }
 

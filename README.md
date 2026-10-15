@@ -45,12 +45,9 @@ TensorStack provides reusable components for local AI inference, text generation
 
 ### External Dependencies
 - `FFMPEG` https://github.com/FFmpeg/FFmpeg
-- `PdfPig` https://github.com/UglyToad/PdfPig
-- `Markdig` https://github.com/xoofx/markdig
 - `Serilog` https://github.com/serilog/serilog
 - `CSnakes` https://github.com/tonybaloney/CSnakes
 - `SkiaSharp` https://github.com/mono/SkiaSharp
-- `ZstdSharp` https://github.com/oleg-st/ZstdSharp
 - `OpenCvSharp4` https://github.com/shimat/opencvsharp
 - `Diffusers` https://github.com/huggingface/diffusers
 - `Transformers` https://github.com/huggingface/transformers

@@ -70,6 +70,6 @@ namespace TensorStack.OnnxRuntime.LLM.Tokenizers
         /// <param name="considerSpecialTokens">if set to <c>true</c> decode special tokens.</param>
         Task<string> DecodeAsync(IEnumerable<long> tokens, bool considerSpecialTokens = false);
 
-      
+
     }
 }

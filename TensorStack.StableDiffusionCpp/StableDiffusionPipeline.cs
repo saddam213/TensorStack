@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace TensorStack.StableDiffusionCpp
 {
     public class StableDiffusionPipeline : IDisposable
     {
-        private readonly Action<LogLevelType, string> _logCallback;
+        private readonly ILogger _logger;
         private readonly IProgress<PipelineProgress> _progresssCallback;
         private Context _context;
 
@@ -22,14 +23,14 @@ namespace TensorStack.StableDiffusionCpp
         /// <param name="progresssCallback">The progresss callback.</param>
         /// <param name="logCallback">The log callback.</param>
         /// <exception cref="System.Exception">Failed to load 'StableDiffusion.cpp' native library: {backendPath}</exception>
-        public StableDiffusionPipeline(string backendPath = null, IProgress<PipelineProgress> progresssCallback = null, Action<LogLevelType, string> logCallback = null)
+        public StableDiffusionPipeline(string backendPath = null, IProgress<PipelineProgress> progresssCallback = null, ILogger logger = null)
         {
-            _logCallback = logCallback;
+            _logger = logger;
             _progresssCallback = progresssCallback;
             if (!NativeApi.LoadNativeLibrary(out var backendInfo, backendPath))
                 throw new Exception($"Failed to load 'StableDiffusion.cpp' native library: {backendPath}");
             if (!NativeApi.LibraryVersion.Equals(backendInfo.Commit, StringComparison.OrdinalIgnoreCase))
-                OnLogCallback(LogLevelType.Warn, $"Native library version mismatch: loaded '{backendInfo.Commit}', expected '{NativeApi.LibraryVersion}'.");
+                logger?.LogWarning($"[StableDiffusion.cpp] Native library version mismatch: loaded '{backendInfo.Commit}', expected '{NativeApi.LibraryVersion}'.");
 
             BackendInfo = backendInfo;
         }
@@ -40,9 +41,17 @@ namespace TensorStack.StableDiffusionCpp
         /// <param name="configuration">The configuration.</param>
         /// <param name="progresssCallback">The progresss callback.</param>
         /// <param name="logCallback">The log callback.</param>
-        public StableDiffusionPipeline(EnvironmentConfig configuration, IProgress<PipelineProgress> progresssCallback = null, Action<LogLevelType, string> logCallback = null)
-            : this(configuration.Directory, progresssCallback, logCallback) { }
+        public StableDiffusionPipeline(BackendConfig configuration, IProgress<PipelineProgress> progresssCallback = null, ILogger logger = null)
+            : this(configuration.Directory, progresssCallback, logger) { }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StableDiffusionPipeline"/> class.
+        /// </summary>
+        /// <param name="backend">The backend environment.</param>
+        /// <param name="progresssCallback">The progresss callback.</param>
+        /// <param name="logger">The logger.</param>
+        public StableDiffusionPipeline(StableDiffusionBackend backend, IProgress<PipelineProgress> progresssCallback = null, ILogger logger = null)
+            : this(backend.Config, progresssCallback, logger) { }
 
         /// <summary>
         /// Gets the loaded backend information.
@@ -72,7 +81,7 @@ namespace TensorStack.StableDiffusionCpp
         public void LoadContext(ContextOptions contextParameters)
         {
             UnloadContext();
-            _context = new Context(contextParameters, OnProgressCallback, OnPreviewCallback, OnLogCallback);
+            _context = new Context(contextParameters, OnProgressCallback, OnPreviewCallback, OnNativeLogCallback);
         }
 
 
@@ -191,7 +200,7 @@ namespace TensorStack.StableDiffusionCpp
                 Maximum = maximum,
                 Elapsed = (float)elapsedTime.TotalMilliseconds,
             });
-            OnLogCallback(LogLevelType.Debug, $"Component: {value}/{maximum}, {elapsedTime}");
+            _logger?.LogDebug($"[StableDiffusion.cpp] Component: {value}/{maximum}, {elapsedTime}");
         }
 
 
@@ -214,7 +223,7 @@ namespace TensorStack.StableDiffusionCpp
                 Tensors = frames,
                 Elapsed = (float)elapsedTime.TotalMilliseconds,
             });
-            OnLogCallback(LogLevelType.Debug, $"Step: {step}/{steps}, {elapsedTime}, PreviewFrames: {frames?.Length ?? 0}");
+            _logger?.LogDebug($"[StableDiffusion.cpp] Step: {step}/{steps}, {elapsedTime}, PreviewFrames: {frames?.Length ?? 0}");
         }
 
 
@@ -223,9 +232,18 @@ namespace TensorStack.StableDiffusionCpp
         /// </summary>
         /// <param name="level">The level.</param>
         /// <param name="message">The message.</param>
-        private void OnLogCallback(LogLevelType level, string message)
+        private void OnNativeLogCallback(LogLevelType level, string message)
         {
-            _logCallback?.Invoke(level, $"[StableDiffusion.cpp] {message}");
+            var logLevel = level switch
+            {
+                LogLevelType.Info => LogLevel.Information,
+                LogLevelType.Debug => LogLevel.Debug,
+                LogLevelType.Warn => LogLevel.Warning,
+                LogLevelType.Error => LogLevel.Error,
+                LogLevelType.Verbose => LogLevel.Trace,
+                _ => LogLevel.Trace
+            };
+            _logger?.Log(logLevel, "[StableDiffusion.cpp] {message}", message);
         }
 
 

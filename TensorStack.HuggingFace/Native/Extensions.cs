@@ -1,9 +1,8 @@
-﻿using CSnakes.Runtime.Python;
+﻿using CSnakesLite.Python;
 using System;
 using TensorStack.Common.Tensor;
-using TensorStack.HuggingFace.Common;
 
-namespace TensorStack.HuggingFace
+namespace TensorStack.HuggingFace.Native
 {
     internal static class Extensions
     {
@@ -45,16 +44,6 @@ namespace TensorStack.HuggingFace
                 dimensions[i] = (int)shape[i];
             }
             return dimensions;
-        }
-
-
-        public static void SendMessage(this IProgress<PipelineProgress> progressCallback, string message)
-        {
-            progressCallback?.Report(new PipelineProgress
-            {
-                Message = message,
-                Key = "Initialize"
-            });
         }
     }
 }

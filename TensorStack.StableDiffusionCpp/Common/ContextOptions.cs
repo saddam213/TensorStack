@@ -26,7 +26,7 @@
 
         public string Backend { get; set; }
         public string ParamsBackend { get; set; }
-        public RngType RngType { get; set; }= RngType.Default;
+        public RngType RngType { get; set; } = RngType.Default;
         public RngType SamplerRngType { get; set; } = RngType.Default;
         public PredictionType Prediction { get; set; } = PredictionType.Default;
         public LoraApplyType LoraApplyMode { get; set; } = LoraApplyType.AtRuntime;

@@ -15,7 +15,7 @@ namespace TensorStack.Common.Video
         /// </summary>
         /// <param name="frame">The frame.</param>
         /// <param name="sourceFrameRate">The source frame rate.</param>
-        public VideoFrame(int index,ImageTensor frame, float sourceFrameRate, ImageTensor auxFrame = default)
+        public VideoFrame(int index, ImageTensor frame, float sourceFrameRate, ImageTensor auxFrame = default)
         {
             Index = index;
             Frame = frame;

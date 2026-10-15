@@ -1,5 +1,5 @@
-﻿using CSnakes.Runtime;
-using CSnakes.Runtime.Python;
+﻿using CSnakesLite;
+using CSnakesLite.Python;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
 using TensorStack.HuggingFace.Common;
-using TensorStack.HuggingFace.Config;
+using TensorStack.HuggingFace.Native;
 
 namespace TensorStack.HuggingFace
 {

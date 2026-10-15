@@ -1,4 +1,4 @@
-﻿using CSnakes.Runtime;
+﻿using CSnakesLite;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -8,38 +8,63 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Common;
-using TensorStack.Common.Pipeline;
 using TensorStack.HuggingFace.Common;
 
 namespace TensorStack.HuggingFace
 {
     /// <summary>
-    /// PythonManager - Manage Python portable installation and virtual environment creation
+    /// Install/Manage Python portable installation and virtual environment creation
     /// </summary>
-    public class InstallManager : EnvironmentInstaller
+    public class HuggingFaceBackend : Backend<PipelineProgress>, IVendorBackend
     {
-        private readonly ILogger _logger;
-        private readonly string _pythonPath;
-        private readonly string _pipelinePath;
-        private readonly PythonVersion _pythonVersion;
+        private ILogger _logger;
+        private string _pythonPath;
+        private string _pipelinePath;
+        private PythonVersion _pythonVersion;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InstallManager"/> class.
+        /// Initializes a new instance of the <see cref="HuggingFaceBackend"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
         /// <param name="baseDirectory">The base directory.</param>
         /// <param name="logger">The logger.</param>
-        public InstallManager(EnvironmentConfig config, IProgress<RunProgress> progressCallback = null, ILogger logger = default)
-            : base(config, progressCallback)
+        public HuggingFaceBackend(BackendConfig config, IProgress<PipelineProgress> progressCallback = null, ILogger logger = default)
+            : base(config, progressCallback) => Initialize(logger);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HuggingFaceBackend"/> class.
+        /// </summary>
+        /// <param name="vendor">The vendor.</param>
+        /// <param name="progressCallback">The progress callback.</param>
+        /// <param name="logger">The logger.</param>
+        public HuggingFaceBackend(VendorType vendor, IProgress<PipelineProgress> progressCallback = null, ILogger logger = default)
+            : base(vendor, progressCallback) => Initialize(logger);
+
+        /// <summary>
+        /// Initializes the specified InstallManager.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        protected void Initialize(ILogger logger)
         {
             _logger = logger;
-            _pythonVersion = GetPythonVresion(config.Version);
+            _pythonVersion = GetPythonVresion(Config.Version);
             _pythonPath = Path.GetFullPath(Path.Join(Config.Directory, _pythonVersion.Folder));
             _pipelinePath = Path.GetFullPath(Path.Join(Config.Directory, "Pipelines"));
             CopyInternalPythonFiles();
-            CopyInternalPipelineFiles();
         }
 
+        /// <summary>
+        /// Gets the backend.
+        /// </summary>
+        public override BackendType Type => BackendType.HuggingFace;
+
+        /// <summary>
+        /// Gets the directory.
+        /// </summary>
+        public override string GetDirectory()
+        {
+            return Path.Combine(_pipelinePath, Config.Name);
+        }
 
         /// <summary>
         /// Checks if a environment exists
@@ -47,8 +72,7 @@ namespace TensorStack.HuggingFace
         /// <returns><c>true</c> if exists, <c>false</c> otherwise.</returns>
         public override bool Exists()
         {
-            var path = Path.Combine(_pipelinePath, $".{Config.Name}");
-            return Directory.Exists(path);
+            return Directory.Exists(GetDirectory());
         }
 
 
@@ -58,7 +82,7 @@ namespace TensorStack.HuggingFace
         /// <returns><c>true</c> if deleted, <c>false</c> otherwise.</returns>
         public override async Task<bool> DeleteAsync()
         {
-            var path = Path.Combine(_pipelinePath, $".{Config.Name}");
+            var path = GetDirectory();
             if (!Directory.Exists(path))
                 return false;
 
@@ -71,41 +95,72 @@ namespace TensorStack.HuggingFace
         /// Load an existing environment.
         /// </summary>
         /// <returns><c>true</c> if loaded, <c>false</c> otherwise.</returns>
-        public override async Task<bool> LoadAsync()
+        public override Task<bool> LoadAsync()
         {
-            return await LoadInternalAsync();
+            return LoadInternalAsync();
         }
 
 
         /// <summary>
-        /// Creates the Environment.
+        /// Setup the Environment.
         /// </summary>
         /// <param name="status">The status.</param>
         /// <returns><c>true</c> if created/updated, <c>false</c> otherwise.</returns>
-        public override async Task<bool> CreateAsync(EnvironmentStatus status)
+        public override Task<bool> SetupAsync(BackendStatus status)
         {
-            return await Task.Run(async () =>
-            {
-                var isRebuild = status == EnvironmentStatus.Rebuild;
-                var isReinstall = status == EnvironmentStatus.Reinstall;
-                await DownloadAsync(isReinstall);
-                if (isReinstall || isRebuild)
-                    await DeleteAsync();
+            return Task.Run(() => SetupInternalAsync(status));
+        }
 
-                return await CreateInternalAsync(status);
-            });
+
+        /// <summary>
+        /// Gets the default vendor configuration.
+        /// </summary>
+        /// <param name="vendor">The vendor.</param>
+        /// <returns>EnvironmentConfig.</returns>
+        protected override BackendConfig GetVendorConfig(VendorType vendor)
+        {
+            return GetConfig(vendor);
+        }
+
+
+        /// <summary>
+        /// Logs the progress message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        protected override void LogProgress(string message)
+        {
+            LogProgress(new PipelineProgress { Key = "Initialize", Message = message });
+        }
+
+
+        /// <summary>
+        /// Setup the Environment.
+        /// </summary>
+        /// <param name="status">The status.</param>
+        private async Task<bool> SetupInternalAsync(BackendStatus status)
+        {
+            if (status == BackendStatus.Load)
+                return Exists();
+
+            var isRebuild = status == BackendStatus.Rebuild;
+            var isReinstall = status == BackendStatus.Reinstall;
+            await DownloadAsync(isReinstall);
+            if (isReinstall || isRebuild)
+                await DeleteAsync();
+
+            return await CreateInternalAsync(status);
         }
 
 
         /// <summary>
         /// Creates an environment.
         /// </summary>
-        private async Task<bool> CreateInternalAsync(EnvironmentStatus status, IProgress<PipelineProgress> progressCallback = null)
+        private async Task<bool> CreateInternalAsync(BackendStatus status)
         {
             var requirementsFile = Path.Combine(_pipelinePath, "requirements.txt");
             try
             {
-                LogProgress($"{status} Python Virtual Environment (.{Config.Name})");
+                LogProgress($"{status} Python Virtual Environment ({Config.Name})");
                 await File.WriteAllLinesAsync(requirementsFile, Config.Requirements);
                 PythonEnvironmentHelper.CreateEnvironment(Config.Name, _pythonPath, _pipelinePath, requirementsFile, _pythonVersion.Version, _logger);
                 LogProgress($"Python Virtual Environment Configured.");
@@ -124,7 +179,7 @@ namespace TensorStack.HuggingFace
         /// <param name="progressCallback">The progress callback.</param>
         /// <returns>A Task&lt;IPythonEnvironment&gt; representing the asynchronous operation.</returns>
         /// <exception cref="System.Exception">Environment does not exist</exception>
-        private async Task<bool> LoadInternalAsync(IProgress<PipelineProgress> progressCallback = null)
+        private async Task<bool> LoadInternalAsync()
         {
             if (!Exists())
                 throw new Exception("Environment does not exist");
@@ -143,7 +198,7 @@ namespace TensorStack.HuggingFace
         /// Downloads and installs Win-Python portable v3.12.10.
         /// </summary>
         /// <param name="reinstall">if set to <c>true</c> [reinstall].</param>
-        private async Task DownloadAsync(bool reinstall, IProgress<PipelineProgress> progressCallback = null)
+        private async Task DownloadAsync(bool reinstall)
         {
             var subfolder = $"{_pythonVersion.ZipFolder}/python";
             var exePath = Path.Combine(_pythonPath, "python.exe");
@@ -214,20 +269,13 @@ namespace TensorStack.HuggingFace
             }
         }
 
+
         /// <summary>
         /// Copies the internal python files.
         /// </summary>
         private void CopyInternalPythonFiles()
         {
             ExtractFiles("Python", _pythonPath);
-        }
-
-
-        /// <summary>
-        /// Copies the internal pipeline files.
-        /// </summary>
-        private void CopyInternalPipelineFiles()
-        {
             ExtractFiles("Pipelines", _pipelinePath);
         }
 
@@ -264,15 +312,15 @@ namespace TensorStack.HuggingFace
         /// <param name="destination">The destination.</param>
         private static void ExtractFiles(string resource, string destination)
         {
-            var assembly = typeof(InstallManager).Assembly;
+            var assembly = typeof(HuggingFaceBackend).Assembly;
             var assemblyName = assembly.GetName().Name;
             foreach (var resourceName in assembly.GetManifestResourceNames())
             {
                 var relativePath = default(string);
-                var pythonRuntimeNamespace = $"{assemblyName}.PythonRuntime.{resource}.";
-                if (resourceName.StartsWith(pythonRuntimeNamespace, StringComparison.Ordinal))
+                var nativeNamespace = $"{assemblyName}.Native.{resource}.";
+                if (resourceName.StartsWith(nativeNamespace, StringComparison.Ordinal))
                 {
-                    relativePath = resourceName[pythonRuntimeNamespace.Length..].Replace('.', Path.DirectorySeparatorChar);
+                    relativePath = resourceName[nativeNamespace.Length..].Replace('.', Path.DirectorySeparatorChar);
                 }
                 if (relativePath == null)
                     continue;
@@ -293,7 +341,97 @@ namespace TensorStack.HuggingFace
                 return $"{path[..end]}.{extension}";
             }
         }
-    }
 
-    public record PythonVersion(string Version, string Link, string FileName, string ZipFolder, string Folder);
+
+        /// <summary>
+        /// The default HuggingFace python requirements
+        /// </summary>
+        public static readonly string[] DefaultRequirements =
+        [
+            "typing==3.7.4.3",
+            "wheel==0.48.0",
+            "transformers==5.19.0",
+            "accelerate==1.15.0",
+            "diffusers==0.41.0",
+            "protobuf==7.36.2",
+            "sentencepiece==0.2.2",
+            "ftfy==6.3.1",
+            "scipy==1.18.1",
+            "peft==0.21.2",
+            "torchsde==0.2.6",
+            "gguf==0.19.0",
+            "av==19.0.1",
+            "soundfile==0.14.0",
+            "optimum-quanto==0.2.7",
+            "bitsandbytes==0.50.2"
+        ];
+
+
+        /// <summary>
+        /// Gets the Vendor default configuration.
+        /// </summary>
+        /// <param name="vendor">The vendor.</param>
+        public static BackendConfig GetConfig(VendorType vendor)
+        {
+            return vendor switch
+            {
+                VendorType.AMD => new BackendConfig
+                {
+                    Version = "3.12",
+                    Name = "default-rocm",
+                    Directory = "HuggingFace",
+                    Variables = new Dictionary<string, string> {
+                        {"MIOPEN_FIND_MODE", "2" },
+                        {"HIP_VISIBLE_DEVICES", "0,1" },
+                        {"TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL", "1" }
+                    },
+                    Requirements =
+                    [
+                        "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm-7.2.1.tar.gz",
+                        "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_core-7.2.1-py3-none-win_amd64.whl",
+                        "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_devel-7.2.1-py3-none-win_amd64.whl",
+                        "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_libraries_custom-7.2.1-py3-none-win_amd64.whl",
+                        "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torch-2.9.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl",
+                        "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torchaudio-2.9.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl",
+                        "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torchvision-0.24.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl",
+                        ..DefaultRequirements,
+                    ]
+                },
+                VendorType.Nvidia => new BackendConfig
+                {
+                    Version = "3.12",
+                    Name = "default-cuda",
+                    Directory = "HuggingFace",
+                    Variables = new Dictionary<string, string> {
+                        {"CUDA_VISIBLE_DEVICES", "0,1" },
+                        {"DIFFUSERS_GGUF_CUDA_KERNELS", "true" }
+                    },
+                    Requirements =
+                    [
+                        "--extra-index-url https://download.pytorch.org/whl/cu130",
+                        "torch==2.11.0+cu130",
+                        "torchaudio==2.11.0+cu130",
+                        "torchvision==0.26.0+cu130",
+                        "torchao==0.17.0",
+                        ..DefaultRequirements,
+                    ]
+                },
+                _ => new BackendConfig
+                {
+                    Version = "3.12",
+                    Name = "default-cpu",
+                    Directory = "HuggingFace",
+                    Requirements = [
+                        "torch==2.9.1",
+                        "torchvaudio==2.9.1",
+                        "torchvision==0.24.1",
+                        "torchao==0.18.0",
+                        ..DefaultRequirements,
+                    ]
+                },
+            };
+        }
+
+        private record PythonVersion(string Version, string Link, string FileName, string ZipFolder, string Folder);
+    }
 }

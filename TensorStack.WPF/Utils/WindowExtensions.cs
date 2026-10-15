@@ -70,7 +70,7 @@ namespace TensorStack.WPF
             if (dpiScale)
             {
                 var source = PresentationSource.FromVisual(visualElement);
-                if (source == null) 
+                if (source == null)
                     return new Point(0, 0);
 
                 double scaleX = point.X * source.CompositionTarget.TransformFromDevice.M11;

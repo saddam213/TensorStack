@@ -97,7 +97,7 @@ namespace TensorStack.OnnxRuntime.Upscale
                 ReportProgress(progressCallback, frameIndex, totalFrames, timestamp);
             }
 
-            return new VideoSequence(results[.. frameIndex], newFrameRate);
+            return new VideoSequence(results[..frameIndex], newFrameRate);
         }
 
 

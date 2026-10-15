@@ -1,9 +1,9 @@
-﻿using TensorStack.StableDiffusionCpp.Common;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
+using TensorStack.StableDiffusionCpp.Common;
 
 namespace TensorStack.StableDiffusionCpp.Native
 {
@@ -12,10 +12,11 @@ namespace TensorStack.StableDiffusionCpp.Native
         public const string LibraryVersion = "1b0ba10"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-956-1b0ba10/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
+        private static BackendInfo _backendInfo;
 
         internal static bool LoadNativeLibrary(out BackendInfo backendInfo, string libraryPath = null)
         {
-            backendInfo = null;
+            backendInfo = _backendInfo;
             if (_libraryHandle != nint.Zero)
                 return true;
 
@@ -45,7 +46,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             if (deviceSize == nuint.Zero)
                 return false;
 
-            backendInfo = GetBackendInfo(deviceSize);
+            _backendInfo = backendInfo = GetBackendInfo(deviceSize);
             return true;
         }
 

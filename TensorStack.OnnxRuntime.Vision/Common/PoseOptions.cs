@@ -48,7 +48,7 @@ namespace TensorStack.OnnxRuntime.Extract
         /// <summary>
         /// Gets or sets if the background is Black or Transparent
         /// </summary>
-        public bool IsTransparent{ get; set; }
+        public bool IsTransparent { get; set; }
     }
 
 

@@ -10,7 +10,7 @@ using TensorStack.OnnxRuntime.LLM.Tokenizers;
 
 namespace TensorStack.OnnxRuntime.LLM.Pipelines.Other
 {
-    public class SummaryPipeline : EncoderDecoderPipeline<GenerateOptions>, 
+    public class SummaryPipeline : EncoderDecoderPipeline<GenerateOptions>,
         IPipeline<GenerateResult, GenerateOptions, GenerateProgress>,
         IPipeline<GenerateResult[], SearchOptions, GenerateProgress>
     {

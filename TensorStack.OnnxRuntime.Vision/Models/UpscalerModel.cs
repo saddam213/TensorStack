@@ -52,5 +52,5 @@ namespace TensorStack.OnnxRuntime.Upscale
 
             return new UpscalerModel(configuration);
         }
-     }
+    }
 }

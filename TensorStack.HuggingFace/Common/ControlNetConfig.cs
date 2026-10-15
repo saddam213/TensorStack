@@ -1,6 +1,6 @@
-﻿namespace TensorStack.HuggingFace.Config
+﻿namespace TensorStack.HuggingFace.Common
 {
-    public class LoraConfig
+    public class ControlNetConfig
     {
         public string Path { get; set; }
         public string Name { get; set; }

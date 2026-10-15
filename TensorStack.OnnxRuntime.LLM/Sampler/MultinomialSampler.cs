@@ -14,8 +14,8 @@ namespace TensorStack.OnnxRuntime.LLM.Sampler
         /// Initializes a new instance of the <see cref="MultinomialSampler "/> class.
         /// </summary>
         /// <param name="seed">The seed.</param>
-        public MultinomialSampler(GenerateOptions options) 
-            : base(options) 
+        public MultinomialSampler(GenerateOptions options)
+            : base(options)
         {
             _random = options.Seed < 0
                 ? new Random()

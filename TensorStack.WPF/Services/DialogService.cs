@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Adam Clark. All rights reserved.
 // Licensed under the Apache 2.0 License.
-using TensorStack.WPF.Controls;
-using TensorStack.WPF.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using TensorStack.WPF.Controls;
+using TensorStack.WPF.Dialogs;
 
 namespace TensorStack.WPF.Services
 {
@@ -109,7 +109,7 @@ namespace TensorStack.WPF.Services
         }
 
 
-        public static async Task<DialogResult> DownloadAsync(string message,  string downloadSource, string downloadDestination)
+        public static async Task<DialogResult> DownloadAsync(string message, string downloadSource, string downloadDestination)
         {
             var dialog = GetDialogInstance<DownloadDialog>();
             var result = await dialog.ShowDialogAsync(message, downloadSource, downloadDestination);
