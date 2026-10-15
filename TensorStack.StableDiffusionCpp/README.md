@@ -1,43 +1,6 @@
 # TensorStack.StableDiffusionCpp
 Basic .NET Wrapper API for StableDiffusion.cpp
 
-## Backends
-Using direct path to the `StableDiffusion.cpp` binaries
-
-```csharp
-
-var backendDirectory = "D:\\sd-cpp\\cuda";
-using (var pipeline = new StableDiffusionPipeline(configuration))
-{
-    foreach (var device in pipeline.Devices)
-    {
-        Console.WriteLine(device);
-        // BackendDevice { Type = GPU, Name = NVIDIA GeForce RTX 3090, Backend = cuda0 }
-        // BackendDevice { Type = CPU, Name = 12th Gen Intel(R) Core(TM) i7-12700KF, Backend = cpu }
-    }
-}
-```
-
-Using `InstallManager`, this will download compatible `StableDiffusion.cpp` binaries and other requirements (cuda, rocm)
-
-```csharp
-//var configuration = BackendConfig.DefaultCUDA;
-//var configuration = BackendConfig.DefaultROCM;
-var configuration = BackendConfig.DefaultVulkan;
-await InstallManager.InitializeAsync(configuration);
-
-using (var pipeline = new StableDiffusionPipeline(configuration))
-{
-    foreach (var device in pipeline.Devices)
-    {
-        Console.WriteLine(device);
-        // BackendDevice { Type = GPU, Name = NVIDIA GeForce RTX 3090, Backend = vulkan0 }
-        // BackendDevice { Type = CPU, Name = 12th Gen Intel(R) Core(TM) i7-12700KF, Backend = cpu }
-    }
-}
-```
-
----
 
 ## Image Example
 Generate an image using Krea2 Turbo
@@ -121,3 +84,112 @@ Generate an video using MiniMax-H3
         await videoSequence.SaveAsync("OutputVideo.mp4");
     }
 ```
+
+
+## StableDiffusion.cpp Backends
+
+The `StableDiffusionBackend` class to manage `StableDiffusion.cpp` backend environments. You can initialize a backend using built-in vendor configurations or provide a custom configuration to control its version, installation directory, and requirements.
+
+### Basic Usage
+
+Create a backend using a built-in vendor configuration:
+
+```csharp
+var backend = new StableDiffusionBackend(VendorType.Nvidia);
+```
+
+#### Initialize the backend
+
+Use `InitializeAsync()` to initialize the backend environment according to its current state.
+
+```csharp
+bool success = await backend.InitializeAsync();
+```
+
+Initialization handles the appropriate setup workflow:
+
+- **Not installed:** Download, create, and load the environment.
+- **Out of date:** Download, update, and load the environment.
+- **Up to date:** Load the existing environment.
+
+The method returns a `bool` indicating whether the operation succeeded.
+
+#### Load an existing backend
+
+Use `LoadAsync()` to load or initialize the backend environment directly.
+
+```csharp
+bool success = await backend.LoadAsync();
+```
+
+#### Manage the backend environment
+
+You can explicitly control the setup operation by specifying a `BackendStatus` value.
+
+```csharp
+bool success = await backend.SetupAsync(BackendStatus.Update);
+```
+
+Depending on the supported `BackendStatus` values, setup operations can include creating, updating, rebuilding, or reinstalling the environment.
+
+To delete the backend environment:
+
+```csharp
+bool success = await backend.DeleteAsync();
+```
+
+To check whether the backend environment exists:
+
+```csharp
+bool exists = backend.Exists();
+```
+
+### Custom Configuration
+
+You can create a `BackendConfig` to define a custom backend configuration instead of using a built-in vendor default.
+
+```csharp
+var configuration = new BackendConfig
+{
+    Name = "vulkan",
+    Version = "956",
+    Directory = "StableDiffusionCpp",
+    Requirements =
+    [
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/sd-master-1b0ba10-bin-win-vulkan-x64.zip"
+    ]
+};
+
+var backend = new StableDiffusionBackend(configuration);
+```
+
+The configuration specifies:
+
+| Property | Description |
+| --- | --- |
+| `Name` | Backend configuration name. |
+| `Version` | Backend version identifier. |
+| `Directory` | Directory used for the backend environment. |
+| `Requirements` | List of requirement URLs used by the backend setup process. |
+
+### Using Built-in Configurations
+
+Retrieve a built-in configuration for a supported vendor with `GetConfig()`.
+
+```csharp
+BackendConfig configuration = StableDiffusionBackend.GetConfig(VendorType.Nvidia);
+```
+
+`BackendConfig` is a C# record, so you can create a modified copy using a `with` expression without modifying the original configuration.
+
+```csharp
+var customConfiguration = configuration with
+{
+    Name = "vulkan-test",
+    Directory = "My Location"
+};
+
+var backend = new StableDiffusionBackend(customConfiguration);
+```
+
+This approach lets you reuse built-in configuration settings while overriding only the properties you need.
