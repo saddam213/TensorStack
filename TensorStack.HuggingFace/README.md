@@ -1,114 +1,101 @@
-# TensorStack.Python
-C# => Python Diffusers Inferface
+# TensorStack.HuggingFace
+Basic .NET Wrapper API for HuggingFace Diffusers & Transformers
 
 ## Python Pipelines
-Once you have created a virtual environment you can now load a pipeline
+Generate an image using Qwen-Image-Edit
 ```csharp
-// Pipeline Config
-var pipelineConfig = new PipelineConfig
+using (var backend = new HuggingFaceBackend(VendorType.Nvidia))
 {
-    Path = "Qwen/Qwen-Image-Edit",
-    Pipeline = "QwenImagePipeline",
-    ProcessType = ProcessType.ImageEdit,
-    DataType = DataType.Bfloat16,
-    MemoryMode = MemoryModeType.OffloadCPU
-};
+    await backend.InitializeAsync();
 
-// Create Pipeline Proxy
-using (var pythonPipeline = new PythonPipeline(pipelineConfig, PipelineProgress.ConsoleCallback))
-{
-    // Download/Load Model
-    await pythonPipeline.LoadAsync();
-
-    // Generate Option
-    var options = new PipelineOptions
+    // Pipeline Config
+    var pipelineConfig = new PipelineConfig
     {
-        Prompt = "Yarn art style",
-        Steps = 30,
-        Width = 1024,
-        Height = 1024,
-        GuidanceScale = 4f,
-        Scheduler = SchedulerType.FlowMatchEulerDiscrete,
-        ImageInput = new ImageInput("Image.png")
+        Path = "Qwen/Qwen-Image-Edit",
+        Pipeline = "QwenImagePipeline",
+        ProcessType = ProcessType.ImageEdit,
+        DataType = DataType.Bfloat16,
+        MemoryMode = MemoryModeType.OffloadCPU
     };
 
-    // Generate
-    var response = await pythonPipeline.GenerateAsync(options);
+    // Create Pipeline Proxy
+    using (var pythonPipeline = new PythonPipeline(pipelineConfig, PipelineProgress.ConsoleCallback))
+    {
+        // Download/Load Model
+        await pythonPipeline.LoadAsync();
 
-    // Save Image
-    await response
-        .AsImageTensor()
-        .SaveAsync("Result.png");
+        // Generate Option
+        var options = new PipelineOptions
+        {
+            Prompt = "Yarn art style",
+            Steps = 30,
+            Width = 1024,
+            Height = 1024,
+            GuidanceScale = 4f,
+            Scheduler = SchedulerType.FlowMatchEulerDiscrete,
+            ImageInput = new ImageInput("Image.png")
+        };
+
+        // Generate
+        var response = await pythonPipeline.GenerateAsync(options);
+
+        // Save Image
+        await response
+            .AsImageTensor()
+            .SaveAsync("Result.png");
+    }
 }
 ```
-
-
-
 
 
 ## HuggingFace Backends
 
 The `HuggingFaceBackend` class to manage `HuggingFace` backend environments. You can initialize a backend using built-in vendor configurations or provide a custom configuration to control its version, installation directory, and requirements.
 
-### Basic Usage
-
-Create a backend using a built-in vendor configuration:
-
+#### Basic Documentation
 ```csharp
+// Create a backend using built-in vendor defaults.
 var backend = new HuggingFaceBackend(VendorType.Nvidia);
-```
 
-#### Initialize the backend
+// Initialize the environment.
+// Attempts to load an existing environment, update it if loading
+// fails, or create a new environment if necessary.
+bool initialized = await backend.InitializeAsync();
 
-Use `InitializeAsync()` to initialize the backend environment according to its current state.
+// Load the environment directly.
+bool loaded = await backend.LoadAsync();
 
-```csharp
-bool success = await backend.InitializeAsync();
-```
+// Perform a specific setup operation.
+bool updated = await backend.SetupAsync(BackendStatus.Update);
 
-Initialization handles the appropriate setup workflow:
+// Delete the backend environment.
+bool deleted = await backend.DeleteAsync();
 
-- **Not installed:** Download, create, and load the environment.
-- **Out of date:** Download, update, and load the environment.
-- **Up to date:** Load the existing environment.
-
-The method returns a `bool` indicating whether the operation succeeded.
-
-#### Load an existing backend
-
-Use `LoadAsync()` to load or initialize the backend environment directly.
-
-```csharp
-bool success = await backend.LoadAsync();
-```
-
-#### Manage the backend environment
-
-You can explicitly control the setup operation by specifying a `BackendStatus` value.
-
-```csharp
-bool success = await backend.SetupAsync(BackendStatus.Update);
-```
-
-Depending on the supported `BackendStatus` values, setup operations can include creating, updating, rebuilding, or reinstalling the environment.
-
-To delete the backend environment:
-
-```csharp
-bool success = await backend.DeleteAsync();
-```
-
-To check whether the backend environment exists:
-
-```csharp
+// Check whether the backend environment exists.
 bool exists = backend.Exists();
-```
 
-### Custom Configuration
 
-You can create a `BackendConfig` to define a custom backend configuration instead of using a built-in vendor default.
+// ============================================================
+// Backend Setup Operations
+// ============================================================
+// Create   - Create a new environment.
+// Load     - Load operation status.
+// Update   - Update an existing environment.
+// Rebuild  - Rebuild the environment.
+// Reinstall - Reinstall the environment.
 
-```csharp
+bool success = await backend.SetupAsync(BackendStatus.Create);
+
+
+// ============================================================
+// Custom Configuration
+// ============================================================
+// Name          - Backend name
+// Version       - Python version (Supported: 3.12, 3.13, 3.14)
+// Directory     - Backend directory
+// Requirements  - List of python package requiremnets.
+
+// Define a custom backend configuration.
 var customConfiguration = new BackendConfig
 {
     Name = "cuda",
@@ -123,37 +110,26 @@ var customConfiguration = new BackendConfig
     ]
 };
 
-var backend = new HuggingFaceBackend(configuration);
-```
+// Create a backend using the custom configuration.
+var customBackend = new HuggingFaceBackend(customConfiguration);
 
-The configuration specifies:
 
-| Property | Description |
-| --- | --- |
-| `Name` | Backend configuration name. |
-| `Version` | Python version identifier. |
-| `Directory` | Directory used for the backend environment. |
-| `Requirements` | List of requirement URLs used by the backend setup process. |
+// ============================================================
+// Built-in Configuration Customization
+// ============================================================
 
-### Using Built-in Configurations
-
-Retrieve a built-in configuration for a supported vendor with `GetConfig()`.
-
-```csharp
+// Retrieve a built-in vendor configuration.
 BackendConfig configuration = HuggingFaceBackend.GetConfig(VendorType.Nvidia);
-```
 
-`BackendConfig` is a C# record, so you can create a modified copy using a `with` expression without modifying the original configuration.
-
-```csharp
-var customConfiguration = configuration with
+// Create a modified copy of the configuration.
+// BackendConfig is a record, so the original remains unchanged.
+var modifiedConfiguration = configuration with
 {
     Name = "cuda-test",
     Version = "3.14",
     Directory = "My Location"
 };
 
-var backend = new HuggingFaceBackend(customConfiguration);
+// Create a backend using the modified configuration.
+var modifiedBackend = new HuggingFaceBackend(modifiedConfiguration);
 ```
-
-This approach lets you reuse built-in configuration settings while overriding only the properties you need.

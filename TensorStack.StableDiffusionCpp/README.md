@@ -5,7 +5,11 @@ Basic .NET Wrapper API for StableDiffusion.cpp
 ## Image Example
 Generate an image using Krea2 Turbo
 ```csharp
-    using (var pipeline = new StableDiffusionPipeline(configuration))
+using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
+{
+    await backend.InitializeAsync();
+
+    using (var pipeline = new StableDiffusionPipeline(backend))
     {
         var device = pipeline.Devices.FirstOrDefault(x => x.Type == DeviceType.GPU);
         await pipeline.LoadContextAsync(new ContextOptions
@@ -40,13 +44,18 @@ Generate an image using Krea2 Turbo
         var imageTensor = result.FirstOrDefault();
         await imageTensor.SaveAsync("OutputImage.png");
     }
+}
 ```
 
 
 ## Video Example
 Generate an video using MiniMax-H3
 ```csharp
-    using (var pipeline = new StableDiffusionPipeline(configuration))
+using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
+{
+    await backend.InitializeAsync();
+
+    using (var pipeline = new StableDiffusionPipeline(backend))
     {
         var device = pipeline.Devices.FirstOrDefault(x => x.Type == DeviceType.GPU);
         await pipeline.LoadContextAsync(new ContextOptions
@@ -83,6 +92,7 @@ Generate an video using MiniMax-H3
         var videoSequence = await pipeline.GenerateVideoAsync(options);
         await videoSequence.SaveAsync("OutputVideo.mp4");
     }
+}
 ```
 
 
@@ -90,66 +100,51 @@ Generate an video using MiniMax-H3
 
 The `StableDiffusionBackend` class to manage `StableDiffusion.cpp` backend environments. You can initialize a backend using built-in vendor configurations or provide a custom configuration to control its version, installation directory, and requirements.
 
-### Basic Usage
-
-Create a backend using a built-in vendor configuration:
-
+#### Basic Documentation
 ```csharp
+// Create a backend using built-in vendor defaults.
 var backend = new StableDiffusionBackend(VendorType.Nvidia);
-```
 
-#### Initialize the backend
+// Initialize the environment.
+// Attempts to load an existing environment, update it if loading
+// fails, or create a new environment if necessary.
+bool initialized = await backend.InitializeAsync();
 
-Use `InitializeAsync()` to initialize the backend environment according to its current state.
+// Load the environment directly.
+bool loaded = await backend.LoadAsync();
 
-```csharp
-bool success = await backend.InitializeAsync();
-```
+// Perform a specific setup operation.
+bool updated = await backend.SetupAsync(BackendStatus.Update);
 
-Initialization handles the appropriate setup workflow:
+// Delete the backend environment.
+bool deleted = await backend.DeleteAsync();
 
-- **Not installed:** Download, create, and load the environment.
-- **Out of date:** Download, update, and load the environment.
-- **Up to date:** Load the existing environment.
-
-The method returns a `bool` indicating whether the operation succeeded.
-
-#### Load an existing backend
-
-Use `LoadAsync()` to load or initialize the backend environment directly.
-
-```csharp
-bool success = await backend.LoadAsync();
-```
-
-#### Manage the backend environment
-
-You can explicitly control the setup operation by specifying a `BackendStatus` value.
-
-```csharp
-bool success = await backend.SetupAsync(BackendStatus.Update);
-```
-
-Depending on the supported `BackendStatus` values, setup operations can include creating, updating, rebuilding, or reinstalling the environment.
-
-To delete the backend environment:
-
-```csharp
-bool success = await backend.DeleteAsync();
-```
-
-To check whether the backend environment exists:
-
-```csharp
+// Check whether the backend environment exists.
 bool exists = backend.Exists();
-```
 
-### Custom Configuration
 
-You can create a `BackendConfig` to define a custom backend configuration instead of using a built-in vendor default.
+// ============================================================
+// Backend Setup Operations
+// ============================================================
+// Create   - Create a new environment.
+// Load     - Load operation status.
+// Update   - Update an existing environment.
+// Rebuild  - Rebuild the environment.
+// Reinstall - Reinstall the environment.
 
-```csharp
-var configuration = new BackendConfig
+bool success = await backend.SetupAsync(BackendStatus.Create);
+
+
+// ============================================================
+// Custom Configuration
+// ============================================================
+// Name          - Backend name
+// Version       - StableDiffusionCpp version
+// Directory     - Backend directory
+// Requirements  - List of downloadrequiremnets.
+
+// Define a custom backend configuration.
+var customConfiguration = new BackendConfig
 {
     Name = "vulkan",
     Version = "956",
@@ -160,36 +155,25 @@ var configuration = new BackendConfig
     ]
 };
 
-var backend = new StableDiffusionBackend(configuration);
-```
+// Create a backend using the custom configuration.
+var customBackend = new StableDiffusionBackend(customConfiguration);
 
-The configuration specifies:
 
-| Property | Description |
-| --- | --- |
-| `Name` | Backend configuration name. |
-| `Version` | Backend version identifier. |
-| `Directory` | Directory used for the backend environment. |
-| `Requirements` | List of requirement URLs used by the backend setup process. |
+// ============================================================
+// Built-in Configuration Customization
+// ============================================================
 
-### Using Built-in Configurations
-
-Retrieve a built-in configuration for a supported vendor with `GetConfig()`.
-
-```csharp
+// Retrieve a built-in vendor configuration.
 BackendConfig configuration = StableDiffusionBackend.GetConfig(VendorType.Nvidia);
-```
 
-`BackendConfig` is a C# record, so you can create a modified copy using a `with` expression without modifying the original configuration.
-
-```csharp
-var customConfiguration = configuration with
+// Create a modified copy of the configuration.
+// BackendConfig is a record, so the original remains unchanged.
+var modifiedConfiguration = configuration with
 {
     Name = "vulkan-test",
     Directory = "My Location"
 };
 
-var backend = new StableDiffusionBackend(customConfiguration);
+// Create a backend using the modified configuration.
+var modifiedBackend = new StableDiffusionBackend(modifiedConfiguration);
 ```
-
-This approach lets you reuse built-in configuration settings while overriding only the properties you need.
