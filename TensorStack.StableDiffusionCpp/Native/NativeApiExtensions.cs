@@ -67,6 +67,8 @@ namespace TensorStack.StableDiffusionCpp.Native
                 SageAttn = unmanaged.sage_attn,
                 ConditioningCacheSize = unmanaged.conditioning_cache_size,
                 IsBatchedCfgEnabled = !unmanaged.batched_cfg,
+                FlashAttnMode = AnsiStringMarshaller.ConvertToManaged(unmanaged.flash_attn_mode),
+                ConvDirectMode = AnsiStringMarshaller.ConvertToManaged(unmanaged.conv_direct_mode)
             };
         }
 
@@ -137,7 +139,9 @@ namespace TensorStack.StableDiffusionCpp.Native
                 tokenizer = AnsiStringMarshaller.ConvertToUnmanaged(managed.TokenizerPath),
                 sage_attn = managed.SageAttn,
                 conditioning_cache_size = managed.ConditioningCacheSize,
-                batched_cfg = managed.IsBatchedCfgEnabled
+                batched_cfg = managed.IsBatchedCfgEnabled,
+                flash_attn_mode = AnsiStringMarshaller.ConvertToUnmanaged(managed.FlashAttnMode),
+                conv_direct_mode = AnsiStringMarshaller.ConvertToUnmanaged(managed.ConvDirectMode),
             };
         }
 
@@ -172,6 +176,8 @@ namespace TensorStack.StableDiffusionCpp.Native
             AnsiStringMarshaller.Free(native.rpc_servers);
             AnsiStringMarshaller.Free(native.model_args);
             AnsiStringMarshaller.Free(native.tokenizer);
+            AnsiStringMarshaller.Free(native.flash_attn_mode);
+            AnsiStringMarshaller.Free(native.conv_direct_mode);
             if (native.embeddings != null)
             {
                 for (uint i = 0; i < native.embedding_count; i++)

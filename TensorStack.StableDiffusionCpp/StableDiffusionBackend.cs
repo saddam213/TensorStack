@@ -395,33 +395,33 @@ namespace TensorStack.StableDiffusionCpp
                 VendorType.AMD => new BackendConfig
                 {
                     Name = "rocm",
-                    Version = "956",
+                    Version = "968",
                     Directory = "StableDiffusionCpp",
                     Requirements =
                     [
-                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/sd-master-1b0ba10-bin-win-rocm-10.1.0-x64.zip",
+                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-968-8cd731e/sd-master-8cd731e-bin-win-rocm-10.1.0-x64.zip",
                         "https://stable.repo.amd.com/rocm/core/tarball/therock-dist-windows-multiarch-10.1.0.tar.gz"
                     ]
                 },
                 VendorType.Nvidia => new BackendConfig
                 {
                     Name = "cuda",
-                    Version = "956",
+                    Version = "968",
                     Directory = "StableDiffusionCpp",
                     Requirements =
                     [
-                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/cudart-sd-bin-win-cu12-x64.zip",
-                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/sd-master-1b0ba10-bin-win-cuda12-x64.zip"
+                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-968-8cd731e/cudart-sd-bin-win-cu12-x64.zip",
+                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-968-8cd731e/sd-master-8cd731e-bin-win-cuda12-x64.zip"
                     ]
                 },
                 _ => new BackendConfig
                 {
                     Name = "vulkan",
-                    Version = "956",
+                    Version = "968",
                     Directory = "StableDiffusionCpp",
                     Requirements =
                     [
-                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/sd-master-1b0ba10-bin-win-vulkan-x64.zip"
+                        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-968-8cd731e/sd-master-8cd731e-bin-win-vulkan-x64.zip"
                     ]
                 },
             };
