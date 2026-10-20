@@ -6,9 +6,6 @@ namespace TensorStack.HuggingFace.Common
 {
     public sealed record PipelineConfig
     {
-        [JsonPropertyName("model_path")]
-        public string ModelPath { get; set; }
-
         [JsonPropertyName("model_type")]
         public string ModelType { get; set; }
 

@@ -74,7 +74,6 @@ class LoraOption:
 @dataclass(slots=True)
 class PipelineConfig:
     # Required / core
-    model_path: str
     model_type: str
     template: str
     pipeline: str

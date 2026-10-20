@@ -179,7 +179,7 @@ def get_model_config(file_path: str, config: DataObjects.PipelineConfig):
         "audio_token_detokenizer_config": audio_token_detokenizer_config,
     }
 
-    info_1 = f"\n\tTemplate: {config.template} \n\tModelType: {config.model_type} \n\tModelPath: {config.model_path} \n\tTemplatePath: {template_path}"
+    info_1 = f"\n\tTemplate: {config.template} \n\tModelType: {config.model_type} \n\tTemplatePath: {template_path}"
     info_2 = f"\n\tTextEncoder: {text_encoder_path}\n\tTextEncoder2: {text_encoder_2_path}\n\tTextEncoder3: {text_encoder_3_path}\n\tUnet: {unet_path}\n\tTransformer: {transformer_path}\n\tTransformer2: {transformer_2_path}"
     info_3 = f"\n\tVae: {vae_path}\n\tAudioVae: {audio_vae_path}\n\tVocoder: {vocoder_path}\n\tConnectors: {connectors_path}\n\tLatentUpsampler: {latent_upsampler_path}\n\tLatentUpsamplerTemporal: {latent_upsampler_temporal_path}"
     info_4 = f"\n\tConditionEncoder: {condition_encoder_path}\n\tAudioTokenizer: {audio_tokenizer_path}\n\tAudioDetokenizer: {audio_token_detokenizer_path}"

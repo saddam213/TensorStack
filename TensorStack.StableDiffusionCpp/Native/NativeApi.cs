@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "8cd731e"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-968-8cd731e/include/stable-diffusion.h
+        public const string LibraryVersion = "0518b34"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-982-0518b34/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
         private static BackendInfo _backendInfo;
@@ -67,9 +67,9 @@ namespace TensorStack.StableDiffusionCpp.Native
             return new BackendInfo
             {
                 Devices = devices,
-                Commit = AnsiStringMarshaller.ConvertToManaged(sd_commit()),
-                Version = AnsiStringMarshaller.ConvertToManaged(sd_version()),
-                SystemInfo = AnsiStringMarshaller.ConvertToManaged(sd_get_system_info()),
+                Commit = Utf8StringMarshaller.ConvertToManaged(sd_commit()),
+                Version = Utf8StringMarshaller.ConvertToManaged(sd_version()),
+                SystemInfo = Utf8StringMarshaller.ConvertToManaged(sd_get_system_info()),
                 NumPhysicalCores = sd_get_num_physical_cores(),
             };
         }
@@ -696,6 +696,10 @@ namespace TensorStack.StableDiffusionCpp.Native
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_supports_video_generation))]
         [return: MarshalAs(UnmanagedType.I1)]
         internal static partial bool sd_ctx_supports_video_generation(sd_ctx_t* sd_ctx);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_supports_ref_image_conditioning))]
+        [return: MarshalAs(UnmanagedType.I1)]
+        internal static partial bool sd_ctx_supports_ref_image_conditioning(sd_ctx_t* sd_ctx);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_load_control_net))]
         [return: MarshalAs(UnmanagedType.I1)]

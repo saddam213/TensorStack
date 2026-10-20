@@ -244,7 +244,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <param name="data">The data.</param>
         private void OnLogCallback(NativeApi.sd_log_level_t level, byte* text, void* data)
         {
-            _logCallback?.Invoke(level.ToManaged(), AnsiStringMarshaller.ConvertToManaged(text)?.Trim('\r', '\n'));
+            _logCallback?.Invoke(level.ToManaged(), Utf8StringMarshaller.ConvertToManaged(text)?.Trim('\r', '\n'));
         }
 
 

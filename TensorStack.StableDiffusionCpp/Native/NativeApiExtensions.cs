@@ -15,28 +15,28 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             return new ContextOptions
             {
-                ModelPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.model_path),
-                ClipLPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.clip_l_path),
-                ClipGPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.clip_g_path),
-                ClipVisionPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.clip_vision_path),
-                T5xxlPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.t5xxl_path),
-                LlmPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.llm_path),
-                LlmVisionPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.llm_vision_path),
-                DiffusionModelPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.diffusion_model_path),
-                HighNoiseDiffusionModelPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.high_noise_diffusion_model_path),
-                UncondDiffusionModelPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.uncond_diffusion_model_path),
-                EmbeddingsConnectorsPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.embeddings_connectors_path),
-                VaePath = AnsiStringMarshaller.ConvertToManaged(unmanaged.vae_path),
-                AudioVaePath = AnsiStringMarshaller.ConvertToManaged(unmanaged.audio_vae_path),
-                AudioEncoderPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.audio_encoder_path),
-                TaesdPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.taesd_path),
-                ControlNetPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.control_net_path),
-                IpAdapterPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.ip_adapter_path),
-                MotionModulePath = AnsiStringMarshaller.ConvertToManaged(unmanaged.motion_module_path),
+                ModelPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.model_path),
+                ClipLPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.clip_l_path),
+                ClipGPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.clip_g_path),
+                ClipVisionPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.clip_vision_path),
+                T5xxlPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.t5xxl_path),
+                LlmPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.llm_path),
+                LlmVisionPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.llm_vision_path),
+                DiffusionModelPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.diffusion_model_path),
+                HighNoiseDiffusionModelPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.high_noise_diffusion_model_path),
+                UncondDiffusionModelPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.uncond_diffusion_model_path),
+                EmbeddingsConnectorsPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.embeddings_connectors_path),
+                VaePath = Utf8StringMarshaller.ConvertToManaged(unmanaged.vae_path),
+                AudioVaePath = Utf8StringMarshaller.ConvertToManaged(unmanaged.audio_vae_path),
+                AudioEncoderPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.audio_encoder_path),
+                TaesdPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.taesd_path),
+                ControlNetPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.control_net_path),
+                IpAdapterPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.ip_adapter_path),
+                MotionModulePath = Utf8StringMarshaller.ConvertToManaged(unmanaged.motion_module_path),
                 // Embeddings = "",
-                PhotoMakerPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.photo_maker_path),
-                PulidWeightsPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.pulid_weights_path),
-                TensorTypeRules = AnsiStringMarshaller.ConvertToManaged(unmanaged.tensor_type_rules),
+                PhotoMakerPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.photo_maker_path),
+                PulidWeightsPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.pulid_weights_path),
+                TensorTypeRules = Utf8StringMarshaller.ConvertToManaged(unmanaged.tensor_type_rules),
                 Threads = unmanaged.n_threads,
                 DataType = unmanaged.wtype.ToManaged(),
                 RngType = unmanaged.rng_type.ToManaged(),
@@ -51,24 +51,24 @@ namespace TensorStack.StableDiffusionCpp.Native
                 VaeConvDirect = unmanaged.vae_conv_direct,
                 ForceSdxlVaeConvScale = unmanaged.force_sdxl_vae_conv_scale,
                 VaeFormat = unmanaged.vae_format.ToManaged(),
-                MaxVram = AnsiStringMarshaller.ConvertToManaged(unmanaged.max_vram),
+                MaxVram = Utf8StringMarshaller.ConvertToManaged(unmanaged.max_vram),
                 IsPrefetchEnabled = !unmanaged.disable_prefetch,
                 EagerLoad = unmanaged.eager_load,
-                Backend = AnsiStringMarshaller.ConvertToManaged(unmanaged.backend),
-                ParamsBackend = AnsiStringMarshaller.ConvertToManaged(unmanaged.params_backend),
-                SplitMode = AnsiStringMarshaller.ConvertToManaged(unmanaged.split_mode),
+                Backend = Utf8StringMarshaller.ConvertToManaged(unmanaged.backend),
+                ParamsBackend = Utf8StringMarshaller.ConvertToManaged(unmanaged.params_backend),
+                SplitMode = Utf8StringMarshaller.ConvertToManaged(unmanaged.split_mode),
                 AutoFit = unmanaged.auto_fit,
-                RpcServers = AnsiStringMarshaller.ConvertToManaged(unmanaged.rpc_servers),
-                ModelArgs = AnsiStringMarshaller.ConvertToManaged(unmanaged.model_args),
+                RpcServers = Utf8StringMarshaller.ConvertToManaged(unmanaged.rpc_servers),
+                ModelArgs = Utf8StringMarshaller.ConvertToManaged(unmanaged.model_args),
                 IsSegmentedComputeEnabled = !unmanaged.disable_segmented_compute,
                 ScaleLinear = unmanaged.linear_scale,
                 ScaleAttn = unmanaged.attn_scale,
-                TokenizerPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.tokenizer),
+                TokenizerPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.tokenizer),
                 SageAttn = unmanaged.sage_attn,
                 ConditioningCacheSize = unmanaged.conditioning_cache_size,
                 IsBatchedCfgEnabled = !unmanaged.batched_cfg,
-                FlashAttnMode = AnsiStringMarshaller.ConvertToManaged(unmanaged.flash_attn_mode),
-                ConvDirectMode = AnsiStringMarshaller.ConvertToManaged(unmanaged.conv_direct_mode)
+                FlashAttnMode = Utf8StringMarshaller.ConvertToManaged(unmanaged.flash_attn_mode),
+                ConvDirectMode = Utf8StringMarshaller.ConvertToManaged(unmanaged.conv_direct_mode)
             };
         }
 
@@ -87,29 +87,29 @@ namespace TensorStack.StableDiffusionCpp.Native
 
             return new NativeApi.sd_ctx_params_t
             {
-                model_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.ModelPath),
-                clip_l_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.ClipLPath),
-                clip_g_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.ClipGPath),
-                clip_vision_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.ClipVisionPath),
-                t5xxl_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.T5xxlPath),
-                llm_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.LlmPath),
-                llm_vision_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.LlmVisionPath),
-                diffusion_model_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.DiffusionModelPath),
-                high_noise_diffusion_model_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.HighNoiseDiffusionModelPath),
-                uncond_diffusion_model_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.UncondDiffusionModelPath),
-                embeddings_connectors_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.EmbeddingsConnectorsPath),
-                vae_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.VaePath),
-                audio_vae_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.AudioVaePath),
-                audio_encoder_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.AudioEncoderPath),
-                taesd_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.TaesdPath),
-                control_net_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.ControlNetPath),
-                ip_adapter_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.IpAdapterPath),
-                motion_module_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.MotionModulePath),
+                model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ModelPath),
+                clip_l_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ClipLPath),
+                clip_g_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ClipGPath),
+                clip_vision_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ClipVisionPath),
+                t5xxl_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.T5xxlPath),
+                llm_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.LlmPath),
+                llm_vision_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.LlmVisionPath),
+                diffusion_model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.DiffusionModelPath),
+                high_noise_diffusion_model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.HighNoiseDiffusionModelPath),
+                uncond_diffusion_model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.UncondDiffusionModelPath),
+                embeddings_connectors_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.EmbeddingsConnectorsPath),
+                vae_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.VaePath),
+                audio_vae_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.AudioVaePath),
+                audio_encoder_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.AudioEncoderPath),
+                taesd_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.TaesdPath),
+                control_net_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ControlNetPath),
+                ip_adapter_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.IpAdapterPath),
+                motion_module_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.MotionModulePath),
                 embeddings = embeddings,
                 embedding_count = (uint)(managed.Embeddings?.Length ?? 0),
-                photo_maker_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.PhotoMakerPath),
-                pulid_weights_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.PulidWeightsPath),
-                tensor_type_rules = AnsiStringMarshaller.ConvertToUnmanaged(managed.TensorTypeRules),
+                photo_maker_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.PhotoMakerPath),
+                pulid_weights_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.PulidWeightsPath),
+                tensor_type_rules = Utf8StringMarshaller.ConvertToUnmanaged(managed.TensorTypeRules),
                 n_threads = managed.Threads,
                 wtype = managed.DataType.ToUnmanaged(),
                 rng_type = managed.RngType.ToUnmanaged(),
@@ -124,60 +124,60 @@ namespace TensorStack.StableDiffusionCpp.Native
                 vae_conv_direct = managed.VaeConvDirect,
                 force_sdxl_vae_conv_scale = managed.ForceSdxlVaeConvScale,
                 vae_format = managed.VaeFormat.ToUnmanaged(),
-                max_vram = AnsiStringMarshaller.ConvertToUnmanaged(managed.MaxVram),
+                max_vram = Utf8StringMarshaller.ConvertToUnmanaged(managed.MaxVram),
                 disable_prefetch = !managed.IsPrefetchEnabled,
                 eager_load = managed.EagerLoad,
-                backend = AnsiStringMarshaller.ConvertToUnmanaged(managed.Backend),
-                params_backend = AnsiStringMarshaller.ConvertToUnmanaged(managed.ParamsBackend),
-                split_mode = AnsiStringMarshaller.ConvertToUnmanaged(managed.SplitMode),
+                backend = Utf8StringMarshaller.ConvertToUnmanaged(managed.Backend),
+                params_backend = Utf8StringMarshaller.ConvertToUnmanaged(managed.ParamsBackend),
+                split_mode = Utf8StringMarshaller.ConvertToUnmanaged(managed.SplitMode),
                 auto_fit = managed.AutoFit,
-                rpc_servers = AnsiStringMarshaller.ConvertToUnmanaged(managed.RpcServers),
-                model_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.ModelArgs),
+                rpc_servers = Utf8StringMarshaller.ConvertToUnmanaged(managed.RpcServers),
+                model_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.ModelArgs),
                 disable_segmented_compute = !managed.IsSegmentedComputeEnabled,
                 linear_scale = managed.ScaleLinear,
                 attn_scale = managed.ScaleAttn,
-                tokenizer = AnsiStringMarshaller.ConvertToUnmanaged(managed.TokenizerPath),
+                tokenizer = Utf8StringMarshaller.ConvertToUnmanaged(managed.TokenizerPath),
                 sage_attn = managed.SageAttn,
                 conditioning_cache_size = managed.ConditioningCacheSize,
                 batched_cfg = managed.IsBatchedCfgEnabled,
-                flash_attn_mode = AnsiStringMarshaller.ConvertToUnmanaged(managed.FlashAttnMode),
-                conv_direct_mode = AnsiStringMarshaller.ConvertToUnmanaged(managed.ConvDirectMode),
+                flash_attn_mode = Utf8StringMarshaller.ConvertToUnmanaged(managed.FlashAttnMode),
+                conv_direct_mode = Utf8StringMarshaller.ConvertToUnmanaged(managed.ConvDirectMode),
             };
         }
 
 
         internal static void FreeUnmanaged(this NativeApi.sd_ctx_params_t native)
         {
-            AnsiStringMarshaller.Free(native.model_path);
-            AnsiStringMarshaller.Free(native.clip_l_path);
-            AnsiStringMarshaller.Free(native.clip_g_path);
-            AnsiStringMarshaller.Free(native.clip_vision_path);
-            AnsiStringMarshaller.Free(native.t5xxl_path);
-            AnsiStringMarshaller.Free(native.llm_path);
-            AnsiStringMarshaller.Free(native.llm_vision_path);
-            AnsiStringMarshaller.Free(native.diffusion_model_path);
-            AnsiStringMarshaller.Free(native.high_noise_diffusion_model_path);
-            AnsiStringMarshaller.Free(native.uncond_diffusion_model_path);
-            AnsiStringMarshaller.Free(native.embeddings_connectors_path);
-            AnsiStringMarshaller.Free(native.vae_path);
-            AnsiStringMarshaller.Free(native.audio_vae_path);
-            AnsiStringMarshaller.Free(native.audio_encoder_path);
-            AnsiStringMarshaller.Free(native.taesd_path);
-            AnsiStringMarshaller.Free(native.control_net_path);
-            AnsiStringMarshaller.Free(native.ip_adapter_path);
-            AnsiStringMarshaller.Free(native.motion_module_path);
-            AnsiStringMarshaller.Free(native.photo_maker_path);
-            AnsiStringMarshaller.Free(native.pulid_weights_path);
-            AnsiStringMarshaller.Free(native.tensor_type_rules);
-            AnsiStringMarshaller.Free(native.max_vram);
-            AnsiStringMarshaller.Free(native.backend);
-            AnsiStringMarshaller.Free(native.params_backend);
-            AnsiStringMarshaller.Free(native.split_mode);
-            AnsiStringMarshaller.Free(native.rpc_servers);
-            AnsiStringMarshaller.Free(native.model_args);
-            AnsiStringMarshaller.Free(native.tokenizer);
-            AnsiStringMarshaller.Free(native.flash_attn_mode);
-            AnsiStringMarshaller.Free(native.conv_direct_mode);
+            Utf8StringMarshaller.Free(native.model_path);
+            Utf8StringMarshaller.Free(native.clip_l_path);
+            Utf8StringMarshaller.Free(native.clip_g_path);
+            Utf8StringMarshaller.Free(native.clip_vision_path);
+            Utf8StringMarshaller.Free(native.t5xxl_path);
+            Utf8StringMarshaller.Free(native.llm_path);
+            Utf8StringMarshaller.Free(native.llm_vision_path);
+            Utf8StringMarshaller.Free(native.diffusion_model_path);
+            Utf8StringMarshaller.Free(native.high_noise_diffusion_model_path);
+            Utf8StringMarshaller.Free(native.uncond_diffusion_model_path);
+            Utf8StringMarshaller.Free(native.embeddings_connectors_path);
+            Utf8StringMarshaller.Free(native.vae_path);
+            Utf8StringMarshaller.Free(native.audio_vae_path);
+            Utf8StringMarshaller.Free(native.audio_encoder_path);
+            Utf8StringMarshaller.Free(native.taesd_path);
+            Utf8StringMarshaller.Free(native.control_net_path);
+            Utf8StringMarshaller.Free(native.ip_adapter_path);
+            Utf8StringMarshaller.Free(native.motion_module_path);
+            Utf8StringMarshaller.Free(native.photo_maker_path);
+            Utf8StringMarshaller.Free(native.pulid_weights_path);
+            Utf8StringMarshaller.Free(native.tensor_type_rules);
+            Utf8StringMarshaller.Free(native.max_vram);
+            Utf8StringMarshaller.Free(native.backend);
+            Utf8StringMarshaller.Free(native.params_backend);
+            Utf8StringMarshaller.Free(native.split_mode);
+            Utf8StringMarshaller.Free(native.rpc_servers);
+            Utf8StringMarshaller.Free(native.model_args);
+            Utf8StringMarshaller.Free(native.tokenizer);
+            Utf8StringMarshaller.Free(native.flash_attn_mode);
+            Utf8StringMarshaller.Free(native.conv_direct_mode);
             if (native.embeddings != null)
             {
                 for (uint i = 0; i < native.embedding_count; i++)
@@ -211,7 +211,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 ShiftedTimestep = unmanaged.shifted_timestep,
                 CustomSigmas = [],
                 FlowShift = unmanaged.flow_shift,
-                ExtraSampleArgs = AnsiStringMarshaller.ConvertToManaged(unmanaged.extra_sample_args),
+                ExtraSampleArgs = Utf8StringMarshaller.ConvertToManaged(unmanaged.extra_sample_args),
                 TxtCfg = unmangedGuidance.txt_cfg,
                 ImgCfg = unmangedGuidance.img_cfg,
                 DistilledGuidance = unmangedGuidance.distilled_guidance,
@@ -264,7 +264,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 custom_sigmas = customSigmas,
                 custom_sigmas_count = managed.CustomSigmas?.Length ?? 0,
                 flow_shift = managed.FlowShift,
-                extra_sample_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.ExtraSampleArgs)
+                extra_sample_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.ExtraSampleArgs)
             };
         }
 
@@ -276,7 +276,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 NativeMemory.Free(native.guidance.slg.layers);
             }
 
-            AnsiStringMarshaller.Free(native.extra_sample_args);
+            Utf8StringMarshaller.Free(native.extra_sample_args);
             if (native.custom_sigmas != null)
                 NativeMemory.Free(native.custom_sigmas);
         }
@@ -289,10 +289,10 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             return new GenerateImageOptions
             {
-                Prompt = AnsiStringMarshaller.ConvertToManaged(unmanaged.prompt),
-                NegativePrompt = AnsiStringMarshaller.ConvertToManaged(unmanaged.negative_prompt),
+                Prompt = Utf8StringMarshaller.ConvertToManaged(unmanaged.prompt),
+                NegativePrompt = Utf8StringMarshaller.ConvertToManaged(unmanaged.negative_prompt),
                 ClipSkip = unmanaged.clip_skip,
-                RefImageArgs = AnsiStringMarshaller.ConvertToManaged(unmanaged.ref_image_args),
+                RefImageArgs = Utf8StringMarshaller.ConvertToManaged(unmanaged.ref_image_args),
                 Width = unmanaged.width,
                 Height = unmanaged.height,
                 SampleParameters = unmanaged.sample_params.ToManaged(),
@@ -309,7 +309,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 QwenImageLayers = unmanaged.qwen_image_layers,
                 CircularX = unmanaged.circular_x,
                 CircularY = unmanaged.circular_y,
-                ImagePreprocess = AnsiStringMarshaller.ConvertToManaged(unmanaged.image_preprocess.rules),
+                ImagePreprocess = Utf8StringMarshaller.ConvertToManaged(unmanaged.image_preprocess.rules),
                 // Loras = "",
                 // InitImage = "",
                 // RefImages = "",
@@ -346,13 +346,13 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 loras = loras,
                 lora_count = (uint)(managed.Loras?.Length ?? 0),
-                prompt = AnsiStringMarshaller.ConvertToUnmanaged(managed.Prompt),
-                negative_prompt = AnsiStringMarshaller.ConvertToUnmanaged(managed.NegativePrompt),
+                prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.Prompt),
+                negative_prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.NegativePrompt),
                 clip_skip = managed.ClipSkip,
                 init_image = managed.InitImage != null ? managed.InitImage.ToUnmanaged() : default,
                 ref_images = refImages,
                 ref_images_count = managed.RefImages?.Length ?? 0,
-                ref_image_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.RefImageArgs),
+                ref_image_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.RefImageArgs),
                 mask_image = managed.MaskImage != null ? managed.MaskImage.ToUnmanaged(1) : default,
                 width = managed.Width,
                 height = managed.Height,
@@ -374,7 +374,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 circular_y = managed.CircularY,
                 image_preprocess = new NativeApi.sd_image_preprocess_params_t
                 {
-                    rules = AnsiStringMarshaller.ConvertToUnmanaged(managed.ImagePreprocess)
+                    rules = Utf8StringMarshaller.ConvertToUnmanaged(managed.ImagePreprocess)
                 }
             };
         }
@@ -383,11 +383,11 @@ namespace TensorStack.StableDiffusionCpp.Native
         internal static void FreeUnmanaged(this NativeApi.sd_img_gen_params_t native)
         {
             if (native.prompt != null)
-                AnsiStringMarshaller.Free(native.prompt);
+                Utf8StringMarshaller.Free(native.prompt);
             if (native.negative_prompt != null)
-                AnsiStringMarshaller.Free(native.negative_prompt);
+                Utf8StringMarshaller.Free(native.negative_prompt);
             if (native.ref_image_args != null)
-                AnsiStringMarshaller.Free(native.ref_image_args);
+                Utf8StringMarshaller.Free(native.ref_image_args);
 
             if (native.loras != null)
             {
@@ -417,7 +417,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             native.vae_tiling_params.FreeUnmanaged();
             native.cache.FreeUnmanaged();
             native.hires.FreeUnmanaged();
-            AnsiStringMarshaller.Free(native.image_preprocess.rules);
+            Utf8StringMarshaller.Free(native.image_preprocess.rules);
         }
 
         #endregion
@@ -428,8 +428,8 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             return new GenerateVideoOptions
             {
-                Prompt = AnsiStringMarshaller.ConvertToManaged(unmanaged.prompt),
-                NegativePrompt = AnsiStringMarshaller.ConvertToManaged(unmanaged.negative_prompt),
+                Prompt = Utf8StringMarshaller.ConvertToManaged(unmanaged.prompt),
+                NegativePrompt = Utf8StringMarshaller.ConvertToManaged(unmanaged.negative_prompt),
                 ClipSkip = unmanaged.clip_skip,
                 Fps = unmanaged.fps,
                 MoeBoundary = unmanaged.moe_boundary,
@@ -514,8 +514,8 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 loras = loras,
                 lora_count = (uint)(managed.Loras?.Length ?? 0),
-                prompt = AnsiStringMarshaller.ConvertToUnmanaged(managed.Prompt),
-                negative_prompt = AnsiStringMarshaller.ConvertToUnmanaged(managed.NegativePrompt),
+                prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.Prompt),
+                negative_prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.NegativePrompt),
                 clip_skip = managed.ClipSkip,
                 init_image = managed.InitImage != null ? managed.InitImage.ToUnmanaged() : default,
                 end_image = managed.EndImage != null ? managed.EndImage.ToUnmanaged() : default,
@@ -544,7 +544,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 circular_y = managed.CircularY,
                 image_preprocess = new NativeApi.sd_image_preprocess_params_t
                 {
-                    rules = AnsiStringMarshaller.ConvertToUnmanaged(managed.ImagePreprocess)
+                    rules = Utf8StringMarshaller.ConvertToUnmanaged(managed.ImagePreprocess)
                 }
             };
         }
@@ -562,8 +562,8 @@ namespace TensorStack.StableDiffusionCpp.Native
                 NativeMemory.Free(native.loras);
             }
 
-            AnsiStringMarshaller.Free(native.prompt);
-            AnsiStringMarshaller.Free(native.negative_prompt);
+            Utf8StringMarshaller.Free(native.prompt);
+            Utf8StringMarshaller.Free(native.negative_prompt);
 
             // Images
             native.init_image.FreeUnmanaged();
@@ -617,7 +617,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             native.vae_tiling_params.FreeUnmanaged();
             native.cache.FreeUnmanaged();
             native.hires.FreeUnmanaged();
-            AnsiStringMarshaller.Free(native.image_preprocess.rules);
+            Utf8StringMarshaller.Free(native.image_preprocess.rules);
         }
 
         #endregion
@@ -630,13 +630,13 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 is_high_noise = managed.IsHighNoise,
                 multiplier = managed.Multiplier,
-                path = AnsiStringMarshaller.ConvertToUnmanaged(managed.Path)
+                path = Utf8StringMarshaller.ConvertToUnmanaged(managed.Path)
             };
         }
 
         internal static void FreeUnmanaged(this NativeApi.sd_lora_t native)
         {
-            AnsiStringMarshaller.Free(native.path);
+            Utf8StringMarshaller.Free(native.path);
         }
 
         #endregion
@@ -654,7 +654,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 RelSizeW = unmanaged.rel_size_w,
                 RelSizeH = unmanaged.rel_size_h,
                 TemporalTiling = unmanaged.temporal_tiling,
-                ExtraTilingArgs = AnsiStringMarshaller.ConvertToManaged(unmanaged.extra_tiling_args)
+                ExtraTilingArgs = Utf8StringMarshaller.ConvertToManaged(unmanaged.extra_tiling_args)
             };
         }
 
@@ -670,14 +670,14 @@ namespace TensorStack.StableDiffusionCpp.Native
                 target_overlap = managed.TargetOverlap,
                 rel_size_w = managed.RelSizeW,
                 rel_size_h = managed.RelSizeH,
-                extra_tiling_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.ExtraTilingArgs)
+                extra_tiling_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.ExtraTilingArgs)
             };
         }
 
 
         internal static void FreeUnmanaged(this NativeApi.sd_tiling_params_t native)
         {
-            AnsiStringMarshaller.Free(native.extra_tiling_args);
+            Utf8StringMarshaller.Free(native.extra_tiling_args);
         }
 
         #endregion
@@ -691,7 +691,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 Enabled = unmanaged.enabled,
                 Upscaler = unmanaged.upscaler.ToManaged(),
                 DenoisingStrength = unmanaged.denoising_strength,
-                ModelPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.model_path),
+                ModelPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.model_path),
                 Scale = unmanaged.scale,
                 Steps = unmanaged.steps,
                 TargetHeight = unmanaged.target_height,
@@ -715,7 +715,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 enabled = managed.Enabled,
                 upscaler = managed.Upscaler.ToUnmanaged(),
-                model_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.ModelPath),
+                model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ModelPath),
                 scale = managed.Scale,
                 target_width = managed.TargetWidth,
                 target_height = managed.TargetHeight,
@@ -730,7 +730,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         internal static void FreeUnmanaged(this NativeApi.sd_hires_params_t native)
         {
-            AnsiStringMarshaller.Free(native.model_path);
+            Utf8StringMarshaller.Free(native.model_path);
             if (native.custom_sigmas != null)
                 NativeMemory.Free(native.custom_sigmas);
         }
@@ -743,17 +743,17 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             return new NativeApi.sd_adetailer_params_t
             {
-                prompt = AnsiStringMarshaller.ConvertToUnmanaged(managed.Prompt),
-                negative_prompt = AnsiStringMarshaller.ConvertToUnmanaged(managed.NegativePrompt),
-                extra_ad_args = AnsiStringMarshaller.ConvertToUnmanaged(managed.ExtraAdArgs)
+                prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.Prompt),
+                negative_prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.NegativePrompt),
+                extra_ad_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.ExtraAdArgs)
             };
         }
 
         internal static void FreeUnmanaged(this NativeApi.sd_adetailer_params_t native)
         {
-            AnsiStringMarshaller.Free(native.prompt);
-            AnsiStringMarshaller.Free(native.negative_prompt);
-            AnsiStringMarshaller.Free(native.extra_ad_args);
+            Utf8StringMarshaller.Free(native.prompt);
+            Utf8StringMarshaller.Free(native.negative_prompt);
+            Utf8StringMarshaller.Free(native.extra_ad_args);
         }
 
         #endregion
@@ -775,7 +775,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 ResetErrorOnCompute = unmanaged.reset_error_on_compute,
                 ResidualDiffThreshold = unmanaged.residual_diff_threshold,
                 ReuseThreshold = unmanaged.reuse_threshold,
-                ScmMask = AnsiStringMarshaller.ConvertToManaged(unmanaged.scm_mask),
+                ScmMask = Utf8StringMarshaller.ConvertToManaged(unmanaged.scm_mask),
                 ScmPolicyDynamic = unmanaged.scm_policy_dynamic,
                 SpectrumFlexWindow = unmanaged.spectrum_flex_window,
                 SpectrumLam = unmanaged.spectrum_lam,
@@ -814,7 +814,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 taylorseer_n_derivatives = managed.TaylorseerNDerivatives,
                 taylorseer_skip_interval = managed.TaylorseerSkipInterval,
 
-                scm_mask = AnsiStringMarshaller.ConvertToUnmanaged(managed.ScmMask),
+                scm_mask = Utf8StringMarshaller.ConvertToUnmanaged(managed.ScmMask),
 
                 scm_policy_dynamic = managed.ScmPolicyDynamic,
 
@@ -831,7 +831,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         internal static void FreeUnmanaged(this NativeApi.sd_cache_params_t native)
         {
-            AnsiStringMarshaller.Free(native.scm_mask);
+            Utf8StringMarshaller.Free(native.scm_mask);
         }
 
 
@@ -843,15 +843,15 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             return new NativeApi.sd_embedding_t
             {
-                name = AnsiStringMarshaller.ConvertToUnmanaged(managed.Name),
-                path = AnsiStringMarshaller.ConvertToUnmanaged(managed.Path)
+                name = Utf8StringMarshaller.ConvertToUnmanaged(managed.Name),
+                path = Utf8StringMarshaller.ConvertToUnmanaged(managed.Path)
             };
         }
 
         internal static void FreeUnmanaged(this NativeApi.sd_embedding_t native)
         {
-            AnsiStringMarshaller.Free(native.name);
-            AnsiStringMarshaller.Free(native.path);
+            Utf8StringMarshaller.Free(native.name);
+            Utf8StringMarshaller.Free(native.path);
         }
 
         #endregion
@@ -862,7 +862,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             return new PhotoMakerOptions
             {
-                IdEmbedPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.id_embed_path),
+                IdEmbedPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.id_embed_path),
                 StyleStrength = unmanaged.style_strength
             };
         }
@@ -884,7 +884,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 id_images = images,
                 id_images_count = managed.IdImages?.Length ?? 0,
-                id_embed_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.IdEmbedPath),
+                id_embed_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.IdEmbedPath),
                 style_strength = managed.StyleStrength
             };
         }
@@ -900,7 +900,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 }
                 NativeMemory.Free(native.id_images);
             }
-            AnsiStringMarshaller.Free(native.id_embed_path);
+            Utf8StringMarshaller.Free(native.id_embed_path);
         }
 
         #endregion
@@ -912,7 +912,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             return new PulidOptions
             {
                 IdWeight = unmanaged.id_weight,
-                IdEmbeddingPath = AnsiStringMarshaller.ConvertToManaged(unmanaged.id_embedding_path),
+                IdEmbeddingPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.id_embedding_path),
             };
         }
 
@@ -920,14 +920,14 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             return new NativeApi.sd_pulid_params_t
             {
-                id_embedding_path = AnsiStringMarshaller.ConvertToUnmanaged(managed.IdEmbeddingPath),
+                id_embedding_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.IdEmbeddingPath),
                 id_weight = managed.IdWeight
             };
         }
 
         internal static void FreeUnmanaged(this NativeApi.sd_pulid_params_t native)
         {
-            AnsiStringMarshaller.Free(native.id_embedding_path);
+            Utf8StringMarshaller.Free(native.id_embedding_path);
         }
 
         #endregion

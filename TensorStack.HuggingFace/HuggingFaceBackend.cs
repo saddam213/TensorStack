@@ -412,7 +412,7 @@ namespace TensorStack.HuggingFace
                         "torch==2.11.0+cu130",
                         "torchaudio==2.11.0+cu130",
                         "torchvision==0.26.0+cu130",
-                        "torchao==0.17.0",
+                        "torchao==0.18.0",
                         ..DefaultRequirements,
                     ]
                 },

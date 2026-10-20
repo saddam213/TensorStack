@@ -411,7 +411,7 @@ def get_model_config(file_path: str, config: PipelineConfig):
         "chat_template": chat_template
     }
 
-    info_1 = f"\n\tModelType: {config.model_type}\n\tTemplate: {config.template}\n\tTemplatePath: {template_path}\n\tChatTemplate: {chat_template_file}\n\tModelPath: {config.model_path} \n\tBaseModel: {base_model_path}"
+    info_1 = f"\n\tModelType: {config.model_type}\n\tTemplate: {config.template}\n\tTemplatePath: {template_path}\n\tChatTemplate: {chat_template_file}\n\tBaseModel: {base_model_path}"
     print(f"[Load] Initialize Model... \n[ {info_1} \n]")
     return _model_config
 
