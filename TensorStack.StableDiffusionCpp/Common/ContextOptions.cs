@@ -40,11 +40,7 @@
         public string SplitMode { get; set; }
         public string TensorTypeRules { get; set; }
         public bool EnableMmap { get; set; }
-        public bool FlashAttn { get; set; }
-        public bool DiffusionFlashAttn { get; set; }
         public bool TaePreviewOnly { get; set; }
-        public bool DiffusionConvDirect { get; set; }
-        public bool VaeConvDirect { get; set; }
         public bool ForceSdxlVaeConvScale { get; set; }
         public VaeFormatType VaeFormat { get; set; } = VaeFormatType.Auto;
 

@@ -44,11 +44,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 Prediction = unmanaged.prediction.ToManaged(),
                 LoraApplyMode = unmanaged.lora_apply_mode.ToManaged(),
                 EnableMmap = unmanaged.enable_mmap,
-                FlashAttn = unmanaged.flash_attn,
-                DiffusionFlashAttn = unmanaged.diffusion_flash_attn,
                 TaePreviewOnly = unmanaged.tae_preview_only,
-                DiffusionConvDirect = unmanaged.diffusion_conv_direct,
-                VaeConvDirect = unmanaged.vae_conv_direct,
                 ForceSdxlVaeConvScale = unmanaged.force_sdxl_vae_conv_scale,
                 VaeFormat = unmanaged.vae_format.ToManaged(),
                 MaxVram = Utf8StringMarshaller.ConvertToManaged(unmanaged.max_vram),
@@ -117,11 +113,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 prediction = managed.Prediction.ToUnmanaged(),
                 lora_apply_mode = managed.LoraApplyMode.ToUnmanaged(),
                 enable_mmap = managed.EnableMmap,
-                flash_attn = managed.FlashAttn,
-                diffusion_flash_attn = managed.DiffusionFlashAttn,
                 tae_preview_only = managed.TaePreviewOnly,
-                diffusion_conv_direct = managed.DiffusionConvDirect,
-                vae_conv_direct = managed.VaeConvDirect,
                 force_sdxl_vae_conv_scale = managed.ForceSdxlVaeConvScale,
                 vae_format = managed.VaeFormat.ToUnmanaged(),
                 max_vram = Utf8StringMarshaller.ConvertToUnmanaged(managed.MaxVram),
@@ -446,6 +438,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 Hires = unmanaged.hires.ToManaged(),
                 CircularX = unmanaged.circular_x,
                 CircularY = unmanaged.circular_y,
+                RefImageArgs = Utf8StringMarshaller.ConvertToManaged(unmanaged.ref_image_args),
                 //ControlFrames,
                 //EndImage,
                 //InitImage,
@@ -545,7 +538,8 @@ namespace TensorStack.StableDiffusionCpp.Native
                 image_preprocess = new NativeApi.sd_image_preprocess_params_t
                 {
                     rules = Utf8StringMarshaller.ConvertToUnmanaged(managed.ImagePreprocess)
-                }
+                },
+                ref_image_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.RefImageArgs)
             };
         }
 
@@ -618,6 +612,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             native.cache.FreeUnmanaged();
             native.hires.FreeUnmanaged();
             Utf8StringMarshaller.Free(native.image_preprocess.rules);
+            Utf8StringMarshaller.Free(native.ref_image_args);
         }
 
         #endregion
@@ -983,6 +978,12 @@ namespace TensorStack.StableDiffusionCpp.Native
         #endregion
 
         #region ImageData
+
+        public static unsafe ImageTensor ToManaged(this NativeApi.sd_image_result_t result)
+        {
+            return result.image.ToManaged();
+        }
+
 
         internal static void FreeUnmanaged(this NativeApi.sd_image_t image)
         {

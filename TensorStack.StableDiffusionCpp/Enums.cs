@@ -78,6 +78,9 @@ namespace TensorStack.StableDiffusionCpp
         SefiFlow,
         MiniT2IFlow,
         SenseNovaFlow,
+        Flux3Flow,
+        H3AVFlow,
+        MingFlow,
         Default,
     }
 

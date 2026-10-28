@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "0518b34"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-982-0518b34/include/stable-diffusion.h
+        public const string LibraryVersion = "be48649"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-1017-be48649/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
         private static BackendInfo _backendInfo;
@@ -132,6 +132,9 @@ namespace TensorStack.StableDiffusionCpp.Native
             SEFI_FLOW_PRED,
             MINIT2I_FLOW_PRED,
             SENSENOVA_U1_FLOW_PRED,
+            FLUX3_FLOW_PRED,
+            H3_AV_FLOW_PRED,
+            MING_IMAGE_FLOW_PRED,
             PREDICTION_COUNT
         }
 
@@ -399,6 +402,33 @@ namespace TensorStack.StableDiffusionCpp.Native
 
 
         [StructLayout(LayoutKind.Sequential)]
+        internal struct sd_image_result_t
+        {
+            public sd_image_t image;
+            public byte* generation_info;
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct sd_image_generation_result_t
+        {
+            public sd_image_result_t* items;
+            public int count;
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct sd_video_generation_result_t
+        {
+            public sd_image_t* frames;
+            public int frame_count;
+            public sd_audio_t* audio;
+            public int fps;
+            public byte* generation_info;
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
         internal struct sd_ref_video_t
         {
             public sd_image_t* frames;
@@ -617,6 +647,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             public bool circular_y;
 
             public sd_image_preprocess_params_t image_preprocess;
+            public byte* ref_image_args;
         }
 
 
@@ -805,7 +836,10 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(generate_image))]
         [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool generate_image(sd_ctx_t* sd_ctx, sd_img_gen_params_t* sd_img_gen_params, out sd_image_t* images_out, out int num_images_out);
+        internal static partial bool generate_image(sd_ctx_t* sd_ctx, sd_img_gen_params_t* sd_img_gen_params, out sd_image_generation_result_t* result_out);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(free_sd_image_generation_result))]
+        internal static partial void free_sd_image_generation_result(sd_image_generation_result_t* result);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_cancel_generation))]
         internal static partial void sd_cancel_generation(sd_ctx_t* sd_ctx, sd_cancel_mode_t mode);
@@ -815,7 +849,10 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(generate_video))]
         [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool generate_video(sd_ctx_t* sd_ctx, sd_vid_gen_params_t* sd_vid_gen_params, out sd_image_t* frames_out, out int num_frames_out, out sd_audio_t* audio_out, out int fps_out);
+        internal static partial bool generate_video(sd_ctx_t* sd_ctx, sd_vid_gen_params_t* sd_vid_gen_params, out sd_video_generation_result_t* result_out);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(free_sd_video_generation_result))]
+        internal static partial void free_sd_video_generation_result(sd_video_generation_result_t* result);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(new_upscaler_ctx))]
         internal static partial upscaler_ctx_t* new_upscaler_ctx(byte* esrgan_path, [MarshalAs(UnmanagedType.I1)] bool direct, int n_threads, int tile_size, byte* backend, byte* params_backend);
@@ -825,7 +862,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(upscale))]
         [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool upscale(upscaler_ctx_t* upscaler_ctx, sd_image_t input_image, uint upscale_factor, out sd_image_t* images_out, out int num_images_out);
+        internal static partial bool upscale(upscaler_ctx_t* upscaler_ctx, sd_image_t input_image, uint upscale_factor, out sd_image_generation_result_t* result_out);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(get_upscale_factor))]
         internal static partial int get_upscale_factor(upscaler_ctx_t* upscaler_ctx);
@@ -841,7 +878,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(adetail_image))]
         [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool adetail_image(adetailer_ctx_t* adetailer_ctx, sd_ctx_t* sd_ctx, sd_image_t input_image, sd_adetailer_params_t* adetailer_params, sd_img_gen_params_t* inpaint_params, out sd_image_t* images_out, out int num_images_out);
+        internal static partial bool adetail_image(adetailer_ctx_t* adetailer_ctx, sd_ctx_t* sd_ctx, sd_image_t input_image, sd_adetailer_params_t* adetailer_params, sd_img_gen_params_t* inpaint_params, out sd_image_generation_result_t* result_out);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(convert))]
         [return: MarshalAs(UnmanagedType.I1)]
@@ -876,6 +913,10 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_list_devices))]
         internal static partial nuint sd_list_devices(byte* buffer, nuint buffer_size);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_add_rpc_servers))]
+        [return: MarshalAs(UnmanagedType.I1)]
+        internal static partial bool sd_add_rpc_servers(byte* servers);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(free_sd_images))]
         internal static partial void free_sd_images(sd_image_t* result_images, int num_images);

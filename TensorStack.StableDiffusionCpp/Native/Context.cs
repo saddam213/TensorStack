@@ -102,9 +102,12 @@ namespace TensorStack.StableDiffusionCpp.Native
             var parameters = options.ToUnmanaged();
             try
             {
-                if (!NativeApi.generate_image(_contextHandle.GetContext(), &parameters, out NativeApi.sd_image_t* unmanagedImages, out int unmanagedImageCount))
+                if (!NativeApi.generate_image(_contextHandle.GetContext(), &parameters, out NativeApi.sd_image_generation_result_t* unmanagedResults) || unmanagedResults == null)
                     return null;
 
+                var unmanagedResult = unmanagedResults[0];
+                var unmanagedImages = unmanagedResult.items;
+                var unmanagedImageCount = unmanagedResult.count;
                 if (unmanagedImages == null || unmanagedImageCount <= 0)
                     return null;
 
@@ -119,7 +122,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 }
                 finally
                 {
-                    NativeApi.free_sd_images(unmanagedImages, unmanagedImageCount);
+                    NativeApi.free_sd_image_generation_result(unmanagedResults);
                 }
             }
             finally
@@ -139,9 +142,14 @@ namespace TensorStack.StableDiffusionCpp.Native
             var parameters = options.ToUnmanaged();
             try
             {
-                if (!NativeApi.generate_video(_contextHandle.GetContext(), &parameters, out NativeApi.sd_image_t* unmanagedFrames, out int unmanagedFrameCount, out NativeApi.sd_audio_t* unmanagedAudio, out int fps))
+                if (!NativeApi.generate_video(_contextHandle.GetContext(), &parameters, out NativeApi.sd_video_generation_result_t* unmanagedResults) || unmanagedResults == null)
                     return null;
 
+                var unmanagedResult = unmanagedResults[0];
+                var unmanagedFrames = unmanagedResult.frames;
+                var unmanagedFrameCount = unmanagedResult.frame_count;
+                var unmanagedAudio = unmanagedResult.audio;
+                var unmanagedFps = unmanagedResult.fps;
                 if (unmanagedFrames == null || unmanagedFrameCount <= 0)
                     return null;
 
@@ -157,8 +165,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 }
                 finally
                 {
-                    NativeApi.free_sd_audio(unmanagedAudio);
-                    NativeApi.free_sd_images(unmanagedFrames, unmanagedFrameCount);
+                    NativeApi.free_sd_video_generation_result(unmanagedResults);
                 }
             }
             finally

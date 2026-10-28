@@ -214,6 +214,12 @@
                     return NativeApi.prediction_t.MINIT2I_FLOW_PRED;
                 case PredictionType.SenseNovaFlow:
                     return NativeApi.prediction_t.SENSENOVA_U1_FLOW_PRED;
+                case PredictionType.Flux3Flow:
+                    return NativeApi.prediction_t.FLUX3_FLOW_PRED;
+                case PredictionType.H3AVFlow:
+                    return NativeApi.prediction_t.H3_AV_FLOW_PRED;
+                case PredictionType.MingFlow:
+                    return NativeApi.prediction_t.MING_IMAGE_FLOW_PRED;
                 default:
                     return NativeApi.prediction_t.PREDICTION_COUNT;
             }
@@ -239,6 +245,12 @@
                     return PredictionType.MiniT2IFlow;
                 case NativeApi.prediction_t.SENSENOVA_U1_FLOW_PRED:
                     return PredictionType.SenseNovaFlow;
+                case NativeApi.prediction_t.FLUX3_FLOW_PRED:
+                    return PredictionType.Flux3Flow;
+                case NativeApi.prediction_t.H3_AV_FLOW_PRED:
+                    return PredictionType.H3AVFlow;
+                case NativeApi.prediction_t.MING_IMAGE_FLOW_PRED:
+                    return PredictionType.MingFlow;
                 default:
                     return PredictionType.Default;
             }
