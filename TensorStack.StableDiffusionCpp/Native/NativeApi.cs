@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "be48649"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-1017-be48649/include/stable-diffusion.h
+        public const string LibraryVersion = "77b72a2"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-1024-77b72a2/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
         private static BackendInfo _backendInfo;
