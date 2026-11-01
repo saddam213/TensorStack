@@ -12,14 +12,10 @@ using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
     using (var pipeline = new StableDiffusionPipeline(backend))
     {
         var device = pipeline.Devices.FirstOrDefault(x => x.Type == DeviceType.GPU);
-        await pipeline.LoadContextAsync(new ContextOptions
+        await pipeline.LoadAsync(new StableDiffusionOptions
         {
             Backend = device.Backend,
             ParamsBackend = "*=cpu",
-            MaxVram = "-1",
-            FlashAttn = true,
-            DiffusionFlashAttn = true,
-
             LlmPath = "Qwen3VL-4B-Instruct-Q8_0.gguf",
             VaePath = "diffusion_pytorch_model.safetensors",
             DiffusionModelPath = "Krea-2-Turbo-Q8_0.gguf",
@@ -41,8 +37,7 @@ using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
         };
 
         var result = await pipeline.GenerateImageAsync(options);
-        var imageTensor = result.FirstOrDefault();
-        await imageTensor.SaveAsync("OutputImage.png");
+        await result.SaveAsync("OutputImage.png");
     }
 }
 ```
@@ -58,14 +53,10 @@ using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
     using (var pipeline = new StableDiffusionPipeline(backend))
     {
         var device = pipeline.Devices.FirstOrDefault(x => x.Type == DeviceType.GPU);
-        await pipeline.LoadContextAsync(new ContextOptions
+        await pipeline.LoadAsync(new StableDiffusionOptions
         {
             Backend = device.Backend,
             ParamsBackend = "*=cpu",
-            MaxVram = "-1",
-            FlashAttn = true,
-            DiffusionFlashAttn = true,
-
             LlmPath = "qwen3vl_32b_minimax_h3-Q4_K_M.gguf",
             VaePath = "minimax_h3_video_vae_fp16.safetensors",
             AudioVaePath = "minimax_h3_audio_vae_fp32.safetensors",
@@ -93,6 +84,97 @@ using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
         await videoSequence.SaveAsync("OutputVideo.mp4");
     }
 }
+```
+
+## Upscale Example
+Upscale Image, Video or inline with generations
+```csharp
+// Upscale Image
+using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
+{
+    await backend.InitializeAsync();
+
+    using (var pipeline = new StableDiffusionPipeline(backend))
+    {
+        var device = pipeline.Devices.FirstOrDefault(x => x.Type == DeviceType.GPU);
+        await pipeline.LoadAsync(new UpscaleOptions
+        {
+            Backend = device.Backend,
+            ModelPath = "2xPSNR.gguf"
+        });
+
+        var inputImage = new ImageInput("InputImage.png");
+        var resultImage = await pipeline.UpscaleImageAsync(inputImage);
+        await resultImage.SaveAsync("OutputImage.png");
+    }
+}
+
+
+// Upscale Video
+using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
+{
+    await backend.InitializeAsync();
+
+    using (var pipeline = new StableDiffusionPipeline(backend))
+    {
+        var device = pipeline.Devices.FirstOrDefault(x => x.Type == DeviceType.GPU);
+        await pipeline.LoadAsync(new UpscaleOptions
+        {
+            Backend = device.Backend,
+            ModelPath = "2xPSNR.gguf"
+        });
+
+        var inputVideo = new VideoInput("InputVideo.mp4");
+        var resultVideo = await pipeline.UpscaleVideoAsync(inputVideo);
+        await resultVideo.SaveAsync("OutputVideo.mp4");
+    }
+}
+
+
+// Inline StableDiffusion + Upscale
+using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
+{
+    await backend.InitializeAsync();
+
+    using (var pipeline = new StableDiffusionPipeline(backend))
+    {
+        var device = pipeline.Devices.FirstOrDefault(x => x.Type == DeviceType.GPU);
+        var stableDiffusionOptions = new StableDiffusionOptions
+        {
+            Backend = device.Backend,
+            ParamsBackend = "*=cpu",
+            LlmPath = "Qwen3VL-4B-Instruct-Q8_0.gguf",
+            VaePath = "diffusion_pytorch_model.safetensors",
+            DiffusionModelPath = "Krea-2-Turbo-Q8_0.gguf",
+        };
+        var upscaleOptions = new UpscaleOptions
+        {
+            Backend = device.Backend,
+            ModelPath = "2xPSNR.gguf"
+        };
+
+        await pipeline.LoadAsync(stableDiffusionOptions, upscaleOptions);
+
+        var defaultOptions = pipeline.DefaultImageOptions;
+        var options = defaultOptions with
+        {
+            Prompt = "cute cat",
+            Width = 1024,
+            Height = 1024,
+            Seed = 420,
+            SampleParameters = defaultOptions.SampleParameters with
+            {
+                TxtCfg = 1,
+                SampleSteps = 8,
+                SampleMethod = SamplerType.Euler,
+            }
+        };
+
+        var result = await pipeline.GenerateImageAsync(options);
+        await result.SaveAsync("OutputImage.png");
+    }
+}
+
 ```
 
 

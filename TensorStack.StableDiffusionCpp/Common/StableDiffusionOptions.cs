@@ -1,6 +1,6 @@
 ﻿namespace TensorStack.StableDiffusionCpp.Common
 {
-    public sealed record ContextOptions
+    public sealed record StableDiffusionOptions
     {
         public string ModelPath { get; set; }
         public string ClipLPath { get; set; }

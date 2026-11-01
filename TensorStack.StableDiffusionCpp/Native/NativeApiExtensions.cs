@@ -11,9 +11,9 @@ namespace TensorStack.StableDiffusionCpp.Native
     {
         #region ContextOptions
 
-        internal static ContextOptions ToManaged(this NativeApi.sd_ctx_params_t unmanaged)
+        internal static StableDiffusionOptions ToManaged(this NativeApi.sd_ctx_params_t unmanaged)
         {
-            return new ContextOptions
+            return new StableDiffusionOptions
             {
                 ModelPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.model_path),
                 ClipLPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.clip_l_path),
@@ -69,7 +69,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         }
 
 
-        internal static NativeApi.sd_ctx_params_t ToUnmanaged(this ContextOptions managed)
+        internal static NativeApi.sd_ctx_params_t ToUnmanaged(this StableDiffusionOptions managed)
         {
             NativeApi.sd_embedding_t* embeddings = null;
             if (managed.Embeddings is { Length: > 0 })
@@ -990,6 +990,14 @@ namespace TensorStack.StableDiffusionCpp.Native
             if (image.data != null)
             {
                 NativeMemory.Free(image.data);
+            }
+        }
+
+        internal static void FreeUnmanaged(this NativeApi.sd_image_t[] images)
+        {
+            foreach (var image in images)
+            {
+                FreeUnmanaged(image);
             }
         }
 

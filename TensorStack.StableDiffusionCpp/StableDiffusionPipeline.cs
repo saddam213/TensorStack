@@ -10,20 +10,20 @@ using TensorStack.StableDiffusionCpp.Native;
 
 namespace TensorStack.StableDiffusionCpp
 {
-    public class StableDiffusionPipeline : IDisposable
+    public sealed class StableDiffusionPipeline : IDisposable
     {
         private readonly ILogger _logger;
         private readonly IProgress<PipelineProgress> _progresssCallback;
-        private Context _context;
+        private StableDiffusionContext _stableDiffusionContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StableDiffusionPipeline"/> class.
         /// </summary>
-        /// <param name="backendPath">The path to a StableDiffusion.cpp backend directory.</param>
+        /// <param name="backendPath">The backend path.</param>
         /// <param name="progresssCallback">The progresss callback.</param>
-        /// <param name="logCallback">The log callback.</param>
+        /// <param name="logger">The logger.</param>
         /// <exception cref="System.Exception">Failed to load 'StableDiffusion.cpp' native library: {backendPath}</exception>
-        public StableDiffusionPipeline(string backendPath = null, IProgress<PipelineProgress> progresssCallback = null, ILogger logger = null)
+        public StableDiffusionPipeline(string backendPath, IProgress<PipelineProgress> progresssCallback = null, ILogger logger = null)
         {
             _logger = logger;
             _progresssCallback = progresssCallback;
@@ -54,7 +54,7 @@ namespace TensorStack.StableDiffusionCpp
             : this(backend.Config, progresssCallback, logger) { }
 
         /// <summary>
-        /// Gets the loaded backend information.
+        /// Gets the backend information.
         /// </summary>
         public BackendInfo BackendInfo { get; }
 
@@ -66,37 +66,91 @@ namespace TensorStack.StableDiffusionCpp
         /// <summary>
         /// Gets the default image options for the current context.
         /// </summary>
-        public GenerateImageOptions DefaultImageOptions => _context?.DefaultImageOptions;
+        public GenerateImageOptions DefaultImageOptions => _stableDiffusionContext?.DefaultImageOptions;
 
         /// <summary>
         /// Gets the default video options for the current context.
         /// </summary>
-        public GenerateVideoOptions DefaultVideoOptions => _context?.DefaultVideoOptions;
+        public GenerateVideoOptions DefaultVideoOptions => _stableDiffusionContext?.DefaultVideoOptions;
 
 
         /// <summary>
-        /// Loads the model context.
+        /// Loads the StableDiffusion pipeline with the specified options.
         /// </summary>
-        /// <param name="contextParameters">The context parameters.</param>
-        public void LoadContext(ContextOptions contextParameters)
+        /// <param name="options">The StableDiffusion options.</param>
+        public void Load(StableDiffusionOptions options)
         {
-            UnloadContext();
-            _context = new Context(contextParameters, OnProgressCallback, OnPreviewCallback, OnNativeLogCallback);
+            Unload();
+            _stableDiffusionContext = new StableDiffusionContext(options, OnProgressCallback, OnPreviewCallback, OnNativeLogCallback);
         }
 
 
         /// <summary>
-        /// Loads the modelcontext.
+        /// Loads the Upscale pipeline with the specified options.
         /// </summary>
-        /// <param name="contextParameters">The context parameters.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        public async Task LoadContextAsync(ContextOptions contextParameters, CancellationToken cancellationToken = default)
+        /// <param name="options">The Upscale options.</param>
+        public void Load(UpscaleOptions options)
         {
-            await Task.Run(() =>
+            Unload();
+            _stableDiffusionContext = new StableDiffusionContext(options, OnProgressCallback, OnNativeLogCallback);
+        }
+
+
+        /// <summary>
+        /// Loads the StableDiffusion + Upscale pipeline with the specified options.
+        /// </summary>
+        /// <param name="options">The StableDiffusion options.</param>
+        /// <param name="upscaleOptions">The upscale options.</param>
+        public void Load(StableDiffusionOptions options, UpscaleOptions upscaleOptions)
+        {
+            Unload();
+            _stableDiffusionContext = new StableDiffusionContext(options, upscaleOptions, OnProgressCallback, OnPreviewCallback, OnNativeLogCallback);
+        }
+
+
+        /// <summary>
+        /// Loads the StableDiffusion pipeline with the specified options.
+        /// </summary>
+        /// <param name="options">The StableDiffusion options.</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        public Task LoadAsync(StableDiffusionOptions options, CancellationToken cancellationToken = default)
+        {
+            return Task.Run(() =>
             {
-                LoadContext(contextParameters);
+                Load(options);
                 cancellationToken.ThrowIfCancellationRequested();
-            }, cancellationToken).ConfigureAwait(false);
+            }, cancellationToken);
+        }
+
+
+        /// <summary>
+        /// Loads the Upscale pipeline with the specified options.
+        /// </summary>
+        /// <param name="options">The Upscale options.</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        public Task LoadAsync(UpscaleOptions options, CancellationToken cancellationToken = default)
+        {
+            return Task.Run(() =>
+            {
+                Load(options);
+                cancellationToken.ThrowIfCancellationRequested();
+            }, cancellationToken);
+        }
+
+
+        /// <summary>
+        /// Loads the StableDiffusion + Upscale pipeline with the specified options.
+        /// </summary>
+        /// <param name="stableDiffusionOptions">The StableDiffusion options.</param>
+        /// <param name="upscaleOptions">The Upscale options.</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        public Task LoadAsync(StableDiffusionOptions stableDiffusionOptions, UpscaleOptions upscaleOptions, CancellationToken cancellationToken = default)
+        {
+            return Task.Run(() =>
+            {
+                Load(stableDiffusionOptions, upscaleOptions);
+                cancellationToken.ThrowIfCancellationRequested();
+            }, cancellationToken);
         }
 
 
@@ -104,9 +158,9 @@ namespace TensorStack.StableDiffusionCpp
         /// Generates an image with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>
-        public ImageTensor[] GenerateImage(GenerateImageOptions options)
+        public ImageTensor GenerateImage(GenerateImageOptions options, CancellationToken cancellationToken = default)
         {
-            return _context.Generate(options);
+            return _stableDiffusionContext.Generate(options, cancellationToken);
         }
 
 
@@ -115,15 +169,14 @@ namespace TensorStack.StableDiffusionCpp
         /// </summary>
         /// <param name="options">The options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public async Task<ImageTensor[]> GenerateImageAsync(GenerateImageOptions options, CancellationToken cancellationToken = default)
+        public Task<ImageTensor> GenerateImageAsync(GenerateImageOptions options, CancellationToken cancellationToken = default)
         {
-            cancellationToken.Register(() => CancelGenerate());
-            return await Task.Run(() =>
+            return Task.Run(() =>
             {
-                var result = GenerateImage(options);
+                var result = GenerateImage(options, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 return result;
-            }, cancellationToken).ConfigureAwait(false);
+            }, cancellationToken);
         }
 
 
@@ -131,9 +184,9 @@ namespace TensorStack.StableDiffusionCpp
         /// Generates a video with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>
-        public VideoSequence GenerateVideo(GenerateVideoOptions options)
+        public VideoSequence GenerateVideo(GenerateVideoOptions options, CancellationToken cancellationToken = default)
         {
-            return _context.Generate(options);
+            return _stableDiffusionContext.Generate(options, cancellationToken);
         }
 
 
@@ -142,35 +195,78 @@ namespace TensorStack.StableDiffusionCpp
         /// </summary>
         /// <param name="options">The options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public async Task<VideoSequence> GenerateVideoAsync(GenerateVideoOptions options, CancellationToken cancellationToken = default)
+        public Task<VideoSequence> GenerateVideoAsync(GenerateVideoOptions options, CancellationToken cancellationToken = default)
         {
-            cancellationToken.Register(() => CancelGenerate());
-            return await Task.Run(() =>
+            return Task.Run(() =>
             {
-                var result = GenerateVideo(options);
+                var result = GenerateVideo(options, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 return result;
-            }, cancellationToken).ConfigureAwait(false);
+            }, cancellationToken);
         }
 
 
         /// <summary>
-        /// Unloads the model context.
+        /// Upscales the image
         /// </summary>
-        public void UnloadContext()
+        /// <param name="inputImage">The input image.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public ImageTensor UpscaleImage(ImageTensor inputImage, CancellationToken cancellationToken = default)
         {
-            _context?.Dispose();
-            _context = null;
+            return _stableDiffusionContext.Upscale(inputImage, cancellationToken);
         }
 
 
         /// <summary>
-        /// Cancels the current generation.
+        /// Upscales the image
         /// </summary>
-        /// <param name="cancelType">Type of the cancel.</param>
-        public void CancelGenerate(CancelType cancelType = CancelType.Immediate)
+        /// <param name="inputImage">The input image.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public Task<ImageTensor> UpscaleImageAsync(ImageTensor inputImage, CancellationToken cancellationToken = default)
         {
-            _context.Cancel(cancelType);
+            return Task.Run(() =>
+            {
+                var result = UpscaleImage(inputImage, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                return result;
+            }, cancellationToken);
+        }
+
+
+        /// <summary>
+        /// Upscales the video
+        /// </summary>
+        /// <param name="inputVideo">The input video.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public VideoSequence UpscaleVideo(VideoSequence inputVideo, CancellationToken cancellationToken = default)
+        {
+            return _stableDiffusionContext.Upscale(inputVideo, cancellationToken);
+        }
+
+
+        /// <summary>
+        /// Upscales the video
+        /// </summary>
+        /// <param name="inputVideo">The input video.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public Task<VideoSequence> UpscaleVideoAsync(VideoSequence inputImage, CancellationToken cancellationToken = default)
+        {
+            return Task.Run(() =>
+            {
+                var result = UpscaleVideo(inputImage, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                return result;
+            }, cancellationToken);
+        }
+
+
+        /// <summary>
+        /// Unloads the context.
+        /// </summary>
+        public void Unload()
+        {
+            _stableDiffusionContext?.Dispose();
+            _stableDiffusionContext = null;
         }
 
 
@@ -179,7 +275,7 @@ namespace TensorStack.StableDiffusionCpp
         /// </summary>
         public void Dispose()
         {
-            UnloadContext();
+            Unload();
             GC.SuppressFinalize(this);
         }
 
