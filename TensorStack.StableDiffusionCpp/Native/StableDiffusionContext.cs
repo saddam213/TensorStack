@@ -40,7 +40,6 @@ namespace TensorStack.StableDiffusionCpp.Native
             _unmanagedLogCallback = OnLogCallback;
             _unmanagedPreviewCallback = OnPreviewCallback;
             _unmanagedProgressCallback = OnProgressCallback;
-            InitializeCallbacks();
         }
 
         /// <summary>
@@ -54,6 +53,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             : this(progressCallback, previewCallback, logCallback)
         {
             _stableDiffusionOptions = options;
+            InitializeCallbacks();
             _stableDiffusionHandle = new StableDiffusionSafeHandle(_stableDiffusionOptions);
             _defaultImageOptions = GetDefaultImageOptions();
             _defaultVideoOptions = GetDefaultVideoOptions();
@@ -69,6 +69,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             : this(progressCallback, null, logCallback)
         {
             _upscaleOptions = options;
+            InitializeCallbacks();
             _upscaleHandle = new UpscaleSafeHandle(_upscaleOptions);
             _upscaleFactor = (uint)Math.Max(1, NativeApi.get_upscale_factor(_upscaleHandle.GetContext()));
         }
@@ -208,7 +209,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                     for (int i = 0; i < unmanagedFrameCount; i++)
                     {
                         var unmanagedFrame = unmanagedFrames[i];
-                        managedVideo[i] = _upscaleHandle != null
+                        managedVideo[i] = _upscaleHandle == null
                             ? unmanagedFrame.ToManaged()
                             : UpscaleInternal(unmanagedFrame);
                     }
