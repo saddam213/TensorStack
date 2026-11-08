@@ -302,6 +302,7 @@ namespace TensorStack.StableDiffusionCpp.Native
                 CircularX = unmanaged.circular_x,
                 CircularY = unmanaged.circular_y,
                 ImagePreprocess = Utf8StringMarshaller.ConvertToManaged(unmanaged.image_preprocess.rules),
+                ControlNetType = unmanaged.control_type.ToManaged(),
                 // Loras = "",
                 // InitImage = "",
                 // RefImages = "",
@@ -367,7 +368,8 @@ namespace TensorStack.StableDiffusionCpp.Native
                 image_preprocess = new NativeApi.sd_image_preprocess_params_t
                 {
                     rules = Utf8StringMarshaller.ConvertToUnmanaged(managed.ImagePreprocess)
-                }
+                },
+                control_type = managed.ControlNetType.ToUnmanaged()
             };
         }
 

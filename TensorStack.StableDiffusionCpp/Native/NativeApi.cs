@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "f5df5f8"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-1052-f5df5f8/include/stable-diffusion.h
+        public const string LibraryVersion = "fc350be"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-1068-fc350be/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
         private static BackendInfo _backendInfo;
@@ -240,6 +240,20 @@ namespace TensorStack.StableDiffusionCpp.Native
             SD_HIRES_UPSCALER_NEAREST,
             SD_HIRES_UPSCALER_MODEL,
             SD_HIRES_UPSCALER_COUNT,
+        }
+
+        internal enum sd_control_type_t
+        {
+            SD_CONTROL_TYPE_NONE,
+            SD_CONTROL_TYPE_OPENPOSE,
+            SD_CONTROL_TYPE_DEPTH,
+            SD_CONTROL_TYPE_SCRIBBLE,
+            SD_CONTROL_TYPE_CANNY,
+            SD_CONTROL_TYPE_NORMAL,
+            SD_CONTROL_TYPE_SEGMENT,
+            SD_CONTROL_TYPE_TILE,
+            SD_CONTROL_TYPE_REPAINT,
+            SD_CONTROL_TYPE_COUNT,
         }
 
         internal enum sd_cancel_mode_t
@@ -605,6 +619,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             public bool circular_y;
 
             public sd_image_preprocess_params_t image_preprocess;
+            public sd_control_type_t control_type;
         }
 
 
@@ -668,6 +683,45 @@ namespace TensorStack.StableDiffusionCpp.Native
         }
 
 
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct sd_generation_progress_t
+        {
+            public byte* stage;
+            public byte* detail;
+            public byte* unit;
+            public int sample_pass;
+            public int total_steps;
+            public long completed;
+            public long total;
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct sd_video_upscaler_ctx_params_t
+        {
+            public byte* diffusion_model_path;
+            public byte* vae_path;
+            public int upscale_factor;
+            public int n_threads;
+            public byte* backend;
+            public byte* params_backend;
+            public byte* flash_attn_mode;
+            public byte* conv_direct_mode;
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct sd_video_upscale_params_t
+        {
+            public sd_image_t* frames;
+            public int frame_count;
+            public int fps;
+            public long seed;
+            public int window_size;
+            public int temporal_chunk_size;
+        }
+
+
         // ============================================================
         // Opaque native types
         // ============================================================
@@ -675,6 +729,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         internal struct upscaler_ctx_t { }
         internal struct adetailer_ctx_t { }
         internal struct ggml_tensor { }
+        internal struct video_upscaler_ctx_t {}
 
 
         // ============================================================
@@ -686,6 +741,9 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void sd_progress_cb_t(int step, int steps, float time, void* data);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void sd_generation_progress_cb_t(sd_generation_progress_t* progress, void* data);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void sd_preview_cb_t(int step, int frame_count, sd_image_t* frames, [MarshalAs(UnmanagedType.I1)] bool is_noisy, void* data);
@@ -704,6 +762,9 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_progress_callback))]
         internal static partial void sd_set_progress_callback(sd_progress_cb_t cb, void* data);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_generation_progress_callback))]
+        internal static partial void sd_set_generation_progress_callback(sd_generation_progress_t cb, void* data);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_preview_callback))]
         internal static partial void sd_set_preview_callback(sd_preview_cb_t cb, preview_t mode, int interval, [MarshalAs(UnmanagedType.I1)] bool denoised, [MarshalAs(UnmanagedType.I1)] bool noisy, void* data);
@@ -792,6 +853,12 @@ namespace TensorStack.StableDiffusionCpp.Native
         [LibraryImport(LibraryName, EntryPoint = nameof(str_to_sd_hires_upscaler))]
         internal static partial sd_hires_upscaler_t str_to_sd_hires_upscaler(byte* str);
 
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_control_type_name))]
+        internal static partial byte* sd_control_type_name(sd_control_type_t upscaler);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(str_to_sd_control_type))]
+        internal static partial sd_control_type_t str_to_sd_control_type(byte* str);
+
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_cache_params_init))]
         internal static partial void sd_cache_params_init(sd_cache_params_t* cache_params);
 
@@ -869,6 +936,22 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(get_upscaler_model_scale))]
         internal static partial int get_upscaler_model_scale(byte* model_path);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_video_upscaler_ctx_params_init))]
+        internal static partial void sd_video_upscaler_ctx_params_init(sd_video_upscaler_ctx_params_t* ctx_params);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_video_upscale_params_init))]
+        internal static partial void sd_video_upscale_params_init(sd_video_upscale_params_t* upscale_params);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(new_video_upscaler_ctx))]
+        internal static partial video_upscaler_ctx_t* new_video_upscaler_ctx(sd_video_upscaler_ctx_params_t* upscale_params);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(free_video_upscaler_ctx))]
+        internal static partial void free_video_upscaler_ctx(video_upscaler_ctx_t* ctx);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(upscale_video))]
+        [return: MarshalAs(UnmanagedType.I1)]
+        internal static partial bool upscale_video(video_upscaler_ctx_t* ctx, sd_video_upscaler_ctx_params_t* upscale_params, out sd_video_generation_result_t* result_out);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(new_adetailer_ctx))]
         internal static partial adetailer_ctx_t* new_adetailer_ctx(byte* detector_path, int n_threads, byte* backend, byte* params_backend);

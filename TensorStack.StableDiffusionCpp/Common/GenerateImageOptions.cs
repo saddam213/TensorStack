@@ -31,5 +31,6 @@ namespace TensorStack.StableDiffusionCpp.Common
         public bool CircularX { get; set; }
         public bool CircularY { get; set; }
         public string ImagePreprocess { get; set; }
+        public ControlNetType ControlNetType { get; set; }
     }
 }

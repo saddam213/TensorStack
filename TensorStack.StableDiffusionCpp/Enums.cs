@@ -207,4 +207,18 @@ namespace TensorStack.StableDiffusionCpp
         CPU,
         Default
     }
+
+    public enum ControlNetType
+    {
+        None,
+        OpenPose,
+        Depth,
+        Scribble,
+        Canny,
+        Normal,
+        Segment,
+        Tile,
+        Repaint,
+        Default,
+    }
 }

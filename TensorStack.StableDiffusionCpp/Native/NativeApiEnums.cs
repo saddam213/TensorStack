@@ -743,5 +743,59 @@
                     return RngType.Default;
             }
         }
+
+        internal static NativeApi.sd_control_type_t ToUnmanaged(this ControlNetType managed)
+        {
+            switch (managed)
+            {
+                case ControlNetType.None:
+                    return NativeApi.sd_control_type_t.SD_CONTROL_TYPE_NONE;
+                case ControlNetType.OpenPose:
+                    return NativeApi.sd_control_type_t.SD_CONTROL_TYPE_OPENPOSE;
+                case ControlNetType.Depth:
+                    return NativeApi.sd_control_type_t.SD_CONTROL_TYPE_DEPTH;
+                case ControlNetType.Scribble:
+                    return NativeApi.sd_control_type_t.SD_CONTROL_TYPE_SCRIBBLE;
+                case ControlNetType.Canny:
+                    return NativeApi.sd_control_type_t.SD_CONTROL_TYPE_CANNY;
+                case ControlNetType.Normal:
+                    return NativeApi.sd_control_type_t.SD_CONTROL_TYPE_NORMAL;
+                case ControlNetType.Segment:
+                    return NativeApi.sd_control_type_t.SD_CONTROL_TYPE_SEGMENT;
+                case ControlNetType.Tile:
+                    return NativeApi.sd_control_type_t.SD_CONTROL_TYPE_TILE;
+                case ControlNetType.Repaint:
+                    return NativeApi.sd_control_type_t.SD_CONTROL_TYPE_REPAINT;
+                default:
+                    return NativeApi.sd_control_type_t.SD_CONTROL_TYPE_COUNT;
+            }
+        }
+
+        internal static ControlNetType ToManaged(this NativeApi.sd_control_type_t unmanaged)
+        {
+            switch (unmanaged)
+            {
+                case NativeApi.sd_control_type_t.SD_CONTROL_TYPE_NONE:
+                    return ControlNetType.None;
+                case NativeApi.sd_control_type_t.SD_CONTROL_TYPE_OPENPOSE:
+                    return ControlNetType.OpenPose;
+                case NativeApi.sd_control_type_t.SD_CONTROL_TYPE_DEPTH:
+                    return ControlNetType.Depth;
+                case NativeApi.sd_control_type_t.SD_CONTROL_TYPE_SCRIBBLE:
+                    return ControlNetType.Scribble;
+                case NativeApi.sd_control_type_t.SD_CONTROL_TYPE_CANNY:
+                    return ControlNetType.Canny;
+                case NativeApi.sd_control_type_t.SD_CONTROL_TYPE_NORMAL:
+                    return ControlNetType.Normal;
+                case NativeApi.sd_control_type_t.SD_CONTROL_TYPE_SEGMENT:
+                    return ControlNetType.Segment;
+                case NativeApi.sd_control_type_t.SD_CONTROL_TYPE_TILE:
+                    return ControlNetType.Tile;
+                case NativeApi.sd_control_type_t.SD_CONTROL_TYPE_REPAINT:
+                    return ControlNetType.Repaint;
+                default:
+                    return ControlNetType.Default;
+            }
+        }
     }
 }
