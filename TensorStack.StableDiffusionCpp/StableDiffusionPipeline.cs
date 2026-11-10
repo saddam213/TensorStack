@@ -210,10 +210,11 @@ namespace TensorStack.StableDiffusionCpp
         /// Upscales the image
         /// </summary>
         /// <param name="inputImage">The input image.</param>
+        /// <param name="options">The upscale options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public ImageTensor UpscaleImage(ImageTensor inputImage, CancellationToken cancellationToken = default)
+        public ImageTensor UpscaleImage(ImageTensor inputImage, UpscaleImageOptions options = default, CancellationToken cancellationToken = default)
         {
-            return _stableDiffusionContext.Upscale(inputImage, cancellationToken);
+            return _stableDiffusionContext.Upscale(inputImage, options, cancellationToken);
         }
 
 
@@ -221,12 +222,42 @@ namespace TensorStack.StableDiffusionCpp
         /// Upscales the image
         /// </summary>
         /// <param name="inputImage">The input image.</param>
+        /// <param name="options">The upscale options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public Task<ImageTensor> UpscaleImageAsync(ImageTensor inputImage, CancellationToken cancellationToken = default)
+        public Task<ImageTensor> UpscaleImageAsync(ImageTensor inputImage, UpscaleImageOptions options = default, CancellationToken cancellationToken = default)
         {
             return Task.Run(() =>
             {
-                var result = UpscaleImage(inputImage, cancellationToken);
+                var result = UpscaleImage(inputImage, options, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                return result;
+            }, cancellationToken);
+        }
+
+
+        /// <summary>
+        /// Upscales the video frames
+        /// </summary>
+        /// <param name="videoFrames">The video frames.</param>
+        /// <param name="options">The upscale options.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public ImageTensor[] UpscaleFrames(ImageTensor[] videoFrames, UpscaleImageOptions options = default, CancellationToken cancellationToken = default)
+        {
+            return _stableDiffusionContext.Upscale(videoFrames, options, cancellationToken);
+        }
+
+
+        /// <summary>
+        /// Upscales the video frames
+        /// </summary>
+        /// <param name="videoFrames">The video frames.</param>
+        /// <param name="options">The upscale options.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public Task<ImageTensor[]> UpscaleFramesAsync(ImageTensor[] videoFrames, UpscaleImageOptions options = default, CancellationToken cancellationToken = default)
+        {
+            return Task.Run(() =>
+            {
+                var result = UpscaleFrames(videoFrames, options, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 return result;
             }, cancellationToken);
@@ -237,10 +268,11 @@ namespace TensorStack.StableDiffusionCpp
         /// Upscales the video
         /// </summary>
         /// <param name="inputVideo">The input video.</param>
+        /// <param name="options">The upscale options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public VideoSequence UpscaleVideo(VideoSequence inputVideo, CancellationToken cancellationToken = default)
+        public VideoSequence UpscaleVideo(VideoSequence inputVideo, UpscaleVideoOptions options = default, CancellationToken cancellationToken = default)
         {
-            return _stableDiffusionContext.Upscale(inputVideo, cancellationToken);
+            return _stableDiffusionContext.Upscale(inputVideo, options, cancellationToken);
         }
 
 
@@ -248,12 +280,13 @@ namespace TensorStack.StableDiffusionCpp
         /// Upscales the video
         /// </summary>
         /// <param name="inputVideo">The input video.</param>
+        /// <param name="options">The upscale options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public Task<VideoSequence> UpscaleVideoAsync(VideoSequence inputImage, CancellationToken cancellationToken = default)
+        public Task<VideoSequence> UpscaleVideoAsync(VideoSequence inputImage, UpscaleVideoOptions options = default, CancellationToken cancellationToken = default)
         {
             return Task.Run(() =>
             {
-                var result = UpscaleVideo(inputImage, cancellationToken);
+                var result = UpscaleVideo(inputImage, options, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 return result;
             }, cancellationToken);

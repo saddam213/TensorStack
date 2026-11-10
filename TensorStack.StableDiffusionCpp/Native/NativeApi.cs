@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "fc350be"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-1068-fc350be/include/stable-diffusion.h
+        public const string LibraryVersion = "32d516c"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-1088-32d516c/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
         private static BackendInfo _backendInfo;
@@ -729,7 +729,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         internal struct upscaler_ctx_t { }
         internal struct adetailer_ctx_t { }
         internal struct ggml_tensor { }
-        internal struct video_upscaler_ctx_t {}
+        internal struct video_upscaler_ctx_t { }
 
 
         // ============================================================
@@ -951,7 +951,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(upscale_video))]
         [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool upscale_video(video_upscaler_ctx_t* ctx, sd_video_upscaler_ctx_params_t* upscale_params, out sd_video_generation_result_t* result_out);
+        internal static partial bool upscale_video(video_upscaler_ctx_t* ctx, sd_video_upscale_params_t* upscale_params, out sd_video_generation_result_t* result_out);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(new_adetailer_ctx))]
         internal static partial adetailer_ctx_t* new_adetailer_ctx(byte* detector_path, int n_threads, byte* backend, byte* params_backend);

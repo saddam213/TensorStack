@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices.Marshalling;
 using System.Threading;
 using TensorStack.Common.Tensor;
@@ -17,12 +15,9 @@ namespace TensorStack.StableDiffusionCpp.Native
         private readonly Action<int, int, float> _progressCallback;
         private readonly Action<int, int, float, ImageTensor[]> _previewCallback;
         private readonly StableDiffusionSafeHandle _stableDiffusionHandle;
-        private readonly UpscaleSafeHandle _upscaleHandle;
+        private readonly UpscaleContext _upscaleContext;
         private readonly StableDiffusionOptions _stableDiffusionOptions;
-        private readonly GenerateImageOptions _defaultImageOptions;
-        private readonly GenerateVideoOptions _defaultVideoOptions;
         private readonly UpscaleOptions _upscaleOptions;
-        private readonly uint _upscaleFactor;
         private ImageTensor[] _previewTensors;
         private bool _isGenerating;
 
@@ -55,8 +50,6 @@ namespace TensorStack.StableDiffusionCpp.Native
             _stableDiffusionOptions = options;
             InitializeCallbacks();
             _stableDiffusionHandle = new StableDiffusionSafeHandle(_stableDiffusionOptions);
-            _defaultImageOptions = GetDefaultImageOptions();
-            _defaultVideoOptions = GetDefaultVideoOptions();
         }
 
         /// <summary>
@@ -70,8 +63,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             _upscaleOptions = options;
             InitializeCallbacks();
-            _upscaleHandle = new UpscaleSafeHandle(_upscaleOptions);
-            _upscaleFactor = (uint)Math.Max(1, NativeApi.get_upscale_factor(_upscaleHandle.GetContext()));
+            _upscaleContext = new UpscaleContext(_upscaleOptions);
         }
 
         /// <summary>
@@ -86,28 +78,25 @@ namespace TensorStack.StableDiffusionCpp.Native
             : this(stableDiffusionOptions, progressCallback, previewCallback, logCallback)
         {
             _upscaleOptions = upscaleOptions;
-            _upscaleHandle = new UpscaleSafeHandle(_upscaleOptions);
-            _upscaleFactor = (uint)Math.Max(1, NativeApi.get_upscale_factor(_upscaleHandle.GetContext()));
+            _upscaleContext = new UpscaleContext(_upscaleOptions);
         }
 
         /// <summary>
         /// Gets the default image options.
         /// </summary>
-        public GenerateImageOptions DefaultImageOptions => _defaultImageOptions;
+        public GenerateImageOptions DefaultImageOptions => _stableDiffusionHandle?.DefaultImageOptions;
 
         /// <summary>
         /// Gets the default video options.
         /// </summary>
-        public GenerateVideoOptions DefaultVideoOptions => _defaultVideoOptions;
+        public GenerateVideoOptions DefaultVideoOptions => _stableDiffusionHandle?.DefaultVideoOptions;
 
         /// <summary>
         /// Determines whether the context supports image generation.
         /// </summary>
         public bool IsImageGenerationSupported()
         {
-            if (_stableDiffusionHandle == null)
-                return false;
-            return NativeApi.sd_ctx_supports_image_generation(_stableDiffusionHandle.GetContext());
+            return _stableDiffusionHandle?.DefaultImageOptions != null;
         }
 
         /// <summary>
@@ -115,9 +104,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// </summary>
         public bool IsVideoGenerationSupported()
         {
-            if (_stableDiffusionHandle == null)
-                return false;
-            return NativeApi.sd_ctx_supports_video_generation(_stableDiffusionHandle.GetContext());
+            return _stableDiffusionHandle?.DefaultVideoOptions != null;
         }
 
         /// <summary>
@@ -125,7 +112,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// </summary>
         public bool IsImageUpscaleSupported()
         {
-            return _upscaleHandle != null;
+            return _upscaleContext?.IsImageUpscaleSupported() ?? false;
         }
 
         /// <summary>
@@ -133,7 +120,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// </summary>
         public bool IsVideoUpscaleSupported()
         {
-            return _upscaleHandle != null;
+            return _upscaleContext?.IsVideoUpscaleSupported() ?? false;
         }
 
 
@@ -161,8 +148,10 @@ namespace TensorStack.StableDiffusionCpp.Native
                         return null;
 
                     var unmanagedImage = unmanagedImages[0].image;
-                    if (_upscaleHandle != null)
-                        return UpscaleInternal(unmanagedImage);
+                    if (IsImageUpscaleSupported())
+                    {
+                        return _upscaleContext.UpscaleImage(unmanagedImage, options.UpscaleOptions);
+                    }
 
                     return unmanagedImage.ToManaged();
                 }
@@ -186,7 +175,6 @@ namespace TensorStack.StableDiffusionCpp.Native
         public VideoSequence Generate(GenerateVideoOptions options, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(_stableDiffusionHandle);
-
             var parameters = options.ToUnmanaged();
             try
             {
@@ -204,14 +192,23 @@ namespace TensorStack.StableDiffusionCpp.Native
                     if (unmanagedFrames == null || unmanagedFrameCount <= 0)
                         return null;
 
-                    var managedVideo = new ImageTensor[unmanagedFrameCount];
+                    var managedVideo = default(ImageTensor[]);
                     var managedAudio = unmanagedAudio == null ? default : unmanagedAudio[0].ToManaged();
-                    for (int i = 0; i < unmanagedFrameCount; i++)
+                    if (IsVideoUpscaleSupported())
                     {
-                        var unmanagedFrame = unmanagedFrames[i];
-                        managedVideo[i] = _upscaleHandle == null
-                            ? unmanagedFrame.ToManaged()
-                            : UpscaleInternal(unmanagedFrame);
+                        managedVideo = _upscaleContext.UpscaleVideo(unmanagedVideo, options.UpscaleOptions, cancellationToken);
+                    }
+                    else if (IsImageUpscaleSupported())
+                    {
+                        managedVideo = _upscaleContext.UpscaleFrames(unmanagedFrames, unmanagedFrameCount, _upscaleContext.DefaultImageOptions, cancellationToken);
+                    }
+                    else
+                    {
+                        managedVideo = new ImageTensor[unmanagedFrameCount];
+                        for (int i = 0; i < unmanagedFrameCount; i++)
+                        {
+                            managedVideo[i] = unmanagedFrames[i].ToManaged();
+                        }
                     }
                     return new VideoSequence(managedVideo, unmanagedFps, managedAudio);
                 }
@@ -232,22 +229,24 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// Upscales the specified image.
         /// </summary>
         /// <param name="image">The image.</param>
-        public ImageTensor Upscale(ImageTensor image, CancellationToken cancellationToken = default)
+        public ImageTensor Upscale(ImageTensor image, UpscaleImageOptions options = default, CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(_upscaleHandle);
+            ArgumentNullException.ThrowIfNull(_upscaleContext);
+            return _upscaleContext.UpscaleImage(image, options);
+        }
 
-            var unmanagedImage = image.ToUnmanaged();
-            try
-            {
-                var timestamp = Stopwatch.GetTimestamp();
-                var managedImage = UpscaleInternal(unmanagedImage);
-                _progressCallback(1, 1, (float)Stopwatch.GetElapsedTime(timestamp).TotalSeconds);
-                return managedImage;
-            }
-            finally
-            {
-                unmanagedImage.FreeUnmanaged();
-            }
+
+        /// <summary>
+        /// Upscales the specified video frames.
+        /// </summary>
+        /// <param name="videoFrames">The video frames.</param>
+        /// <param name="options">The options.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="System.ArgumentNullException"></exception>
+        public ImageTensor[] Upscale(ImageTensor[] videoFrames, UpscaleImageOptions options = default, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(_upscaleContext);
+            return _upscaleContext.UpscaleFrames(videoFrames, options, cancellationToken);
         }
 
 
@@ -256,27 +255,10 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// </summary>
         /// <param name="videoSequence">The video sequence.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public VideoSequence Upscale(VideoSequence videoSequence, CancellationToken cancellationToken = default)
+        public VideoSequence Upscale(VideoSequence videoSequence, UpscaleVideoOptions options = default, CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(_upscaleHandle);
-
-            var unmanagedFrames = videoSequence.Frames.Select(x => x.ToUnmanaged()).ToArray();
-            try
-            {
-                var managedFrames = new ImageTensor[videoSequence.FrameCount];
-                for (int i = 0; i < unmanagedFrames.Length; i++)
-                {
-                    var timestamp = Stopwatch.GetTimestamp();
-                    cancellationToken.ThrowIfCancellationRequested();
-                    managedFrames[i] = UpscaleInternal(unmanagedFrames[i]);
-                    _progressCallback(i, unmanagedFrames.Length, (float)Stopwatch.GetElapsedTime(timestamp).TotalSeconds);
-                }
-                return new VideoSequence(managedFrames, videoSequence.FrameRate, videoSequence.Audio);
-            }
-            finally
-            {
-                unmanagedFrames.FreeUnmanaged();
-            }
+            ArgumentNullException.ThrowIfNull(_upscaleContext);
+            return _upscaleContext.UpscaleVideo(videoSequence, options, cancellationToken);
         }
 
 
@@ -315,53 +297,6 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             ResetState();
             NativeApi.sd_cancel_generation(_stableDiffusionHandle.GetContext(), cancelType.ToUnmanaged());
-        }
-
-
-        /// <summary>
-        /// Upscales the internal.
-        /// </summary>
-        /// <param name="inputImage">The input image.</param>
-        /// <returns>ImageTensor.</returns>
-        private ImageTensor UpscaleInternal(NativeApi.sd_image_t inputImage)
-        {
-            if (!NativeApi.upscale(_upscaleHandle.GetContext(), inputImage, _upscaleFactor, out NativeApi.sd_image_generation_result_t* unmanagedResults) || unmanagedResults == null)
-                return null;
-
-            var unmanagedImage = unmanagedResults[0];
-            var unmanagedImages = unmanagedImage.items;
-            var unmanagedImageCount = unmanagedImage.count;
-            if (unmanagedImages == null || unmanagedImageCount <= 0)
-                return null;
-            return unmanagedImages[0].ToManaged();
-        }
-
-
-        /// <summary>
-        /// Gets the default image options.
-        /// </summary>
-        private GenerateImageOptions GetDefaultImageOptions()
-        {
-            if (!IsImageGenerationSupported())
-                return null;
-
-            var options = new NativeApi.sd_img_gen_params_t();
-            NativeApi.sd_img_gen_params_init(&options);
-            return options.ToManaged();
-        }
-
-
-        /// <summary>
-        /// Gets the default video options.
-        /// </summary>
-        private GenerateVideoOptions GetDefaultVideoOptions()
-        {
-            if (!IsVideoGenerationSupported())
-                return null;
-
-            var options = new NativeApi.sd_vid_gen_params_t();
-            NativeApi.sd_vid_gen_params_init(&options);
-            return options.ToManaged();
         }
 
 
@@ -436,7 +371,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             DisposeCallbacks();
             ResetState();
-            _upscaleHandle?.Dispose();
+            _upscaleContext?.Dispose();
             _stableDiffusionHandle?.Dispose();
         }
     }

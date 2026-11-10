@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
+using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
 using TensorStack.StableDiffusionCpp.Common;
@@ -615,6 +616,93 @@ namespace TensorStack.StableDiffusionCpp.Native
             native.hires.FreeUnmanaged();
             Utf8StringMarshaller.Free(native.image_preprocess.rules);
             Utf8StringMarshaller.Free(native.ref_image_args);
+        }
+
+        #endregion
+
+        #region UpscaleParameters
+
+        internal static UpscaleOptions ToManaged(this NativeApi.sd_video_upscaler_ctx_params_t managed)
+        {
+            return new UpscaleOptions
+            {
+                Backend = Utf8StringMarshaller.ConvertToManaged(managed.backend),
+                ParamsBackend = Utf8StringMarshaller.ConvertToManaged(managed.params_backend),
+                DiffusionModelPath = Utf8StringMarshaller.ConvertToManaged(managed.diffusion_model_path),
+                VaePath = Utf8StringMarshaller.ConvertToManaged(managed.vae_path),
+                Threads = managed.n_threads,
+                ScaleFactor = managed.upscale_factor,
+                FlashAttnMode = Utf8StringMarshaller.ConvertToManaged(managed.flash_attn_mode),
+                ConvDirectMode = Utf8StringMarshaller.ConvertToManaged(managed.conv_direct_mode),
+            };
+        }
+
+
+        internal static NativeApi.sd_video_upscaler_ctx_params_t ToUnmanaged(this UpscaleOptions managed)
+        {
+            var unmanaged = new NativeApi.sd_video_upscaler_ctx_params_t();
+            NativeApi.sd_video_upscaler_ctx_params_init(&unmanaged);
+            unmanaged.backend = Utf8StringMarshaller.ConvertToUnmanaged(managed.Backend);
+            unmanaged.params_backend = Utf8StringMarshaller.ConvertToUnmanaged(managed.ParamsBackend);
+            unmanaged.diffusion_model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.DiffusionModelPath);
+            unmanaged.vae_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.VaePath);
+            unmanaged.n_threads = managed.Threads;
+            unmanaged.upscale_factor = managed.ScaleFactor;
+            unmanaged.flash_attn_mode = Utf8StringMarshaller.ConvertToUnmanaged(managed.FlashAttnMode);
+            unmanaged.conv_direct_mode = Utf8StringMarshaller.ConvertToUnmanaged(managed.ConvDirectMode);
+            return unmanaged;
+        }
+
+
+        internal static void FreeUnmanaged(this NativeApi.sd_video_upscaler_ctx_params_t native)
+        {
+            Utf8StringMarshaller.Free(native.backend);
+            Utf8StringMarshaller.Free(native.params_backend);
+            Utf8StringMarshaller.Free(native.diffusion_model_path);
+            Utf8StringMarshaller.Free(native.vae_path);
+            Utf8StringMarshaller.Free(native.flash_attn_mode);
+            Utf8StringMarshaller.Free(native.conv_direct_mode);
+        }
+
+
+        internal static UpscaleVideoOptions ToManaged(this NativeApi.sd_video_upscale_params_t unmanaged)
+        {
+            return new UpscaleVideoOptions
+            {
+                Seed = unmanaged.seed,
+                WindowSize = unmanaged.window_size,
+                TemporalChunkSize = unmanaged.temporal_chunk_size
+            };
+        }
+
+
+        internal unsafe static NativeApi.sd_video_upscale_params_t ToUnmanaged(this UpscaleVideoOptions options, NativeApi.sd_image_t* videoFrames, int frameCount, int frameRate)
+        {
+            var unmanaged = new NativeApi.sd_video_upscale_params_t();
+            unmanaged.frames = videoFrames;
+            unmanaged.fps = frameRate;
+            unmanaged.seed = options.Seed;
+            unmanaged.window_size = options.WindowSize;
+            unmanaged.frame_count = frameCount;
+            unmanaged.temporal_chunk_size = options.TemporalChunkSize;
+            return unmanaged;
+        }
+
+
+        internal static NativeApi.sd_video_upscale_params_t ToUnmanaged(this UpscaleVideoOptions options, ImageTensor[] videoFrames, int frameRate)
+        {
+            var unmanagedFrames = (NativeApi.sd_image_t*)NativeMemory.Alloc((nuint)videoFrames.Length, (nuint)sizeof(NativeApi.sd_image_t));
+            Parallel.For(0, videoFrames.Length, i =>
+            {
+                unmanagedFrames[i] = videoFrames[i].ToUnmanaged(3);
+            });
+            return options.ToUnmanaged(unmanagedFrames, videoFrames.Length, frameRate);
+        }
+
+
+        internal static void FreeUnmanaged(this NativeApi.sd_video_upscale_params_t native)
+        {
+            NativeApi.free_sd_images(native.frames, native.frame_count);
         }
 
         #endregion

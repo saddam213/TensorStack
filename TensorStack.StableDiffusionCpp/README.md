@@ -87,7 +87,7 @@ using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
 ```
 
 ## Upscale Example
-Upscale Image, Video or inline with generations
+Upscale Images, Videos or Inline with generations
 ```csharp
 // Upscale Image
 using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
@@ -110,7 +110,7 @@ using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
 }
 
 
-// Upscale Video
+// Upscale Video Frames
 using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
 {
     await backend.InitializeAsync();
@@ -125,7 +125,37 @@ using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
         });
 
         var inputVideo = new VideoInput("InputVideo.mp4");
-        var resultVideo = await pipeline.UpscaleVideoAsync(inputVideo);
+        var videoFrames = await pipeline.UpscaleFramesAsync(inputVideo.Frames);
+        var resultVideo = new VideoSequence(videoFrames, inputVideo.FrameRate, inputVideo.Audio);
+        await resultVideo.SaveAsync("OutputFrames.mp4");
+    }
+}
+
+
+// Upscale Video
+using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
+{
+    await backend.InitializeAsync();
+
+    using (var pipeline = new StableDiffusionPipeline(backend))
+    {
+        var device = pipeline.Devices.FirstOrDefault(x => x.Type == DeviceType.GPU);
+        await pipeline.LoadAsync(new UpscaleOptions
+        {
+            Backend = device.Backend,
+            ScaleFactor = 2,
+            VaePath = "seedvr2_ema_vae_fp16.safetensors",
+            DiffusionModelPath = "seedvr2_3b_fp16.safetensors"
+        });
+
+        var options = new UpscaleVideoOptions
+        {
+            Seed = 42,
+            TemporalChunkSize = 1
+        };
+
+        var inputVideo = new VideoInput("InputVideo.mp4");
+        var resultVideo = await pipeline.UpscaleVideoAsync(inputVideo, options);
         await resultVideo.SaveAsync("OutputVideo.mp4");
     }
 }
