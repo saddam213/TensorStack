@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "32d516c"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-1088-32d516c/include/stable-diffusion.h
+        public const string LibraryVersion = "3bad892"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-1094-3bad892/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
         private static BackendInfo _backendInfo;
@@ -752,6 +752,9 @@ namespace TensorStack.StableDiffusionCpp.Native
         [return: MarshalAs(UnmanagedType.I1)]
         internal delegate bool sd_graph_eval_callback_t(ggml_tensor* t, [MarshalAs(UnmanagedType.I1)] bool ask, void* user_data);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.I1)]
+        internal delegate bool sd_prompt_image_cb_t(byte* text, void* data, sd_image_t* image_out);
 
         // ============================================================
         // API
@@ -764,7 +767,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         internal static partial void sd_set_progress_callback(sd_progress_cb_t cb, void* data);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_generation_progress_callback))]
-        internal static partial void sd_set_generation_progress_callback(sd_generation_progress_t cb, void* data);
+        internal static partial void sd_set_generation_progress_callback(sd_ctx_t* ctx, sd_generation_progress_cb_t cb, void* data);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_preview_callback))]
         internal static partial void sd_set_preview_callback(sd_preview_cb_t cb, preview_t mode, int interval, [MarshalAs(UnmanagedType.I1)] bool denoised, [MarshalAs(UnmanagedType.I1)] bool noisy, void* data);
@@ -774,6 +777,9 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_backend_eval_callback))]
         internal static partial void sd_set_backend_eval_callback(sd_graph_eval_callback_t cb, void* data);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_prompt_image_callback))]
+        internal static partial void sd_set_prompt_image_callback(sd_ctx_t* ctx, sd_prompt_image_cb_t cb, void* data);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_num_physical_cores))]
         internal static partial int sd_get_num_physical_cores();

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices.Marshalling;
 using System.Threading;
 using TensorStack.Common.Tensor;
+using TensorStack.Media.Image;
 using TensorStack.StableDiffusionCpp.Common;
 
 namespace TensorStack.StableDiffusionCpp.Native
@@ -11,6 +13,8 @@ namespace TensorStack.StableDiffusionCpp.Native
         private readonly NativeApi.sd_log_cb_t _unmanagedLogCallback;
         private readonly NativeApi.sd_preview_cb_t _unmanagedPreviewCallback;
         private readonly NativeApi.sd_progress_cb_t _unmanagedProgressCallback;
+        private readonly NativeApi.sd_generation_progress_cb_t _unmanagedGenerationCallback;
+        private readonly NativeApi.sd_prompt_image_cb_t _unmanagedPromptImageCallback;
         private readonly Action<LogLevelType, string> _logCallback;
         private readonly Action<int, int, float> _progressCallback;
         private readonly Action<int, int, float, ImageTensor[]> _previewCallback;
@@ -49,7 +53,12 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             _stableDiffusionOptions = options;
             InitializeCallbacks();
+            _unmanagedGenerationCallback = OnGenerationCallback;
+            _unmanagedPromptImageCallback = OnPromptImageCallback;
             _stableDiffusionHandle = new StableDiffusionSafeHandle(_stableDiffusionOptions);
+            NativeApi.sd_set_generation_progress_callback(_stableDiffusionHandle.GetContext(), _unmanagedGenerationCallback, null);
+            if (_stableDiffusionOptions.PreviewType != PreviewType.Disabled && _stableDiffusionOptions.PreviewType != PreviewType.Default)
+                NativeApi.sd_set_preview_callback(_unmanagedPreviewCallback, _stableDiffusionOptions.PreviewType.ToUnmanaged(), _stableDiffusionOptions.PreviewInterval, !_stableDiffusionOptions.IsPreviewNoisy, _stableDiffusionOptions.IsPreviewNoisy, null);
         }
 
         /// <summary>
@@ -133,10 +142,13 @@ namespace TensorStack.StableDiffusionCpp.Native
             ArgumentNullException.ThrowIfNull(_stableDiffusionHandle);
 
             var parameters = options.ToUnmanaged();
+            var context = _stableDiffusionHandle.GetContext();
+
             try
             {
                 cancellationToken.Register(() => GenerateCancel(CancelType.Immediate));
-                if (!NativeApi.generate_image(_stableDiffusionHandle.GetContext(), &parameters, out NativeApi.sd_image_generation_result_t* unmanagedResults) || unmanagedResults == null)
+                NativeApi.sd_set_prompt_image_callback(context, _unmanagedPromptImageCallback, null);
+                if (!NativeApi.generate_image(context, &parameters, out NativeApi.sd_image_generation_result_t* unmanagedResults) || unmanagedResults == null)
                     return null;
 
                 try
@@ -164,6 +176,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 ResetState();
                 parameters.FreeUnmanaged();
+                NativeApi.sd_set_prompt_image_callback(context, null, null);
             }
         }
 
@@ -176,10 +189,13 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             ArgumentNullException.ThrowIfNull(_stableDiffusionHandle);
             var parameters = options.ToUnmanaged();
+            var context = _stableDiffusionHandle.GetContext();
+
             try
             {
                 cancellationToken.Register(() => GenerateCancel(CancelType.Immediate));
-                if (!NativeApi.generate_video(_stableDiffusionHandle.GetContext(), &parameters, out NativeApi.sd_video_generation_result_t* unmanagedResults) || unmanagedResults == null)
+                NativeApi.sd_set_prompt_image_callback(context, _unmanagedPromptImageCallback, null);
+                if (!NativeApi.generate_video(context, &parameters, out NativeApi.sd_video_generation_result_t* unmanagedResults) || unmanagedResults == null)
                     return null;
 
                 try
@@ -221,6 +237,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 ResetState();
                 parameters.FreeUnmanaged();
+                NativeApi.sd_set_prompt_image_callback(context, null, null);
             }
         }
 
@@ -269,11 +286,6 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             NativeApi.sd_set_log_callback(_unmanagedLogCallback, null);
             NativeApi.sd_set_progress_callback(_unmanagedProgressCallback, null);
-            if (_stableDiffusionOptions != null)
-            {
-                if (_stableDiffusionOptions.PreviewType != PreviewType.Disabled && _stableDiffusionOptions.PreviewType != PreviewType.Default)
-                    NativeApi.sd_set_preview_callback(_unmanagedPreviewCallback, _stableDiffusionOptions.PreviewType.ToUnmanaged(), _stableDiffusionOptions.PreviewInterval, !_stableDiffusionOptions.IsPreviewNoisy, _stableDiffusionOptions.IsPreviewNoisy, null);
-            }
         }
 
 
@@ -284,6 +296,8 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             NativeApi.sd_set_log_callback(null, null);
             NativeApi.sd_set_progress_callback(null, null);
+            if (_unmanagedGenerationCallback != null)
+                NativeApi.sd_set_generation_progress_callback(null, null, null);
             if (_unmanagedPreviewCallback != null)
                 NativeApi.sd_set_preview_callback(null, NativeApi.preview_t.PREVIEW_COUNT, 0, false, false, null);
         }
@@ -313,25 +327,6 @@ namespace TensorStack.StableDiffusionCpp.Native
 
 
         /// <summary>
-        /// Called when unmanaged progress is emitted.
-        /// </summary>
-        /// <param name="step">The step.</param>
-        /// <param name="steps">The steps.</param>
-        /// <param name="time">The time.</param>
-        /// <param name="data">The data.</param>
-        private void OnProgressCallback(int step, int steps, float time, void* data)
-        {
-            if (_isGenerating && _previewTensors is not null)
-            {
-                _previewCallback?.Invoke(step, steps, time, _previewTensors);
-                _previewTensors = null;
-                return;
-            }
-            _progressCallback?.Invoke(step, steps, time);
-        }
-
-
-        /// <summary>
         /// Called when unmanaged preview is emitted.
         /// </summary>
         /// <param name="step">The step.</param>
@@ -351,6 +346,78 @@ namespace TensorStack.StableDiffusionCpp.Native
                 managedFrames[i] = frames[i].ToManaged();
             }
             _previewTensors = managedFrames;
+        }
+
+
+        /// <summary>
+        /// Called when unmanaged progress is emitted.
+        /// </summary>
+        /// <param name="step">The step.</param>
+        /// <param name="steps">The steps.</param>
+        /// <param name="time">The time.</param>
+        /// <param name="data">The data.</param>
+        private void OnProgressCallback(int step, int steps, float time, void* data)
+        {
+            if (_isGenerating && _previewTensors is not null)
+            {
+                _previewCallback?.Invoke(step, steps, time, _previewTensors);
+                _previewTensors = null;
+                return;
+            }
+            _progressCallback?.Invoke(step, steps, time);
+        }
+
+
+        /// <summary>
+        /// Called when generation progress is emitted.
+        /// </summary>
+        /// <param name="progress">The generation progress data.</param>
+        /// <param name="data">The data.</param>
+        private void OnGenerationCallback(NativeApi.sd_generation_progress_t* progress, void* data)
+        {
+            if (progress == null)
+                return;
+
+            var progressData = progress[0];
+            var stage = Utf8StringMarshaller.ConvertToManaged(progressData.stage);
+            var detail = Utf8StringMarshaller.ConvertToManaged(progressData.detail);
+            var unit = Utf8StringMarshaller.ConvertToManaged(progressData.unit);
+        }
+
+
+        /// <summary>
+        /// Called when a prompt image request is emitted.
+        /// </summary>
+        /// <param name="source_data">The source data.</param>
+        /// <param name="data">The data.</param>
+        /// <param name="image_out">The image out.</param>
+        private bool OnPromptImageCallback(byte* source_data, void* data, NativeApi.sd_image_t* image_out)
+        {
+            if (source_data == null || image_out == null)
+                return false;
+
+            try
+            {
+                var source = Utf8StringMarshaller.ConvertToManaged(source_data);
+                if (string.IsNullOrWhiteSpace(source))
+                    return false;
+
+                var imagePath = Path.GetFullPath(source);
+                if (!File.Exists(imagePath))
+                    return false;
+
+                var managedImage = new ImageInput(imagePath);
+                var unmanagedImage = managedImage.ToUnmanaged();
+                image_out[0].data = unmanagedImage.data;
+                image_out[0].width = unmanagedImage.width;
+                image_out[0].height = unmanagedImage.height;
+                image_out[0].channel = unmanagedImage.channel;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
 

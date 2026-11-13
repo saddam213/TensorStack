@@ -162,11 +162,29 @@
   <data name="CopyCanvas" xml:space="preserve">
     <value>Copy Canvas</value>
   </data>
+  <data name="CopyHtml" xml:space="preserve">
+    <value>Copy Html</value>
+  </data>
   <data name="CopyMask" xml:space="preserve">
     <value>Copy Mask</value>
   </data>
   <data name="CopyOverlay" xml:space="preserve">
     <value>Copy Overlay</value>
+  </data>
+  <data name="CopyResponse" xml:space="preserve">
+    <value>Copy Response</value>
+  </data>
+  <data name="CopyResponseHtml" xml:space="preserve">
+    <value>Copy Response Html</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>Copy Text</value>
+  </data>
+  <data name="CopyThinking" xml:space="preserve">
+    <value>Copy Thinking</value>
+  </data>
+  <data name="CopyThinkingHtml" xml:space="preserve">
+    <value>Copy Thinking Html</value>
   </data>
   <data name="Create" xml:space="preserve">
     <value>Create</value>

@@ -156,11 +156,29 @@
   <data name="CopyCanvas" xml:space="preserve">
     <value>キャンバスをコピー</value>
   </data>
+  <data name="CopyHtml" xml:space="preserve">
+    <value>HTMLをコピー</value>
+  </data>
   <data name="CopyMask" xml:space="preserve">
     <value>マスクをコピー</value>
   </data>
   <data name="CopyOverlay" xml:space="preserve">
     <value>オーバーレイをコピー</value>
+  </data>
+  <data name="CopyResponse" xml:space="preserve">
+    <value>応答をコピー</value>
+  </data>
+  <data name="CopyResponseHtml" xml:space="preserve">
+    <value>応答をHTMLとしてコピー</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>テキストをコピー</value>
+  </data>
+  <data name="CopyThinking" xml:space="preserve">
+    <value>Thinkingをコピー</value>
+  </data>
+  <data name="CopyThinkingHtml" xml:space="preserve">
+    <value>ThinkingをHTMLとしてコピー</value>
   </data>
   <data name="Crop" xml:space="preserve">
     <value>切り抜き</value>

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -240,6 +242,22 @@ namespace TensorStack.WPF
                 return $"{timeSpan.Minutes}m {timeSpan.Seconds}s {remaining}";
 
             return $"{timeSpan.Seconds}s {remaining}";
+        }
+
+
+        public static string GetEmbeddedResource(string resourceName)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var resourceStream = assembly.GetManifestResourceStream(resourceName))
+            {
+                if (resourceStream == null)
+                    return string.Empty;
+
+                using (var streamReader = new StreamReader(resourceStream, Encoding.UTF8))
+                {
+                    return streamReader.ReadToEnd();
+                }
+            }
         }
     }
 }

@@ -196,6 +196,15 @@ namespace TensorStack.WPF.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy Html.
+        /// </summary>
+        public static string CopyHtml {
+            get {
+                return ResourceManager.GetString("CopyHtml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy Mask.
         /// </summary>
         public static string CopyMask {
@@ -210,6 +219,51 @@ namespace TensorStack.WPF.Resources {
         public static string CopyOverlay {
             get {
                 return ResourceManager.GetString("CopyOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Response.
+        /// </summary>
+        public static string CopyResponse {
+            get {
+                return ResourceManager.GetString("CopyResponse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Response Html.
+        /// </summary>
+        public static string CopyResponseHtml {
+            get {
+                return ResourceManager.GetString("CopyResponseHtml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Text.
+        /// </summary>
+        public static string CopyText {
+            get {
+                return ResourceManager.GetString("CopyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Thinking.
+        /// </summary>
+        public static string CopyThinking {
+            get {
+                return ResourceManager.GetString("CopyThinking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Thinking Html.
+        /// </summary>
+        public static string CopyThinkingHtml {
+            get {
+                return ResourceManager.GetString("CopyThinkingHtml", resourceCulture);
             }
         }
         
