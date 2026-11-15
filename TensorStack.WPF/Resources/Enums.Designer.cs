@@ -320,5 +320,23 @@ namespace TensorStack.WPF.Resources {
                 return ResourceManager.GetString("SplitterVisibility2", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dark.
+        /// </summary>
+        public static string ThemeType0 {
+            get {
+                return ResourceManager.GetString("ThemeType0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Light.
+        /// </summary>
+        public static string ThemeType1 {
+            get {
+                return ResourceManager.GetString("ThemeType1", resourceCulture);
+            }
+        }
     }
 }

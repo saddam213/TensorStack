@@ -8,6 +8,7 @@
         bool IsVolumeInputMute { get; set; }
         bool IsVolumeOutputMute { get; set; }
         double UIScale { get; set; }
+        ThemeType Theme { get; set; }
         bool IsExternalLinksEnabled { get; set; }
         bool IsExternalLinksAcknowledged { get; set; }
         bool IsExternalToolsEnabled { get; set; }
@@ -24,6 +25,7 @@
         public bool IsVolumeInputMute { get; set; }
         public bool IsVolumeOutputMute { get; set; }
         public double UIScale { get; set; } = 1;
+        public ThemeType Theme { get; set; }
         public bool IsExternalLinksEnabled { get; set; }
         public bool IsExternalLinksAcknowledged { get; set; }
         public bool IsExternalToolsEnabled { get; set; }

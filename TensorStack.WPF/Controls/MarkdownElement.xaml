@@ -8,7 +8,7 @@
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              xmlns:Behaviors="clr-namespace:TensorStack.WPF.Behaviors"
              xmlns:CommonControls="clr-namespace:TensorStack.WPF.Controls"
-             Background="#FF272727" Focusable="True">
+             Background="{StaticResource ContainerBackground}" Focusable="True">
     <CommonControls:BaseControl.InputBindings>
         <KeyBinding Modifiers="Ctrl" Key="S" Command="{Binding SaveCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type local:MarkdownElement}}}" CommandParameter="{StaticResource False}"/>
         <KeyBinding Modifiers="Ctrl" Key="A" Command="{Binding CopyCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type local:MarkdownElement}}}" CommandParameter="{StaticResource False}"/>

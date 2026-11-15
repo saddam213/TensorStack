@@ -83,8 +83,8 @@
                             IconFalse="f04b"
                             SizeTrue="11"
                             SizeFalse="11"
-                            ColorTrue="#80FFFFFF"
-                            ColorFalse="#25FFFFFF"
+                            ColorTrue="{StaticResource ToggleIconOnColour}"
+                            ColorFalse="{StaticResource ToggleIconOffColour}"
                             ToolTipTrue="{CommonControls:Localize Tooltip_DisableAutoPlay}"
                             ToolTipFalse="{CommonControls:Localize Tooltip_EnableAutoPlay}"
                             ToolTipPlacement="Top"
@@ -95,8 +95,8 @@
                             IconFalse="f363"
                             SizeTrue="11"
                             SizeFalse="11"
-                            ColorTrue="#80FFFFFF"
-                            ColorFalse="#25FFFFFF"
+                            ColorTrue="{StaticResource ToggleIconOnColour}"
+                            ColorFalse="{StaticResource ToggleIconOffColour}"
                             ToolTipTrue="{CommonControls:Localize Tooltip_DisableAutoReplay}"
                             ToolTipFalse="{CommonControls:Localize Tooltip_EnableAutoReplay}"
                             ToolTipPlacement="Top"
@@ -312,7 +312,7 @@
                             <Border Height="36" 
                                 Padding="10,6"
                                 Margin="1,0,0,0"
-                                Background="#E0232323"
+                                Background="{StaticResource MediaControlsBackground}"
                                 Visibility="{Binding IsVideoFrameView, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                                 <UniformGrid Columns="2">
 

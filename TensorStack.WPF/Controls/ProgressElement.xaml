@@ -17,9 +17,9 @@
                 </Style>
             </ProgressBar.Style>
         </ProgressBar>
-        <TextBlock Text="{Binding Progress.Message}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="13" Foreground="#BFFFFFFF">
+        <TextBlock Text="{Binding Progress.Message}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="13" Foreground="{StaticResource ProgressTextForeground}">
             <TextBlock.Effect>
-                <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="1" Opacity="1" />
+                <DropShadowEffect Color="{StaticResource ProgressTextShadowColor}" BlurRadius="4" ShadowDepth="1" Opacity="1" />
             </TextBlock.Effect>
         </TextBlock>
     </Grid>

@@ -450,3 +450,282 @@ plainText {
 .specialChar {
     color: #d7ba7d;
 }
+
+
+/* Light Theme */
+html.theme-light, html.theme-light body {
+    color: #0A0A0A;
+    background-color: #FFFFFF;
+}
+
+html.theme-light h1, html.theme-light h2, html.theme-light blockquote, html.theme-light hr {
+    border-color: #D0D0D0;
+}
+
+html.theme-light a {
+    color: #0d72ba;
+}
+
+html.theme-light blockquote {
+    color: #606060;
+}
+
+html.theme-light code, html.theme-light code span {
+    background-color: #EFEFEF;
+}
+
+html.theme-light pre, html.theme-light .copy-block {
+    background-color: #F5F5F5;
+}
+
+html.theme-light pre code, html.theme-light pre span {
+    background: none;
+}
+
+html.theme-light .copy-code, html.theme-light .copy-code:hover {
+    background-color: #E8E8E8;
+    border-color: #C8C8C8;
+    color: #3A9A2E;
+}
+
+html.theme-light .copy-code:hover {
+    border-color: #0d72ba;
+}
+
+html.theme-light th, html.theme-light td, html.theme-light details {
+    border-color: #C8C8C8;
+}
+
+html.theme-light th, html.theme-light details, html.theme-light details[open] {
+    background: #F5F5F5;
+}
+
+html.theme-light .message-user {
+    border-color: #D0D0D0;
+    background: #F0F0F0;
+}
+
+html.theme-light plainText {
+    color: #0A0A0A;
+}
+
+html.theme-light .htmlServerSideScript {
+    color: #AF00DB;
+}
+
+html.theme-light .htmlComment {
+    color: #008000;
+}
+
+html.theme-light .htmlTagDelimiter {
+    color: #800000;
+}
+
+html.theme-light .htmlElementName {
+    color: #0000FF;
+}
+
+html.theme-light .htmlAttributeName {
+    color: #001080;
+}
+
+html.theme-light .htmlAttributeValue {
+    color: #A31515;
+}
+
+html.theme-light .htmlOperator {
+    color: #000000;
+}
+
+html.theme-light .comment {
+    color: #008000;
+}
+
+html.theme-light .xmlDocTag {
+    color: #008000;
+}
+
+html.theme-light .xmlDocComment {
+    color: #008000;
+}
+
+html.theme-light .string {
+    color: #A31515;
+}
+
+html.theme-light .stringCSharpVerbatim {
+    color: #A31515;
+}
+
+html.theme-light .keyword {
+    color: #0000FF;
+}
+
+html.theme-light .preprocessorKeyword {
+    color: #AF00DB;
+}
+
+html.theme-light .htmlEntity {
+    color: #800000;
+}
+
+html.theme-light .jsonKey {
+    color: #001080;
+}
+
+html.theme-light .jsonString {
+    color: #A31515;
+}
+
+html.theme-light .jsonNumber {
+    color: #098658;
+}
+
+html.theme-light .jsonConst {
+    color: #0000FF;
+}
+
+html.theme-light .xmlAttribute {
+    color: #001080;
+}
+
+html.theme-light .xmlAttributeQuotes {
+    color: #000000;
+}
+
+html.theme-light .xmlAttributeValue {
+    color: #A31515;
+}
+
+html.theme-light .xmlCDataSection {
+    color: #008000;
+}
+
+html.theme-light .xmlComment {
+    color: #008000;
+}
+
+html.theme-light .xmlDelimiter {
+    color: #800000;
+}
+
+html.theme-light .xmlName {
+    color: #0000FF;
+}
+
+html.theme-light .className {
+    color: #267F99;
+}
+
+html.theme-light .cssSelector {
+    color: #800000;
+}
+
+html.theme-light .cssPropertyName {
+    color: #001080;
+}
+
+html.theme-light .cssPropertyValue {
+    color: #A31515;
+}
+
+html.theme-light .sqlSystemFunction {
+    color: #795E26;
+}
+
+html.theme-light .powershellAttribute {
+    color: #0070C1;
+}
+
+html.theme-light .powershellOperator {
+    color: #000000;
+}
+
+html.theme-light .powershellType {
+    color: #267F99;
+}
+
+html.theme-light .powershellVariable {
+    color: #001080;
+}
+
+html.theme-light .powershellCommand {
+    color: #795E26;
+}
+
+html.theme-light .powershellParameter {
+    color: #A31515;
+}
+
+html.theme-light .type {
+    color: #267F99;
+}
+
+html.theme-light .typeVariable {
+    color: #267F99;
+}
+
+html.theme-light .namespace {
+    color: #267F99;
+}
+
+html.theme-light .constructor {
+    color: #795E26;
+}
+
+html.theme-light .predefined {
+    color: #0000FF;
+}
+
+html.theme-light .pseudoKeyword {
+    color: #0000FF;
+}
+
+html.theme-light .stringEscape {
+    color: #800000;
+}
+
+html.theme-light .controlKeyword {
+    color: #AF00DB;
+}
+
+html.theme-light .number {
+    color: #098658;
+}
+
+html.theme-light .operator {
+    color: #000000;
+}
+
+html.theme-light .delimiter {
+    color: #000000;
+}
+
+html.theme-light .markdownHeader {
+    color: #0000FF;
+}
+
+html.theme-light .markdownCode {
+    color: #A31515;
+}
+
+html.theme-light .markdownListItem {
+    color: #000000;
+}
+
+html.theme-light .builtinFunction {
+    color: #795E26;
+}
+
+html.theme-light .builtinValue {
+    color: #0000FF;
+}
+
+html.theme-light .attribute {
+    color: #001080;
+}
+
+html.theme-light .specialChar {
+    color: #800000;
+}
+

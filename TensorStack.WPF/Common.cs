@@ -64,6 +64,9 @@ namespace TensorStack.WPF
             var types = Assembly.GetExecutingAssembly().GetTypes().ToList();
             types.AddRange(Assembly.GetAssembly(typeof(T)).GetTypes());
 
+            // Theme, must be set before App resources are loaded
+            ThemeDictionary.Theme = configuration.Theme;
+
             // Register Configuration
             services.AddSingleton<C>(configuration);
             var interfaces = typeof(C).GetInterfaces();

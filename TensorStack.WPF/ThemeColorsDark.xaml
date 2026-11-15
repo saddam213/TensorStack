@@ -1,0 +1,298 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--Dark Theme Colours-->
+
+    <!--Dynamic Resources-->
+    <Color x:Key="Accent1">#FF0d72ba</Color>
+    <Color x:Key="Accent2">#FF74b768</Color>
+    <SolidColorBrush x:Key="AccentColour1" Color="#FF0d72ba" />
+    <SolidColorBrush x:Key="AccentColour2" Color="#FF74b768" />
+
+    <!--Static Resources-->
+    <SolidColorBrush x:Key="InfoColour" Color="#FF2e90d7" />
+    <SolidColorBrush x:Key="SuccessColour" Color="#FF8ed781" />
+    <SolidColorBrush x:Key="WarningColour" Color="#ffffcc00" />
+    <SolidColorBrush x:Key="DangerColour" Color="#fffe2929" />
+
+    <SolidColorBrush x:Key="DefaultForeground" Color="#FFC8C8C8"/>
+    <SolidColorBrush x:Key="DefaultBackgroundColor" Color="#FF232323"/>
+    <SolidColorBrush x:Key="DefaultBorderColor" Color="#FF343434"/>
+    <SolidColorBrush x:Key="WindowBorderColour" Color="#FF343434"/>
+    <SolidColorBrush x:Key="WindowTitleColour" Color="#FF242424"/>
+
+
+    <!-- 12x12 tile; light gray background + two darker squares -->
+    <DrawingBrush x:Key="CheckerBrush"
+           TileMode="Tile"
+           Viewport="0,0,12,12"
+           ViewportUnits="Absolute"
+           Stretch="None">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#FFF5F5F5" Geometry="M0,0 L12,0 12,12 0,12 Z"/>
+                <GeometryDrawing Brush="#FFE3E3E3" Geometry="M0,0 L6,0 6,6 0,6 Z"/>
+                <GeometryDrawing Brush="#FFE3E3E3" Geometry="M6,6 L12,6 12,12 6,12 Z"/>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+
+
+
+
+    <!-- Complete DarkTheme Colours -->
+    <SolidColorBrush x:Key="TransparentBrush" Color="Transparent"/>
+
+    <SolidColorBrush x:Key="ContainerBackground" Color="#FF272727"/>
+    <SolidColorBrush x:Key="ContainerBorder" Color="#FF3F3F3F"/>
+
+    <SolidColorBrush x:Key="BorderMediumColor">#FF888888</SolidColorBrush>
+
+    <SolidColorBrush x:Key="ControlDarkerBackground" Color="#FF2A2A2A"/>
+    <SolidColorBrush x:Key="ControlDarkerBorderBrush" Color="#FF2F2F2F"/>
+    <SolidColorBrush x:Key="ControlDefaultBackground" Color="#FF2D2D2D"/>
+    <SolidColorBrush x:Key="ControlDefaultBorderBrush" Color="#FF323232"/>
+    <SolidColorBrush x:Key="ControlBrightDefaultBackground" Color="#FF343434"/>
+    <SolidColorBrush x:Key="ControlBrightDefaultBorderBrush" Color="#FF3C3C3C"/>
+    <SolidColorBrush x:Key="ControlDisabledBackground" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ControlDisabledBorderBrush" Color="#FF464646"/>
+    <SolidColorBrush x:Key="ControlMouseOverBackground" Color="#FF3F3F3F"/>
+    <SolidColorBrush x:Key="ControlMouseOverBorderBrush" Color="#FF414141"/>
+    <SolidColorBrush x:Key="ControlSelectedBackground" Color="#FF323232"/>
+    <SolidColorBrush x:Key="ControlSelectedBorderBrush" Color="#FF373737"/>
+    <SolidColorBrush x:Key="ControlSelectedMouseOverBackground" Color="#FF3F3F3F"/>
+    <SolidColorBrush x:Key="ControlSelectedMouseOverBorderBrush" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ControlGlythColour" Color="#FFEBEBEB"/>
+    <SolidColorBrush x:Key="ControlMouseOverGlythColour" Color="#FFD7D7D7"/>
+    <SolidColorBrush x:Key="ControlSelectedGlythColour" Color="#FFC8C8C8"/>
+    <SolidColorBrush x:Key="ControlDisabledGlythColour" Color="#FFA0A0A0"/>
+
+
+    <!-- Colourful theme  Colours -->
+    <SolidColorBrush x:Key="ControlPrimaryColourBackground" Color="#FF2084E8"/>
+    <SolidColorBrush x:Key="ControlPrimaryColourBorderBrush" Color="#FF3294E8"/>
+    <SolidColorBrush x:Key="ControlBrightPrimaryColourBackground" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="ControlBrightPrimaryColourBorderBrush" Color="#FF50A4FA"/>
+    <SolidColorBrush x:Key="ControlSelectionHighlightBrush" Color="#FFF4F4F4"/>
+
+
+    <!--RadioButton-->
+    <SolidColorBrush x:Key="RadioButtonBackground" Color="#FF2D2D2D"/>
+    <SolidColorBrush x:Key="RadioButtonBorder" Color="#FF323232"/>
+    <SolidColorBrush x:Key="RadioButtonGlyph" Color="#FF2084E8"/>
+    <SolidColorBrush x:Key="RadioButtonBackgroundMouseOver" Color="#FF3F3F3F"/>
+    <SolidColorBrush x:Key="RadioButtonBorderMouseOver" Color="#FF414141"/>
+    <SolidColorBrush x:Key="RadioButtonGlyphMouseOver" Color="#FF3294E8"/>
+    <SolidColorBrush x:Key="RadioButtonBackgroundPressed" Color="#FF323232"/>
+    <SolidColorBrush x:Key="RadioButtonBorderPressed" Color="#FF373737"/>
+    <SolidColorBrush x:Key="RadioButtonGlyphPressed" Color="#FF3294E8"/>
+    <SolidColorBrush x:Key="RadioButtonBackgroundDisabled" Color="#FF424242"/>
+    <SolidColorBrush x:Key="RadioButtonBorderDisabled" Color="#FF464646"/>
+    <SolidColorBrush x:Key="RadioButtonGlyphDisabled" Color="#FF707070"/>
+
+    <!--ListBox-->
+    <SolidColorBrush x:Key="ListBoxBackground" Color="#FF2D2D2D"/>
+    <SolidColorBrush x:Key="ListBoxBorder" Color="#FF323232"/>
+    <SolidColorBrush x:Key="ListBoxBackgroundDisabled" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ListBoxBorderDisabled" Color="#FF3C3C3C"/>
+
+    <!--ScrollBar-->
+    <LinearGradientBrush x:Key="ScrollBarBackground" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF343434" Offset="0.0"/>
+        <GradientStop Color="#FF2A2A2A" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ScrollBarBorder" Color="#FF464646"/>
+    <SolidColorBrush x:Key="ScrollBarGlyph" Color="#FFF4F4F4"/>
+    <LinearGradientBrush x:Key="ScrollBarThumb" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF707070" Offset="0.0"/>
+        <GradientStop Color="#FF707070" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ScrollBarBackgroundMouseOver" Color="#FF323232"/>
+    <SolidColorBrush x:Key="ScrollBarBorderMouseOver" Color="#FF373737"/>
+    <SolidColorBrush x:Key="ScrollBarGlyphMouseOver" Color="#606060"/>
+    <SolidColorBrush x:Key="ScrollBarThumbMouseOver" Color="#A6A6A6"/>
+    <SolidColorBrush x:Key="ScrollBarBackgroundPressed" Color="#FF343434"/>
+    <SolidColorBrush x:Key="ScrollBarBorderPressed" Color="#FF373737"/>
+    <SolidColorBrush x:Key="ScrollBarThumbPressed" Color="#606060"/>
+    <SolidColorBrush x:Key="ScrollBarGlyphPressed" Color="#FFF4F4F4"/>
+    <SolidColorBrush x:Key="ScrollBarBackgroundDisabled" Color="#FF343434"/>
+    <SolidColorBrush x:Key="ScrollBarBorderDisabled" Color="#FF343434"/>
+    <SolidColorBrush x:Key="ScrollBarGlyphDisabled" Color="#606060"/>
+    <SolidColorBrush x:Key="ScrollBarThumbDisabled" Color="#606060"/>
+
+
+    <!--GroupBox-->
+    <SolidColorBrush x:Key="GroupBoxBorder" Color="#FF414141" />
+    <SolidColorBrush x:Key="GroupBoxBorderOuter" Color="#FF323232" />
+    <SolidColorBrush x:Key="GroupBoxBorderInner" Color="#FF323232" />
+    <SolidColorBrush x:Key="GroupBoxForeground" Color="#FFC8C8C8" />
+
+
+
+    <!--ProgressBar-->
+    <LinearGradientBrush x:Key="ProgressBarProgress" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF2084E8" Offset="0.0"/>
+        <GradientStop Color="#FF3296FA" Offset="1.0"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ProgressBarBackground" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF343434" Offset="0.0"/>
+        <GradientStop Color="#FF2A2A2A" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ProgressBarBorder" Color="#FF2F2F2F"/>
+    <SolidColorBrush x:Key="ProgressBarProgressDisabled" Color="#FF707070"/>
+    <SolidColorBrush x:Key="ProgressBarBackgroundDisabled" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ProgressBarBorderDisabled" Color="#FF464646"/>
+
+
+    <!--CheckBox-->
+    <SolidColorBrush x:Key="CheckBoxBackground" Color="#FF2D2D2D"/>
+    <SolidColorBrush x:Key="CheckBoxBorder" Color="#FF323232"/>
+    <SolidColorBrush x:Key="CheckBoxGlyph" Color="#FF2084E8"/>
+    <SolidColorBrush x:Key="CheckBoxBackgroundMouseOver" Color="#FF3F3F3F"/>
+    <SolidColorBrush x:Key="CheckBoxBorderMouseOver" Color="#FF414141"/>
+    <SolidColorBrush x:Key="CheckBoxGlyphMouseOver" Color="#FF3294E8"/>
+    <SolidColorBrush x:Key="CheckBoxBackgroundPressed" Color="#FF323232"/>
+    <SolidColorBrush x:Key="CheckBoxBorderPressed" Color="#FF373737"/>
+    <SolidColorBrush x:Key="CheckBoxGlyphPressed" Color="#FF3294E8"/>
+    <SolidColorBrush x:Key="CheckBoxBackgroundDisabled" Color="#FF424242"/>
+    <SolidColorBrush x:Key="CheckBoxBorderDisabled" Color="#FF464646"/>
+    <SolidColorBrush x:Key="CheckBoxGlyphDisabled" Color="#FF707070"/>
+
+
+
+    <!--Button-->
+    <LinearGradientBrush x:Key="ButtonBackground" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF212222" Offset="0.0"/>
+        <GradientStop Color="#FF2A2A2A" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ButtonForeground" Color="#FFC8C8C8"/>
+    <SolidColorBrush x:Key="ButtonBorderBrush" Color="#FF4e4d4d"/>
+    <SolidColorBrush x:Key="ButtonBorderDefault" Color="#FF4e4d4d"/>
+    <SolidColorBrush x:Key="ButtonBorderMouseOver" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="ButtonBackgroundMouseOver" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ButtonBorderPressed" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#FF50A4FA"/>
+    <SolidColorBrush x:Key="ButtonBorderDisabled" Color="#FF464646"/>
+    <LinearGradientBrush x:Key="ButtonBackgroundDisabled" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF464646" Offset="0.0"/>
+        <GradientStop Color="#FF424242" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ButtonForegroundDisabled" Color="#FF414141"/>
+
+
+
+    <!--TabItem-->
+    <SolidColorBrush x:Key="TabItemForeground" Color="#FFC8C8C8" />
+    <LinearGradientBrush x:Key="TabItemBackground" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF343434" Offset="0.0"/>
+        <GradientStop Color="#FF2A2A2A" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="TabItemBorder" Color="#FF414141"/>
+    <LinearGradientBrush x:Key="TabItemBackgroundMouseOver" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF3F3F3F" Offset="0.0"/>
+        <GradientStop Color="#FF3F3F3F" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="TabItemBorderMouseOver" Color="#FF424242"/>
+    <SolidColorBrush x:Key="TabItemBackgroundSelected" Color="#FF323232"/>
+    <SolidColorBrush x:Key="TabItemBorderSelected" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="TabItemBackgroundDisabled" Color="#FF424242"/>
+    <SolidColorBrush x:Key="TabItemBorderDisabled" Color="#FF464646"/>
+
+
+    <!--ComboBox-->
+    <LinearGradientBrush x:Key="ComboBoxBackground" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF343434" Offset="0.0"/>
+        <GradientStop Color="#FF2A2A2A" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ComboBoxBorder" Color="#FF414141"/>
+    <SolidColorBrush x:Key="ComboBoxGlyph" Color="#FFBFBFBF"/>
+    <LinearGradientBrush x:Key="ComboBoxBackgroundMouseOver" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF3F3F3F" Offset="0.0"/>
+        <GradientStop Color="#FF3F3F3F" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ComboBoxBorderMouseOver" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="ComboBoxGlyphMouseOver" Color="#FFC8C8C8"/>
+    <LinearGradientBrush x:Key="ComboBoxBackgroundPressed" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF343434" Offset="0.0"/>
+        <GradientStop Color="#FF2A2A2A" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ComboBoxBorderPressed" Color="#FF50A4FA"/>
+    <SolidColorBrush x:Key="ComboBoxGlyphPressed" Color="#FF000000"/>
+    <SolidColorBrush x:Key="ComboBoxBackgroundDisabled" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ComboBoxBorderDisabled" Color="#FF464646"/>
+    <SolidColorBrush x:Key="ComboBoxGlyphDisabled" Color="#FF606060"/>
+
+
+
+    <!--ComboBoxItem-->
+    <LinearGradientBrush x:Key="ComboBoxItemBackground" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF343434" Offset="0.0"/>
+        <GradientStop Color="#FF2A2A2A" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ComboBoxItemForeground" Color="#FFC8C8C8"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrush" Color="#FF323232"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderMouseOver" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundMouseOver" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderPressed" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundPressed" Color="#FF50A4FA"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderDisabled" Color="#FF464646"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundHover" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderHover" Color="#A826A0DA"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderSelected" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedHover" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderSelectedHover" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedNoFocus" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderSelectedNoFocus" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderFocus" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundHoverFocus" Color="#FF424242"/>
+    <SolidColorBrush x:Key="ComboBoxItemBorderHoverFocus" Color="#FF26A0DA"/>
+
+
+    <!--Slider-->
+    <LinearGradientBrush x:Key="SliderThumbBackground" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#FF707070" Offset="0.0"/>
+        <GradientStop Color="#FF707070" Offset="1.0"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="SliderThumbBorder" Color="#FF3C3C3C"/>
+    <SolidColorBrush x:Key="SliderThumbForeground" Color="#FFC8C8C8"/>
+    <SolidColorBrush x:Key="SliderThumbBackgroundMouseOver" Color="#FF2D2D2D"/>
+    <SolidColorBrush x:Key="SliderThumbBorderMouseOver" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="SliderThumbBackgroundPressed" Color="#FF2D2D2D"/>
+    <SolidColorBrush x:Key="SliderThumbBorderPressed" Color="#FF3296FA"/>
+    <SolidColorBrush x:Key="SliderThumbBackgroundDisabled" Color="#FF424242"/>
+    <SolidColorBrush x:Key="SliderThumbBorderDisabled" Color="#FF464646"/>
+    <SolidColorBrush x:Key="SliderTrackBackground" Color="#FF2D2D2D"/>
+    <SolidColorBrush x:Key="SliderTrackBorder" Color="#FF3C3C3C"/>
+
+
+    <!--Crop Image Dialog-->
+    <SolidColorBrush x:Key="CropFrameBrush" Color="#FF3296FA" />
+    <SolidColorBrush x:Key="CropFrameBorder" Color="#FFC8C8C8" />
+
+
+    <!--Progress Text-->
+    <SolidColorBrush x:Key="ProgressTextForeground" Color="#BFFFFFFF" />
+    <Color x:Key="ProgressTextShadowColor">#FF000000</Color>
+
+
+    <!--Placeholder Images-->
+    <BitmapImage x:Key="PlaceholderImage" UriSource="pack://application:,,,/TensorStack.WPF;component/Images/PlaceholderImage.png" />
+    <BitmapImage x:Key="PlaceholderVideo" UriSource="pack://application:,,,/TensorStack.WPF;component/Images/PlaceholderVideo.png" />
+    <BitmapImage x:Key="PlaceholderAudio" UriSource="pack://application:,,,/TensorStack.WPF;component/Images/PlaceholderAudio.png" />
+    <BitmapImage x:Key="PlaceholderText" UriSource="pack://application:,,,/TensorStack.WPF;component/Images/PlaceholderText.png" />
+
+
+    <!--Theme Specific-->
+    <SolidColorBrush x:Key="WindowTitleForeground" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="MenuItemHighlightBackground" Color="#FF5082A4" />
+    <SolidColorBrush x:Key="ComboBoxEditableFocusForeground" Color="#FF000000" />
+    <SolidColorBrush x:Key="ToggleIconOnColour" Color="#80FFFFFF" />
+    <SolidColorBrush x:Key="ToggleIconOffColour" Color="#25FFFFFF" />
+    <SolidColorBrush x:Key="IconMutedColour" Color="#10FFFFFF" />
+    <SolidColorBrush x:Key="MediaControlsBackground" Color="#E0232323" />
+    <SolidColorBrush x:Key="HistoryItemBackground" Color="#80000000" />
+    <Color x:Key="WebViewBackgroundColor">#FF2D2D2D</Color>
+
+</ResourceDictionary>

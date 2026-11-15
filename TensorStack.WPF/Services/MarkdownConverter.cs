@@ -98,9 +98,10 @@ namespace TensorStack.WPF.Services
 
         public static string FormatHtmlPage(ReadOnlySpan<char> bodyContent, double fontSize, FontFamily fontFamily)
         {
+            var themeClass = ThemeDictionary.Theme == ThemeType.Light ? "theme-light" : "theme-dark";
             return $$"""
             <!DOCTYPE html>
-            <html>
+            <html class="{{themeClass}}">
                 <head>
                     <meta charset="UTF-8">
                     <script>

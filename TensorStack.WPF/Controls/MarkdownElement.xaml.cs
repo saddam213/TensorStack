@@ -603,11 +603,23 @@ namespace TensorStack.WPF.Controls
             {
                 SnapsToDevicePixels = true,
                 UseLayoutRounding = true,
-                DefaultBackgroundColor = Color.FromArgb(0xFF, 0x2D, 0x2D, 0x2D)
+                DefaultBackgroundColor = GetWebViewBackgroundColor()
             };
 
             WebViewer.SetBinding(WebView2.ZoomFactorProperty, new Binding("Settings.UIScale"));
             WebViewerContainer.Children.Add(WebViewer);
+        }
+
+
+        /// <summary>
+        /// Gets the WebView2 background colour from the current theme.
+        /// </summary>
+        private Color GetWebViewBackgroundColor()
+        {
+            if (TryFindResource("WebViewBackgroundColor") is System.Windows.Media.Color color)
+                return Color.FromArgb(color.A, color.R, color.G, color.B);
+
+            return Color.FromArgb(0xFF, 0x2D, 0x2D, 0x2D);
         }
 
 

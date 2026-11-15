@@ -204,4 +204,10 @@
   <data name="SplitterVisibility2" xml:space="preserve">
     <value>手動</value>
   </data>
+  <data name="ThemeType0" xml:space="preserve">
+    <value>ダーク</value>
+  </data>
+  <data name="ThemeType1" xml:space="preserve">
+    <value>ライト</value>
+  </data>
 </root>

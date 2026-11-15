@@ -204,4 +204,10 @@
   <data name="SplitterVisibility2" xml:space="preserve">
     <value>Manual</value>
   </data>
+  <data name="ThemeType0" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="ThemeType1" xml:space="preserve">
+    <value>Light</value>
+  </data>
 </root>

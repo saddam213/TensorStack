@@ -39,6 +39,10 @@
     <Resource Include="Images\PlaceholderImage.png" />
     <Resource Include="Images\PlaceholderText.png" />
     <Resource Include="Images\PlaceholderVideo.png" />
+    <Resource Include="Images\PlaceholderAudio-Light.png" />
+    <Resource Include="Images\PlaceholderImage-Light.png" />
+    <Resource Include="Images\PlaceholderText-Light.png" />
+    <Resource Include="Images\PlaceholderVideo-Light.png" />
     <Resource Include="Images\Tensorstack-720-Gray.png" />
     <Resource Include="Images\Tensorstack-720.png" />
     <Resource Include="Images\tensorstack-long.png" />
