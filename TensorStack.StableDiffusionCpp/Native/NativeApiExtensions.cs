@@ -1059,10 +1059,6 @@ namespace TensorStack.StableDiffusionCpp.Native
             }
 
             native.audio.FreeUnmanaged();
-            if (native.audio.data != null)
-            {
-                NativeMemory.Free(native.audio.data);
-            }
         }
 
         #endregion
