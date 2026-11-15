@@ -1,6 +1,9 @@
 # TensorStack.StableDiffusionCpp
 Basic .NET Wrapper API for StableDiffusion.cpp
 
+## Nuget Package
+[![Common Badge](https://img.shields.io/nuget/v/TensorStack.StableDiffusionCpp?color=4bc51e&label=TensorStack.StableDiffusionCpp)](https://www.nuget.org/packages/TensorStack.StableDiffusionCpp)
+
 
 ## Image Example
 Generate an image using Krea2 Turbo
