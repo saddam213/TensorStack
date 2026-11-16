@@ -61,14 +61,15 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <param name="options">The options.</param>
         public ImageTensor UpscaleImage(ImageTensor inputImage, UpscaleImageOptions options = default)
         {
-            var unmanaged = inputImage.ToUnmanaged();
+            // Upscaling requires an RGB image
+            var unmanaged = inputImage.ToUnmanaged(3);
             try
             {
                 return UpscaleImage(unmanaged, options);
             }
             finally
             {
-                unmanaged.FreeUnmanaged();
+                NativeApi.sd_tensor_free(unmanaged);
             }
         }
 
@@ -76,9 +77,9 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <summary>
         /// Upscales unmanaged images.
         /// </summary>
-        /// <param name="inputImage">The input image.</param>
+        /// <param name="inputImage">The input image, borrowed.</param>
         /// <param name="options">The options.</param>
-        internal ImageTensor UpscaleImage(NativeApi.sd_image_t inputImage, UpscaleImageOptions options = default)
+        internal ImageTensor UpscaleImage(NativeApi.sd_tensor_t* inputImage, UpscaleImageOptions options = default)
         {
             return UpscaleImageInternal(inputImage, options);
         }
@@ -103,19 +104,19 @@ namespace TensorStack.StableDiffusionCpp.Native
 
 
         /// <summary>
-        /// Upscales unmanaged frames.
+        /// Upscales the frames of an unmanaged result.
         /// </summary>
-        /// <param name="videoFrames">The video frames.</param>
-        /// <param name="frameCount">The frame count.</param>
+        /// <param name="result">The result, borrowed.</param>
         /// <param name="options">The options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        internal ImageTensor[] UpscaleFrames(NativeApi.sd_image_t* videoFrames, int frameCount, UpscaleImageOptions options = default, CancellationToken cancellationToken = default)
+        internal ImageTensor[] UpscaleFrames(NativeApi.sd_result_t* result, UpscaleImageOptions options = default, CancellationToken cancellationToken = default)
         {
+            var frameCount = checked((int)NativeApi.sd_result_get_image_count(result));
             var managed = new ImageTensor[frameCount];
             for (int i = 0; i < frameCount; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                managed[i] = UpscaleImage(videoFrames[i], options);
+                managed[i] = UpscaleImage(NativeApi.sd_result_get_image(result, (nuint)i), options);
             }
             return managed;
         }
@@ -129,116 +130,100 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <param name="cancellationToken">The cancellation token.</param>
         public VideoSequence UpscaleVideo(VideoSequence videoSequence, UpscaleVideoOptions options = default, CancellationToken cancellationToken = default)
         {
-            var videoFrames = UpscaleVideoInternal(videoSequence.Frames, (int)videoSequence.FrameRate, options, cancellationToken);
-            return new VideoSequence(videoFrames, videoSequence.FrameRate, videoSequence.Audio);
+            // Upscaling requires RGB frames
+            var unmanaged = videoSequence.Frames.ToUnmanaged(3);
+            try
+            {
+                var videoFrames = UpscaleVideoInternal(unmanaged, (int)videoSequence.FrameRate, options, cancellationToken);
+                return new VideoSequence(videoFrames, videoSequence.FrameRate, videoSequence.Audio);
+            }
+            finally
+            {
+                NativeApi.sd_tensor_free(unmanaged);
+            }
         }
 
 
         /// <summary>
-        /// Upscales unmanaged video.
+        /// Upscales the video of an unmanaged result.
         /// </summary>
-        /// <param name="videoResult">The video result.</param>
+        /// <param name="result">The video result, borrowed.</param>
         /// <param name="options">The options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public ImageTensor[] UpscaleVideo(NativeApi.sd_video_generation_result_t videoResult, UpscaleVideoOptions options = default, CancellationToken cancellationToken = default)
+        /// <exception cref="System.Exception">Failed to read video result</exception>
+        internal ImageTensor[] UpscaleVideo(NativeApi.sd_result_t* result, UpscaleVideoOptions options = default, CancellationToken cancellationToken = default)
         {
-            return UpscaleVideoInternal(videoResult, options, cancellationToken);
+            // Packs the frames into a single [C,W,H,T] tensor, owned by the result
+            var video = NativeApi.sd_result_get_video(result);
+            if (video == null || video->data == null)
+                throw new Exception($"Failed to read video result: {NativeApi.GetLastError()}");
+
+            return UpscaleVideoInternal(video->data, video->fps, options, cancellationToken);
         }
 
 
         /// <summary>
         /// Upscales unmanaged image.
         /// </summary>
-        /// <param name="inputImage">The input image.</param>
-        /// <param name="options">The options.</param>
-        private ImageTensor UpscaleImageInternal(NativeApi.sd_image_t inputImage, UpscaleImageOptions options)
+        /// <param name="inputImage">The input image, borrowed.</param>
+        /// <param name="options">The options, the scale is fixed by the loaded model.</param>
+        private ImageTensor UpscaleImageInternal(NativeApi.sd_tensor_t* inputImage, UpscaleImageOptions options)
         {
-            options = options ?? DefaultImageOptions;
-            if (!NativeApi.upscale(_upscaleImageHandle.GetContext(), inputImage, (uint)options.ScaleFactor, out NativeApi.sd_image_generation_result_t* unmanagedResults) || unmanagedResults == null)
-                return null;
+            using (var parameters = NativeApiExtensions.ToUnmanagedUpscale(inputImage))
+            {
+                var status = NativeApi.sd_upscale(_upscaleImageHandle.GetContext(), parameters.Handle, out NativeApi.sd_result_t* unmanagedResult);
+                NativeApi.ThrowIfFailed(status, "Failed to upscale image");
 
-            try
-            {
-                var unmanagedImage = unmanagedResults[0];
-                var unmanagedImages = unmanagedImage.items;
-                var unmanagedImageCount = unmanagedImage.count;
-                if (unmanagedImages == null || unmanagedImageCount <= 0)
-                    return null;
-                return unmanagedImages[0].image.ToManaged();
-            }
-            finally
-            {
-                NativeApi.free_sd_image_generation_result(unmanagedResults);
+                try
+                {
+                    if (NativeApi.sd_result_get_image_count(unmanagedResult) == 0)
+                        return null;
+
+                    return NativeApiExtensions.ToImageTensor(NativeApi.sd_result_get_image(unmanagedResult, 0));
+                }
+                finally
+                {
+                    NativeApi.sd_result_free(unmanagedResult);
+                }
             }
         }
 
 
         /// <summary>
-        /// Upscales managed video.
+        /// Upscales unmanaged video.
         /// </summary>
-        /// <param name="videoFrames">The video frames.</param>
+        /// <param name="videoFrames">The video frames [C,W,H,T], borrowed.</param>
         /// <param name="frameRate">The frame rate.</param>
         /// <param name="options">The options.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        private ImageTensor[] UpscaleVideoInternal(ImageTensor[] videoFrames, int frameRate, UpscaleVideoOptions options, CancellationToken cancellationToken = default)
+        private ImageTensor[] UpscaleVideoInternal(NativeApi.sd_tensor_t* videoFrames, int frameRate, UpscaleVideoOptions options, CancellationToken cancellationToken = default)
         {
             options = options ?? DefaultVideoOptions;
-            var parameters = options.ToUnmanaged(videoFrames, frameRate);
-            try
+            using (var parameters = options.ToUnmanaged(videoFrames, frameRate))
             {
-                return UpscaleVideoInternal(&parameters, cancellationToken);
-            }
-            finally
-            {
-                parameters.FreeUnmanaged();
-            }
-        }
+                var status = NativeApi.sd_upscale_video(_upscaleVideoHandle.GetContext(), parameters.Handle, out NativeApi.sd_result_t* unmanagedResult);
+                NativeApi.ThrowIfFailed(status, "Failed to upscale video");
 
-
-        /// <summary>
-        /// Upscales unmanaged video.
-        /// </summary>
-        /// <param name="videoResult">The sd video result.</param>
-        /// <param name="options">The options.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        private ImageTensor[] UpscaleVideoInternal(NativeApi.sd_video_generation_result_t videoResult, UpscaleVideoOptions options, CancellationToken cancellationToken = default)
-        {
-            options = options ?? DefaultVideoOptions;
-            var parameters = options.ToUnmanaged(videoResult.frames, videoResult.frame_count, videoResult.fps);
-            return UpscaleVideoInternal(&parameters, cancellationToken);
-        }
-
-
-        /// <summary>
-        /// Upscales unmanaged video.
-        /// </summary>
-        /// <param name="parameters">The upscale parameters.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        private ImageTensor[] UpscaleVideoInternal(NativeApi.sd_video_upscale_params_t* parameters, CancellationToken cancellationToken = default)
-        {
-            if (!NativeApi.upscale_video(_upscaleVideoHandle.GetContext(), parameters, out NativeApi.sd_video_generation_result_t* unmanagedResults) || unmanagedResults == null)
-                return null;
-
-            try
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var unmanagedResult = unmanagedResults[0];
-                var unmanagedFrames = unmanagedResult.frames;
-                var unmanagedFrameCount = unmanagedResult.frame_count;
-                if (unmanagedFrames == null || unmanagedFrameCount <= 0)
-                    return null;
-
-                var managedVideo = new ImageTensor[unmanagedFrameCount];
-                Parallel.For(0, unmanagedFrameCount, i =>
+                try
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    managedVideo[i] = unmanagedFrames[i].ToManaged();
-                });
-                return managedVideo;
-            }
-            finally
-            {
-                NativeApi.free_sd_video_generation_result(unmanagedResults);
+                    var result = (nint)unmanagedResult;
+                    var frameCount = checked((int)NativeApi.sd_result_get_image_count(unmanagedResult));
+                    if (frameCount <= 0)
+                        return null;
+
+                    var managedVideo = new ImageTensor[frameCount];
+                    Parallel.For(0, frameCount, i =>
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        managedVideo[i] = NativeApiExtensions.ToImageTensor(NativeApi.sd_result_get_image((NativeApi.sd_result_t*)result, (nuint)i));
+                    });
+                    return managedVideo;
+                }
+                finally
+                {
+                    NativeApi.sd_result_free(unmanagedResult);
+                }
             }
         }
 

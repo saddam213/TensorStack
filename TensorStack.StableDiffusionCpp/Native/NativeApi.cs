@@ -9,7 +9,7 @@ namespace TensorStack.StableDiffusionCpp.Native
 {
     public static unsafe partial class NativeApi
     {
-        public const string LibraryVersion = "5dcfa79"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-1104-5dcfa79/include/stable-diffusion.h
+        public const string LibraryVersion = "532d2c1"; // https://github.com/leejet/stable-diffusion.cpp/blob/master-1106-532d2c1/include/stable-diffusion.h
         internal const string LibraryName = "stable-diffusion";
         private static nint _libraryHandle;
         private static BackendInfo _backendInfo;
@@ -74,68 +74,66 @@ namespace TensorStack.StableDiffusionCpp.Native
             };
         }
 
-        internal enum sample_method_t
+
+        /// <summary>
+        /// Gets the last native error for the calling thread.
+        /// </summary>
+        internal static string GetLastError()
         {
-            EULER_SAMPLE_METHOD,
-            EULER_A_SAMPLE_METHOD,
-            HEUN_SAMPLE_METHOD,
-            DPM2_SAMPLE_METHOD,
-            DPMPP2S_A_SAMPLE_METHOD,
-            DPMPP2M_SAMPLE_METHOD,
-            DPMPP2Mv2_SAMPLE_METHOD,
-            IPNDM_SAMPLE_METHOD,
-            IPNDM_V_SAMPLE_METHOD,
-            LCM_SAMPLE_METHOD,
-            DDIM_TRAILING_SAMPLE_METHOD,
-            TCD_SAMPLE_METHOD,
-            RES_MULTISTEP_SAMPLE_METHOD,
-            RES_2S_SAMPLE_METHOD,
-            ER_SDE_SAMPLE_METHOD,
-            EULER_CFG_PP_SAMPLE_METHOD,
-            EULER_A_CFG_PP_SAMPLE_METHOD,
-            EULER_GE_SAMPLE_METHOD,
-            DPMPP2M_SDE_SAMPLE_METHOD,
-            DPMPP2M_SDE_BT_SAMPLE_METHOD,
-            LMS_SAMPLE_METHOD,
-            SAMPLE_METHOD_COUNT
+            return Utf8StringMarshaller.ConvertToManaged(sd_get_last_error());
         }
 
-        internal enum scheduler_t
+
+        /// <summary>
+        /// Throws if the native status is not OK.
+        /// </summary>
+        /// <param name="status">The status.</param>
+        /// <param name="message">The message.</param>
+        /// <exception cref="System.Exception">The message, status and native error</exception>
+        internal static void ThrowIfFailed(sd_status_t status, string message)
         {
-            DISCRETE_SCHEDULER,
-            KARRAS_SCHEDULER,
-            EXPONENTIAL_SCHEDULER,
-            AYS_SCHEDULER,
-            GITS_SCHEDULER,
-            SGM_UNIFORM_SCHEDULER,
-            SIMPLE_SCHEDULER,
-            SMOOTHSTEP_SCHEDULER,
-            KL_OPTIMAL_SCHEDULER,
-            LCM_SCHEDULER,
-            BONG_TANGENT_SCHEDULER,
-            LTX2_SCHEDULER,
-            LOGIT_NORMAL_SCHEDULER,
-            FLUX2_SCHEDULER,
-            FLUX_SCHEDULER,
-            BETA_SCHEDULER,
-            LLADA_IMAGE_SCHEDULER,
-            SCHEDULER_COUNT
+            if (status == sd_status_t.SD_STATUS_OK)
+                return;
+
+            // Must be read before any other native call, it is thread-local and cleared by the next call
+            var error = GetLastError();
+            throw new Exception(string.IsNullOrEmpty(error) ? $"{message} ({status})" : $"{message} ({status}): {error}");
         }
 
-        internal enum prediction_t
+
+        // ============================================================
+        // Enums
+        // ============================================================
+
+        internal enum sd_status_t
         {
-            EPS_PRED,
-            V_PRED,
-            EDM_V_PRED,
-            FLOW_PRED,
-            FLUX_FLOW_PRED,
-            SEFI_FLOW_PRED,
-            MINIT2I_FLOW_PRED,
-            SENSENOVA_U1_FLOW_PRED,
-            FLUX3_FLOW_PRED,
-            H3_AV_FLOW_PRED,
-            MING_IMAGE_FLOW_PRED,
-            PREDICTION_COUNT
+            SD_STATUS_OK = 0,
+            SD_STATUS_INVALID_ARGUMENT = 1,
+            SD_STATUS_UNKNOWN_KEY = 2,
+            SD_STATUS_TYPE_MISMATCH = 3,
+            SD_STATUS_OUT_OF_RANGE = 4,
+            SD_STATUS_UNSUPPORTED = 5,
+            SD_STATUS_OUT_OF_MEMORY = 6,
+            SD_STATUS_LOAD_FAILED = 7,
+            SD_STATUS_GENERATION_FAILED = 8,
+            SD_STATUS_BUSY = 9,
+            SD_STATUS_CANCELLED = 10
+        }
+
+        internal enum sd_tensor_type_t : int
+        {
+            SD_TENSOR_U8 = 1,
+            SD_TENSOR_I32 = 2,
+            SD_TENSOR_I64 = 3,
+            SD_TENSOR_F32 = 4,
+            SD_TENSOR_F64 = 5
+        }
+
+        internal enum sd_result_kind_t
+        {
+            SD_RESULT_INVALID = 0,
+            SD_RESULT_IMAGE = 1,
+            SD_RESULT_VIDEO = 2
         }
 
         internal enum sd_type_t
@@ -189,86 +187,11 @@ namespace TensorStack.StableDiffusionCpp.Native
             SD_LOG_ERROR
         }
 
-        internal enum preview_t
-        {
-            PREVIEW_NONE,
-            PREVIEW_PROJ,
-            PREVIEW_TAE,
-            PREVIEW_VAE,
-            PREVIEW_COUNT
-        }
-
-        internal enum lora_apply_mode_t
-        {
-            LORA_APPLY_AUTO,
-            LORA_APPLY_IMMEDIATELY,
-            LORA_APPLY_AT_RUNTIME,
-            LORA_APPLY_MODE_COUNT
-        }
-
-        internal enum sd_vae_format_t
-        {
-            SD_VAE_FORMAT_AUTO = -1,
-            SD_VAE_FORMAT_FLUX,
-            SD_VAE_FORMAT_SD3,
-            SD_VAE_FORMAT_FLUX2,
-            SD_VAE_FORMAT_WAN,
-            SD_VAE_FORMAT_COUNT
-        }
-
-        internal enum sd_cache_mode_t
-        {
-            SD_CACHE_DISABLED = 0,
-            SD_CACHE_EASYCACHE,
-            SD_CACHE_UCACHE,
-            SD_CACHE_DBCACHE,
-            SD_CACHE_TAYLORSEER,
-            SD_CACHE_CACHE_DIT,
-            SD_CACHE_SPECTRUM,
-        }
-
-        internal enum sd_hires_upscaler_t
-        {
-            SD_HIRES_UPSCALER_NONE,
-            SD_HIRES_UPSCALER_LATENT,
-            SD_HIRES_UPSCALER_LATENT_NEAREST,
-            SD_HIRES_UPSCALER_LATENT_NEAREST_EXACT,
-            SD_HIRES_UPSCALER_LATENT_ANTIALIASED,
-            SD_HIRES_UPSCALER_LATENT_BICUBIC,
-            SD_HIRES_UPSCALER_LATENT_BICUBIC_ANTIALIASED,
-            SD_HIRES_UPSCALER_LANCZOS,
-            SD_HIRES_UPSCALER_NEAREST,
-            SD_HIRES_UPSCALER_MODEL,
-            SD_HIRES_UPSCALER_COUNT,
-        }
-
-        internal enum sd_control_type_t
-        {
-            SD_CONTROL_TYPE_NONE,
-            SD_CONTROL_TYPE_OPENPOSE,
-            SD_CONTROL_TYPE_DEPTH,
-            SD_CONTROL_TYPE_SCRIBBLE,
-            SD_CONTROL_TYPE_CANNY,
-            SD_CONTROL_TYPE_NORMAL,
-            SD_CONTROL_TYPE_SEGMENT,
-            SD_CONTROL_TYPE_TILE,
-            SD_CONTROL_TYPE_REPAINT,
-            SD_CONTROL_TYPE_COUNT,
-        }
-
         internal enum sd_cancel_mode_t
         {
             SD_CANCEL_ALL,
             SD_CANCEL_NEW_LATENTS,
             SD_CANCEL_RESET
-        }
-
-        internal enum rng_type_t
-        {
-            STD_DEFAULT_RNG,
-            CUDA_RNG,
-            CPU_RNG,
-            RNG_TYPE_COUNT
         }
 
 
@@ -277,21 +200,19 @@ namespace TensorStack.StableDiffusionCpp.Native
         // ============================================================
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_tiling_params_t
+        internal struct sd_audio_t
         {
-            [MarshalAs(UnmanagedType.I1)]
-            public bool enabled;
+            public uint sample_rate;
+            public sd_tensor_t* data;
+        }
 
-            [MarshalAs(UnmanagedType.I1)]
-            public bool temporal_tiling;
 
-            public int tile_size_w;
-            public int tile_size_h;
-            public float target_overlap;
-            public float rel_size_w;
-            public float rel_size_h;
-
-            public byte* extra_tiling_args;
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct sd_video_t
+        {
+            public sd_tensor_t* data;
+            public int fps;
+            public sd_audio_t audio;
         }
 
 
@@ -300,255 +221,6 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             public byte* name;
             public byte* path;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_ctx_params_t
-        {
-            public byte* model_path;
-            public byte* clip_l_path;
-            public byte* clip_g_path;
-            public byte* clip_vision_path;
-            public byte* t5xxl_path;
-            public byte* llm_path;
-            public byte* llm_vision_path;
-            public byte* diffusion_model_path;
-            public byte* high_noise_diffusion_model_path;
-            public byte* uncond_diffusion_model_path;
-            public byte* embeddings_connectors_path;
-            public byte* vae_path;
-            public byte* audio_vae_path;
-            public byte* audio_encoder_path;
-            public byte* taesd_path;
-            public byte* control_net_path;
-            public byte* ip_adapter_path;
-            public byte* motion_module_path;
-            public sd_embedding_t* embeddings;
-            public uint embedding_count;
-            public byte* photo_maker_path;
-            public byte* pulid_weights_path;
-            public byte* tensor_type_rules;
-            public int n_threads;
-            public sd_type_t wtype;
-            public rng_type_t rng_type;
-            public rng_type_t sampler_rng_type;
-            public prediction_t prediction;
-            public lora_apply_mode_t lora_apply_mode;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool enable_mmap;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool flash_attn;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool diffusion_flash_attn;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool tae_preview_only;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool diffusion_conv_direct;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool vae_conv_direct;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool force_sdxl_vae_conv_scale;
-
-            public sd_vae_format_t vae_format;
-            public byte* max_vram;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool disable_prefetch;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool eager_load;
-
-            public byte* backend;
-            public byte* params_backend;
-            public byte* split_mode;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool auto_fit;
-
-            public byte* rpc_servers;
-            public byte* model_args;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool disable_segmented_compute;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool batched_cfg;
-
-            public float linear_scale;
-            public float attn_scale;
-            public byte* tokenizer;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool sage_attn;
-
-            public int conditioning_cache_size;
-            public byte* flash_attn_mode;
-            public byte* conv_direct_mode;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_audio_t
-        {
-            public uint sample_rate;
-            public uint channels;
-            public ulong sample_count;
-            public float* data;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_image_t
-        {
-            public uint width;
-            public uint height;
-            public uint channel;
-            public byte* data;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_image_result_t
-        {
-            public sd_image_t image;
-            public byte* generation_info;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_image_generation_result_t
-        {
-            public sd_image_result_t* items;
-            public int count;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_video_generation_result_t
-        {
-            public sd_image_t* frames;
-            public int frame_count;
-            public sd_audio_t* audio;
-            public int fps;
-            public byte* generation_info;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_ref_video_t
-        {
-            public sd_image_t* frames;
-            public int frame_count;
-            public int fps;
-            public sd_audio_t audio;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_image_preprocess_params_t
-        {
-            public byte* rules;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_slg_params_t
-        {
-            public int* layers;
-            public nuint layer_count;
-            public float layer_start;
-            public float layer_end;
-            public float scale;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_guidance_params_t
-        {
-            public float txt_cfg;
-            public float img_cfg;
-            public float distilled_guidance;
-            public sd_slg_params_t slg;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_sample_params_t
-        {
-            public sd_guidance_params_t guidance;
-            public scheduler_t scheduler;
-            public sample_method_t sample_method;
-            public int sample_steps;
-            public float eta;
-            public int shifted_timestep;
-            public float* custom_sigmas;
-            public int custom_sigmas_count;
-            public float flow_shift;
-            public byte* extra_sample_args;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_pm_params_t
-        {
-            public sd_image_t* id_images;
-            public int id_images_count;
-            public byte* id_embed_path;
-            public float style_strength;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_pulid_params_t
-        {
-            public byte* id_embedding_path;
-            public float id_weight;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_cache_params_t
-        {
-            public sd_cache_mode_t mode;
-            public float reuse_threshold;
-            public float start_percent;
-            public float end_percent;
-            public float error_decay_rate;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool use_relative_threshold;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool reset_error_on_compute;
-
-            public int Fn_compute_blocks;
-            public int Bn_compute_blocks;
-            public float residual_diff_threshold;
-            public int max_warmup_steps;
-            public int max_cached_steps;
-            public int max_continuous_cached_steps;
-            public int taylorseer_n_derivatives;
-            public int taylorseer_skip_interval;
-            public byte* scm_mask;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool scm_policy_dynamic;
-
-            public float spectrum_w;
-            public int spectrum_m;
-            public float spectrum_lam;
-            public int spectrum_window_size;
-            public float spectrum_flex_window;
-            public int spectrum_warmup_steps;
-            public float spectrum_stop_percent;
         }
 
 
@@ -564,114 +236,14 @@ namespace TensorStack.StableDiffusionCpp.Native
 
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_hires_params_t
+        internal struct sd_generation_progress_t
         {
-            [MarshalAs(UnmanagedType.I1)]
-            public bool enabled;
-
-            public sd_hires_upscaler_t upscaler;
-            public byte* model_path;
-            public float scale;
-            public int target_width;
-            public int target_height;
-            public int steps;
-            public float denoising_strength;
-            public int upscale_tile_size;
-            public float* custom_sigmas;
-            public int custom_sigmas_count;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_img_gen_params_t
-        {
-            public sd_lora_t* loras;
-            public uint lora_count;
-            public byte* prompt;
-            public byte* negative_prompt;
-            public int clip_skip;
-            public sd_image_t init_image;
-            public sd_image_t* ref_images;
-            public int ref_images_count;
-            public byte* ref_image_args;
-            public sd_image_t mask_image;
-            public int width;
-            public int height;
-            public sd_sample_params_t sample_params;
-            public float strength;
-            public long seed;
-            public int batch_count;
-            public sd_image_t control_image;
-            public float control_strength;
-            public sd_image_t ip_adapter_image;
-            public float ip_adapter_strength;
-            public sd_pm_params_t pm_params;
-            public sd_pulid_params_t pulid_params;
-            public sd_tiling_params_t vae_tiling_params;
-            public sd_cache_params_t cache;
-            public sd_hires_params_t hires;
-            public int qwen_image_layers;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool circular_x;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool circular_y;
-
-            public sd_image_preprocess_params_t image_preprocess;
-            public sd_control_type_t control_type;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_vid_gen_params_t
-        {
-            public sd_lora_t* loras;
-            public uint lora_count;
-            public byte* prompt;
-            public byte* negative_prompt;
-            public int clip_skip;
-            public sd_image_t init_image;
-            public sd_image_t end_image;
-            public sd_image_t* ref_images;
-            public int ref_images_count;
-            public sd_ref_video_t* ref_videos;
-            public int ref_videos_count;
-            public sd_audio_t* ref_audios;
-            public int ref_audios_count;
-            public sd_image_t* control_frames;
-            public int control_frames_size;
-            public int width;
-            public int height;
-            public sd_sample_params_t sample_params;
-            public sd_sample_params_t high_noise_sample_params;
-            public float moe_boundary;
-            public float strength;
-            public long seed;
-            public int video_frames;
-            public int fps;
-            public float vace_strength;
-            public sd_tiling_params_t vae_tiling_params;
-            public sd_cache_params_t cache;
-            public sd_hires_params_t hires;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool circular_x;
-
-            [MarshalAs(UnmanagedType.I1)]
-            public bool circular_y;
-
-            public sd_image_preprocess_params_t image_preprocess;
-            public byte* ref_image_args;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_adetailer_params_t
-        {
-            public byte* prompt;
-            public byte* negative_prompt;
-            public byte* extra_ad_args;
+            public byte* stage;
+            public byte* detail;
+            public byte* unit;
+            public int sample_pass;
+            public long completed;
+            public long total;
         }
 
 
@@ -683,53 +255,17 @@ namespace TensorStack.StableDiffusionCpp.Native
         }
 
 
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_generation_progress_t
-        {
-            public byte* stage;
-            public byte* detail;
-            public byte* unit;
-            public int sample_pass;
-            public int total_steps;
-            public long completed;
-            public long total;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_video_upscaler_ctx_params_t
-        {
-            public byte* diffusion_model_path;
-            public byte* vae_path;
-            public int upscale_factor;
-            public int n_threads;
-            public byte* backend;
-            public byte* params_backend;
-            public byte* flash_attn_mode;
-            public byte* conv_direct_mode;
-        }
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct sd_video_upscale_params_t
-        {
-            public sd_image_t* frames;
-            public int frame_count;
-            public int fps;
-            public long seed;
-            public int window_size;
-            public int temporal_chunk_size;
-        }
-
-
         // ============================================================
         // Opaque native types
         // ============================================================
+        internal struct sd_tensor_t { }
         internal struct sd_ctx_t { }
-        internal struct upscaler_ctx_t { }
-        internal struct adetailer_ctx_t { }
+        internal struct sd_result_t { }
+        internal struct sd_opt_t { }
+        internal struct sd_upscaler_t { }
+        internal struct sd_vid_upscaler_t { }
+        internal struct sd_adetailer_t { }
         internal struct ggml_tensor { }
-        internal struct video_upscaler_ctx_t { }
 
 
         // ============================================================
@@ -746,7 +282,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         internal delegate void sd_generation_progress_cb_t(sd_generation_progress_t* progress, void* data);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void sd_preview_cb_t(int step, int frame_count, sd_image_t* frames, [MarshalAs(UnmanagedType.I1)] bool is_noisy, void* data);
+        internal delegate void sd_preview_cb_t(int step, int frame_count, sd_tensor_t** frames, [MarshalAs(UnmanagedType.I1)] bool is_noisy, void* data);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
@@ -754,10 +290,194 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
-        internal delegate bool sd_prompt_image_cb_t(byte* text, void* data, sd_image_t* image_out);
+        internal delegate bool sd_prompt_image_cb_t(byte* source, void* data, sd_tensor_t** image_out);
+
 
         // ============================================================
-        // API
+        // API: Status and diagnostics
+        // ============================================================
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_last_error))]
+        internal static partial byte* sd_get_last_error();
+
+
+        // ============================================================
+        // API: Tensors
+        // ============================================================
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_tensor_create))]
+        internal static partial sd_tensor_t* sd_tensor_create(sd_tensor_type_t type, nuint rank, long* shape, void* data, nuint data_size);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_tensor_retain))]
+        internal static partial sd_tensor_t* sd_tensor_retain(sd_tensor_t* tensor);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_tensor_free))]
+        internal static partial void sd_tensor_free(sd_tensor_t* tensor);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_tensor_type))]
+        internal static partial sd_tensor_type_t sd_tensor_type(sd_tensor_t* tensor);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_tensor_rank))]
+        internal static partial nuint sd_tensor_rank(sd_tensor_t* tensor);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_tensor_dim))]
+        internal static partial long sd_tensor_dim(sd_tensor_t* tensor, nuint axis);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_tensor_byte_size))]
+        internal static partial nuint sd_tensor_byte_size(sd_tensor_t* tensor);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_tensor_data))]
+        internal static partial void* sd_tensor_data(sd_tensor_t* tensor);
+
+
+        // ============================================================
+        // API: Options
+        // ============================================================
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_opt_create))]
+        internal static partial sd_opt_t* sd_ctx_opt_create();
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_img_gen_opt_create))]
+        internal static partial sd_opt_t* sd_img_gen_opt_create();
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_vid_gen_opt_create))]
+        internal static partial sd_opt_t* sd_vid_gen_opt_create();
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_upscaler_opt_create))]
+        internal static partial sd_opt_t* sd_upscaler_opt_create();
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_upscale_opt_create))]
+        internal static partial sd_opt_t* sd_upscale_opt_create();
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_vid_upscaler_opt_create))]
+        internal static partial sd_opt_t* sd_vid_upscaler_opt_create();
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_vid_upscale_opt_create))]
+        internal static partial sd_opt_t* sd_vid_upscale_opt_create();
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_adetailer_opt_create))]
+        internal static partial sd_opt_t* sd_adetailer_opt_create();
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_adetail_opt_create))]
+        internal static partial sd_opt_t* sd_adetail_opt_create();
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_free))]
+        internal static partial void sd_opt_free(sd_opt_t* opt);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_bool), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_bool(sd_opt_t* opt, string key, [MarshalAs(UnmanagedType.I1)] bool value);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_int), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_int(sd_opt_t* opt, string key, long value);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_float), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_float(sd_opt_t* opt, string key, double value);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_string), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_string(sd_opt_t* opt, string key, string value);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_tensor), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_tensor(sd_opt_t* opt, string key, sd_tensor_t* tensor);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_tensors), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_tensors(sd_opt_t* opt, string key, sd_tensor_t** tensors, nuint count);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_floats), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_floats(sd_opt_t* opt, string key, float* values, nuint count);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_ints), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_ints(sd_opt_t* opt, string key, int* values, nuint count);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_loras), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_loras(sd_opt_t* opt, string key, sd_lora_t* values, nuint count);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_embeddings), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_embeddings(sd_opt_t* opt, string key, sd_embedding_t* values, nuint count);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_audios), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_audios(sd_opt_t* opt, string key, sd_audio_t* values, nuint count);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_set_videos), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_set_videos(sd_opt_t* opt, string key, sd_video_t* values, nuint count);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_opt_unset), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_opt_unset(sd_opt_t* opt, string key);
+
+
+        // ============================================================
+        // API: Context and generation
+        // ============================================================
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_create))]
+        internal static partial sd_status_t sd_ctx_create(sd_opt_t* opt, out sd_ctx_t* ctx_out);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_free))]
+        internal static partial void sd_ctx_free(sd_ctx_t* ctx);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_generate_image))]
+        internal static partial sd_status_t sd_generate_image(sd_ctx_t* ctx, sd_opt_t* opt, out sd_result_t* result_out);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_generate_video))]
+        internal static partial sd_status_t sd_generate_video(sd_ctx_t* ctx, sd_opt_t* opt, out sd_result_t* result_out);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_supports_image_generation))]
+        [return: MarshalAs(UnmanagedType.I1)]
+        internal static partial bool sd_ctx_supports_image_generation(sd_ctx_t* sd_ctx);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_supports_video_generation))]
+        [return: MarshalAs(UnmanagedType.I1)]
+        internal static partial bool sd_ctx_supports_video_generation(sd_ctx_t* sd_ctx);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_load_control_net), StringMarshalling = StringMarshalling.Utf8)]
+        [return: MarshalAs(UnmanagedType.I1)]
+        internal static partial bool sd_ctx_load_control_net(sd_ctx_t* sd_ctx, string path);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_unload_control_net))]
+        [return: MarshalAs(UnmanagedType.I1)]
+        internal static partial bool sd_ctx_unload_control_net(sd_ctx_t* sd_ctx);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_has_control_net))]
+        [return: MarshalAs(UnmanagedType.I1)]
+        internal static partial bool sd_ctx_has_control_net(sd_ctx_t* sd_ctx);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_model_version_name))]
+        internal static partial byte* sd_get_model_version_name(sd_ctx_t* sd_ctx);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_cancel_generation))]
+        internal static partial void sd_cancel_generation(sd_ctx_t* sd_ctx, sd_cancel_mode_t mode);
+
+
+        // ============================================================
+        // API: Results
+        // ============================================================
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_result_get_kind))]
+        internal static partial sd_result_kind_t sd_result_get_kind(sd_result_t* result);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_result_get_image_count))]
+        internal static partial nuint sd_result_get_image_count(sd_result_t* result);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_result_get_image))]
+        internal static partial sd_tensor_t* sd_result_get_image(sd_result_t* result, nuint index);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_result_get_video))]
+        internal static partial sd_video_t* sd_result_get_video(sd_result_t* result);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_result_get_generation_info))]
+        internal static partial byte* sd_result_get_generation_info(sd_result_t* result, nuint index);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_result_get_audio))]
+        internal static partial sd_audio_t* sd_result_get_audio(sd_result_t* result);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_result_get_fps))]
+        internal static partial int sd_result_get_fps(sd_result_t* result);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_result_free))]
+        internal static partial void sd_result_free(sd_result_t* result);
+
+
+        // ============================================================
+        // API: Callbacks and progress
         // ============================================================
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_log_callback))]
@@ -769,205 +489,84 @@ namespace TensorStack.StableDiffusionCpp.Native
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_generation_progress_callback))]
         internal static partial void sd_set_generation_progress_callback(sd_ctx_t* ctx, sd_generation_progress_cb_t cb, void* data);
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_preview_callback))]
-        internal static partial void sd_set_preview_callback(sd_preview_cb_t cb, preview_t mode, int interval, [MarshalAs(UnmanagedType.I1)] bool denoised, [MarshalAs(UnmanagedType.I1)] bool noisy, void* data);
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_preview_callback), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_status_t sd_set_preview_callback(sd_preview_cb_t cb, string mode, int interval, [MarshalAs(UnmanagedType.I1)] bool denoised, [MarshalAs(UnmanagedType.I1)] bool noisy, void* data);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_preview_info))]
         internal static partial sd_preview_info_t sd_get_preview_info();
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_backend_eval_callback))]
-        internal static partial void sd_set_backend_eval_callback(sd_graph_eval_callback_t cb, void* data);
-
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_prompt_image_callback))]
         internal static partial void sd_set_prompt_image_callback(sd_ctx_t* ctx, sd_prompt_image_cb_t cb, void* data);
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_num_physical_cores))]
-        internal static partial int sd_get_num_physical_cores();
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_set_backend_eval_callback))]
+        internal static partial void sd_set_backend_eval_callback(sd_graph_eval_callback_t cb, void* data);
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_system_info))]
-        internal static partial byte* sd_get_system_info();
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_supports_image_generation))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool sd_ctx_supports_image_generation(sd_ctx_t* sd_ctx);
+        // ============================================================
+        // API: Image upscaling
+        // ============================================================
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_supports_video_generation))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool sd_ctx_supports_video_generation(sd_ctx_t* sd_ctx);
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_upscaler_create))]
+        internal static partial sd_status_t sd_upscaler_create(sd_opt_t* opt, out sd_upscaler_t* upscaler_out);
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_supports_ref_image_conditioning))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool sd_ctx_supports_ref_image_conditioning(sd_ctx_t* sd_ctx);
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_upscaler_free))]
+        internal static partial void sd_upscaler_free(sd_upscaler_t* upscaler);
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_load_control_net))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool sd_ctx_load_control_net(sd_ctx_t* sd_ctx, byte* path);
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_upscale))]
+        internal static partial sd_status_t sd_upscale(sd_upscaler_t* upscaler, sd_opt_t* opt, out sd_result_t* result_out);
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_unload_control_net))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool sd_ctx_unload_control_net(sd_ctx_t* sd_ctx);
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_upscaler_get_scale))]
+        internal static partial int sd_upscaler_get_scale(sd_upscaler_t* upscaler);
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_has_control_net))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool sd_ctx_has_control_net(sd_ctx_t* sd_ctx);
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_upscaler_probe_scale), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial int sd_upscaler_probe_scale(string model_path);
+
+
+        // ============================================================
+        // API: Video upscaling
+        // ============================================================
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_vid_upscaler_create))]
+        internal static partial sd_status_t sd_vid_upscaler_create(sd_opt_t* opt, out sd_vid_upscaler_t* upscaler_out);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_vid_upscaler_free))]
+        internal static partial void sd_vid_upscaler_free(sd_vid_upscaler_t* upscaler);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_upscale_video))]
+        internal static partial sd_status_t sd_upscale_video(sd_vid_upscaler_t* upscaler, sd_opt_t* opt, out sd_result_t* result_out);
+
+
+        // ============================================================
+        // API: ADetailer
+        // ============================================================
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_adetailer_create))]
+        internal static partial sd_status_t sd_adetailer_create(sd_opt_t* opt, out sd_adetailer_t* adetailer_out);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_adetailer_free))]
+        internal static partial void sd_adetailer_free(sd_adetailer_t* adetailer);
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_adetail))]
+        internal static partial sd_status_t sd_adetail(sd_adetailer_t* adetailer, sd_ctx_t* ctx, sd_opt_t* opt, out sd_result_t* result_out);
+
+
+        // ============================================================
+        // API: Image preprocessing
+        // ============================================================
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_preprocess_canny))]
+        internal static partial sd_status_t sd_preprocess_canny(sd_tensor_t* image, float high_threshold, float low_threshold, float weak, float strong, [MarshalAs(UnmanagedType.I1)] bool inverse, out sd_tensor_t* image_out);
+
+
+        // ============================================================
+        // API: Weight types and model conversion
+        // ============================================================
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_type_name))]
         internal static partial byte* sd_type_name(sd_type_t type);
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(str_to_sd_type))]
-        internal static partial sd_type_t str_to_sd_type(byte* str);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_rng_type_name))]
-        internal static partial byte* sd_rng_type_name(rng_type_t rng_type);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(str_to_rng_type))]
-        internal static partial rng_type_t str_to_rng_type(byte* str);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_sample_method_name))]
-        internal static partial byte* sd_sample_method_name(sample_method_t sample_method);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(str_to_sample_method))]
-        internal static partial sample_method_t str_to_sample_method(byte* str);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_scheduler_name))]
-        internal static partial byte* sd_scheduler_name(scheduler_t scheduler);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(str_to_scheduler))]
-        internal static partial scheduler_t str_to_scheduler(byte* str);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_prediction_name))]
-        internal static partial byte* sd_prediction_name(prediction_t prediction);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(str_to_prediction))]
-        internal static partial prediction_t str_to_prediction(byte* str);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_preview_name))]
-        internal static partial byte* sd_preview_name(preview_t preview);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(str_to_preview))]
-        internal static partial preview_t str_to_preview(byte* str);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_lora_apply_mode_name))]
-        internal static partial byte* sd_lora_apply_mode_name(lora_apply_mode_t mode);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(str_to_lora_apply_mode))]
-        internal static partial lora_apply_mode_t str_to_lora_apply_mode(byte* str);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_hires_upscaler_name))]
-        internal static partial byte* sd_hires_upscaler_name(sd_hires_upscaler_t upscaler);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(str_to_sd_hires_upscaler))]
-        internal static partial sd_hires_upscaler_t str_to_sd_hires_upscaler(byte* str);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_control_type_name))]
-        internal static partial byte* sd_control_type_name(sd_control_type_t upscaler);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(str_to_sd_control_type))]
-        internal static partial sd_control_type_t str_to_sd_control_type(byte* str);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_cache_params_init))]
-        internal static partial void sd_cache_params_init(sd_cache_params_t* cache_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_hires_params_init))]
-        internal static partial void sd_hires_params_init(sd_hires_params_t* hires_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_params_init))]
-        internal static partial void sd_ctx_params_init(sd_ctx_params_t* sd_ctx_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_ctx_params_to_str))]
-        internal static partial byte* sd_ctx_params_to_str(sd_ctx_params_t* sd_ctx_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(new_sd_ctx))]
-        internal static partial sd_ctx_t* new_sd_ctx(sd_ctx_params_t* sd_ctx_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(free_sd_ctx))]
-        internal static partial void free_sd_ctx(sd_ctx_t* sd_ctx);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(free_sd_audio))]
-        internal static partial void free_sd_audio(sd_audio_t* audio);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_sample_params_init))]
-        internal static partial void sd_sample_params_init(sd_sample_params_t* sample_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_sample_params_to_str))]
-        internal static partial byte* sd_sample_params_to_str(sd_sample_params_t* sample_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_model_version_name))]
-        internal static partial byte* sd_get_model_version_name(sd_ctx_t* sd_ctx);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_default_sample_method))]
-        internal static partial sample_method_t sd_get_default_sample_method(sd_ctx_t* sd_ctx);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_default_scheduler))]
-        internal static partial scheduler_t sd_get_default_scheduler(sd_ctx_t* sd_ctx, sample_method_t sample_method);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_img_gen_params_init))]
-        internal static partial void sd_img_gen_params_init(sd_img_gen_params_t* sd_img_gen_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_img_gen_params_to_str))]
-        internal static partial byte* sd_img_gen_params_to_str(sd_img_gen_params_t* sd_img_gen_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(generate_image))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool generate_image(sd_ctx_t* sd_ctx, sd_img_gen_params_t* sd_img_gen_params, out sd_image_generation_result_t* result_out);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(free_sd_image_generation_result))]
-        internal static partial void free_sd_image_generation_result(sd_image_generation_result_t* result);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_cancel_generation))]
-        internal static partial void sd_cancel_generation(sd_ctx_t* sd_ctx, sd_cancel_mode_t mode);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_vid_gen_params_init))]
-        internal static partial void sd_vid_gen_params_init(sd_vid_gen_params_t* sd_vid_gen_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(generate_video))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool generate_video(sd_ctx_t* sd_ctx, sd_vid_gen_params_t* sd_vid_gen_params, out sd_video_generation_result_t* result_out);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(free_sd_video_generation_result))]
-        internal static partial void free_sd_video_generation_result(sd_video_generation_result_t* result);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(new_upscaler_ctx))]
-        internal static partial upscaler_ctx_t* new_upscaler_ctx(byte* esrgan_path, [MarshalAs(UnmanagedType.I1)] bool direct, int n_threads, int tile_size, byte* backend, byte* params_backend);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(free_upscaler_ctx))]
-        internal static partial void free_upscaler_ctx(upscaler_ctx_t* upscaler_ctx);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(upscale))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool upscale(upscaler_ctx_t* upscaler_ctx, sd_image_t input_image, uint upscale_factor, out sd_image_generation_result_t* result_out);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(get_upscale_factor))]
-        internal static partial int get_upscale_factor(upscaler_ctx_t* upscaler_ctx);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(get_upscaler_model_scale))]
-        internal static partial int get_upscaler_model_scale(byte* model_path);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_video_upscaler_ctx_params_init))]
-        internal static partial void sd_video_upscaler_ctx_params_init(sd_video_upscaler_ctx_params_t* ctx_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_video_upscale_params_init))]
-        internal static partial void sd_video_upscale_params_init(sd_video_upscale_params_t* upscale_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(new_video_upscaler_ctx))]
-        internal static partial video_upscaler_ctx_t* new_video_upscaler_ctx(sd_video_upscaler_ctx_params_t* upscale_params);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(free_video_upscaler_ctx))]
-        internal static partial void free_video_upscaler_ctx(video_upscaler_ctx_t* ctx);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(upscale_video))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool upscale_video(video_upscaler_ctx_t* ctx, sd_video_upscale_params_t* upscale_params, out sd_video_generation_result_t* result_out);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(new_adetailer_ctx))]
-        internal static partial adetailer_ctx_t* new_adetailer_ctx(byte* detector_path, int n_threads, byte* backend, byte* params_backend);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(free_adetailer_ctx))]
-        internal static partial void free_adetailer_ctx(adetailer_ctx_t* adetailer_ctx);
-
-        [LibraryImport(LibraryName, EntryPoint = nameof(adetail_image))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool adetail_image(adetailer_ctx_t* adetailer_ctx, sd_ctx_t* sd_ctx, sd_image_t input_image, sd_adetailer_params_t* adetailer_params, sd_img_gen_params_t* inpaint_params, out sd_image_generation_result_t* result_out);
+        [LibraryImport(LibraryName, EntryPoint = nameof(str_to_sd_type), StringMarshalling = StringMarshalling.Utf8)]
+        internal static partial sd_type_t str_to_sd_type(string str);
 
         [LibraryImport(LibraryName, EntryPoint = nameof(convert))]
         [return: MarshalAs(UnmanagedType.I1)]
@@ -977,9 +576,10 @@ namespace TensorStack.StableDiffusionCpp.Native
         [return: MarshalAs(UnmanagedType.I1)]
         internal static partial bool convert_with_components(byte* model_path, byte* clip_l_path, byte* clip_g_path, byte* t5xxl_path, byte* diffusion_model_path, byte* vae_path, byte* output_path, sd_type_t output_type, byte* tensor_type_rules, [MarshalAs(UnmanagedType.I1)] bool convert_name, int n_threads, sd_lora_t* loras, int lora_count);
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(preprocess_canny))]
-        [return: MarshalAs(UnmanagedType.I1)]
-        internal static partial bool preprocess_canny(sd_image_t image, float high_threshold, float low_threshold, float weak, float strong, [MarshalAs(UnmanagedType.I1)] bool inverse);
+
+        // ============================================================
+        // API: Importance matrix
+        // ============================================================
 
         [LibraryImport(LibraryName, EntryPoint = nameof(load_imatrix))]
         [return: MarshalAs(UnmanagedType.I1)]
@@ -994,11 +594,10 @@ namespace TensorStack.StableDiffusionCpp.Native
         [LibraryImport(LibraryName, EntryPoint = nameof(disable_imatrix_collection))]
         internal static partial void disable_imatrix_collection();
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_commit))]
-        internal static partial byte* sd_commit();
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(sd_version))]
-        internal static partial byte* sd_version();
+        // ============================================================
+        // API: Devices and system information
+        // ============================================================
 
         [LibraryImport(LibraryName, EntryPoint = nameof(sd_list_devices))]
         internal static partial nuint sd_list_devices(byte* buffer, nuint buffer_size);
@@ -1007,7 +606,21 @@ namespace TensorStack.StableDiffusionCpp.Native
         [return: MarshalAs(UnmanagedType.I1)]
         internal static partial bool sd_add_rpc_servers(byte* servers);
 
-        [LibraryImport(LibraryName, EntryPoint = nameof(free_sd_images))]
-        internal static partial void free_sd_images(sd_image_t* result_images, int num_images);
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_num_physical_cores))]
+        internal static partial int sd_get_num_physical_cores();
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_get_system_info))]
+        internal static partial byte* sd_get_system_info();
+
+
+        // ============================================================
+        // API: Build information
+        // ============================================================
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_commit))]
+        internal static partial byte* sd_commit();
+
+        [LibraryImport(LibraryName, EntryPoint = nameof(sd_version))]
+        internal static partial byte* sd_version();
     }
 }

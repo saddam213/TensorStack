@@ -21,8 +21,8 @@
 
     public sealed record UpscaleVideoOptions
     {
-        public long Seed { get; set; }
+        public long Seed { get; set; } = 42;
         public int WindowSize { get; set; } = 16;
-        public int TemporalChunkSize { get; set; } = 1;
+        public int TemporalChunkSize { get; set; } = 5;
     }
 }

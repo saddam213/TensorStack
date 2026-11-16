@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32.SafeHandles;
-using System;
 using TensorStack.StableDiffusionCpp.Common;
 
 namespace TensorStack.StableDiffusionCpp.Native
@@ -14,20 +13,14 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <exception cref="System.Exception">Failed to create Diffusion context</exception>
         public StableDiffusionSafeHandle(StableDiffusionOptions options) : base(true)
         {
-            var parameters = options.ToUnmanaged();
-            try
+            using (var parameters = options.ToUnmanaged())
             {
-                var context = NativeApi.new_sd_ctx(&parameters);
-                if (context == null)
-                    throw new Exception("Failed to create Diffusion context");
+                var status = NativeApi.sd_ctx_create(parameters.Handle, out NativeApi.sd_ctx_t* context);
+                NativeApi.ThrowIfFailed(status, "Failed to create Diffusion context");
 
                 SetHandle((nint)context);
                 DefaultImageOptions = GetDefaultImageOptions();
                 DefaultVideoOptions = GetDefaultVideoOptions();
-            }
-            finally
-            {
-                parameters.FreeUnmanaged();
             }
         }
 
@@ -47,7 +40,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// </summary>
         protected override bool ReleaseHandle()
         {
-            NativeApi.free_sd_ctx((NativeApi.sd_ctx_t*)handle);
+            NativeApi.sd_ctx_free((NativeApi.sd_ctx_t*)handle);
             return true;
         }
 
@@ -63,29 +56,27 @@ namespace TensorStack.StableDiffusionCpp.Native
 
         /// <summary>
         /// Gets the default image options.
+        /// The library no longer exposes its defaults, the managed options mirror them.
         /// </summary>
         private GenerateImageOptions GetDefaultImageOptions()
         {
             if (!NativeApi.sd_ctx_supports_image_generation(GetContext()))
                 return null;
 
-            var options = new NativeApi.sd_img_gen_params_t();
-            NativeApi.sd_img_gen_params_init(&options);
-            return options.ToManaged();
+            return new GenerateImageOptions();
         }
 
 
         /// <summary>
         /// Gets the default video options.
+        /// The library no longer exposes its defaults, the managed options mirror them.
         /// </summary>
         private GenerateVideoOptions GetDefaultVideoOptions()
         {
             if (!NativeApi.sd_ctx_supports_video_generation(GetContext()))
                 return null;
 
-            var options = new NativeApi.sd_vid_gen_params_t();
-            NativeApi.sd_vid_gen_params_init(&options);
-            return options.ToManaged();
+            return new GenerateVideoOptions();
         }
     }
 }

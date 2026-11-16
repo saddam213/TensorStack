@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 using System.Threading.Tasks;
 using TensorStack.Common;
 using TensorStack.Common.Tensor;
@@ -12,1106 +11,747 @@ namespace TensorStack.StableDiffusionCpp.Native
     {
         #region ContextOptions
 
-        internal static StableDiffusionOptions ToManaged(this NativeApi.sd_ctx_params_t unmanaged)
+        /// <summary>
+        /// Creates the native context options, the caller owns the result.
+        /// </summary>
+        /// <param name="managed">The managed options.</param>
+        internal static NativeOptions ToUnmanaged(this StableDiffusionOptions managed)
         {
-            return new StableDiffusionOptions
+            var options = NativeOptions.CreateContext();
+            try
             {
-                ModelPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.model_path),
-                ClipLPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.clip_l_path),
-                ClipGPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.clip_g_path),
-                ClipVisionPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.clip_vision_path),
-                T5xxlPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.t5xxl_path),
-                LlmPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.llm_path),
-                LlmVisionPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.llm_vision_path),
-                DiffusionModelPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.diffusion_model_path),
-                HighNoiseDiffusionModelPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.high_noise_diffusion_model_path),
-                UncondDiffusionModelPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.uncond_diffusion_model_path),
-                EmbeddingsConnectorsPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.embeddings_connectors_path),
-                VaePath = Utf8StringMarshaller.ConvertToManaged(unmanaged.vae_path),
-                AudioVaePath = Utf8StringMarshaller.ConvertToManaged(unmanaged.audio_vae_path),
-                AudioEncoderPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.audio_encoder_path),
-                TaesdPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.taesd_path),
-                ControlNetPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.control_net_path),
-                IpAdapterPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.ip_adapter_path),
-                MotionModulePath = Utf8StringMarshaller.ConvertToManaged(unmanaged.motion_module_path),
-                // Embeddings = "",
-                PhotoMakerPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.photo_maker_path),
-                PulidWeightsPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.pulid_weights_path),
-                TensorTypeRules = Utf8StringMarshaller.ConvertToManaged(unmanaged.tensor_type_rules),
-                Threads = unmanaged.n_threads,
-                DataType = unmanaged.wtype.ToManaged(),
-                RngType = unmanaged.rng_type.ToManaged(),
-                SamplerRngType = unmanaged.sampler_rng_type.ToManaged(),
-                Prediction = unmanaged.prediction.ToManaged(),
-                LoraApplyMode = unmanaged.lora_apply_mode.ToManaged(),
-                EnableMmap = unmanaged.enable_mmap,
-                TaePreviewOnly = unmanaged.tae_preview_only,
-                ForceSdxlVaeConvScale = unmanaged.force_sdxl_vae_conv_scale,
-                VaeFormat = unmanaged.vae_format.ToManaged(),
-                MaxVram = Utf8StringMarshaller.ConvertToManaged(unmanaged.max_vram),
-                IsPrefetchEnabled = !unmanaged.disable_prefetch,
-                EagerLoad = unmanaged.eager_load,
-                Backend = Utf8StringMarshaller.ConvertToManaged(unmanaged.backend),
-                ParamsBackend = Utf8StringMarshaller.ConvertToManaged(unmanaged.params_backend),
-                SplitMode = Utf8StringMarshaller.ConvertToManaged(unmanaged.split_mode),
-                AutoFit = unmanaged.auto_fit,
-                RpcServers = Utf8StringMarshaller.ConvertToManaged(unmanaged.rpc_servers),
-                ModelArgs = Utf8StringMarshaller.ConvertToManaged(unmanaged.model_args),
-                IsSegmentedComputeEnabled = !unmanaged.disable_segmented_compute,
-                ScaleLinear = unmanaged.linear_scale,
-                ScaleAttn = unmanaged.attn_scale,
-                TokenizerPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.tokenizer),
-                SageAttn = unmanaged.sage_attn,
-                ConditioningCacheSize = unmanaged.conditioning_cache_size,
-                IsBatchedCfgEnabled = !unmanaged.batched_cfg,
-                FlashAttnMode = Utf8StringMarshaller.ConvertToManaged(unmanaged.flash_attn_mode),
-                ConvDirectMode = Utf8StringMarshaller.ConvertToManaged(unmanaged.conv_direct_mode)
-            };
-        }
+                // Models
+                options.SetString("model_path", managed.ModelPath);
+                options.SetString("clip_l_path", managed.ClipLPath);
+                options.SetString("clip_g_path", managed.ClipGPath);
+                options.SetString("clip_vision_path", managed.ClipVisionPath);
+                options.SetString("t5xxl_path", managed.T5xxlPath);
+                options.SetString("llm_path", managed.LlmPath);
+                options.SetString("llm_vision_path", managed.LlmVisionPath);
+                options.SetString("diffusion_model_path", managed.DiffusionModelPath);
+                options.SetString("high_noise_diffusion_model_path", managed.HighNoiseDiffusionModelPath);
+                options.SetString("uncond_diffusion_model_path", managed.UncondDiffusionModelPath);
+                options.SetString("embeddings_connectors_path", managed.EmbeddingsConnectorsPath);
+                options.SetString("vae_path", managed.VaePath);
+                options.SetString("audio_vae_path", managed.AudioVaePath);
+                options.SetString("audio_encoder_path", managed.AudioEncoderPath);
+                options.SetString("taesd_path", managed.TaesdPath);
+                options.SetString("control_net_path", managed.ControlNetPath);
+                options.SetString("ip_adapter_path", managed.IpAdapterPath);
+                options.SetString("motion_module_path", managed.MotionModulePath);
+                options.SetString("photo_maker_path", managed.PhotoMakerPath);
+                options.SetString("pulid_weights_path", managed.PulidWeightsPath);
+                options.SetString("tokenizer", managed.TokenizerPath);
+                options.SetEmbeddings("embeddings", managed.Embeddings);
 
+                // Backend
+                options.SetString("backend", managed.Backend);
+                options.SetString("params_backend", managed.ParamsBackend);
+                options.SetString("split_mode", managed.SplitMode);
+                options.SetString("rpc_servers", managed.RpcServers);
+                options.SetString("max_vram", managed.MaxVram);
+                options.SetInt("n_threads", managed.Threads, 1);
+                options.SetBool("auto_fit", managed.AutoFit);
+                options.SetBool("eager_load", managed.EagerLoad);
+                options.SetBool("enable_mmap", managed.EnableMmap);
+                options.SetBool("disable_prefetch", !managed.IsPrefetchEnabled);
+                options.SetBool("disable_segmented_compute", !managed.IsSegmentedComputeEnabled);
+                options.SetBool("batched_cfg", managed.IsBatchedCfgEnabled);
+                options.SetBool("sage_attn", managed.SageAttn);
+                options.SetString("flash_attn_mode", managed.FlashAttnMode);
+                options.SetString("conv_direct_mode", managed.ConvDirectMode);
+                options.SetInt("conditioning_cache_size", managed.ConditioningCacheSize, 0);
 
-        internal static NativeApi.sd_ctx_params_t ToUnmanaged(this StableDiffusionOptions managed)
-        {
-            NativeApi.sd_embedding_t* embeddings = null;
-            if (managed.Embeddings is { Length: > 0 })
-            {
-                embeddings = (NativeApi.sd_embedding_t*)NativeMemory.Alloc((nuint)managed.Embeddings.Length, (nuint)sizeof(NativeApi.sd_embedding_t));
-                for (int i = 0; i < managed.Embeddings.Length; i++)
-                {
-                    embeddings[i] = managed.Embeddings[i].ToUnmanaged();
-                }
+                // Model
+                options.SetString("model_args", managed.ModelArgs);
+                options.SetString("tensor_type_rules", managed.TensorTypeRules);
+                options.SetString("wtype", managed.DataType.ToUnmanaged());
+                options.SetString("rng_type", managed.RngType.ToUnmanaged());
+                options.SetString("sampler_rng_type", managed.SamplerRngType.ToUnmanaged());
+                options.SetString("prediction", managed.Prediction.ToUnmanaged());
+                options.SetString("lora_apply_mode", managed.LoraApplyMode.ToUnmanaged());
+                options.SetString("vae_format", managed.VaeFormat.ToUnmanaged());
+                options.SetBool("tae_preview_only", managed.TaePreviewOnly);
+                options.SetBool("force_sdxl_vae_conv_scale", managed.ForceSdxlVaeConvScale);
+                if (managed.ScaleLinear >= 0)
+                    options.SetFloat("linear_scale", managed.ScaleLinear);
+                if (managed.ScaleAttn >= 0)
+                    options.SetFloat("attn_scale", managed.ScaleAttn);
+
+                return options;
             }
-
-            return new NativeApi.sd_ctx_params_t
+            catch
             {
-                model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ModelPath),
-                clip_l_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ClipLPath),
-                clip_g_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ClipGPath),
-                clip_vision_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ClipVisionPath),
-                t5xxl_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.T5xxlPath),
-                llm_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.LlmPath),
-                llm_vision_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.LlmVisionPath),
-                diffusion_model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.DiffusionModelPath),
-                high_noise_diffusion_model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.HighNoiseDiffusionModelPath),
-                uncond_diffusion_model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.UncondDiffusionModelPath),
-                embeddings_connectors_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.EmbeddingsConnectorsPath),
-                vae_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.VaePath),
-                audio_vae_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.AudioVaePath),
-                audio_encoder_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.AudioEncoderPath),
-                taesd_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.TaesdPath),
-                control_net_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ControlNetPath),
-                ip_adapter_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.IpAdapterPath),
-                motion_module_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.MotionModulePath),
-                embeddings = embeddings,
-                embedding_count = (uint)(managed.Embeddings?.Length ?? 0),
-                photo_maker_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.PhotoMakerPath),
-                pulid_weights_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.PulidWeightsPath),
-                tensor_type_rules = Utf8StringMarshaller.ConvertToUnmanaged(managed.TensorTypeRules),
-                n_threads = managed.Threads,
-                wtype = managed.DataType.ToUnmanaged(),
-                rng_type = managed.RngType.ToUnmanaged(),
-                sampler_rng_type = managed.SamplerRngType.ToUnmanaged(),
-                prediction = managed.Prediction.ToUnmanaged(),
-                lora_apply_mode = managed.LoraApplyMode.ToUnmanaged(),
-                enable_mmap = managed.EnableMmap,
-                tae_preview_only = managed.TaePreviewOnly,
-                force_sdxl_vae_conv_scale = managed.ForceSdxlVaeConvScale,
-                vae_format = managed.VaeFormat.ToUnmanaged(),
-                max_vram = Utf8StringMarshaller.ConvertToUnmanaged(managed.MaxVram),
-                disable_prefetch = !managed.IsPrefetchEnabled,
-                eager_load = managed.EagerLoad,
-                backend = Utf8StringMarshaller.ConvertToUnmanaged(managed.Backend),
-                params_backend = Utf8StringMarshaller.ConvertToUnmanaged(managed.ParamsBackend),
-                split_mode = Utf8StringMarshaller.ConvertToUnmanaged(managed.SplitMode),
-                auto_fit = managed.AutoFit,
-                rpc_servers = Utf8StringMarshaller.ConvertToUnmanaged(managed.RpcServers),
-                model_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.ModelArgs),
-                disable_segmented_compute = !managed.IsSegmentedComputeEnabled,
-                linear_scale = managed.ScaleLinear,
-                attn_scale = managed.ScaleAttn,
-                tokenizer = Utf8StringMarshaller.ConvertToUnmanaged(managed.TokenizerPath),
-                sage_attn = managed.SageAttn,
-                conditioning_cache_size = managed.ConditioningCacheSize,
-                batched_cfg = managed.IsBatchedCfgEnabled,
-                flash_attn_mode = Utf8StringMarshaller.ConvertToUnmanaged(managed.FlashAttnMode),
-                conv_direct_mode = Utf8StringMarshaller.ConvertToUnmanaged(managed.ConvDirectMode),
-            };
-        }
-
-
-        internal static void FreeUnmanaged(this NativeApi.sd_ctx_params_t native)
-        {
-            Utf8StringMarshaller.Free(native.model_path);
-            Utf8StringMarshaller.Free(native.clip_l_path);
-            Utf8StringMarshaller.Free(native.clip_g_path);
-            Utf8StringMarshaller.Free(native.clip_vision_path);
-            Utf8StringMarshaller.Free(native.t5xxl_path);
-            Utf8StringMarshaller.Free(native.llm_path);
-            Utf8StringMarshaller.Free(native.llm_vision_path);
-            Utf8StringMarshaller.Free(native.diffusion_model_path);
-            Utf8StringMarshaller.Free(native.high_noise_diffusion_model_path);
-            Utf8StringMarshaller.Free(native.uncond_diffusion_model_path);
-            Utf8StringMarshaller.Free(native.embeddings_connectors_path);
-            Utf8StringMarshaller.Free(native.vae_path);
-            Utf8StringMarshaller.Free(native.audio_vae_path);
-            Utf8StringMarshaller.Free(native.audio_encoder_path);
-            Utf8StringMarshaller.Free(native.taesd_path);
-            Utf8StringMarshaller.Free(native.control_net_path);
-            Utf8StringMarshaller.Free(native.ip_adapter_path);
-            Utf8StringMarshaller.Free(native.motion_module_path);
-            Utf8StringMarshaller.Free(native.photo_maker_path);
-            Utf8StringMarshaller.Free(native.pulid_weights_path);
-            Utf8StringMarshaller.Free(native.tensor_type_rules);
-            Utf8StringMarshaller.Free(native.max_vram);
-            Utf8StringMarshaller.Free(native.backend);
-            Utf8StringMarshaller.Free(native.params_backend);
-            Utf8StringMarshaller.Free(native.split_mode);
-            Utf8StringMarshaller.Free(native.rpc_servers);
-            Utf8StringMarshaller.Free(native.model_args);
-            Utf8StringMarshaller.Free(native.tokenizer);
-            Utf8StringMarshaller.Free(native.flash_attn_mode);
-            Utf8StringMarshaller.Free(native.conv_direct_mode);
-            if (native.embeddings != null)
-            {
-                for (uint i = 0; i < native.embedding_count; i++)
-                {
-                    native.embeddings[i].FreeUnmanaged();
-                }
-                NativeMemory.Free(native.embeddings);
+                options.Dispose();
+                throw;
             }
-
-        }
-
-        #endregion
-
-        #region SamplerOptions
-
-        internal static SamplerOptions ToManaged(this NativeApi.sd_sample_params_t unmanaged)
-        {
-            var unmangedGuidance = unmanaged.guidance;
-            var unmangedGuidanceSlg = unmanaged.guidance.slg;
-
-            int[] layers = [];
-            if (unmangedGuidanceSlg.layer_count > 0)
-                layers = new ReadOnlySpan<int>(unmangedGuidanceSlg.layers, checked((int)unmangedGuidanceSlg.layer_count)).ToArray();
-
-            return new SamplerOptions
-            {
-                Scheduler = unmanaged.scheduler.ToManaged(),
-                SampleMethod = unmanaged.sample_method.ToManaged(),
-                SampleSteps = unmanaged.sample_steps,
-                Eta = unmanaged.eta,
-                ShiftedTimestep = unmanaged.shifted_timestep,
-                CustomSigmas = [],
-                FlowShift = unmanaged.flow_shift,
-                ExtraSampleArgs = Utf8StringMarshaller.ConvertToManaged(unmanaged.extra_sample_args),
-                TxtCfg = unmangedGuidance.txt_cfg,
-                ImgCfg = unmangedGuidance.img_cfg,
-                DistilledGuidance = unmangedGuidance.distilled_guidance,
-                SlgLayers = layers,
-                SlgLayerEnd = unmangedGuidanceSlg.layer_end,
-                SlgLayerStart = unmangedGuidanceSlg.layer_start,
-                SlgScale = unmangedGuidanceSlg.scale,
-            };
-        }
-
-
-        internal static unsafe NativeApi.sd_sample_params_t ToUnmanaged(this SamplerOptions managed)
-        {
-            float* customSigmas = null;
-            if (!managed.CustomSigmas.IsNullOrEmpty())
-            {
-                customSigmas = (float*)NativeMemory.Alloc((nuint)managed.CustomSigmas.Length, sizeof(float));
-                managed.CustomSigmas.AsSpan().CopyTo(new Span<float>(customSigmas, managed.CustomSigmas.Length));
-            }
-
-            int* layers = null;
-            var layerCount = managed?.SlgLayers?.Length ?? 0;
-            if (layerCount > 0)
-            {
-                layers = (int*)NativeMemory.Alloc((nuint)managed.SlgLayers.Length, sizeof(int));
-                managed.SlgLayers.AsSpan().CopyTo(new Span<int>(layers, managed.SlgLayers.Length));
-            }
-
-            return new NativeApi.sd_sample_params_t
-            {
-                guidance = new NativeApi.sd_guidance_params_t
-                {
-                    txt_cfg = managed.TxtCfg,
-                    img_cfg = managed.ImgCfg,
-                    distilled_guidance = managed.DistilledGuidance,
-                    slg = new NativeApi.sd_slg_params_t
-                    {
-                        layers = layers,
-                        layer_count = (nuint)layerCount,
-                        layer_start = managed.SlgLayerStart,
-                        layer_end = managed.SlgLayerEnd,
-                        scale = managed.SlgScale
-                    }
-                },
-                scheduler = managed.Scheduler.ToUnmanaged(),
-                sample_method = managed.SampleMethod.ToUnmanaged(),
-                sample_steps = managed.SampleSteps,
-                eta = managed.Eta,
-                shifted_timestep = managed.ShiftedTimestep,
-                custom_sigmas = customSigmas,
-                custom_sigmas_count = managed.CustomSigmas?.Length ?? 0,
-                flow_shift = managed.FlowShift,
-                extra_sample_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.ExtraSampleArgs)
-            };
-        }
-
-
-        internal static void FreeUnmanaged(this NativeApi.sd_sample_params_t native)
-        {
-            if (native.guidance.slg.layers != null)
-            {
-                NativeMemory.Free(native.guidance.slg.layers);
-            }
-
-            Utf8StringMarshaller.Free(native.extra_sample_args);
-            if (native.custom_sigmas != null)
-                NativeMemory.Free(native.custom_sigmas);
         }
 
         #endregion
 
         #region ImageGenerationParameters
 
-        internal static GenerateImageOptions ToManaged(this NativeApi.sd_img_gen_params_t unmanaged)
+        /// <summary>
+        /// Creates the native image generation options, the caller owns the result.
+        /// Only values that differ from the defaults are sent, the rest keep the library default.
+        /// </summary>
+        /// <param name="managed">The managed options.</param>
+        internal static NativeOptions ToUnmanaged(this GenerateImageOptions managed)
         {
-            return new GenerateImageOptions
+            var defaults = new GenerateImageOptions();
+            var options = NativeOptions.CreateImage();
+            try
             {
-                Prompt = Utf8StringMarshaller.ConvertToManaged(unmanaged.prompt),
-                NegativePrompt = Utf8StringMarshaller.ConvertToManaged(unmanaged.negative_prompt),
-                ClipSkip = unmanaged.clip_skip,
-                RefImageArgs = Utf8StringMarshaller.ConvertToManaged(unmanaged.ref_image_args),
-                Width = unmanaged.width,
-                Height = unmanaged.height,
-                SampleParameters = unmanaged.sample_params.ToManaged(),
-                Strength = unmanaged.strength,
-                Seed = unmanaged.seed,
-                BatchCount = unmanaged.batch_count,
-                ControlStrength = unmanaged.control_strength,
-                IpAdapterStrength = unmanaged.ip_adapter_strength,
-                PmParameters = unmanaged.pm_params.ToManaged(),
-                PulidParameters = unmanaged.pulid_params.ToManaged(),
-                VaeTilingParameters = unmanaged.vae_tiling_params.ToManaged(),
-                Cache = unmanaged.cache.ToManaged(),
-                Hires = unmanaged.hires.ToManaged(),
-                QwenImageLayers = unmanaged.qwen_image_layers,
-                CircularX = unmanaged.circular_x,
-                CircularY = unmanaged.circular_y,
-                ImagePreprocess = Utf8StringMarshaller.ConvertToManaged(unmanaged.image_preprocess.rules),
-                ControlNetType = unmanaged.control_type.ToManaged(),
-                // Loras = "",
-                // InitImage = "",
-                // RefImages = "",
-                // MaskImage = "",
-                // ControlImage = "",
-                // IpAdapterImage = "",
-            };
-        }
+                // Prompt
+                options.SetString("prompt", managed.Prompt);
+                options.SetString("negative_prompt", managed.NegativePrompt);
+                options.SetInt("clip_skip", managed.ClipSkip, defaults.ClipSkip, int.MinValue);
+                options.SetLoras("loras", managed.Loras);
 
+                // Generation
+                options.SetInt("width", managed.Width, defaults.Width, 1);
+                options.SetInt("height", managed.Height, defaults.Height, 1);
+                options.SetInt("seed", managed.Seed, defaults.Seed, long.MinValue);
+                options.SetInt("batch_count", managed.BatchCount, defaults.BatchCount, 1);
+                options.SetFloat("strength", managed.Strength, defaults.Strength);
+                options.SetBool("circular_x", managed.CircularX, defaults.CircularX);
+                options.SetBool("circular_y", managed.CircularY, defaults.CircularY);
 
-        internal static NativeApi.sd_img_gen_params_t ToUnmanaged(this GenerateImageOptions managed)
-        {
-            NativeApi.sd_lora_t* loras = null;
-            if (managed.Loras is { Length: > 0 })
-            {
-                loras = (NativeApi.sd_lora_t*)NativeMemory.Alloc((nuint)managed.Loras.Length, (nuint)sizeof(NativeApi.sd_lora_t));
-                for (int i = 0; i < managed.Loras.Length; i++)
-                {
-                    loras[i] = managed.Loras[i].ToUnmanaged();
-                }
+                // Setting this at all is rejected by every model other than Qwen Image Layered
+                options.SetInt("qwen_image_layers", managed.QwenImageLayers, defaults.QwenImageLayers, 0);
+
+                // Images
+                options.SetImage("init_image", managed.InitImage);
+                options.SetImage("mask_image", managed.MaskImage, 1);
+                options.SetImages("ref_images", managed.RefImages);
+                options.SetString("ref_image_args", managed.RefImageArgs);
+                options.SetString("image_preprocess.rules", managed.ImagePreprocess);
+
+                // ControlNet
+                options.SetImage("control_image", managed.ControlImage);
+                options.SetFloat("control_strength", managed.ControlStrength, defaults.ControlStrength);
+                if (managed.ControlNetType != defaults.ControlNetType)
+                    options.SetString("control_type", managed.ControlNetType.ToUnmanaged());
+
+                // IpAdapter
+                options.SetImage("ip_adapter_image", managed.IpAdapterImage);
+                options.SetFloat("ip_adapter_strength", managed.IpAdapterStrength, defaults.IpAdapterStrength);
+
+                options.SetSampler("sample", managed.SampleParameters, defaults.SampleParameters, false);
+                options.SetPhotoMaker(managed.PmParameters, defaults.PmParameters);
+                options.SetPulid(managed.PulidParameters, defaults.PulidParameters);
+                options.SetTiling(managed.VaeTilingParameters, defaults.VaeTilingParameters);
+                options.SetCache(managed.Cache, defaults.Cache);
+                options.SetHires(managed.Hires, defaults.Hires);
+                return options;
             }
-
-            NativeApi.sd_image_t* refImages = null;
-            if (managed.RefImages is { Length: > 0 })
+            catch
             {
-                refImages = (NativeApi.sd_image_t*)NativeMemory.Alloc((nuint)managed.RefImages.Length, (nuint)sizeof(NativeApi.sd_image_t));
-                for (int i = 0; i < managed.RefImages.Length; i++)
-                {
-                    refImages[i] = managed.RefImages[i].ToUnmanaged();
-                }
+                options.Dispose();
+                throw;
             }
-
-            return new NativeApi.sd_img_gen_params_t
-            {
-                loras = loras,
-                lora_count = (uint)(managed.Loras?.Length ?? 0),
-                prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.Prompt),
-                negative_prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.NegativePrompt),
-                clip_skip = managed.ClipSkip,
-                init_image = managed.InitImage != null ? managed.InitImage.ToUnmanaged() : default,
-                ref_images = refImages,
-                ref_images_count = managed.RefImages?.Length ?? 0,
-                ref_image_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.RefImageArgs),
-                mask_image = managed.MaskImage != null ? managed.MaskImage.ToUnmanaged(1) : default,
-                width = managed.Width,
-                height = managed.Height,
-                sample_params = managed.SampleParameters.ToUnmanaged(),
-                strength = managed.Strength,
-                seed = managed.Seed,
-                batch_count = managed.BatchCount,
-                control_image = managed.ControlImage != null ? managed.ControlImage.ToUnmanaged() : default,
-                control_strength = managed.ControlStrength,
-                ip_adapter_image = managed.IpAdapterImage != null ? managed.IpAdapterImage.ToUnmanaged() : default,
-                ip_adapter_strength = managed.IpAdapterStrength,
-                pm_params = managed.PmParameters.ToUnmanaged(),
-                pulid_params = managed.PulidParameters.ToUnmanaged(),
-                vae_tiling_params = managed.VaeTilingParameters.ToUnmanaged(),
-                cache = managed.Cache.ToUnmanaged(),
-                hires = managed.Hires.ToUnmanaged(),
-                qwen_image_layers = managed.QwenImageLayers,
-                circular_x = managed.CircularX,
-                circular_y = managed.CircularY,
-                image_preprocess = new NativeApi.sd_image_preprocess_params_t
-                {
-                    rules = Utf8StringMarshaller.ConvertToUnmanaged(managed.ImagePreprocess)
-                },
-                control_type = managed.ControlNetType.ToUnmanaged()
-            };
-        }
-
-
-        internal static void FreeUnmanaged(this NativeApi.sd_img_gen_params_t native)
-        {
-            if (native.prompt != null)
-                Utf8StringMarshaller.Free(native.prompt);
-            if (native.negative_prompt != null)
-                Utf8StringMarshaller.Free(native.negative_prompt);
-            if (native.ref_image_args != null)
-                Utf8StringMarshaller.Free(native.ref_image_args);
-
-            if (native.loras != null)
-            {
-                for (uint i = 0; i < native.lora_count; i++)
-                {
-                    native.loras[i].FreeUnmanaged();
-                }
-                NativeMemory.Free(native.loras);
-            }
-
-            if (native.ref_images != null)
-            {
-                for (int i = 0; i < native.ref_images_count; i++)
-                {
-                    native.ref_images[i].FreeUnmanaged();
-                }
-                NativeMemory.Free(native.ref_images);
-            }
-
-            native.init_image.FreeUnmanaged();
-            native.mask_image.FreeUnmanaged();
-            native.sample_params.FreeUnmanaged();
-            native.control_image.FreeUnmanaged();
-            native.ip_adapter_image.FreeUnmanaged();
-            native.pm_params.FreeUnmanaged();
-            native.pulid_params.FreeUnmanaged();
-            native.vae_tiling_params.FreeUnmanaged();
-            native.cache.FreeUnmanaged();
-            native.hires.FreeUnmanaged();
-            Utf8StringMarshaller.Free(native.image_preprocess.rules);
         }
 
         #endregion
 
         #region VideoGenerationParameters
 
-        internal static GenerateVideoOptions ToManaged(this NativeApi.sd_vid_gen_params_t unmanaged)
+        /// <summary>
+        /// Creates the native video generation options, the caller owns the result.
+        /// Only values that differ from the defaults are sent, the rest keep the library default.
+        /// </summary>
+        /// <param name="managed">The managed options.</param>
+        internal static NativeOptions ToUnmanaged(this GenerateVideoOptions managed)
         {
-            return new GenerateVideoOptions
+            var defaults = new GenerateVideoOptions();
+            var options = NativeOptions.CreateVideo();
+            try
             {
-                Prompt = Utf8StringMarshaller.ConvertToManaged(unmanaged.prompt),
-                NegativePrompt = Utf8StringMarshaller.ConvertToManaged(unmanaged.negative_prompt),
-                ClipSkip = unmanaged.clip_skip,
-                Fps = unmanaged.fps,
-                MoeBoundary = unmanaged.moe_boundary,
-                VaceStrength = unmanaged.vace_strength,
-                VideoFrames = unmanaged.video_frames,
-                Width = unmanaged.width,
-                Height = unmanaged.height,
-                SampleParameters = unmanaged.sample_params.ToManaged(),
-                HighNoiseSampleParameters = unmanaged.high_noise_sample_params.ToManaged(),
-                Strength = unmanaged.strength,
-                Seed = unmanaged.seed,
-                VaeTilingParameters = unmanaged.vae_tiling_params.ToManaged(),
-                Cache = unmanaged.cache.ToManaged(),
-                Hires = unmanaged.hires.ToManaged(),
-                CircularX = unmanaged.circular_x,
-                CircularY = unmanaged.circular_y,
-                RefImageArgs = Utf8StringMarshaller.ConvertToManaged(unmanaged.ref_image_args),
-                //ControlFrames,
-                //EndImage,
-                //InitImage,
-                //Loras,
-                //RefAudios,
-                //RefImages,
-                //RefVideos
-            };
-        }
+                // Prompt
+                options.SetString("prompt", managed.Prompt);
+                options.SetString("negative_prompt", managed.NegativePrompt);
+                options.SetInt("clip_skip", managed.ClipSkip, defaults.ClipSkip, int.MinValue);
+                options.SetLoras("loras", managed.Loras);
 
+                // Generation
+                options.SetInt("width", managed.Width, defaults.Width, 1);
+                options.SetInt("height", managed.Height, defaults.Height, 1);
+                options.SetInt("seed", managed.Seed, defaults.Seed, long.MinValue);
+                options.SetInt("video_frames", managed.VideoFrames, defaults.VideoFrames, 1);
+                options.SetInt("fps", managed.Fps, defaults.Fps, 1);
+                options.SetFloat("strength", managed.Strength, defaults.Strength);
+                options.SetFloat("moe_boundary", managed.MoeBoundary, defaults.MoeBoundary);
+                options.SetFloat("vace_strength", managed.VaceStrength, defaults.VaceStrength);
+                options.SetBool("circular_x", managed.CircularX, defaults.CircularX);
+                options.SetBool("circular_y", managed.CircularY, defaults.CircularY);
 
-        internal static NativeApi.sd_vid_gen_params_t ToUnmanaged(this GenerateVideoOptions managed)
-        {
-            NativeApi.sd_lora_t* loras = null;
-            if (managed.Loras is { Length: > 0 })
-            {
-                loras = (NativeApi.sd_lora_t*)NativeMemory.Alloc((nuint)managed.Loras.Length, (nuint)sizeof(NativeApi.sd_lora_t));
-                for (int i = 0; i < managed.Loras.Length; i++)
-                {
-                    loras[i] = managed.Loras[i].ToUnmanaged();
-                }
+                // Images
+                options.SetImage("init_image", managed.InitImage);
+                options.SetImage("end_image", managed.EndImage);
+                options.SetImages("ref_images", managed.RefImages);
+                options.SetString("ref_image_args", managed.RefImageArgs);
+                options.SetString("image_preprocess.rules", managed.ImagePreprocess);
+
+                // Video/Audio
+                options.SetFrames("control_frames", managed.ControlFrames);
+                options.SetVideos("ref_videos", managed.RefVideos);
+                options.SetAudios("ref_audios", managed.RefAudios);
+
+                options.SetSampler("sample", managed.SampleParameters, defaults.SampleParameters, false);
+                options.SetSampler("high_noise_sample", managed.HighNoiseSampleParameters, defaults.HighNoiseSampleParameters, true);
+                options.SetTiling(managed.VaeTilingParameters, defaults.VaeTilingParameters);
+                options.SetCache(managed.Cache, defaults.Cache);
+                options.SetHires(managed.Hires, defaults.Hires);
+                return options;
             }
-
-            NativeApi.sd_image_t* refImages = null;
-            if (managed.RefImages is { Length: > 0 })
+            catch
             {
-                refImages = (NativeApi.sd_image_t*)NativeMemory.Alloc((nuint)managed.RefImages.Length, (nuint)sizeof(NativeApi.sd_image_t));
-                for (int i = 0; i < managed.RefImages.Length; i++)
-                {
-                    refImages[i] = managed.RefImages[i].ToUnmanaged();
-                }
+                options.Dispose();
+                throw;
             }
-
-
-            NativeApi.sd_ref_video_t* refVideos = null;
-            if (managed.RefVideos is { Length: > 0 })
-            {
-                refVideos = (NativeApi.sd_ref_video_t*)NativeMemory.Alloc((nuint)managed.RefVideos.Length, (nuint)sizeof(NativeApi.sd_ref_video_t));
-                for (int i = 0; i < managed.RefVideos.Length; i++)
-                {
-                    refVideos[i] = managed.RefVideos[i].ToUnmanaged();
-                }
-            }
-
-            NativeApi.sd_audio_t* refAudios = null;
-            if (managed.RefAudios is { Length: > 0 })
-            {
-                refAudios = (NativeApi.sd_audio_t*)NativeMemory.Alloc((nuint)managed.RefAudios.Length, (nuint)sizeof(NativeApi.sd_audio_t));
-                for (int i = 0; i < managed.RefAudios.Length; i++)
-                {
-                    refAudios[i] = managed.RefAudios[i].ToUnmanaged();
-                }
-            }
-
-            NativeApi.sd_image_t* controlFrames = null;
-            if (managed.ControlFrames is { Length: > 0 })
-            {
-                controlFrames = (NativeApi.sd_image_t*)NativeMemory.Alloc((nuint)managed.ControlFrames.Length, (nuint)sizeof(NativeApi.sd_image_t));
-                for (int i = 0; i < managed.ControlFrames.Length; i++)
-                {
-                    controlFrames[i] = managed.ControlFrames[i].ToUnmanaged();
-                }
-            }
-
-            return new NativeApi.sd_vid_gen_params_t
-            {
-                loras = loras,
-                lora_count = (uint)(managed.Loras?.Length ?? 0),
-                prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.Prompt),
-                negative_prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.NegativePrompt),
-                clip_skip = managed.ClipSkip,
-                init_image = managed.InitImage != null ? managed.InitImage.ToUnmanaged() : default,
-                end_image = managed.EndImage != null ? managed.EndImage.ToUnmanaged() : default,
-                ref_images = refImages,
-                ref_images_count = managed.RefImages?.Length ?? 0,
-                ref_videos = refVideos,
-                ref_videos_count = managed.RefVideos?.Length ?? 0,
-                ref_audios = refAudios,
-                ref_audios_count = managed.RefAudios?.Length ?? 0,
-                control_frames = controlFrames,
-                control_frames_size = managed.ControlFrames?.Length ?? 0,
-                width = managed.Width,
-                height = managed.Height,
-                sample_params = managed.SampleParameters.ToUnmanaged(),
-                high_noise_sample_params = managed.HighNoiseSampleParameters.ToUnmanaged(),
-                moe_boundary = managed.MoeBoundary,
-                strength = managed.Strength,
-                seed = managed.Seed,
-                video_frames = managed.VideoFrames,
-                fps = managed.Fps,
-                vace_strength = managed.VaceStrength,
-                vae_tiling_params = managed.VaeTilingParameters.ToUnmanaged(),
-                cache = managed.Cache.ToUnmanaged(),
-                hires = managed.Hires.ToUnmanaged(),
-                circular_x = managed.CircularX,
-                circular_y = managed.CircularY,
-                image_preprocess = new NativeApi.sd_image_preprocess_params_t
-                {
-                    rules = Utf8StringMarshaller.ConvertToUnmanaged(managed.ImagePreprocess)
-                },
-                ref_image_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.RefImageArgs)
-            };
-        }
-
-        internal static void FreeUnmanaged(this NativeApi.sd_vid_gen_params_t native)
-        {
-            // LoRAs
-            if (native.loras != null)
-            {
-                for (uint i = 0; i < native.lora_count; i++)
-                {
-                    native.loras[i].FreeUnmanaged();
-                }
-
-                NativeMemory.Free(native.loras);
-            }
-
-            Utf8StringMarshaller.Free(native.prompt);
-            Utf8StringMarshaller.Free(native.negative_prompt);
-
-            // Images
-            native.init_image.FreeUnmanaged();
-            native.end_image.FreeUnmanaged();
-
-            if (native.ref_images != null)
-            {
-                for (int i = 0; i < native.ref_images_count; i++)
-                {
-                    native.ref_images[i].FreeUnmanaged();
-                }
-
-                NativeMemory.Free(native.ref_images);
-            }
-
-            // Videos
-            if (native.ref_videos != null)
-            {
-                for (int i = 0; i < native.ref_videos_count; i++)
-                {
-                    native.ref_videos[i].FreeUnmanaged();
-                }
-
-                NativeMemory.Free(native.ref_videos);
-            }
-
-            // Audio
-            if (native.ref_audios != null)
-            {
-                for (int i = 0; i < native.ref_audios_count; i++)
-                {
-                    native.ref_audios[i].FreeUnmanaged();
-                }
-
-                NativeMemory.Free(native.ref_audios);
-            }
-
-            // Control frames
-            if (native.control_frames != null)
-            {
-                for (int i = 0; i < native.control_frames_size; i++)
-                {
-                    native.control_frames[i].FreeUnmanaged();
-                }
-
-                NativeMemory.Free(native.control_frames);
-            }
-
-            native.sample_params.FreeUnmanaged();
-            native.high_noise_sample_params.FreeUnmanaged();
-            native.vae_tiling_params.FreeUnmanaged();
-            native.cache.FreeUnmanaged();
-            native.hires.FreeUnmanaged();
-            Utf8StringMarshaller.Free(native.image_preprocess.rules);
-            Utf8StringMarshaller.Free(native.ref_image_args);
         }
 
         #endregion
 
         #region UpscaleParameters
 
-        internal static UpscaleOptions ToManaged(this NativeApi.sd_video_upscaler_ctx_params_t managed)
+        /// <summary>
+        /// Creates the native image upscaler load options, the caller owns the result.
+        /// </summary>
+        /// <param name="managed">The managed options.</param>
+        internal static NativeOptions ToUnmanagedImageUpscaler(this UpscaleOptions managed)
         {
-            return new UpscaleOptions
+            var options = NativeOptions.CreateUpscaler();
+            try
             {
-                Backend = Utf8StringMarshaller.ConvertToManaged(managed.backend),
-                ParamsBackend = Utf8StringMarshaller.ConvertToManaged(managed.params_backend),
-                DiffusionModelPath = Utf8StringMarshaller.ConvertToManaged(managed.diffusion_model_path),
-                VaePath = Utf8StringMarshaller.ConvertToManaged(managed.vae_path),
-                Threads = managed.n_threads,
-                ScaleFactor = managed.upscale_factor,
-                FlashAttnMode = Utf8StringMarshaller.ConvertToManaged(managed.flash_attn_mode),
-                ConvDirectMode = Utf8StringMarshaller.ConvertToManaged(managed.conv_direct_mode),
-            };
-        }
-
-
-        internal static NativeApi.sd_video_upscaler_ctx_params_t ToUnmanaged(this UpscaleOptions managed)
-        {
-            var unmanaged = new NativeApi.sd_video_upscaler_ctx_params_t();
-            NativeApi.sd_video_upscaler_ctx_params_init(&unmanaged);
-            unmanaged.backend = Utf8StringMarshaller.ConvertToUnmanaged(managed.Backend);
-            unmanaged.params_backend = Utf8StringMarshaller.ConvertToUnmanaged(managed.ParamsBackend);
-            unmanaged.diffusion_model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.DiffusionModelPath);
-            unmanaged.vae_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.VaePath);
-            unmanaged.n_threads = managed.Threads;
-            unmanaged.upscale_factor = managed.ScaleFactor;
-            unmanaged.flash_attn_mode = Utf8StringMarshaller.ConvertToUnmanaged(managed.FlashAttnMode);
-            unmanaged.conv_direct_mode = Utf8StringMarshaller.ConvertToUnmanaged(managed.ConvDirectMode);
-            return unmanaged;
-        }
-
-
-        internal static void FreeUnmanaged(this NativeApi.sd_video_upscaler_ctx_params_t native)
-        {
-            Utf8StringMarshaller.Free(native.backend);
-            Utf8StringMarshaller.Free(native.params_backend);
-            Utf8StringMarshaller.Free(native.diffusion_model_path);
-            Utf8StringMarshaller.Free(native.vae_path);
-            Utf8StringMarshaller.Free(native.flash_attn_mode);
-            Utf8StringMarshaller.Free(native.conv_direct_mode);
-        }
-
-
-        internal static UpscaleVideoOptions ToManaged(this NativeApi.sd_video_upscale_params_t unmanaged)
-        {
-            return new UpscaleVideoOptions
+                options.SetString("model_path", managed.ModelPath);
+                options.SetString("backend", managed.Backend);
+                options.SetString("params_backend", managed.ParamsBackend);
+                options.SetInt("n_threads", managed.Threads, 1);
+                options.SetInt("tile_size", managed.TileSize, 1);
+                options.SetBool("conv_direct", !string.IsNullOrEmpty(managed.ConvDirectMode) && managed.ConvDirectMode.Equals("on"));
+                return options;
+            }
+            catch
             {
-                Seed = unmanaged.seed,
-                WindowSize = unmanaged.window_size,
-                TemporalChunkSize = unmanaged.temporal_chunk_size
-            };
+                options.Dispose();
+                throw;
+            }
         }
 
 
-        internal unsafe static NativeApi.sd_video_upscale_params_t ToUnmanaged(this UpscaleVideoOptions options, NativeApi.sd_image_t* videoFrames, int frameCount, int frameRate)
+        /// <summary>
+        /// Creates the native video upscaler load options, the caller owns the result.
+        /// </summary>
+        /// <param name="managed">The managed options.</param>
+        internal static NativeOptions ToUnmanagedVideoUpscaler(this UpscaleOptions managed)
         {
-            var unmanaged = new NativeApi.sd_video_upscale_params_t();
-            unmanaged.frames = videoFrames;
-            unmanaged.fps = frameRate;
-            unmanaged.seed = options.Seed;
-            unmanaged.window_size = options.WindowSize;
-            unmanaged.frame_count = frameCount;
-            unmanaged.temporal_chunk_size = options.TemporalChunkSize;
-            return unmanaged;
-        }
-
-
-        internal static NativeApi.sd_video_upscale_params_t ToUnmanaged(this UpscaleVideoOptions options, ImageTensor[] videoFrames, int frameRate)
-        {
-            var unmanagedFrames = (NativeApi.sd_image_t*)NativeMemory.Alloc((nuint)videoFrames.Length, (nuint)sizeof(NativeApi.sd_image_t));
-            Parallel.For(0, videoFrames.Length, i =>
+            var options = NativeOptions.CreateVideoUpscaler();
+            try
             {
-                unmanagedFrames[i] = videoFrames[i].ToUnmanaged(3);
-            });
-            return options.ToUnmanaged(unmanagedFrames, videoFrames.Length, frameRate);
+                options.SetString("diffusion_model_path", managed.DiffusionModelPath);
+                options.SetString("vae_path", managed.VaePath);
+                options.SetString("backend", managed.Backend);
+                options.SetString("params_backend", managed.ParamsBackend);
+                options.SetString("flash_attn_mode", managed.FlashAttnMode);
+                options.SetString("conv_direct_mode", managed.ConvDirectMode);
+                options.SetInt("n_threads", managed.Threads, 1);
+                options.SetInt("upscale_factor", managed.ScaleFactor, 1);
+                return options;
+            }
+            catch
+            {
+                options.Dispose();
+                throw;
+            }
         }
 
 
-        internal static void FreeUnmanaged(this NativeApi.sd_video_upscale_params_t native)
+        /// <summary>
+        /// Creates the native image upscale options, the caller owns the result.
+        /// </summary>
+        /// <param name="image">The RGB image, retained by the options.</param>
+        internal static NativeOptions ToUnmanagedUpscale(NativeApi.sd_tensor_t* image)
         {
-            NativeApi.free_sd_images(native.frames, native.frame_count);
+            var options = NativeOptions.CreateUpscale();
+            try
+            {
+                options.SetTensor("image", image);
+                return options;
+            }
+            catch
+            {
+                options.Dispose();
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Creates the native video upscale options, the caller owns the result.
+        /// </summary>
+        /// <param name="managed">The managed options.</param>
+        /// <param name="frames">The RGB frames [C,W,H,T], retained by the options.</param>
+        /// <param name="frameRate">The frame rate.</param>
+        internal static NativeOptions ToUnmanaged(this UpscaleVideoOptions managed, NativeApi.sd_tensor_t* frames, int frameRate)
+        {
+            var options = NativeOptions.CreateVideoUpscale();
+            try
+            {
+                options.SetTensor("frames", frames);
+                options.SetInt("fps", frameRate, 1);
+                options.SetInt("seed", managed.Seed);
+                options.SetInt("window_size", managed.WindowSize, 1);
+                options.SetInt("temporal_chunk_size", managed.TemporalChunkSize, 1);
+                return options;
+            }
+            catch
+            {
+                options.Dispose();
+                throw;
+            }
         }
 
         #endregion
 
-        #region LoraOptions
+        #region SamplerOptions
 
-        internal static NativeApi.sd_lora_t ToUnmanaged(this LoraOptions managed)
+        /// <summary>
+        /// Sets the sampler options.
+        /// The high-noise pass shares the base scheduler, sigmas, flow shift and timestep shift, the library has no separate keys for them.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="prefix">The key prefix, "sample" or "high_noise_sample".</param>
+        /// <param name="managed">The managed options.</param>
+        /// <param name="defaults">The default options.</param>
+        /// <param name="isHighNoise">if set to <c>true</c> these are the high-noise options.</param>
+        private static void SetSampler(this NativeOptions options, string prefix, SamplerOptions managed, SamplerOptions defaults, bool isHighNoise)
         {
-            return new NativeApi.sd_lora_t
+            if (managed == null)
+                return;
+
+            if (managed.SampleMethod != defaults.SampleMethod)
+                options.SetString($"{prefix}.method", managed.SampleMethod.ToUnmanaged());
+
+            options.SetInt($"{prefix}.steps", managed.SampleSteps, defaults.SampleSteps, isHighNoise ? -1 : 1);
+            options.SetFloat($"{prefix}.eta", managed.Eta, defaults.Eta);
+            options.SetString($"{prefix}.args", managed.ExtraSampleArgs);
+            if (!isHighNoise)
             {
-                is_high_noise = managed.IsHighNoise,
-                multiplier = managed.Multiplier,
-                path = Utf8StringMarshaller.ConvertToUnmanaged(managed.Path)
-            };
-        }
+                if (managed.Scheduler != defaults.Scheduler)
+                    options.SetString($"{prefix}.scheduler", managed.Scheduler.ToUnmanaged());
 
-        internal static void FreeUnmanaged(this NativeApi.sd_lora_t native)
-        {
-            Utf8StringMarshaller.Free(native.path);
+                options.SetInt($"{prefix}.shifted_timestep", managed.ShiftedTimestep, defaults.ShiftedTimestep, 0);
+                options.SetFloat($"{prefix}.flow_shift", managed.FlowShift, defaults.FlowShift);
+                options.SetFloats($"{prefix}.sigmas", managed.CustomSigmas);
+            }
+
+            // Guidance
+            options.SetFloat($"{prefix}.guidance.txt_cfg", managed.TxtCfg, defaults.TxtCfg);
+            options.SetFloat($"{prefix}.guidance.img_cfg", managed.ImgCfg, defaults.ImgCfg);
+            options.SetFloat($"{prefix}.guidance.distilled_guidance", managed.DistilledGuidance, defaults.DistilledGuidance);
+
+            // Skip Layer Guidance
+            options.SetInts($"{prefix}.guidance.slg.layers", managed.SlgLayers);
+            options.SetFloat($"{prefix}.guidance.slg.layer_start", managed.SlgLayerStart, defaults.SlgLayerStart);
+            options.SetFloat($"{prefix}.guidance.slg.layer_end", managed.SlgLayerEnd, defaults.SlgLayerEnd);
+            options.SetFloat($"{prefix}.guidance.slg.scale", managed.SlgScale, defaults.SlgScale);
         }
 
         #endregion
 
         #region TilingOptions
 
-        internal static TilingOptions ToManaged(this NativeApi.sd_tiling_params_t unmanaged)
+        /// <summary>
+        /// Sets the VAE tiling options.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="managed">The managed options.</param>
+        /// <param name="defaults">The default options.</param>
+        private static void SetTiling(this NativeOptions options, TilingOptions managed, TilingOptions defaults)
         {
-            return new TilingOptions
-            {
-                Enabled = unmanaged.enabled,
-                TileSizeW = unmanaged.tile_size_w,
-                TileSizeH = unmanaged.tile_size_h,
-                TargetOverlap = unmanaged.target_overlap,
-                RelSizeW = unmanaged.rel_size_w,
-                RelSizeH = unmanaged.rel_size_h,
-                TemporalTiling = unmanaged.temporal_tiling,
-                ExtraTilingArgs = Utf8StringMarshaller.ConvertToManaged(unmanaged.extra_tiling_args)
-            };
-        }
+            if (managed == null)
+                return;
 
-
-        internal static NativeApi.sd_tiling_params_t ToUnmanaged(this TilingOptions managed)
-        {
-            return new NativeApi.sd_tiling_params_t
-            {
-                enabled = managed.Enabled,
-                temporal_tiling = managed.TemporalTiling,
-                tile_size_w = managed.TileSizeW,
-                tile_size_h = managed.TileSizeH,
-                target_overlap = managed.TargetOverlap,
-                rel_size_w = managed.RelSizeW,
-                rel_size_h = managed.RelSizeH,
-                extra_tiling_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.ExtraTilingArgs)
-            };
-        }
-
-
-        internal static void FreeUnmanaged(this NativeApi.sd_tiling_params_t native)
-        {
-            Utf8StringMarshaller.Free(native.extra_tiling_args);
+            options.SetBool("vae_tiling.enabled", managed.Enabled, defaults.Enabled);
+            options.SetBool("vae_tiling.temporal_tiling", managed.TemporalTiling, defaults.TemporalTiling);
+            options.SetInt("vae_tiling.tile_size_w", managed.TileSizeW, defaults.TileSizeW, 0);
+            options.SetInt("vae_tiling.tile_size_h", managed.TileSizeH, defaults.TileSizeH, 0);
+            options.SetFloat("vae_tiling.target_overlap", managed.TargetOverlap, defaults.TargetOverlap);
+            options.SetFloat("vae_tiling.rel_size_w", managed.RelSizeW, defaults.RelSizeW);
+            options.SetFloat("vae_tiling.rel_size_h", managed.RelSizeH, defaults.RelSizeH);
+            options.SetString("vae_tiling.extra_tiling_args", managed.ExtraTilingArgs);
         }
 
         #endregion
 
         #region HiresOptions
 
-        internal static HiresOptions ToManaged(this NativeApi.sd_hires_params_t unmanaged)
+        /// <summary>
+        /// Sets the hires options.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="managed">The managed options.</param>
+        /// <param name="defaults">The default options.</param>
+        private static void SetHires(this NativeOptions options, HiresOptions managed, HiresOptions defaults)
         {
-            return new HiresOptions
-            {
-                Enabled = unmanaged.enabled,
-                Upscaler = unmanaged.upscaler.ToManaged(),
-                DenoisingStrength = unmanaged.denoising_strength,
-                ModelPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.model_path),
-                Scale = unmanaged.scale,
-                Steps = unmanaged.steps,
-                TargetHeight = unmanaged.target_height,
-                TargetWidth = unmanaged.target_width,
-                UpscaleTileSize = unmanaged.upscale_tile_size,
-                CustomSigmas = null
-            };
-        }
+            if (managed == null)
+                return;
 
+            options.SetBool("hires.enabled", managed.Enabled, defaults.Enabled);
+            if (managed.Upscaler != defaults.Upscaler)
+                options.SetString("hires.upscaler", managed.Upscaler.ToUnmanaged());
 
-        internal static NativeApi.sd_hires_params_t ToUnmanaged(this HiresOptions managed)
-        {
-            float* customSigmas = null;
-            if (!managed.CustomSigmas.IsNullOrEmpty())
-            {
-                customSigmas = (float*)NativeMemory.Alloc((nuint)managed.CustomSigmas.Length, sizeof(float));
-                managed.CustomSigmas.AsSpan().CopyTo(new Span<float>(customSigmas, managed.CustomSigmas.Length));
-            }
-
-            return new NativeApi.sd_hires_params_t
-            {
-                enabled = managed.Enabled,
-                upscaler = managed.Upscaler.ToUnmanaged(),
-                model_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.ModelPath),
-                scale = managed.Scale,
-                target_width = managed.TargetWidth,
-                target_height = managed.TargetHeight,
-                steps = managed.Steps,
-                denoising_strength = managed.DenoisingStrength,
-                upscale_tile_size = managed.UpscaleTileSize,
-                custom_sigmas = customSigmas,
-                custom_sigmas_count = managed.CustomSigmas?.Length ?? 0
-            };
-        }
-
-
-        internal static void FreeUnmanaged(this NativeApi.sd_hires_params_t native)
-        {
-            Utf8StringMarshaller.Free(native.model_path);
-            if (native.custom_sigmas != null)
-                NativeMemory.Free(native.custom_sigmas);
-        }
-
-        #endregion
-
-        #region AdetailerOptions
-
-        internal static NativeApi.sd_adetailer_params_t ToUnmanaged(this AdetailerOptions managed)
-        {
-            return new NativeApi.sd_adetailer_params_t
-            {
-                prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.Prompt),
-                negative_prompt = Utf8StringMarshaller.ConvertToUnmanaged(managed.NegativePrompt),
-                extra_ad_args = Utf8StringMarshaller.ConvertToUnmanaged(managed.ExtraAdArgs)
-            };
-        }
-
-        internal static void FreeUnmanaged(this NativeApi.sd_adetailer_params_t native)
-        {
-            Utf8StringMarshaller.Free(native.prompt);
-            Utf8StringMarshaller.Free(native.negative_prompt);
-            Utf8StringMarshaller.Free(native.extra_ad_args);
+            options.SetString("hires.model_path", managed.ModelPath);
+            options.SetFloat("hires.scale", managed.Scale, defaults.Scale);
+            options.SetInt("hires.target_width", managed.TargetWidth, defaults.TargetWidth, 0);
+            options.SetInt("hires.target_height", managed.TargetHeight, defaults.TargetHeight, 0);
+            options.SetInt("hires.steps", managed.Steps, defaults.Steps, 0);
+            options.SetFloat("hires.denoising_strength", managed.DenoisingStrength, defaults.DenoisingStrength);
+            options.SetInt("hires.upscale_tile_size", managed.UpscaleTileSize, defaults.UpscaleTileSize, 1);
+            options.SetFloats("hires.sigmas", managed.CustomSigmas);
         }
 
         #endregion
 
         #region CacheOptions
 
-        internal static CacheOptions ToManaged(this NativeApi.sd_cache_params_t unmanaged)
+        /// <summary>
+        /// Sets the cache options.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="managed">The managed options.</param>
+        /// <param name="defaults">The default options.</param>
+        private static void SetCache(this NativeOptions options, CacheOptions managed, CacheOptions defaults)
         {
-            return new CacheOptions
-            {
-                Mode = unmanaged.mode.ToManaged(),
-                BnComputeBlocks = unmanaged.Bn_compute_blocks,
-                EndPercent = unmanaged.end_percent,
-                ErrorDecayRate = unmanaged.error_decay_rate,
-                FnComputeBlocks = unmanaged.Fn_compute_blocks,
-                MaxCachedSteps = unmanaged.max_cached_steps,
-                MaxContinuousCachedSteps = unmanaged.max_continuous_cached_steps,
-                MaxWarmupSteps = unmanaged.max_warmup_steps,
-                ResetErrorOnCompute = unmanaged.reset_error_on_compute,
-                ResidualDiffThreshold = unmanaged.residual_diff_threshold,
-                ReuseThreshold = unmanaged.reuse_threshold,
-                ScmMask = Utf8StringMarshaller.ConvertToManaged(unmanaged.scm_mask),
-                ScmPolicyDynamic = unmanaged.scm_policy_dynamic,
-                SpectrumFlexWindow = unmanaged.spectrum_flex_window,
-                SpectrumLam = unmanaged.spectrum_lam,
-                SpectrumM = unmanaged.spectrum_m,
-                SpectrumStopPercent = unmanaged.spectrum_stop_percent,
-                SpectrumW = unmanaged.spectrum_w,
-                SpectrumWarmupSteps = unmanaged.spectrum_warmup_steps,
-                SpectrumWindowSize = unmanaged.spectrum_window_size,
-                StartPercent = unmanaged.start_percent,
-                TaylorseerNDerivatives = unmanaged.taylorseer_n_derivatives,
-                TaylorseerSkipInterval = unmanaged.taylorseer_skip_interval,
-                UseRelativeThreshold = unmanaged.use_relative_threshold,
-            };
-        }
+            if (managed == null)
+                return;
 
+            if (managed.Mode != defaults.Mode)
+                options.SetString("cache.mode", managed.Mode.ToUnmanaged());
 
-        internal static NativeApi.sd_cache_params_t ToUnmanaged(this CacheOptions managed)
-        {
-            return new NativeApi.sd_cache_params_t
-            {
-                mode = managed.Mode.ToUnmanaged(),
-                reuse_threshold = managed.ReuseThreshold,
-                start_percent = managed.StartPercent,
-                end_percent = managed.EndPercent,
-                error_decay_rate = managed.ErrorDecayRate,
-
-                use_relative_threshold = managed.UseRelativeThreshold,
-                reset_error_on_compute = managed.ResetErrorOnCompute,
-
-                Fn_compute_blocks = managed.FnComputeBlocks,
-                Bn_compute_blocks = managed.BnComputeBlocks,
-                residual_diff_threshold = managed.ResidualDiffThreshold,
-                max_warmup_steps = managed.MaxWarmupSteps,
-                max_cached_steps = managed.MaxCachedSteps,
-                max_continuous_cached_steps = managed.MaxContinuousCachedSteps,
-                taylorseer_n_derivatives = managed.TaylorseerNDerivatives,
-                taylorseer_skip_interval = managed.TaylorseerSkipInterval,
-
-                scm_mask = Utf8StringMarshaller.ConvertToUnmanaged(managed.ScmMask),
-
-                scm_policy_dynamic = managed.ScmPolicyDynamic,
-
-                spectrum_w = managed.SpectrumW,
-                spectrum_m = managed.SpectrumM,
-                spectrum_lam = managed.SpectrumLam,
-                spectrum_window_size = managed.SpectrumWindowSize,
-                spectrum_flex_window = managed.SpectrumFlexWindow,
-                spectrum_warmup_steps = managed.SpectrumWarmupSteps,
-                spectrum_stop_percent = managed.SpectrumStopPercent
-            };
-        }
-
-
-        internal static void FreeUnmanaged(this NativeApi.sd_cache_params_t native)
-        {
-            Utf8StringMarshaller.Free(native.scm_mask);
-        }
-
-
-        #endregion
-
-        #region EmbeddingOptions
-
-        internal static NativeApi.sd_embedding_t ToUnmanaged(this EmbeddingOptions managed)
-        {
-            return new NativeApi.sd_embedding_t
-            {
-                name = Utf8StringMarshaller.ConvertToUnmanaged(managed.Name),
-                path = Utf8StringMarshaller.ConvertToUnmanaged(managed.Path)
-            };
-        }
-
-        internal static void FreeUnmanaged(this NativeApi.sd_embedding_t native)
-        {
-            Utf8StringMarshaller.Free(native.name);
-            Utf8StringMarshaller.Free(native.path);
+            options.SetFloat("cache.reuse_threshold", managed.ReuseThreshold, defaults.ReuseThreshold);
+            options.SetFloat("cache.start_percent", managed.StartPercent, defaults.StartPercent);
+            options.SetFloat("cache.end_percent", managed.EndPercent, defaults.EndPercent);
+            options.SetFloat("cache.error_decay_rate", managed.ErrorDecayRate, defaults.ErrorDecayRate);
+            options.SetBool("cache.use_relative_threshold", managed.UseRelativeThreshold, defaults.UseRelativeThreshold);
+            options.SetBool("cache.reset_error_on_compute", managed.ResetErrorOnCompute, defaults.ResetErrorOnCompute);
+            options.SetInt("cache.fn_compute_blocks", managed.FnComputeBlocks, defaults.FnComputeBlocks, 0);
+            options.SetInt("cache.bn_compute_blocks", managed.BnComputeBlocks, defaults.BnComputeBlocks, 0);
+            options.SetFloat("cache.residual_diff_threshold", managed.ResidualDiffThreshold, defaults.ResidualDiffThreshold);
+            options.SetInt("cache.max_warmup_steps", managed.MaxWarmupSteps, defaults.MaxWarmupSteps, 0);
+            options.SetInt("cache.max_cached_steps", managed.MaxCachedSteps, defaults.MaxCachedSteps, int.MinValue);
+            options.SetInt("cache.max_continuous_cached_steps", managed.MaxContinuousCachedSteps, defaults.MaxContinuousCachedSteps, int.MinValue);
+            options.SetInt("cache.taylorseer_n_derivatives", managed.TaylorseerNDerivatives, defaults.TaylorseerNDerivatives, 0);
+            options.SetInt("cache.taylorseer_skip_interval", managed.TaylorseerSkipInterval, defaults.TaylorseerSkipInterval, 1);
+            options.SetString("cache.scm_mask", managed.ScmMask);
+            options.SetBool("cache.scm_policy_dynamic", managed.ScmPolicyDynamic, defaults.ScmPolicyDynamic);
+            options.SetFloat("cache.spectrum_w", managed.SpectrumW, defaults.SpectrumW);
+            options.SetInt("cache.spectrum_m", managed.SpectrumM, defaults.SpectrumM, 1);
+            options.SetFloat("cache.spectrum_lam", managed.SpectrumLam, defaults.SpectrumLam);
+            options.SetInt("cache.spectrum_window_size", managed.SpectrumWindowSize, defaults.SpectrumWindowSize, 1);
+            options.SetFloat("cache.spectrum_flex_window", managed.SpectrumFlexWindow, defaults.SpectrumFlexWindow);
+            options.SetInt("cache.spectrum_warmup_steps", managed.SpectrumWarmupSteps, defaults.SpectrumWarmupSteps, 0);
+            options.SetFloat("cache.spectrum_stop_percent", managed.SpectrumStopPercent, defaults.SpectrumStopPercent);
         }
 
         #endregion
 
         #region PhotoMakerOptions
 
-        internal static PhotoMakerOptions ToManaged(this NativeApi.sd_pm_params_t unmanaged)
+        /// <summary>
+        /// Sets the PhotoMaker options.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="managed">The managed options.</param>
+        /// <param name="defaults">The default options.</param>
+        private static void SetPhotoMaker(this NativeOptions options, PhotoMakerOptions managed, PhotoMakerOptions defaults)
         {
-            return new PhotoMakerOptions
-            {
-                IdEmbedPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.id_embed_path),
-                StyleStrength = unmanaged.style_strength
-            };
-        }
+            if (managed == null)
+                return;
 
-
-        internal static NativeApi.sd_pm_params_t ToUnmanaged(this PhotoMakerOptions managed)
-        {
-            NativeApi.sd_image_t* images = null;
-            if (managed.IdImages is { Length: > 0 })
-            {
-                images = (NativeApi.sd_image_t*)NativeMemory.Alloc((nuint)managed.IdImages.Length, (nuint)sizeof(NativeApi.sd_image_t));
-                for (int i = 0; i < managed.IdImages.Length; i++)
-                {
-                    images[i] = managed.IdImages[i].ToUnmanaged();
-                }
-            }
-
-            return new NativeApi.sd_pm_params_t
-            {
-                id_images = images,
-                id_images_count = managed.IdImages?.Length ?? 0,
-                id_embed_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.IdEmbedPath),
-                style_strength = managed.StyleStrength
-            };
-        }
-
-
-        internal static void FreeUnmanaged(this NativeApi.sd_pm_params_t native)
-        {
-            if (native.id_images != null)
-            {
-                for (int i = 0; i < native.id_images_count; i++)
-                {
-                    native.id_images[i].FreeUnmanaged();
-                }
-                NativeMemory.Free(native.id_images);
-            }
-            Utf8StringMarshaller.Free(native.id_embed_path);
+            options.SetImages("photomaker.id_images", managed.IdImages);
+            options.SetString("photomaker.id_embed_path", managed.IdEmbedPath);
+            options.SetFloat("photomaker.style_strength", managed.StyleStrength, defaults.StyleStrength);
         }
 
         #endregion
 
         #region PulidOptions
 
-        internal static PulidOptions ToManaged(this NativeApi.sd_pulid_params_t unmanaged)
+        /// <summary>
+        /// Sets the PuLID options.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="managed">The managed options.</param>
+        /// <param name="defaults">The default options.</param>
+        private static void SetPulid(this NativeOptions options, PulidOptions managed, PulidOptions defaults)
         {
-            return new PulidOptions
-            {
-                IdWeight = unmanaged.id_weight,
-                IdEmbeddingPath = Utf8StringMarshaller.ConvertToManaged(unmanaged.id_embedding_path),
-            };
-        }
+            if (managed == null)
+                return;
 
-        internal static NativeApi.sd_pulid_params_t ToUnmanaged(this PulidOptions managed)
-        {
-            return new NativeApi.sd_pulid_params_t
-            {
-                id_embedding_path = Utf8StringMarshaller.ConvertToUnmanaged(managed.IdEmbeddingPath),
-                id_weight = managed.IdWeight
-            };
-        }
-
-        internal static void FreeUnmanaged(this NativeApi.sd_pulid_params_t native)
-        {
-            Utf8StringMarshaller.Free(native.id_embedding_path);
-        }
-
-        #endregion
-
-        #region VideoSequence
-
-        internal static NativeApi.sd_ref_video_t ToUnmanaged(this VideoSequence managed)
-        {
-            NativeApi.sd_image_t* frames = null;
-            if (managed.FrameCount > 0)
-            {
-                frames = (NativeApi.sd_image_t*)NativeMemory.Alloc((nuint)managed.Frames.Length, (nuint)sizeof(NativeApi.sd_image_t));
-                for (int i = 0; i < managed.Frames.Length; i++)
-                {
-                    frames[i] = managed.Frames[i].ToUnmanaged();
-                }
-            }
-
-            NativeApi.sd_audio_t audio = default;
-            if (managed.Audio != null)
-            {
-                audio = managed.Audio.ToUnmanaged();
-            }
-
-            return new NativeApi.sd_ref_video_t
-            {
-                frames = frames,
-                frame_count = managed.FrameCount,
-                fps = (int)managed.FrameRate,
-                audio = audio
-            };
-        }
-
-
-        internal static void FreeUnmanaged(this NativeApi.sd_ref_video_t native)
-        {
-            if (native.frames != null)
-            {
-                for (int i = 0; i < native.frame_count; i++)
-                {
-                    native.frames[i].FreeUnmanaged();
-                }
-                NativeMemory.Free(native.frames);
-            }
-
-            native.audio.FreeUnmanaged();
-        }
-
-        #endregion
-
-        #region ImageData
-
-        public static unsafe ImageTensor ToManaged(this NativeApi.sd_image_result_t result)
-        {
-            return result.image.ToManaged();
-        }
-
-
-        internal static void FreeUnmanaged(this NativeApi.sd_image_t image)
-        {
-            if (image.data != null)
-            {
-                NativeMemory.Free(image.data);
-            }
-        }
-
-        internal static void FreeUnmanaged(this NativeApi.sd_image_t[] images)
-        {
-            foreach (var image in images)
-            {
-                FreeUnmanaged(image);
-            }
-        }
-
-        #endregion
-
-        #region AudioData
-
-        internal static void FreeUnmanaged(this NativeApi.sd_audio_t native)
-        {
-            if (native.data != null)
-                NativeMemory.Free(native.data);
+            options.SetString("pulid.id_embedding_path", managed.IdEmbeddingPath);
+            options.SetFloat("pulid.id_weight", managed.IdWeight, defaults.IdWeight);
         }
 
         #endregion
 
         #region Tensors
 
-        public static unsafe ImageTensor ToManaged(this NativeApi.sd_image_t image)
+        /// <summary>
+        /// Creates a native U8 image tensor [C,W,H], the caller must free it with sd_tensor_free.
+        /// </summary>
+        /// <param name="tensor">The tensor.</param>
+        /// <param name="channels">The channels, 1 (mask), 3 (RGB) or 4 (RGBA).</param>
+        internal static NativeApi.sd_tensor_t* ToUnmanaged(this ImageTensor tensor, int channels = 4)
         {
-            var width = checked((int)image.width);
-            var height = checked((int)image.height);
-            var channels = checked((int)image.channel);
+            var height = tensor.Dimensions[2];
+            var width = tensor.Dimensions[3];
+            var byteCount = checked(width * height * channels);
+            var data = (byte*)NativeMemory.Alloc((nuint)byteCount);
+            try
+            {
+                WritePixels(tensor, data, channels);
+
+                // The library copies the data
+                var shape = stackalloc long[] { channels, width, height };
+                var result = NativeApi.sd_tensor_create(NativeApi.sd_tensor_type_t.SD_TENSOR_U8, 3, shape, data, (nuint)byteCount);
+                if (result == null)
+                    throw new Exception($"Failed to create image tensor: {NativeApi.GetLastError()}");
+
+                return result;
+            }
+            finally
+            {
+                NativeMemory.Free(data);
+            }
+        }
+
+
+        /// <summary>
+        /// Creates a native U8 video tensor [C,W,H,T], the caller must free it with sd_tensor_free.
+        /// </summary>
+        /// <param name="frames">The frames, all the same size.</param>
+        /// <param name="channels">The channels, 1, 3 (RGB) or 4 (RGBA).</param>
+        /// <exception cref="System.ArgumentException">Video frames must all be the same size</exception>
+        internal static NativeApi.sd_tensor_t* ToUnmanaged(this ImageTensor[] frames, int channels = 4)
+        {
+            if (frames.IsNullOrEmpty())
+                throw new ArgumentException("Video has no frames", nameof(frames));
+
+            var height = frames[0].Dimensions[2];
+            var width = frames[0].Dimensions[3];
+            foreach (var frame in frames)
+            {
+                if (frame.Dimensions[2] != height || frame.Dimensions[3] != width)
+                    throw new ArgumentException("Video frames must all be the same size", nameof(frames));
+            }
+
+            var frameSize = checked(width * height * channels);
+            var byteCount = checked((nuint)frameSize * (nuint)frames.Length);
+            var data = (nint)NativeMemory.Alloc(byteCount);
+            try
+            {
+                Parallel.For(0, frames.Length, i =>
+                {
+                    WritePixels(frames[i], (byte*)data + (nint)i * frameSize, channels);
+                });
+
+                // The library copies the data
+                var shape = stackalloc long[] { channels, width, height, frames.Length };
+                var result = NativeApi.sd_tensor_create(NativeApi.sd_tensor_type_t.SD_TENSOR_U8, 4, shape, (void*)data, byteCount);
+                if (result == null)
+                    throw new Exception($"Failed to create video tensor: {NativeApi.GetLastError()}");
+
+                return result;
+            }
+            finally
+            {
+                NativeMemory.Free((void*)data);
+            }
+        }
+
+
+        /// <summary>
+        /// Creates a native audio descriptor with an F32 tensor [C,N], the caller must free the tensor with sd_tensor_free.
+        /// </summary>
+        /// <param name="audio">The audio.</param>
+        /// <exception cref="System.InvalidOperationException">Audio has no channels or samples</exception>
+        internal static NativeApi.sd_audio_t ToUnmanaged(this AudioTensor audio)
+        {
+            var sampleRate = audio.SampleRate;
+            var channels = audio.Channels;
+            var samples = audio.Samples;
+            if (channels <= 0)
+                throw new InvalidOperationException("Audio has no channels.");
+            if (samples <= 0)
+                throw new InvalidOperationException("Audio has no samples.");
+            if (sampleRate <= 0)
+                throw new InvalidOperationException("Audio has no sample rate.");
+
+            var totalSamples = checked(channels * samples);
+            fixed (float* data = audio.Span)
+            {
+                // The library copies the data
+                var shape = stackalloc long[] { channels, samples };
+                var result = NativeApi.sd_tensor_create(NativeApi.sd_tensor_type_t.SD_TENSOR_F32, 2, shape, data, (nuint)totalSamples * sizeof(float));
+                if (result == null)
+                    throw new Exception($"Failed to create audio tensor: {NativeApi.GetLastError()}");
+
+                return new NativeApi.sd_audio_t
+                {
+                    sample_rate = (uint)sampleRate,
+                    data = result
+                };
+            }
+        }
+
+
+        /// <summary>
+        /// Copies a native U8 image tensor [C,W,H] to a managed image.
+        /// </summary>
+        /// <param name="tensor">The tensor, borrowed.</param>
+        /// <exception cref="System.ArgumentNullException">tensor</exception>
+        /// <exception cref="System.ArgumentException">Expected a U8 [C,W,H] image tensor</exception>
+        internal static ImageTensor ToImageTensor(NativeApi.sd_tensor_t* tensor)
+        {
+            if (tensor == null)
+                throw new ArgumentNullException(nameof(tensor));
+            if (NativeApi.sd_tensor_type(tensor) != NativeApi.sd_tensor_type_t.SD_TENSOR_U8 || NativeApi.sd_tensor_rank(tensor) != 3)
+                throw new ArgumentException("Expected a U8 [C,W,H] image tensor", nameof(tensor));
+
+            var channels = checked((int)NativeApi.sd_tensor_dim(tensor, 0));
+            var width = checked((int)NativeApi.sd_tensor_dim(tensor, 1));
+            var height = checked((int)NativeApi.sd_tensor_dim(tensor, 2));
+            var data = (byte*)NativeApi.sd_tensor_data(tensor);
+            if (data == null)
+                throw new ArgumentNullException(nameof(tensor));
+
+            return ReadPixels(data, width, height, channels);
+        }
+
+
+        /// <summary>
+        /// Copies a native U8 video tensor [C,W,H,T] to managed frames.
+        /// </summary>
+        /// <param name="tensor">The tensor, borrowed.</param>
+        /// <exception cref="System.ArgumentNullException">tensor</exception>
+        /// <exception cref="System.ArgumentException">Expected a U8 [C,W,H,T] video tensor</exception>
+        internal static ImageTensor[] ToImageTensors(NativeApi.sd_tensor_t* tensor)
+        {
+            if (tensor == null)
+                throw new ArgumentNullException(nameof(tensor));
+            if (NativeApi.sd_tensor_type(tensor) != NativeApi.sd_tensor_type_t.SD_TENSOR_U8 || NativeApi.sd_tensor_rank(tensor) != 4)
+                throw new ArgumentException("Expected a U8 [C,W,H,T] video tensor", nameof(tensor));
+
+            var channels = checked((int)NativeApi.sd_tensor_dim(tensor, 0));
+            var width = checked((int)NativeApi.sd_tensor_dim(tensor, 1));
+            var height = checked((int)NativeApi.sd_tensor_dim(tensor, 2));
+            var frameCount = checked((int)NativeApi.sd_tensor_dim(tensor, 3));
+            var frameSize = checked(width * height * channels);
+            var data = (nint)NativeApi.sd_tensor_data(tensor);
+            if (data == nint.Zero)
+                throw new ArgumentNullException(nameof(tensor));
+
+            var frames = new ImageTensor[frameCount];
+            Parallel.For(0, frameCount, i =>
+            {
+                frames[i] = ReadPixels((byte*)data + (nint)i * frameSize, width, height, channels);
+            });
+            return frames;
+        }
+
+
+        /// <summary>
+        /// Copies a native audio descriptor to a managed audio tensor.
+        /// </summary>
+        /// <param name="audio">The audio, borrowed.</param>
+        /// <exception cref="System.ArgumentException">Expected an F32 [C,N] audio tensor</exception>
+        internal static AudioTensor ToManaged(this NativeApi.sd_audio_t audio)
+        {
+            var tensor = audio.data;
+            if (tensor == null)
+                throw new ArgumentNullException(nameof(audio));
+            if (NativeApi.sd_tensor_type(tensor) != NativeApi.sd_tensor_type_t.SD_TENSOR_F32 || NativeApi.sd_tensor_rank(tensor) != 2)
+                throw new ArgumentException("Expected an F32 [C,N] audio tensor", nameof(audio));
+
+            var sampleRate = checked((int)audio.sample_rate);
+            var channels = checked((int)NativeApi.sd_tensor_dim(tensor, 0));
+            var samples = checked((int)NativeApi.sd_tensor_dim(tensor, 1));
+            if (channels <= 0)
+                throw new ArgumentOutOfRangeException(nameof(channels));
+            if (samples <= 0)
+                throw new ArgumentOutOfRangeException(nameof(samples));
+
+            var data = (float*)NativeApi.sd_tensor_data(tensor);
+            if (data == null)
+                throw new ArgumentNullException(nameof(audio));
+
+            var totalSamples = checked(channels * samples);
+            var managedTensor = new Tensor<float>([channels, samples]);
+            var unmanagedTensor = new ReadOnlySpan<float>(data, totalSamples);
+            unmanagedTensor.CopyTo(managedTensor.Memory.Span);
+            return managedTensor.AsAudioTensor(sampleRate);
+        }
+
+
+        /// <summary>
+        /// Writes an image as interleaved bytes, row by row.
+        /// </summary>
+        /// <param name="tensor">The tensor.</param>
+        /// <param name="data">The destination, width * height * channels bytes.</param>
+        /// <param name="channels">The channels.</param>
+        private static void WritePixels(ImageTensor tensor, byte* data, int channels)
+        {
+            var height = tensor.Dimensions[2];
+            var width = tensor.Dimensions[3];
             var channelSize = checked(width * height);
-            if (image.data == null)
-                throw new ArgumentNullException(nameof(image.data));
+
+            // StableDiffusion.cpp can injest 1,3 and 4 channel tensors depending on input type
+            // images can be 3 or 4, masks are 1
+            var r = tensor.GetChannel(1);
+            var g = tensor.GetChannel(2);
+            var b = tensor.GetChannel(3);
+            var a = tensor.GetChannel(4);
+            if (channels == 1)
+            {
+                for (int i = 0; i < channelSize; i++)
+                    data[i] = r[i].DenormalizeToByte();
+            }
+            else if (channels == 3)
+            {
+                for (int i = 0, dst = 0; i < channelSize; i++)
+                {
+                    data[dst++] = r[i].DenormalizeToByte();
+                    data[dst++] = g[i].DenormalizeToByte();
+                    data[dst++] = b[i].DenormalizeToByte();
+                }
+            }
+            else
+            {
+                for (int i = 0, dst = 0; i < channelSize; i++)
+                {
+                    data[dst++] = r[i].DenormalizeToByte();
+                    data[dst++] = g[i].DenormalizeToByte();
+                    data[dst++] = b[i].DenormalizeToByte();
+                    data[dst++] = a[i].DenormalizeToByte();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Reads an image from interleaved bytes, row by row.
+        /// </summary>
+        /// <param name="data">The source, width * height * channels bytes.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="channels">The channels.</param>
+        private static ImageTensor ReadPixels(byte* data, int width, int height, int channels)
+        {
+            var channelSize = checked(width * height);
 
             // TensorStack image tensors are strictly 4 channle RGBA
-            var imageData = image.data;
             var tensor = new ImageTensor(height, width, 1f);
             var r = tensor.GetChannel(1);
             var g = tensor.GetChannel(2);
@@ -1121,7 +761,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 for (int i = 0; i < channelSize; i++)
                 {
-                    var value = imageData[i].NormalizeToFloat();
+                    var value = data[i].NormalizeToFloat();
                     r[i] = value;
                     g[i] = value;
                     b[i] = value;
@@ -1131,129 +771,26 @@ namespace TensorStack.StableDiffusionCpp.Native
             {
                 for (int i = 0, src = 0; i < channelSize; i++)
                 {
-                    r[i] = imageData[src++].NormalizeToFloat();
-                    g[i] = imageData[src++].NormalizeToFloat();
-                    b[i] = imageData[src++].NormalizeToFloat();
+                    r[i] = data[src++].NormalizeToFloat();
+                    g[i] = data[src++].NormalizeToFloat();
+                    b[i] = data[src++].NormalizeToFloat();
+                }
+            }
+            else if (channels == 4)
+            {
+                for (int i = 0, src = 0; i < channelSize; i++)
+                {
+                    r[i] = data[src++].NormalizeToFloat();
+                    g[i] = data[src++].NormalizeToFloat();
+                    b[i] = data[src++].NormalizeToFloat();
+                    a[i] = data[src++].NormalizeToFloat();
                 }
             }
             else
             {
-                for (int i = 0, src = 0; i < channelSize; i++)
-                {
-                    r[i] = imageData[src++].NormalizeToFloat();
-                    g[i] = imageData[src++].NormalizeToFloat();
-                    b[i] = imageData[src++].NormalizeToFloat();
-                    a[i] = imageData[src++].NormalizeToFloat();
-                }
+                throw new ArgumentOutOfRangeException(nameof(channels));
             }
             return tensor;
-        }
-
-
-        public static unsafe NativeApi.sd_image_t ToUnmanaged(this ImageTensor tensor, int channels = 4)
-        {
-            var height = tensor.Dimensions[2];
-            var width = tensor.Dimensions[3];
-            var channelSize = checked(width * height);
-            var byteCount = checked(width * height * channels);
-            var data = (byte*)NativeMemory.Alloc((nuint)byteCount);
-
-            try
-            {
-                // StableDiffusion.cpp can injest 1,3 and 4 channel tensors depending on input type
-                // images can be 3 or 4, masks are 1, default to 3
-                var r = tensor.GetChannel(1);
-                var g = tensor.GetChannel(2);
-                var b = tensor.GetChannel(3);
-                var a = tensor.GetChannel(4);
-                if (channels == 1)
-                {
-                    for (int i = 0; i < channelSize; i++)
-                        data[i] = r[i].DenormalizeToByte();
-                }
-                else if (channels == 3)
-                {
-                    for (int i = 0, dst = 0; i < channelSize; i++)
-                    {
-                        data[dst++] = r[i].DenormalizeToByte();
-                        data[dst++] = g[i].DenormalizeToByte();
-                        data[dst++] = b[i].DenormalizeToByte();
-                    }
-                }
-                else
-                {
-                    for (int i = 0, dst = 0; i < channelSize; i++)
-                    {
-                        data[dst++] = r[i].DenormalizeToByte();
-                        data[dst++] = g[i].DenormalizeToByte();
-                        data[dst++] = b[i].DenormalizeToByte();
-                        data[dst++] = a[i].DenormalizeToByte();
-                    }
-                }
-                return new NativeApi.sd_image_t
-                {
-                    width = (uint)width,
-                    height = (uint)height,
-                    channel = (uint)channels,
-                    data = data
-                };
-            }
-            catch
-            {
-                NativeMemory.Free(data);
-                throw;
-            }
-        }
-
-
-        public static unsafe AudioTensor ToManaged(this NativeApi.sd_audio_t audio)
-        {
-            var sampleRate = checked((int)audio.sample_rate);
-            var channels = checked((int)audio.channels);
-            var samples = checked((int)audio.sample_count);
-            if (channels <= 0)
-                throw new ArgumentOutOfRangeException(nameof(channels));
-            if (samples <= 0)
-                throw new ArgumentOutOfRangeException(nameof(samples));
-            if (audio.data == null)
-                throw new ArgumentNullException(nameof(audio.data));
-
-            var totalSamples = checked(channels * samples);
-            var managedTensor = new Tensor<float>([channels, samples]);
-            var unmanagedTensor = new ReadOnlySpan<float>(audio.data, totalSamples);
-            unmanagedTensor.CopyTo(managedTensor.Memory.Span);
-            return managedTensor.AsAudioTensor(sampleRate);
-        }
-
-
-        public static unsafe NativeApi.sd_audio_t ToUnmanaged(this AudioTensor audio)
-        {
-            var sampleRate = audio.SampleRate;
-            var channels = audio.Channels;
-            var samples = audio.Samples;
-            if (channels <= 0)
-                throw new InvalidOperationException("Audio has no channels.");
-            if (samples <= 0)
-                throw new InvalidOperationException("Audio has no samples.");
-
-            var totalSamples = checked(channels * samples);
-            var unmanagedData = (float*)NativeMemory.Alloc((nuint)(totalSamples * sizeof(float)));
-            try
-            {
-                audio.Span.CopyTo(new Span<float>(unmanagedData, totalSamples));
-                return new NativeApi.sd_audio_t
-                {
-                    sample_rate = (uint)sampleRate,
-                    channels = (uint)channels,
-                    sample_count = (ulong)samples,
-                    data = unmanagedData
-                };
-            }
-            catch
-            {
-                NativeMemory.Free(unmanagedData);
-                throw;
-            }
         }
 
         #endregion

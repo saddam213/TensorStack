@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32.SafeHandles;
-using System;
 using TensorStack.StableDiffusionCpp.Common;
 
 namespace TensorStack.StableDiffusionCpp.Native
@@ -14,19 +13,13 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <exception cref="System.Exception">Failed to create Upscale Video context</exception>
         public UpscaleVideoSafeHandle(UpscaleOptions options) : base(true)
         {
-            var unmanaged = options.ToUnmanaged();
-            try
+            using (var parameters = options.ToUnmanagedVideoUpscaler())
             {
-                var context = NativeApi.new_video_upscaler_ctx(&unmanaged);
-                if (context == null)
-                    throw new Exception("Failed to create Upscale Video context");
+                var status = NativeApi.sd_vid_upscaler_create(parameters.Handle, out NativeApi.sd_vid_upscaler_t* context);
+                NativeApi.ThrowIfFailed(status, "Failed to create Upscale Video context");
 
                 SetHandle((nint)context);
                 DefaultOptions = GetDefaultOptions();
-            }
-            finally
-            {
-                unmanaged.FreeUnmanaged();
             }
         }
 
@@ -41,7 +34,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// </summary>
         protected override bool ReleaseHandle()
         {
-            NativeApi.free_video_upscaler_ctx((NativeApi.video_upscaler_ctx_t*)handle);
+            NativeApi.sd_vid_upscaler_free((NativeApi.sd_vid_upscaler_t*)handle);
             return true;
         }
 
@@ -49,21 +42,20 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <summary>
         /// Gets the context.
         /// </summary>
-        public NativeApi.video_upscaler_ctx_t* GetContext()
+        public NativeApi.sd_vid_upscaler_t* GetContext()
         {
-            return (NativeApi.video_upscaler_ctx_t*)DangerousGetHandle();
+            return (NativeApi.sd_vid_upscaler_t*)DangerousGetHandle();
         }
 
 
         /// <summary>
         /// Gets the default options.
+        /// The library no longer exposes its defaults, the managed options mirror them.
         /// </summary>
         /// <returns>UpscaleVideoOptions.</returns>
         private UpscaleVideoOptions GetDefaultOptions()
         {
-            var options = new NativeApi.sd_video_upscale_params_t();
-            NativeApi.sd_video_upscale_params_init(&options);
-            return options.ToManaged();
+            return new UpscaleVideoOptions();
         }
     }
 }

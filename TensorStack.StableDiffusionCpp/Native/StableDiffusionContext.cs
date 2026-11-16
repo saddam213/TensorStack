@@ -23,6 +23,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         private readonly StableDiffusionOptions _stableDiffusionOptions;
         private readonly UpscaleOptions _upscaleOptions;
         private ImageTensor[] _previewTensors;
+        private NativeApi.sd_tensor_t* _promptImageTensor;
         private bool _isGenerating;
 
         /// <summary>
@@ -58,7 +59,10 @@ namespace TensorStack.StableDiffusionCpp.Native
             _stableDiffusionHandle = new StableDiffusionSafeHandle(_stableDiffusionOptions);
             NativeApi.sd_set_generation_progress_callback(_stableDiffusionHandle.GetContext(), _unmanagedGenerationCallback, null);
             if (_stableDiffusionOptions.PreviewType != PreviewType.Disabled && _stableDiffusionOptions.PreviewType != PreviewType.Default)
-                NativeApi.sd_set_preview_callback(_unmanagedPreviewCallback, _stableDiffusionOptions.PreviewType.ToUnmanaged(), _stableDiffusionOptions.PreviewInterval, !_stableDiffusionOptions.IsPreviewNoisy, _stableDiffusionOptions.IsPreviewNoisy, null);
+            {
+                var status = NativeApi.sd_set_preview_callback(_unmanagedPreviewCallback, _stableDiffusionOptions.PreviewType.ToUnmanaged(), _stableDiffusionOptions.PreviewInterval, !_stableDiffusionOptions.IsPreviewNoisy, _stableDiffusionOptions.IsPreviewNoisy, null);
+                NativeApi.ThrowIfFailed(status, "Failed to set preview callback");
+            }
         }
 
         /// <summary>
@@ -137,46 +141,48 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// Generates an image with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The image, or <c>null</c> if the generation was cancelled.</returns>
         public ImageTensor Generate(GenerateImageOptions options, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(_stableDiffusionHandle);
 
-            var parameters = options.ToUnmanaged();
             var context = _stableDiffusionHandle.GetContext();
-
-            try
+            using (var parameters = options.ToUnmanaged())
+            using (cancellationToken.Register(() => GenerateCancel(CancelType.Immediate)))
             {
-                cancellationToken.Register(() => GenerateCancel(CancelType.Immediate));
-                NativeApi.sd_set_prompt_image_callback(context, _unmanagedPromptImageCallback, null);
-                if (!NativeApi.generate_image(context, &parameters, out NativeApi.sd_image_generation_result_t* unmanagedResults) || unmanagedResults == null)
-                    return null;
-
                 try
                 {
-                    var unmanagedResult = unmanagedResults[0];
-                    var unmanagedImages = unmanagedResult.items;
-                    var unmanagedImageCount = unmanagedResult.count;
-                    if (unmanagedImages == null || unmanagedImageCount <= 0)
+                    NativeApi.sd_set_prompt_image_callback(context, _unmanagedPromptImageCallback, null);
+                    var status = NativeApi.sd_generate_image(context, parameters.Handle, out NativeApi.sd_result_t* unmanagedResult);
+                    if (status == NativeApi.sd_status_t.SD_STATUS_CANCELLED)
                         return null;
 
-                    var unmanagedImage = unmanagedImages[0].image;
-                    if (IsImageUpscaleSupported())
+                    NativeApi.ThrowIfFailed(status, "Failed to generate image");
+                    try
                     {
-                        return _upscaleContext.UpscaleImage(unmanagedImage, options.UpscaleOptions);
-                    }
+                        if (NativeApi.sd_result_get_image_count(unmanagedResult) == 0)
+                            return null;
 
-                    return unmanagedImage.ToManaged();
+                        var unmanagedImage = NativeApi.sd_result_get_image(unmanagedResult, 0);
+                        if (IsImageUpscaleSupported())
+                        {
+                            return _upscaleContext.UpscaleImage(unmanagedImage, options.UpscaleOptions);
+                        }
+
+                        return NativeApiExtensions.ToImageTensor(unmanagedImage);
+                    }
+                    finally
+                    {
+                        NativeApi.sd_result_free(unmanagedResult);
+                    }
                 }
                 finally
                 {
-                    NativeApi.free_sd_image_generation_result(unmanagedResults);
+                    ResetState();
+                    NativeApi.sd_set_prompt_image_callback(context, null, null);
+                    FreePromptImage();
                 }
-            }
-            finally
-            {
-                ResetState();
-                parameters.FreeUnmanaged();
-                NativeApi.sd_set_prompt_image_callback(context, null, null);
             }
         }
 
@@ -185,59 +191,64 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// Generates a video with the specified options.
         /// </summary>
         /// <param name="options">The options.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The video, or <c>null</c> if the generation was cancelled.</returns>
         public VideoSequence Generate(GenerateVideoOptions options, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(_stableDiffusionHandle);
-            var parameters = options.ToUnmanaged();
+
             var context = _stableDiffusionHandle.GetContext();
-
-            try
+            using (var parameters = options.ToUnmanaged())
+            using (cancellationToken.Register(() => GenerateCancel(CancelType.Immediate)))
             {
-                cancellationToken.Register(() => GenerateCancel(CancelType.Immediate));
-                NativeApi.sd_set_prompt_image_callback(context, _unmanagedPromptImageCallback, null);
-                if (!NativeApi.generate_video(context, &parameters, out NativeApi.sd_video_generation_result_t* unmanagedResults) || unmanagedResults == null)
-                    return null;
-
                 try
                 {
-                    var unmanagedVideo = unmanagedResults[0];
-                    var unmanagedFrames = unmanagedVideo.frames;
-                    var unmanagedFrameCount = unmanagedVideo.frame_count;
-                    var unmanagedAudio = unmanagedVideo.audio;
-                    var unmanagedFps = unmanagedVideo.fps;
-                    if (unmanagedFrames == null || unmanagedFrameCount <= 0)
+                    NativeApi.sd_set_prompt_image_callback(context, _unmanagedPromptImageCallback, null);
+                    var status = NativeApi.sd_generate_video(context, parameters.Handle, out NativeApi.sd_result_t* unmanagedResult);
+                    if (status == NativeApi.sd_status_t.SD_STATUS_CANCELLED)
                         return null;
 
-                    var managedVideo = default(ImageTensor[]);
-                    var managedAudio = unmanagedAudio == null ? default : unmanagedAudio[0].ToManaged();
-                    if (IsVideoUpscaleSupported())
+                    NativeApi.ThrowIfFailed(status, "Failed to generate video");
+                    try
                     {
-                        managedVideo = _upscaleContext.UpscaleVideo(unmanagedVideo, options.UpscaleOptions, cancellationToken);
-                    }
-                    else if (IsImageUpscaleSupported())
-                    {
-                        managedVideo = _upscaleContext.UpscaleFrames(unmanagedFrames, unmanagedFrameCount, _upscaleContext.DefaultImageOptions, cancellationToken);
-                    }
-                    else
-                    {
-                        managedVideo = new ImageTensor[unmanagedFrameCount];
-                        for (int i = 0; i < unmanagedFrameCount; i++)
+                        var unmanagedFrameCount = checked((int)NativeApi.sd_result_get_image_count(unmanagedResult));
+                        if (unmanagedFrameCount <= 0)
+                            return null;
+
+                        var unmanagedFps = NativeApi.sd_result_get_fps(unmanagedResult);
+                        var unmanagedAudio = NativeApi.sd_result_get_audio(unmanagedResult);
+                        var managedVideo = default(ImageTensor[]);
+                        var managedAudio = unmanagedAudio == null ? default : unmanagedAudio[0].ToManaged();
+                        if (IsVideoUpscaleSupported())
                         {
-                            managedVideo[i] = unmanagedFrames[i].ToManaged();
+                            managedVideo = _upscaleContext.UpscaleVideo(unmanagedResult, options.UpscaleOptions, cancellationToken);
                         }
+                        else if (IsImageUpscaleSupported())
+                        {
+                            managedVideo = _upscaleContext.UpscaleFrames(unmanagedResult, _upscaleContext.DefaultImageOptions, cancellationToken);
+                        }
+                        else
+                        {
+                            // Reading the frames one by one avoids packing them into a single video tensor
+                            managedVideo = new ImageTensor[unmanagedFrameCount];
+                            for (int i = 0; i < unmanagedFrameCount; i++)
+                            {
+                                managedVideo[i] = NativeApiExtensions.ToImageTensor(NativeApi.sd_result_get_image(unmanagedResult, (nuint)i));
+                            }
+                        }
+                        return new VideoSequence(managedVideo, unmanagedFps, managedAudio);
                     }
-                    return new VideoSequence(managedVideo, unmanagedFps, managedAudio);
+                    finally
+                    {
+                        NativeApi.sd_result_free(unmanagedResult);
+                    }
                 }
                 finally
                 {
-                    NativeApi.free_sd_video_generation_result(unmanagedResults);
+                    ResetState();
+                    NativeApi.sd_set_prompt_image_callback(context, null, null);
+                    FreePromptImage();
                 }
-            }
-            finally
-            {
-                ResetState();
-                parameters.FreeUnmanaged();
-                NativeApi.sd_set_prompt_image_callback(context, null, null);
             }
         }
 
@@ -296,10 +307,10 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             NativeApi.sd_set_log_callback(null, null);
             NativeApi.sd_set_progress_callback(null, null);
-            if (_unmanagedGenerationCallback != null)
-                NativeApi.sd_set_generation_progress_callback(null, null, null);
+            if (_unmanagedGenerationCallback != null && _stableDiffusionHandle != null)
+                NativeApi.sd_set_generation_progress_callback(_stableDiffusionHandle.GetContext(), null, null);
             if (_unmanagedPreviewCallback != null)
-                NativeApi.sd_set_preview_callback(null, NativeApi.preview_t.PREVIEW_COUNT, 0, false, false, null);
+                NativeApi.sd_set_preview_callback(null, PreviewType.Disabled.ToUnmanaged(), 1, false, false, null);
         }
 
 
@@ -331,10 +342,10 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// </summary>
         /// <param name="step">The step.</param>
         /// <param name="frame_count">The frame count.</param>
-        /// <param name="frames">The frames.</param>
+        /// <param name="frames">The frames, borrowed for the duration of the callback.</param>
         /// <param name="is_noisy">if set to <c>true</c> [is noisy].</param>
         /// <param name="data">The data.</param>
-        private void OnPreviewCallback(int step, int frame_count, NativeApi.sd_image_t* frames, bool is_noisy, void* data)
+        private void OnPreviewCallback(int step, int frame_count, NativeApi.sd_tensor_t** frames, bool is_noisy, void* data)
         {
             _isGenerating = true;
             if (frames == null || frame_count == 0 || _previewCallback == null)
@@ -343,7 +354,7 @@ namespace TensorStack.StableDiffusionCpp.Native
             var managedFrames = new ImageTensor[frame_count];
             for (int i = 0; i < frame_count; i++)
             {
-                managedFrames[i] = frames[i].ToManaged();
+                managedFrames[i] = NativeApiExtensions.ToImageTensor(frames[i]);
             }
             _previewTensors = managedFrames;
         }
@@ -391,7 +402,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         /// <param name="source_data">The source data.</param>
         /// <param name="data">The data.</param>
         /// <param name="image_out">The image out.</param>
-        private bool OnPromptImageCallback(byte* source_data, void* data, NativeApi.sd_image_t* image_out)
+        private bool OnPromptImageCallback(byte* source_data, void* data, NativeApi.sd_tensor_t** image_out)
         {
             if (source_data == null || image_out == null)
                 return false;
@@ -406,18 +417,30 @@ namespace TensorStack.StableDiffusionCpp.Native
                 if (!File.Exists(imagePath))
                     return false;
 
+                // The library borrows the image until the next callback, so it is freed then or when generation ends
                 var managedImage = new ImageInput(imagePath);
-                var unmanagedImage = managedImage.ToUnmanaged();
-                image_out[0].data = unmanagedImage.data;
-                image_out[0].width = unmanagedImage.width;
-                image_out[0].height = unmanagedImage.height;
-                image_out[0].channel = unmanagedImage.channel;
+                FreePromptImage();
+                _promptImageTensor = managedImage.ToUnmanaged();
+                image_out[0] = _promptImageTensor;
                 return true;
             }
             catch (Exception)
             {
                 return false;
             }
+        }
+
+
+        /// <summary>
+        /// Frees the last prompt image.
+        /// </summary>
+        private void FreePromptImage()
+        {
+            if (_promptImageTensor == null)
+                return;
+
+            NativeApi.sd_tensor_free(_promptImageTensor);
+            _promptImageTensor = null;
         }
 
 
@@ -438,6 +461,7 @@ namespace TensorStack.StableDiffusionCpp.Native
         {
             DisposeCallbacks();
             ResetState();
+            FreePromptImage();
             _upscaleContext?.Dispose();
             _stableDiffusionHandle?.Dispose();
         }
