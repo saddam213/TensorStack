@@ -46,6 +46,7 @@ namespace TensorStack.WPF.Services
         {
             _cultureInfo = CultureInfo.GetCultureInfo(cultureName);
             CultureInfo.CurrentUICulture = _cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = _cultureInfo;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Item[]"));
         }
 

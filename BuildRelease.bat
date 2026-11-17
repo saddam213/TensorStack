@@ -19,5 +19,8 @@ dotnet pack TensorStack.HuggingFace/TensorStack.HuggingFace.csproj -c Release
 dotnet build TensorStack.StableDiffusionCpp/TensorStack.StableDiffusionCpp.csproj -c Release
 dotnet pack TensorStack.StableDiffusionCpp/TensorStack.StableDiffusionCpp.csproj -c Release
 
+dotnet build TensorStack.AudioCpp/TensorStack.AudioCpp.csproj -c Release
+dotnet pack TensorStack.AudioCpp/TensorStack.AudioCpp.csproj -c Release
+
 dotnet build TensorStack.WPF/TensorStack.WPF.csproj -c Release
 dotnet pack TensorStack.WPF/TensorStack.WPF.csproj -c Release

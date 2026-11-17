@@ -17,13 +17,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.HuggingFace", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.WPF", "TensorStack.WPF\TensorStack.WPF.csproj", "{7857FE20-AE05-0406-1B43-6D71C008B379}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.StableDiffusionCpp", "TensorStack.StableDiffusionCpp\TensorStack.StableDiffusionCpp.csproj", "{300A69DD-344F-4948-9B4A-AABFD244A1C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.AudioCpp", "TensorStack.AudioCpp\TensorStack.AudioCpp.csproj", "{4E6B2F0A-93C1-4D7E-8A55-1F0C6B7D2E39}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
 		BuildRelease.bat = BuildRelease.bat
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorStack.StableDiffusionCpp", "TensorStack.StableDiffusionCpp\TensorStack.StableDiffusionCpp.csproj", "{300A69DD-344F-4948-9B4A-AABFD244A1C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +82,12 @@ Global
 		{300A69DD-344F-4948-9B4A-AABFD244A1C4}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
 		{300A69DD-344F-4948-9B4A-AABFD244A1C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{300A69DD-344F-4948-9B4A-AABFD244A1C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E6B2F0A-93C1-4D7E-8A55-1F0C6B7D2E39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E6B2F0A-93C1-4D7E-8A55-1F0C6B7D2E39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E6B2F0A-93C1-4D7E-8A55-1F0C6B7D2E39}.Release_Installer|Any CPU.ActiveCfg = Release|Any CPU
+		{4E6B2F0A-93C1-4D7E-8A55-1F0C6B7D2E39}.Release_Installer|Any CPU.Build.0 = Release|Any CPU
+		{4E6B2F0A-93C1-4D7E-8A55-1F0C6B7D2E39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E6B2F0A-93C1-4D7E-8A55-1F0C6B7D2E39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

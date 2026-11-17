@@ -13,6 +13,9 @@ namespace TensorStack.Common
         [Display(Name = "StableDiffusionCpp", ShortName = "SD.cpp", Description = "GGML model inference using StableDiffusionCpp")]
         StableDiffusionCpp = 20,
 
+        [Display(Name = "AudioCpp", ShortName = "Audio.cpp", Description = "GGML audio model inference using audio.cpp")]
+        AudioCpp = 30,
+
         // Deprecated
         PyTorch = 1000
     }
