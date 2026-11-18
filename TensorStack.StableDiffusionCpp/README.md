@@ -1,8 +1,8 @@
 # TensorStack.StableDiffusionCpp
-Basic .NET Wrapper API for StableDiffusion.cpp
+Basic .NET Wrapper API for [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp)
 
 ## Nuget Package
-[![Common Badge](https://img.shields.io/nuget/v/TensorStack.StableDiffusionCpp?color=4bc51e&label=TensorStack.StableDiffusionCpp)](https://www.nuget.org/packages/TensorStack.StableDiffusionCpp)
+[![StableDiffusionCpp Badge](https://img.shields.io/nuget/v/TensorStack.StableDiffusionCpp?color=4bc51e&label=TensorStack.StableDiffusionCpp)](https://www.nuget.org/packages/TensorStack.StableDiffusionCpp)
 
 
 ## Image Example
@@ -47,7 +47,7 @@ using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
 
 
 ## Video Example
-Generate an video using MiniMax-H3
+Generate a video using MiniMax-H3
 ```csharp
 using (var backend = new StableDiffusionBackend(VendorType.Nvidia))
 {
@@ -256,17 +256,17 @@ bool success = await backend.SetupAsync(BackendStatus.Create);
 // Name          - Backend name
 // Version       - StableDiffusionCpp version
 // Directory     - Backend directory
-// Requirements  - List of downloadrequiremnets.
+// Requirements  - List of download requirements.
 
 // Define a custom backend configuration.
 var customConfiguration = new BackendConfig
 {
     Name = "vulkan",
-    Version = "956",
+    Version = "1106",
     Directory = "StableDiffusionCpp",
     Requirements =
     [
-        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-956-1b0ba10/sd-master-1b0ba10-bin-win-vulkan-x64.zip"
+        "https://github.com/leejet/stable-diffusion.cpp/releases/download/master-1106-532d2c1/sd-master-532d2c1-bin-win-vulkan-x64.zip"
     ]
 };
 

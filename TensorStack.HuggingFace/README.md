@@ -1,8 +1,11 @@
 # TensorStack.HuggingFace
 Basic .NET Wrapper API for HuggingFace Diffusers & Transformers
 
-## Python Pipelines
-Generate an image using Qwen-Image-Edit
+## Nuget Package
+[![HuggingFace Badge](https://img.shields.io/nuget/v/TensorStack.HuggingFace?color=4bc51e&label=TensorStack.HuggingFace)](https://www.nuget.org/packages/TensorStack.HuggingFace)
+
+## Image Example
+Edit an image using Qwen-Image-Edit
 ```csharp
 using (var backend = new HuggingFaceBackend(VendorType.Nvidia))
 {
@@ -11,41 +14,54 @@ using (var backend = new HuggingFaceBackend(VendorType.Nvidia))
     // Pipeline Config
     var pipelineConfig = new PipelineConfig
     {
-        Path = "Qwen/Qwen-Image-Edit",
         Pipeline = "QwenImagePipeline",
+        Template = "QwenImage_Edit",
         ProcessType = ProcessType.ImageEdit,
         DataType = DataType.Bfloat16,
-        MemoryMode = MemoryModeType.OffloadCPU
+        MemoryMode = MemoryModeType.OffloadCPU,
+        CheckpointConfig = new CheckpointConfig
+        {
+            Transformer = "models/Qwen-Image-Edit-2511/transformer",
+            TextEncoder = "models/Qwen2.5-VL-7B/text_encoder",
+            Vae = "models/Qwen-Image/vae"
+        }
     };
 
-    // Create Pipeline Proxy
-    using (var pythonPipeline = new PythonPipeline(pipelineConfig, PipelineProgress.ConsoleCallback))
+    using (var pipeline = new HuggingFacePipeline(pipelineConfig, PipelineProgress.ConsoleCallback))
     {
-        // Download/Load Model
-        await pythonPipeline.LoadAsync();
+        // Load Model
+        await pipeline.LoadAsync();
 
-        // Generate Option
-        var options = new PipelineOptions
+        // Generate
+        var results = await pipeline.GenerateImageAsync(new GenerateImageOptions
         {
             Prompt = "Yarn art style",
             Steps = 30,
             Width = 1024,
             Height = 1024,
             GuidanceScale = 4f,
-            Scheduler = SchedulerType.FlowMatchEulerDiscrete,
-            ImageInput = new ImageInput("Image.png")
-        };
-
-        // Generate
-        var response = await pythonPipeline.GenerateAsync(options);
+            SchedulerOptions = new FlowMatchEulerOptions(),
+            InputImages = [new ImageInput("Image.png")]
+        });
 
         // Save Image
-        await response
-            .AsImageTensor()
-            .SaveAsync("Result.png");
+        await results[0].SaveAsync("Result.png");
     }
 }
 ```
+
+
+## Pipelines
+`Pipeline` names a Python pipeline module in `Native/Pipelines` (e.g. `FluxPipeline`, `WanPipeline`, `LTX20Pipeline`, `AceStepPipeline`, `AutoTextPipeline`), and `Template` names a folder in `Native/Pipelines/Templates` holding the model's config files. `CheckpointConfig` gives the path of each model component.
+
+| Method | Returns | Process Types |
+|---|---|---|
+| `GenerateImageAsync` | `ImageTensor[]` | `TextToImage`, `ImageToImage`, `ImageEdit`, `ImageInpaint`, `ImageControlNet` |
+| `GenerateVideoAsync` | `Tensor<float>[]` | `TextToVideo`, `ImageToVideo`, `VideoToVideo` |
+| `GenerateAudioAsync` | `AudioTensor[]` | `TextToAudio` |
+| `GenerateTextAsync` | `TextInput[]` | `TextToText`, `ImageToText` |
+
+`ReloadAsync` changes the process type, LoRA adapters or ControlNet without reloading the model.
 
 
 ## HuggingFace Backends
@@ -93,7 +109,7 @@ bool success = await backend.SetupAsync(BackendStatus.Create);
 // Name          - Backend name
 // Version       - Python version (Supported: 3.12, 3.13, 3.14)
 // Directory     - Backend directory
-// Requirements  - List of python package requiremnets.
+// Requirements  - List of python package requirements.
 
 // Define a custom backend configuration.
 var customConfiguration = new BackendConfig

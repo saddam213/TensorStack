@@ -12,6 +12,7 @@ namespace TensorStack.AudioCpp.Native
         private const string TaskClone = "clon";
         private const string TaskRecognition = "asr";
         private const string PipelineMiniMaxMusic = "minimax_music3";
+        private const string PipelineMossSoundEffect = "moss_soundeffect";
         private const string PipelineStableAudio = "stable_audio";
         private const string PipelineYuE = "yue2";
         private const int YuESemanticFrameRate = 25;
@@ -21,14 +22,17 @@ namespace TensorStack.AudioCpp.Native
         /// Creates the session options (--session-option).
         /// </summary>
         /// <param name="options">The options.</param>
-        internal static Dictionary<string, string> ToSessionOptions(this AudioCppOptions options)
+        /// <param name="requestOptions">The request session options, these override the load options.</param>
+        internal static Dictionary<string, string> ToSessionOptions(this AudioCppOptions options, Dictionary<string, string> requestOptions = default)
         {
             var sessionOptions = new Dictionary<string, string>
             {
                 ["weight_type"] = options.DataType == DataType.Default ? default : options.DataType.ToString().ToLowerInvariant(),
                 ["mem_saver"] = options.IsMemorySaverEnabled ? "true" : default
             };
-            return sessionOptions.Merge(options.SessionOptions);
+            return sessionOptions
+                .Merge(options.SessionOptions)
+                .Merge(requestOptions);
         }
 
 
@@ -70,6 +74,11 @@ namespace TensorStack.AudioCpp.Native
                 // MiniMax Music: Prompt is the caption, Prompt2 is the lyrics
                 requestOptions["ar_guidance_scale"] = options.GuidanceScale2 > 0 ? ToString(options.GuidanceScale2) : default;
             }
+            else if (pipeline == PipelineMossSoundEffect)
+            {
+                // MOSS SoundEffect: steps are declared as num_steps
+                requestOptions["num_steps"] = options.Steps > 0 ? ToString(options.Steps) : default;
+            }
             else if (pipeline == PipelineStableAudio)
             {
                 // Stable Audio: input audio is the init audio, Strength is the noise level
@@ -108,7 +117,8 @@ namespace TensorStack.AudioCpp.Native
                 Audio = isSpeech ? default : inputAudio,
                 VoiceAudio = isSpeech ? inputAudio : default,
                 VoiceId = isSpeech ? options.Task.DefaultIfWhiteSpace() : default,
-                Options = requestOptions.Merge(options.Options)
+                Options = requestOptions.Merge(options.Options),
+                SessionOptions = options.SessionOptions
             };
         }
 

@@ -24,11 +24,11 @@
 
   <!--Binaries-->
   <ItemGroup>
-    <Content Include="ffmpeg.exe" Pack="true" PackagePath="contentFiles\any\any\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
+    <Content Include="ffmpeg.exe" Pack="true" PackagePath="contentFiles\any\any\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
     <None Include="ffmpeg.exe" Pack="false" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ffprobe.exe" Pack="true" PackagePath="contentFiles\any\any\" CopyToOutputDirectory="Always" PackageCopyToOutput="true" />
+    <Content Include="ffprobe.exe" Pack="true" PackagePath="contentFiles\any\any\" CopyToOutputDirectory="PreserveNewest" PackageCopyToOutput="true" />
     <None Include="ffprobe.exe" Pack="false" />
   </ItemGroup>
 

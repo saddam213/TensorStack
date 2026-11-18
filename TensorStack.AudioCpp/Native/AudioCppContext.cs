@@ -14,6 +14,7 @@ namespace TensorStack.AudioCpp.Native
         private readonly AudioCppModelSafeHandle _modelHandle;
         private readonly AudioCppOptions _options;
         private AudioCppSessionSafeHandle _sessionHandle;
+        private Dictionary<string, string> _sessionOptions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioCppContext"/> class.
@@ -81,7 +82,7 @@ namespace TensorStack.AudioCpp.Native
         private AudioCppResult Run(AudioCppRequest request, CancellationToken cancellationToken = default)
         {
             // Session
-            var session = GetSession(GetSupportedTask(request.Tasks));
+            var session = GetSession(GetSupportedTask(request.Tasks), request.SessionOptions);
 
             // Request
             var requestOptions = FilterOptions(request.Options, _modelHandle.RequestOptions, "request");
@@ -134,20 +135,49 @@ namespace TensorStack.AudioCpp.Native
 
 
         /// <summary>
-        /// Gets the session for the task, a session is bound to a single task so it is recreated when the task changes.
+        /// Gets the session for the task, a session is bound to a single task and loads its weights with the session options (e.g. lora, lora_scale),
+        /// so it is recreated when the task or the session options change.
         /// </summary>
         /// <param name="task">The task.</param>
-        private AudioCppSessionSafeHandle GetSession(string task)
+        /// <param name="requestOptions">The request session options.</param>
+        private AudioCppSessionSafeHandle GetSession(string task, Dictionary<string, string> requestOptions)
         {
-            if (_sessionHandle != null && _sessionHandle.Task == task)
+            var sessionOptions = FilterOptions(_options.ToSessionOptions(requestOptions), _modelHandle.SessionOptions, "session");
+            if (_sessionHandle != null && _sessionHandle.Task == task && IsEqual(_sessionOptions, sessionOptions))
                 return _sessionHandle;
+
+            if (_sessionHandle != null)
+                _logCallback?.Invoke(LogLevelType.Info, $"Recreating '{task}' session, task or session options changed.");
 
             _sessionHandle?.Dispose();
             _sessionHandle = null;
+            _sessionOptions = null;
 
-            var sessionOptions = FilterOptions(_options.ToSessionOptions(), _modelHandle.SessionOptions, "session");
             _sessionHandle = new AudioCppSessionSafeHandle(_modelHandle, task, ModeOffline, _options, sessionOptions);
+            _sessionOptions = sessionOptions;
             return _sessionHandle;
+        }
+
+
+        /// <summary>
+        /// Determines whether the option sets are equal.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="other">The other options.</param>
+        private static bool IsEqual(Dictionary<string, string> options, Dictionary<string, string> other)
+        {
+            if (options == null || other == null)
+                return options == other;
+
+            if (options.Count != other.Count)
+                return false;
+
+            foreach (var option in options)
+            {
+                if (!other.TryGetValue(option.Key, out var value) || !string.Equals(option.Value, value, StringComparison.Ordinal))
+                    return false;
+            }
+            return true;
         }
 
 

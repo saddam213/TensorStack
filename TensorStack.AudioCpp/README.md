@@ -1,6 +1,9 @@
 # TensorStack.AudioCpp
 Basic .NET Wrapper API for [audio.cpp](https://github.com/0xShug0/audio.cpp)
 
+## Nuget Package
+[![AudioCpp Badge](https://img.shields.io/nuget/v/TensorStack.AudioCpp?color=4bc51e&label=TensorStack.AudioCpp)](https://www.nuget.org/packages/TensorStack.AudioCpp)
+
 
 ## Music Example
 Generate music using ACE-Step

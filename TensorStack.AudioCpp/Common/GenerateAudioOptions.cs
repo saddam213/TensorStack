@@ -100,6 +100,12 @@ namespace TensorStack.AudioCpp.Common
         public Dictionary<string, string> Options { get; set; } = [];
 
         /// <summary>
+        /// Gets or sets the session options for this request by audio.cpp name (--session-option) e.g. lora, lora_scale, these override the load options.
+        /// Session options are applied when the session loads its weights, so the session is recreated when they change between requests.
+        /// </summary>
+        public Dictionary<string, string> SessionOptions { get; set; } = [];
+
+        /// <summary>
         /// Gets or sets the input audios: the source audio for music and sound effects, the speaker reference for speech.
         /// </summary>
         public List<AudioTensor> InputAudios { get; set; } = [];

@@ -47,5 +47,10 @@ namespace TensorStack.AudioCpp.Common
         /// Gets the request options (--request-option), only options the model declares are applied.
         /// </summary>
         public Dictionary<string, string> Options { get; init; } = [];
+
+        /// <summary>
+        /// Gets the session options (--session-option) for this request, the session is recreated when they change.
+        /// </summary>
+        public Dictionary<string, string> SessionOptions { get; init; } = [];
     }
 }

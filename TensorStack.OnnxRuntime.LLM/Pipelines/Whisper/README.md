@@ -5,7 +5,7 @@
 var provider = Provider.GetProvider(0);
 var modelPath = "M:\\Models\\Whisper-Base";
 var pipeline = WhisperPipeline.Create(provider, modelPath, WhisperType.Base);
-var options = new GenerateOptions
+var options = new WhisperOptions
 {
     Task = TaskType.Transcribe,
     Language = LanguageType.EN,
@@ -21,7 +21,7 @@ System.Console.WriteLine(generateResult.Result);
 var provider = Provider.GetProvider(0);
 var modelPath = "M:\\Models\\Whisper-Large";
 var pipeline = WhisperPipeline.Create(provider, modelPath, WhisperType.Large);
-var options = new SearchOptions
+var options = new WhisperSearchOptions
 {
     Seed = 0,
     TopK = 50,

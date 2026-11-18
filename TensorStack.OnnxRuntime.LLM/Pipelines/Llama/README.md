@@ -6,7 +6,7 @@ Llama-3.2-1B: https://huggingface.co/TensorStack/Llama-3.2-1B
 ```csharp
 var provider = Provider.GetProvider();
 var modelPath = "M:\\Models\\Llama-3.2-1B";
-var pipeline = LlamaPipeline.Create(provider, modelPath, PhiType.Mini);
+var pipeline = LlamaPipeline.Create(provider, modelPath);
 var options = new GenerateOptions
 {
     Prompt = "What is an apple?"
@@ -20,7 +20,7 @@ System.Console.WriteLine(generateResult.Result);
 ```csharp
 var provider = Provider.GetProvider();
 var modelPath = "M:\\Models\\Llama-3.2-1B";
-var pipeline = LlamaPipeline.Create(provider, modelPath, PhiType.Mini);
+var pipeline = LlamaPipeline.Create(provider, modelPath);
 var options = new SearchOptions
 {
     Seed = 0,
