@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <!--Projects-->
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\TensorStack.Media\TensorStack.Media.csproj" />
+  </ItemGroup>
+
+  <!--Packages-->
+  <ItemGroup Condition=" '$(Configuration)' == 'Release'">
+    <PackageReference Include="TensorStack.Media" Version="$(Version)" />
+  </ItemGroup>
+
+  <!--Common-->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="11.0.0" />
+  </ItemGroup>
+
+  <!--Nuget Settings-->
+  <PropertyGroup>
+    <Title>$(AssemblyName)</Title>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Product>$(AssemblyName)</Product>
+    <PackageIcon>Icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>.NET Wrapper API for llama.cpp</Description>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <None Remove="README.md" />
+    <None Remove="*/*/README.md" />
+    <None Remove="Icon.png" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="*/*/README.md">
+    </None>
+    <None Include="..\Assets\Icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

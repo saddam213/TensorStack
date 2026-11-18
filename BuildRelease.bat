@@ -22,5 +22,8 @@ dotnet pack TensorStack.StableDiffusionCpp/TensorStack.StableDiffusionCpp.csproj
 dotnet build TensorStack.AudioCpp/TensorStack.AudioCpp.csproj -c Release
 dotnet pack TensorStack.AudioCpp/TensorStack.AudioCpp.csproj -c Release
 
+dotnet build TensorStack.LlamaCpp/TensorStack.LlamaCpp.csproj -c Release
+dotnet pack TensorStack.LlamaCpp/TensorStack.LlamaCpp.csproj -c Release
+
 dotnet build TensorStack.WPF/TensorStack.WPF.csproj -c Release
 dotnet pack TensorStack.WPF/TensorStack.WPF.csproj -c Release
