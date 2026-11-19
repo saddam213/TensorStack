@@ -312,7 +312,7 @@ namespace TensorStack.AudioCpp
                     Directory = "AudioCpp",
                     Requirements =
                     [
-                        "https://github.com/0xShug0/audio.cpp/releases/download/v0.9.5/audio-v0.9.5-lib-windows-x64-vulkan.zip"
+                        "https://github.com/0xShug0/audio.cpp/releases/download/v0.9.5/audio-v0.9.5-lib-windows-x64-vulkan-portable.zip"
                     ]
                 },
             };

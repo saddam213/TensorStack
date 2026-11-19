@@ -57,7 +57,10 @@ namespace TensorStack.LlamaCpp.Templates
         {
             return template switch
             {
-                PromptTemplate.Qwen30 or PromptTemplate.Qwen35 or PromptTemplate.Qwen36 or PromptTemplate.Qwen38 => new QwenFormatter(template, mediaMarker),
+                PromptTemplate.Qwen30 => new Qwen30Formatter(mediaMarker),
+                PromptTemplate.Qwen35 => new Qwen35Formatter(mediaMarker),
+                PromptTemplate.Qwen36 => new Qwen36Formatter(mediaMarker),
+                PromptTemplate.Qwen38 => new Qwen38Formatter(mediaMarker),
                 PromptTemplate.Gemma4 => new Gemma4Formatter(mediaMarker),
                 _ => throw new NotSupportedException($"Prompt template '{template}' is not supported.")
             };

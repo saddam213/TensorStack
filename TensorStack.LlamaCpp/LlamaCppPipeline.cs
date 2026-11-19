@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,6 +48,11 @@ namespace TensorStack.LlamaCpp
         /// Gets the backend information.
         /// </summary>
         public BackendInfo BackendInfo { get; }
+
+        /// <summary>
+        /// Gets the devices.
+        /// </summary>
+        public IReadOnlyList<BackendDevice> Devices => BackendInfo?.Devices;
 
         /// <summary>
         /// Gets the description of the loaded model (architecture, size and quantization).

@@ -86,8 +86,34 @@ namespace TensorStack.LlamaCpp.Native
             {
                 Commit = version,
                 Version = version,
-                SystemInfo = PtrToString(llama_print_system_info())
+                SystemInfo = PtrToString(llama_print_system_info()),
+                Devices = GetBackendDevices()
             };
+        }
+
+
+        /// <summary>
+        /// Gets the ggml backend devices, the backends must be loaded first.
+        /// </summary>
+        private static BackendDevice[] GetBackendDevices()
+        {
+            var deviceCount = (int)ggml_backend_dev_count();
+            var devices = new BackendDevice[deviceCount];
+            for (int i = 0; i < deviceCount; i++)
+            {
+                var device = ggml_backend_dev_get((nuint)i);
+                var deviceType = ggml_backend_dev_type(device);
+                var isGpu = deviceType == DeviceType.Gpu || deviceType == DeviceType.IntegratedGpu;
+                devices[i] = new BackendDevice
+                {
+                    Type = isGpu ? TensorStack.Common.DeviceType.GPU : TensorStack.Common.DeviceType.CPU,
+                    Name = PtrToString(ggml_backend_dev_name(device)),
+                    Backend = PtrToString(ggml_backend_reg_name(ggml_backend_dev_backend_reg(device)))?.ToLower(),
+                    Description = PtrToString(ggml_backend_dev_description(device)),
+                    IsIntegrated = deviceType == DeviceType.IntegratedGpu
+                };
+            }
+            return devices;
         }
 
 
@@ -226,6 +252,14 @@ namespace TensorStack.LlamaCpp.Native
         [LibraryImport(LibraryNameGgmlBase)]
         [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
         internal static partial void ggml_backend_dev_memory(nint device, out nuint free, out nuint total);
+
+        [LibraryImport(LibraryNameGgmlBase)]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+        internal static partial nint ggml_backend_dev_backend_reg(nint device);
+
+        [LibraryImport(LibraryNameGgmlBase)]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+        internal static partial nint ggml_backend_reg_name(nint reg);
 
 
         // llama: Versioning and logging

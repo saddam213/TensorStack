@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -13,7 +12,7 @@ namespace TensorStack.AudioCpp.Native
     /// </summary>
     internal static unsafe partial class NativeApi
     {
-        internal const string LibraryVersion = "0.9.5"; // https://github.com/0xShug0/audio.cpp/blob/v0.9.5/include/audiocpp.h
+        internal const string LibraryVersion = "0.3.0"; // https://github.com/0xShug0/audio.cpp/blob/v0.9.5/include/audiocpp.h
         internal const string LibraryName = "audiocpp";
         private static nint _libraryHandle;
         private static BackendInfo _backendInfo;
@@ -49,7 +48,6 @@ namespace TensorStack.AudioCpp.Native
                     return false;
 
                 _libraryHandle = handle;
-                audiocpp_abi_version();
             }
             finally
             {
@@ -74,7 +72,7 @@ namespace TensorStack.AudioCpp.Native
             var abiMinor = (abiVersion >> 8) & 0xff;
             return new BackendInfo
             {
-                Commit = $"{abiMajor}.{abiMinor}",
+                Commit = $"{abiMajor}.{abiMinor}.0",
                 Version = PtrToString(audiocpp_build_version()),
             };
         }
